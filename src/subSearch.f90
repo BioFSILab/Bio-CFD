@@ -47,8 +47,8 @@
         alpha_m = alpha_m*pi/180_rk
         theta_m = theta_m*pi/180_rk
         !freq!/(2.*a0y)
-        a0y = 0.!a0y
-        ang_theta = 0.!2._rk*pi*freq
+        a0y = 0.  !a0y
+        ang_theta = 0.  !2._rk*pi*freq
         alpha_t=(alpha_m*0.5)*(1+cos(ang_theta*(totime+deltat)+phase_angle))
         theta_t       =  theta_m*cos(ang_theta*(totime+deltat))
         DO g=blk_start,nblocks
@@ -108,14 +108,14 @@
 
         block(g)%thetaDot  =  0.
         block(g)% thetaDDot =  0._rk
-        block(g)% thetaDot   =  0.!ang_theta*a0*cos(2._rk*pi*freq*totime + phase_angle)
+        block(g)% thetaDot   =  0.  !ang_theta*a0*cos(2._rk*pi*freq*totime + phase_angle)
         block(g)%thetaDot1  = 0.
         block(g)% thetaDot2  = 0.
         block(g)% alphaDot  = 0.
-        block(g)%alphaDDot  = 0.!-ang_theta*ang_theta*a0*sin(2._rk*pi*freq*totime + phase_angle)
+        block(g)%alphaDDot  = 0.  !-ang_theta*ang_theta*a0*sin(2._rk*pi*freq*totime + phase_angle)
         block(g)% thetaDDot1 = 0.
         block(g)%thetaDDot2 = 0.
-        block(g)% thetaDDot  = 0.!-ang_theta*ang_theta*a0*sin(2._rk*pi*freq*totime + phase_angle)
+        block(g)% thetaDDot  = 0.  !-ang_theta*ang_theta*a0*sin(2._rk*pi*freq*totime + phase_angle)
        block(g)%yt         =  bdy*sin(2*pi*bdfr*totime )
        block(g)%ydot       =  angt*bdy*cos(2*pi*bdfr*totime)
        block(g)%yddot      =  -angt*angt*bdy*sin(2*pi*bdfr*totime)
@@ -166,8 +166,8 @@
              !znode1(i) = znode(i) + block(g)%zshift
            ELSE
                xr1 = block(g)% xnode(i)
-               zr1 = block(g)% znode(i)!*cos(aoa1) + ynode(i)*sin(aoa1)
-               yr1 = block(g)% ynode(i)!*sin(aoa1) + ynode(i)*cos(aoa1)
+               zr1 = block(g)% znode(i)  !*cos(aoa1) + ynode(i)*sin(aoa1)
+               yr1 = block(g)% ynode(i)  !*sin(aoa1) + ynode(i)*cos(aoa1)
              !xr =  xnode(i)*cos(aoa1) + ynode(i)*sin(aoa1)
              !yr = -xnode(i)*sin(aoa1) + ynode(i)*cos(aoa1)
              !xnode1(i) = xr + piv_pt - piv_pt*cos(aoa1) + xshift

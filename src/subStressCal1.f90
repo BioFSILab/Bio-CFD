@@ -164,10 +164,10 @@
          usurf     =  0.
 	      vsurf     =  0.
 	      wsurf     =  0.
-	      ac_z      =  0.!-thetaDot**2*(zcent(nelp(index_ts(n))) - piv_z)
-         ac_y      =  0.!-thetaDot**2*(ycent(nelp(index_ts(n))) - piv_y)
-         at_z      =  0.! thetaDDot*(ycent(nelp(index_ts(n))) - piv_y)
-         at_y      =  0.!
+	      ac_z      =  0.  !-thetaDot**2*(zcent(nelp(index_ts(n))) - piv_z)
+         ac_y      =  0.  !-thetaDot**2*(ycent(nelp(index_ts(n))) - piv_y)
+         at_z      =  0.  ! thetaDDot*(ycent(nelp(index_ts(n))) - piv_y)
+         at_y      =  0.  !
        ELSEIF (block(g)%ibSurfID(ielem)==51) THEN
         block(g)% thetaDot  = block(g)% thetaDot1
 	     block(g)% thetaDDot = block(g)% thetaDDot1
@@ -530,8 +530,8 @@
       !!$acc wait
         !area_Sx= 0.5 * area_Sx
         !area_Sy= 0.5 * area_Sy
-        area_Sx= 1.!0.5 * area_Sx
-        area_Sy= 1.!0.5 * area_Sy
+        area_Sx= 1.  !0.5 * area_Sx
+        area_Sy= 1.  !0.5 * area_Sy
         viscousDragcoefficient= 2* (viscousDrag/area_Sx)
         pressureDragcoefficient= 2* (pressureDrag/area_Sy)
         viscousLiftcoefficient= 2* (viscousLift/area_Sx)

@@ -117,8 +117,8 @@
 !    call cpu_time(dstart)
 
        DO g=1,nblocks
-               CALL correctPressure(g)!pressure correction
-               CALL correctVelocity(g) !velocity correction
+               CALL correctPressure(g)  !pressure correction
+               CALL correctVelocity(g)  !velocity correction
 
         END DO
          CALL velocityBC      !correct velocity at boundaries
