@@ -133,7 +133,7 @@
 
          !IF(mod(ita,10000) .eq.0 )THEN
          !IF(mod(ita,1000) .eq.0 .or. mod(ita,3) .eq. 0)THEN
-         IF((mod(ita,200) ==0 .or. ita <= 2 ))then ! .or. &
+         IF((mod(ita,200) ==0 .or. ita <= 2 ))then  ! .or. &
          !   (ita .gt. 250 .and. mod(ita,1) .eq. 0)) THEN
          !IF(mod(ita,100) .eq.0 )THEN
 

@@ -65,7 +65,7 @@
            i = block(f)%fluidIndexPtr(n, 1)
            j = block(f)%fluidIndexPtr(n, 2)
 	    k = block(f)%fluidIndexPtr(n, 3)
-          block(f)% u(i,j,k)  = uc !396.33054782262406 !116.236233
+          block(f)% u(i,j,k)  = uc  !396.33054782262406 !116.236233
            block(f)%v(i,j,k)  = 0.
 	    block(f)%w(i,j,k)  = 0._rk
            block(f)%ut(i,j,k) = uc

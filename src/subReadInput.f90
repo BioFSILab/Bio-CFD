@@ -97,7 +97,7 @@
         pi = 4.D0*ATAN(1.D0)
         a0y = 2*sin(pi/6)*l_c
         freq = freq*u0/l_c
-        deltat = 1./(4.*freq*dt_order)!0.00041666666666_rk! *5e-4
+        deltat = 1./(4.*freq*dt_order)  !0.00041666666666_rk! *5e-4
         disp = block(blk_start)%a0*cos(2*pi*freq*deltat)
         alpha  = 1._rk
       !!freq=(mu_f*re*180)/(4*theta_m*pi*l_c*l_c)
