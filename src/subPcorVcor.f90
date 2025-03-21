@@ -8,7 +8,7 @@
         REAL (KIND = 8)    :: max_derr1, max_derr2, max_div, max_derrStdSt
         REAL (KIND = 8)    :: er_dudt, er_dvdt, er_dwdt, err_ds
         INTEGER(KIND=8) :: max_nIterPcor, max_nit
-        CHARACTER(len=160) filename1
+        CHARACTER(len=160) :: filename1
 
 
 

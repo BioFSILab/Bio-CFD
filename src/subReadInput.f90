@@ -4,7 +4,7 @@
        IMPLICIT NONE
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER (KIND=8) :: i, j , k , g, r, nx_var, ny_var, nz_var
-        CHARACTER(len=160)  filename1
+        CHARACTER(len=160)  :: filename1
 
         !OPEN(60, FILE = 'geometries/2blk/inputdata', FORM = 'formatted')
         OPEN(60, FILE = 'inputdata', FORM = 'formatted')

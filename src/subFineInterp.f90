@@ -1208,7 +1208,7 @@
         INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y, coarse_indx,a_blk_no, b_blk_no
         INTEGER(KIND=8) :: varz1,varz2, tar_z, loc_z
         INTEGER(KIND=8), INTENT(IN) :: g
-        CHARACTER(len=150) filename1
+        CHARACTER(len=150) :: filename1
 
 
 

@@ -194,7 +194,7 @@
         REAL (KIND=8)      ::  xr1, yr1, zr1
         REAL (KIND=8)      :: vol, angg, angt
         REAL (KIND=8)      :: bdy,bdfr, yt_prv
-        CHARACTER(len=150) filename1
+        CHARACTER(len=150) :: filename1
 
         DO g=blk_start,nblocks
         angg=90
@@ -878,7 +878,7 @@
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER            :: g,i, j, k, i1, j1, k1, iPt1, m, n, i_x1, i_y1, i_z1, i_x2, i_y2, i_z2, il, jl, kl, tscnt
         REAL (KIND=8)      :: pos1_x, pos1_y, pos1_z, pos2_x, pos2_y, pos2_z, pt1
-        CHARACTER(len=70) filename1
+        CHARACTER(len=70) :: filename1
 
 
         print*,'inside findTScells'
@@ -1046,8 +1046,8 @@
                               n1dotn, n2dotn, n3dotn, n4dotn, n5dotn, n6dotn, n7dotn, n8dotn, n9dotn,  &
                               cent_x, cent_y, cent_z
 
-        CHARACTER(len=120) filename1
-        CHARACTER(len=120) filename2
+        CHARACTER(len=120) :: filename1
+        CHARACTER(len=120) :: filename2
 
         !g=2
         !g=2
@@ -1490,7 +1490,7 @@ block(g)%fluidCellCount = flcnt
         INTEGER            ::  nel2u1, nel2u2, nel2v1, nel2v2, nel2w1, nel2w2
         INTEGER            :: i, j, k, n, nel2p, g, ibxx, m
         REAL (KIND=8)      :: n1x, n2x, n3x, n1y, n2y, n3y, n1z, n2z, n3z, dis, dis1, dis2, dis3, dis4, dis5, dis6, minDis, minDis1, minDis2, minDis3, minDis4, minDis5, minDis6, cent_x, cent_y,cent_z
-        CHARACTER(len=70)  filename1
+        CHARACTER(len=70)  :: filename1
 
         print*, 'computeNormDistance started'
         DO g=blk_start,nblocks
@@ -2762,7 +2762,7 @@ block(g)%fluidCellCount = flcnt
                               n1dotn, n2dotn, n3dotn, n4dotn, n5dotn, n6dotn, n7dotn, n8dotn, n9dotn,  &
                               cent_x, cent_y, cent_z
         CHARACTER(LEN=100) :: cLine
-        CHARACTER(len=150)  filename1
+        CHARACTER(len=150)  :: filename1
         DO g=blk_start,nblocks
         if ( block(g)%move_check == 1)then
 	 ALLOCATE(block(g)%minElemcell(block(g)%nx+2,block(g)%ny+2,block(g)%nz+2))
@@ -3350,7 +3350,7 @@ block(g)%fluidCellCount = flcnt
         use global
         implicit none
         INTEGER (kind = 8) ::   i, j, k,g
-        CHARACTER(len=150)  filename1
+        CHARACTER(len=150)  :: filename1
 
         DO g=blk_start,nblocks
          WRITE(filename1,1) g
