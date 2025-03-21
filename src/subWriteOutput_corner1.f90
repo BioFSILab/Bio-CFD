@@ -114,8 +114,8 @@
        USE global
 !!       USE mod_tecio
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
-       CHARACTER*150  filename1
-       CHARACTER*150  filename2
+       CHARACTER(len=150)  filename1
+       CHARACTER(len=150)  filename2
        INTEGER  :: k, i, j, g
        REAL (KIND = 8) :: u1, v1, w1
 
@@ -266,7 +266,7 @@
         implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k,g
-       CHARACTER*70  filename1
+       CHARACTER(len=70)  filename1
         IF(mod(ita,500)==0)THEN
            Do g=1,nblocks
            WRITE(filename1,22)char_f,g,re,block(2)%dx
@@ -289,8 +289,8 @@
      SUBROUTINE writeTagging
        USE global
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
-       CHARACTER*70  filename1
-       CHARACTER*70  filename2
+       CHARACTER(len=70)  filename1
+       CHARACTER(len=70)  filename2
        INTEGER  :: k, i, j,g
         g=2
             WRITE(filename1,1) geo_num,ita
@@ -335,7 +335,7 @@
         implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
-       CHARACTER*70  filename1
+       CHARACTER(len=70)  filename1
 
 
         IF(mod(ita1,1000)==0)THEN
@@ -359,7 +359,7 @@
         implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
-       CHARACTER*70  filename1
+       CHARACTER(len=70)  filename1
 
 
         IF(mod(ita1,1000)==0)THEN
@@ -382,7 +382,7 @@
         implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
-       CHARACTER*70  filename1
+       CHARACTER(len=70)  filename1
 
         DO g=1,nblocks
         WRITE(filename1,22)g,re
@@ -406,7 +406,7 @@
         implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
-       CHARACTER*70  filename1
+       CHARACTER(len=70)  filename1
 
         DO g=1,nblocks
         WRITE(filename1,22)g,re
@@ -463,8 +463,8 @@
        USE global
 !!tec       USE mod_tecio
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
-       CHARACTER*70  filename1
-       CHARACTER*70  filename2
+       CHARACTER(len=70)  filename1
+       CHARACTER(len=70)  filename2
        INTEGER  :: k, i, j, g
        REAL (KIND = 8) :: u_avg1, v_avg1, w_avg1
 !!tec         CHARACTER*1 NULLCHR
@@ -588,7 +588,7 @@
          USE global
          IMPLICIT NONE
          INTEGER(KIND=8) :: inode, ielem, g
-          CHARACTER*150 filename1
+          CHARACTER(len=150) filename1
 
           DO g=1,nblocks
           if (ita == 1 )then
@@ -799,8 +799,8 @@
        USE global
 !!tec       USE mod_tecio
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
-       CHARACTER*70  filename1
-       CHARACTER*70  filename2
+       CHARACTER(len=70)  filename1
+       CHARACTER(len=70)  filename2
        INTEGER  :: k, i, j, g
        REAL (KIND = 8) :: u_avg1, v_avg1, w_avg1
 !!tec         CHARACTER*1 NULLCHR
@@ -925,8 +925,8 @@
        USE global
 
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
-       CHARACTER*150  filename1
-       CHARACTER*150  filename2
+       CHARACTER(len=150)  filename1
+       CHARACTER(len=150)  filename2
        INTEGER  :: n,k, i, j, g
        REAL (KIND = 8) :: uu, vv, ww, uv, vw, wu
 
