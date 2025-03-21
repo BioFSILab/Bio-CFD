@@ -35,7 +35,7 @@ jobs:
 
       - run: |
           # environment vars FC, CC, and CXX are set
-          ${{ env.FC }} *f90 -o test || true
+          ${{ env.FC }} -c modGlobal.f90
           # We run this twice because of the hacky way we are
           # building, remove once we have a proper build system
           ${{ env.FC }} *f90 -o test
