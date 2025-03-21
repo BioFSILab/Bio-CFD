@@ -4,7 +4,7 @@
        implicit none
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER::  i, j, k, g
-        CHARACTER(len=150) filename3
+        CHARACTER(len=150) :: filename3
         WRITE(*,*) 'Enter lastcondtitions'
 
         DO g=1,nblocks
