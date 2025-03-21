@@ -147,7 +147,7 @@ SUBROUTINE velocityBC
          ! INTEGER (KIND = 8), INTENT(IN) :: b_blk_no
         !g=b_blk_no
       !  print*,g,'inside_solid'
-         if (block(g)%move_check .eq. 1) then
+         if (block(g)%move_check == 1) then
          !INTEGER (KIND = 8):: g
          !DO g=blk_start, nblocks
          !$acc parallel loop gang vector &

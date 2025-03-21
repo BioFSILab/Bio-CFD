@@ -37,7 +37,7 @@
          END DO
 
 
-         if (f .eq.1)then
+         if (f ==1)then
          !inlet, i = 1
          block(f)%Acx(1, 2)   =  block(f)%Acx(1, 2)  - block(f)%Acx(1, 1)
          block(f)%Acx(1, 1)   =  0._rk

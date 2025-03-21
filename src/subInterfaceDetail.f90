@@ -70,7 +70,7 @@
         b_blk_no=intfr(g)%b_blk
         DO i=1,block(a_blk_no)%nx+3
 
-        if(block(a_blk_no)%xp(i) .gt. intfr(g)%xintf_start)then
+        if(block(a_blk_no)%xp(i) > intfr(g)%xintf_start)then
 
                 xx1_p=i
                 exit
@@ -81,7 +81,7 @@
         DO i=xx1_p,block(a_blk_no)%nx+2
 
         !if(block(a_blk_no)%xp(i) .gt. intfr(g)%xintf_end+(1.5*block(b_blk_no)%dx))then
-        if(block(a_blk_no)%xp(i) .gt. intfr(g)%xintf_end)then
+        if(block(a_blk_no)%xp(i) > intfr(g)%xintf_end)then
 
                 xx2_p=i-1
                 exit
@@ -106,7 +106,7 @@
         intfr(g)%counterxp=intfr(g)%counterxp+1
         xx1_p=xx1_p+1
 
-        if(xx1_p .le. xx2_p)then
+        if(xx1_p <= xx2_p)then
                 GOTO 12
         endif
 
@@ -121,7 +121,7 @@
         DO j=1,block(a_blk_no)%ny+2
 
        !!if(block(a_blk_no)%yp(j) .gt. intfr(g)%yintf_start-(1.5*block(b_blk_no)%dy))then
-        if(block(a_blk_no)%yp(j) .gt. intfr(g)%yintf_start)then
+        if(block(a_blk_no)%yp(j) > intfr(g)%yintf_start)then
          !       print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_start-(2*block(b_blk_no)%dy)
                 yy1_p=j
                 exit
@@ -132,7 +132,7 @@
         DO j=yy1_p,block(a_blk_no)%ny+2
 
         !if(block(a_blk_no)%y1(j) .gt. intfr(g)%yintf_end+(1.5*block(b_blk_no)%dy))then
-        if(block(a_blk_no)%yp(j) .gt. intfr(g)%yintf_end)then
+        if(block(a_blk_no)%yp(j) > intfr(g)%yintf_end)then
           !      print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_end+(2*block(b_blk_no)%dy)
 
                 yy2_p=j-1
@@ -155,7 +155,7 @@
         intfr(g)%counteryp=intfr(g)%counteryp+1
         yy1_p=yy1_p+1
 
-        if(yy1_p .le. yy2_p)then
+        if(yy1_p <= yy2_p)then
                 GOTO 13
         endif
 
@@ -167,7 +167,7 @@
         DO j=1,block(a_blk_no)%nz+2
 
        !!if(block(a_blk_no)%yp(j) .gt. intfr(g)%yintf_start-(1.5*block(b_blk_no)%dy))then
-        if(block(a_blk_no)%zp(j) .gt. intfr(g)%zintf_start)then
+        if(block(a_blk_no)%zp(j) > intfr(g)%zintf_start)then
          !       print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_start-(2*block(b_blk_no)%dy)
                 zz1_p=j
                 exit
@@ -178,7 +178,7 @@
         DO j=zz1_p,block(a_blk_no)%nz+2
 
         !if(block(a_blk_no)%y1(j) .gt. intfr(g)%yintf_end+(1.5*block(b_blk_no)%dy))then
-        if(block(a_blk_no)%zp(j) .gt. intfr(g)%zintf_end)then
+        if(block(a_blk_no)%zp(j) > intfr(g)%zintf_end)then
           !      print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_end+(2*block(b_blk_no)%dy)
 
                 zz2_p=j-1
@@ -201,7 +201,7 @@
         intfr(g)%counterzp=intfr(g)%counterzp+1
         zz1_p=zz1_p+1
 
-        if(zz1_p .le. zz2_p)then
+        if(zz1_p <= zz2_p)then
                 GOTO 913
         endif
 
@@ -213,7 +213,7 @@
         !DO i=1,block(a_blk_no)%itn_en
         DO i=1,block(a_blk_no)%nx+3
 
-        if(block(a_blk_no)%xu(i) .ge. intfr(g)%xintf_start)then
+        if(block(a_blk_no)%xu(i) >= intfr(g)%xintf_start)then
 
                 xx1_p=i
                 exit
@@ -224,7 +224,7 @@
         DO i=xx1_p,block(a_blk_no)%nx+3
 
         !if(block(a_blk_no)%xu(i) .gt. intfr(g)%xintf_end+(2*block(b_blk_no)%dx))then
-        if(block(a_blk_no)%xu(i) .gt. intfr(g)%xintf_end)then
+        if(block(a_blk_no)%xu(i) > intfr(g)%xintf_end)then
 
                 xx2_p=i-1
                 exit
@@ -247,7 +247,7 @@
         ender=ender+factor
         intfr(g)%counterxu=intfr(g)%counterxu+1
 
-        if(xx1_p .lt. xx2_p)then
+        if(xx1_p < xx2_p)then
                 GOTO 121
         endif
 
@@ -259,7 +259,7 @@
         !DO j=1,block(a_blk_no)%jtn_en
         DO j=1,block(a_blk_no)%ny+2
 
-        if(block(a_blk_no)%yu(j) .gt. intfr(g)%yintf_start)then
+        if(block(a_blk_no)%yu(j) > intfr(g)%yintf_start)then
                 !print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_start-(2*block(b_blk_no)%dy)
                 yy1_p=j
                 exit
@@ -270,7 +270,7 @@
         DO j=yy1_p,block(a_blk_no)%ny+2
 
         !if(block(a_blk_no)%yu(j) .gt. intfr(g)%yintf_end+(1.5*block(b_blk_no)%dy))then
-        if(block(a_blk_no)%yu(j) .gt. intfr(g)%yintf_end)then
+        if(block(a_blk_no)%yu(j) > intfr(g)%yintf_end)then
         !        print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_end+(2*block(b_blk_no)%dy)
 
                 yy2_p=j-1
@@ -293,7 +293,7 @@
         intfr(g)%counteryu=intfr(g)%counteryu+1
         yy1_p=yy1_p+1
 
-        if(yy1_p .le. yy2_p)then
+        if(yy1_p <= yy2_p)then
                 GOTO 131
         endif
 
@@ -306,7 +306,7 @@
 
         DO j=1,block(a_blk_no)%nz+2
 
-        if(block(a_blk_no)%zu(j) .gt. intfr(g)%zintf_start)then
+        if(block(a_blk_no)%zu(j) > intfr(g)%zintf_start)then
                 !print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_start-(2*block(b_blk_no)%dy)
                 zz1_p=j
                 exit
@@ -317,7 +317,7 @@
         DO j=zz1_p,block(a_blk_no)%nz+2
 
         !if(block(a_blk_no)%yu(j) .gt. intfr(g)%yintf_end+(1.5*block(b_blk_no)%dy))then
-        if(block(a_blk_no)%zu(j) .gt. intfr(g)%zintf_end)then
+        if(block(a_blk_no)%zu(j) > intfr(g)%zintf_end)then
         !        print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_end+(2*block(b_blk_no)%dy)
 
                 zz2_p=j-1
@@ -340,7 +340,7 @@
         intfr(g)%counterzu=intfr(g)%counterzu+1
         zz1_p=zz1_p+1
 
-        if(zz1_p .le. zz2_p)then
+        if(zz1_p <= zz2_p)then
                 GOTO 9131
         endif
 
@@ -352,7 +352,7 @@
         !DO i=1,block(a_blk_no)%itn_en
         DO i=1,block(a_blk_no)%nx+2
 
-        if(block(a_blk_no)%xv(i) .gt. intfr(g)%xintf_start)then
+        if(block(a_blk_no)%xv(i) > intfr(g)%xintf_start)then
 
                 xx1_p=i
                 exit
@@ -363,7 +363,7 @@
         DO i=xx1_p,block(a_blk_no)%nx+2
 
         !if(block(a_blk_no)%xv(i) .gt. intfr(g)%xintf_end+(1.5*block(b_blk_no)%dx))then
-        if(block(a_blk_no)%xv(i) .gt. intfr(g)%xintf_end)then
+        if(block(a_blk_no)%xv(i) > intfr(g)%xintf_end)then
 
                 xx2_p=i-1
                 exit
@@ -385,7 +385,7 @@
         intfr(g)%counterxv=intfr(g)%counterxv+1
         xx1_p=xx1_p+1
 
-        if(xx1_p .le. xx2_p)then
+        if(xx1_p <= xx2_p)then
                 GOTO 122
         endif
 
@@ -397,7 +397,7 @@
         !DO j=1,block(a_blk_no)%jtn_en
         DO j=1,block(a_blk_no)%ny+3
 
-        if(block(a_blk_no)%yv(j) .ge. intfr(g)%yintf_start)then
+        if(block(a_blk_no)%yv(j) >= intfr(g)%yintf_start)then
                 !print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_start-(2*block(b_blk_no)%dy)
                 yy1_p=j
                 exit
@@ -407,7 +407,7 @@
         !DO j=yy1_p,block(a_blk_no)%jtn_en
         DO j=yy1_p,block(a_blk_no)%ny+3
 
-        if(block(a_blk_no)%yv(j) .gt. intfr(g)%yintf_end)then
+        if(block(a_blk_no)%yv(j) > intfr(g)%yintf_end)then
         !if(block(a_blk_no)%yv(j) .gt. intfr(g)%yintf_end+(2*block(b_blk_no)%dy))then
                 !print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_end+(2*block(b_blk_no)%dy)
 
@@ -431,7 +431,7 @@
         ender=ender+factor
         intfr(g)%counteryv=intfr(g)%counteryv+1
 
-        if(yy1_p .lt. yy2_p)then
+        if(yy1_p < yy2_p)then
                 GOTO 132
         endif
 
@@ -443,7 +443,7 @@
 
         DO i=1,block(a_blk_no)%nz+2
 
-        if(block(a_blk_no)%zv(i) .gt. intfr(g)%zintf_start)then
+        if(block(a_blk_no)%zv(i) > intfr(g)%zintf_start)then
 
                 zz1_p=i
                 exit
@@ -454,7 +454,7 @@
         DO i=zz1_p,block(a_blk_no)%nz+2
 
         !if(block(a_blk_no)%xv(i) .gt. intfr(g)%xintf_end+(1.5*block(b_blk_no)%dx))then
-        if(block(a_blk_no)%zv(i) .gt. intfr(g)%zintf_end)then
+        if(block(a_blk_no)%zv(i) > intfr(g)%zintf_end)then
 
                 zz2_p=i-1
                 exit
@@ -476,7 +476,7 @@
         intfr(g)%counterzv=intfr(g)%counterzv+1
         zz1_p=zz1_p+1
 
-        if(zz1_p .le. zz2_p)then
+        if(zz1_p <= zz2_p)then
                 GOTO 9122
         endif
 
@@ -489,7 +489,7 @@
         !DO i=1,block(a_blk_no)%itn_en
         DO i=1,block(a_blk_no)%nx+2
 
-        if(block(a_blk_no)%xw(i) .gt. intfr(g)%xintf_start)then
+        if(block(a_blk_no)%xw(i) > intfr(g)%xintf_start)then
 
                 xx1_p=i
                 exit
@@ -500,7 +500,7 @@
         DO i=xx1_p,block(a_blk_no)%nx+2
 
         !if(block(a_blk_no)%xv(i) .gt. intfr(g)%xintf_end+(1.5*block(b_blk_no)%dx))then
-        if(block(a_blk_no)%xw(i) .gt. intfr(g)%xintf_end)then
+        if(block(a_blk_no)%xw(i) > intfr(g)%xintf_end)then
 
                 xx2_p=i-1
                 exit
@@ -522,7 +522,7 @@
         intfr(g)%counterxw=intfr(g)%counterxw+1
         xx1_p=xx1_p+1
 
-        if(xx1_p .le. xx2_p)then
+        if(xx1_p <= xx2_p)then
                 GOTO 1229
         endif
 
@@ -534,7 +534,7 @@
         !DO j=1,block(a_blk_no)%jtn_en
         DO j=1,block(a_blk_no)%ny+2
 
-        if(block(a_blk_no)%yw(j) .gt. intfr(g)%yintf_start)then
+        if(block(a_blk_no)%yw(j) > intfr(g)%yintf_start)then
                 !print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_start-(2*block(b_blk_no)%dy)
                 yy1_p=j
                 exit
@@ -544,7 +544,7 @@
         !DO j=yy1_p,block(a_blk_no)%jtn_en
         DO j=yy1_p,block(a_blk_no)%ny+2
 
-        if(block(a_blk_no)%yw(j) .gt. intfr(g)%yintf_end)then
+        if(block(a_blk_no)%yw(j) > intfr(g)%yintf_end)then
         !if(block(a_blk_no)%yv(j) .gt. intfr(g)%yintf_end+(2*block(b_blk_no)%dy))then
                 !print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_end+(2*block(b_blk_no)%dy)
 
@@ -568,7 +568,7 @@
         intfr(g)%counteryw=intfr(g)%counteryw+1
         yy1_p=yy1_p+1
 
-        if(yy1_p .le. yy2_p)then
+        if(yy1_p <= yy2_p)then
                 GOTO 1329
         endif
 
@@ -580,7 +580,7 @@
 
         DO i=1,block(a_blk_no)%nz+3
 
-        if(block(a_blk_no)%zw(i) .ge. intfr(g)%zintf_start)then
+        if(block(a_blk_no)%zw(i) >= intfr(g)%zintf_start)then
 
                 zz1_p=i
                 exit
@@ -591,7 +591,7 @@
         DO i=zz1_p,block(a_blk_no)%nz+3
 
         !if(block(a_blk_no)%xv(i) .gt. intfr(g)%xintf_end+(1.5*block(b_blk_no)%dx))then
-        if(block(a_blk_no)%zw(i) .gt. intfr(g)%zintf_end)then
+        if(block(a_blk_no)%zw(i) > intfr(g)%zintf_end)then
 
                 zz2_p=i-1
                 exit
@@ -615,7 +615,7 @@
         ender=ender+factor
         intfr(g)%counterzw=intfr(g)%counterzw+1
 
-        if(zz1_p .lt. zz2_p)then
+        if(zz1_p < zz2_p)then
                 GOTO 91229
         endif
 

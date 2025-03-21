@@ -133,7 +133,7 @@
 
          !IF(mod(ita,10000) .eq.0 )THEN
          !IF(mod(ita,1000) .eq.0 .or. mod(ita,3) .eq. 0)THEN
-         IF((mod(ita,200) .eq.0 .or. ita .le. 2 ))then ! .or. &
+         IF((mod(ita,200) ==0 .or. ita <= 2 ))then ! .or. &
          !   (ita .gt. 250 .and. mod(ita,1) .eq. 0)) THEN
          !IF(mod(ita,100) .eq.0 )THEN
 
@@ -267,7 +267,7 @@
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k,g
        CHARACTER*70  filename1
-        IF(mod(ita,500).EQ.0)THEN
+        IF(mod(ita,500)==0)THEN
            Do g=1,nblocks
            WRITE(filename1,22)char_f,g,re,block(2)%dx
  !22          FORMAT('out/4blk/aorta_chkpt.',i3.3,'.',f6.1,".dat")
@@ -338,7 +338,7 @@
        CHARACTER*70  filename1
 
 
-        IF(mod(ita1,1000).EQ.0)THEN
+        IF(mod(ita1,1000)==0)THEN
         DO g=1,nblocks
         WRITE(filename1,22)g,re
  22     FORMAT('out/4blk/aorta_sumdata.',i3.3,'.',f6.1,".dat")
@@ -362,7 +362,7 @@
        CHARACTER*70  filename1
 
 
-        IF(mod(ita1,1000).EQ.0)THEN
+        IF(mod(ita1,1000)==0)THEN
         DO g=1,nblocks
         WRITE(filename1,22)g,re
  22     FORMAT('out/4blk/aorta_sumsqdata.',i3.3,'.',f6.1,".dat")
@@ -591,7 +591,7 @@
           CHARACTER*150 filename1
 
           DO g=1,nblocks
-          if (ita .eq. 1 )then
+          if (ita == 1 )then
           !DO g=1,nblocks
           WRITE(filename1,108)
   108     FORMAT("out/butterfly.dat")
@@ -933,14 +933,14 @@
         g=1
 
 
-           if ( mod(block(g)%nx+1,2) .eq. 0) then
+           if ( mod(block(g)%nx+1,2) == 0) then
                 i=(block(g)%nx+1)/2
            else
 
                 i=((block(g)%nx+1)/2) +1
            endif
 
-           if ( mod(block(g)%nz+1,2) .eq. 0) then
+           if ( mod(block(g)%nz+1,2) == 0) then
                 k=(block(g)%nz+1)/2
            else
 
@@ -950,7 +950,7 @@
  126      FORMAT(' ',7F15.7)
             do n=1,block(g)%ny+2
 
-                if( block(g)%yv(n) .gt.18) then
+                if( block(g)%yv(n) >18) then
                         j=n-1
                         exit
                 end if
@@ -972,7 +972,7 @@
 
             do n=1,block(g)%ny+2
 
-                if( block(g)%yv(n) .gt.24) then
+                if( block(g)%yv(n) >24) then
                         j=n-1
                         exit
                 end if
@@ -995,7 +995,7 @@
 
             do n=1,block(g)%ny+2
 
-                if( block(g)%yv(n) .gt.31) then
+                if( block(g)%yv(n) >31) then
                         j=n-1
                         exit
                 end if
@@ -1016,7 +1016,7 @@
 
             do n=1,block(g)%ny+2
 
-                if( block(g)%yv(n) .gt.40) then
+                if( block(g)%yv(n) >40) then
                         j=n-1
                         exit
                 end if
@@ -1038,14 +1038,14 @@
 
 
           g=2
-           if ( mod(block(g)%nx+1,2) .eq. 0) then
+           if ( mod(block(g)%nx+1,2) == 0) then
                 i=(block(g)%nx+1)/2
            else
 
                 i=((block(g)%nx+1)/2) +1
            endif
 
-           if ( mod(block(g)%nz+1,2) .eq. 0) then
+           if ( mod(block(g)%nz+1,2) == 0) then
                 k=(block(g)%nz+1)/2
            else
 
@@ -1054,7 +1054,7 @@
 
             do n=1,block(g)%ny+2
 
-                if( block(g)%yv(n) .gt.46) then
+                if( block(g)%yv(n) >46) then
                         j=n-1
                         exit
                 end if

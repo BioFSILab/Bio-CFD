@@ -53,7 +53,7 @@
                 tar_y=l
                 tar_z=q
                !if (block(a_blk_no)%cell(loc_x,loc_y) .eq.0)then
-               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) .eq.0)then
+               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) ==0)then
        !if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .ne. 1 .and. &
        !      block(a_blk_no)%cell(loc_x+1,loc_y-1) .ne. 1 .and.  &
        !      block(a_blk_no)%cell(loc_x+1,loc_y+1) .ne. 1 .and. &
@@ -290,7 +290,7 @@
                 tar_y=l
                 tar_z=q
               ! if (block(a_blk_no)%cell(loc_x,loc_y) .eq.0)then
-               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) .eq.0)then
+               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) ==0)then
       ! if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .ne. 1 .and. &
       !       block(a_blk_no)%cell(loc_x+1,loc_y-1) .ne. 1 .and. &
       !       block(a_blk_no)%cell(loc_x+1,loc_y+1) .ne. 1 .and. &
@@ -504,7 +504,7 @@
                 tar_y=l
                 tar_z=q
                !if (block(a_blk_no)%cell(loc_x,loc_y) .eq.0)then
-               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) .eq.0)then
+               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) ==0)then
       ! if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .ne. 1 .and. &
       !       block(a_blk_no)%cell(loc_x+1,loc_y-1) .ne. 1 .and. &
       !       block(a_blk_no)%cell(loc_x+1,loc_y+1) .ne. 1 .and. &
@@ -622,7 +622,7 @@
                 tar_y=l
                 tar_z=q
                !if (block(a_blk_no)%cell(loc_x,loc_y) .eq.0)then
-               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) .eq.0)then
+               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) ==0)then
       ! if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .ne. 1 .and. &
       !       block(a_blk_no)%cell(loc_x+1,loc_y-1) .ne. 1 .and. &
       !       block(a_blk_no)%cell(loc_x+1,loc_y+1) .ne. 1 .and. &
@@ -1253,7 +1253,7 @@
                 tar_z=q
                !if (block(a_blk_no)%cell(loc_x,loc_y) .eq.0)then
                !if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) .eq.0)then
-               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) .ne.1)then
+               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) /=1)then
        !if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .ne. 1 .and. &
        !      block(a_blk_no)%cell(loc_x+1,loc_y-1) .ne. 1 .and.  &
        !      block(a_blk_no)%cell(loc_x+1,loc_y+1) .ne. 1 .and. &
@@ -1493,7 +1493,7 @@
                 tar_y=l
                 tar_z=q
               ! if (block(a_blk_no)%cell(loc_x,loc_y) .eq.0)then
-               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) .ne.1)then
+               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) /=1)then
       ! if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .ne. 1 .and. &
       !       block(a_blk_no)%cell(loc_x+1,loc_y-1) .ne. 1 .and. &
       !       block(a_blk_no)%cell(loc_x+1,loc_y+1) .ne. 1 .and. &
@@ -1718,7 +1718,7 @@
                 tar_y=l
                 tar_z=q
                !if (block(a_blk_no)%cell(loc_x,loc_y) .eq.0)then
-               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) .ne.1)then
+               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) /=1)then
       ! if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .ne. 1 .and. &
       !       block(a_blk_no)%cell(loc_x+1,loc_y-1) .ne. 1 .and. &
       !       block(a_blk_no)%cell(loc_x+1,loc_y+1) .ne. 1 .and. &
@@ -1839,7 +1839,7 @@
                 tar_y=l
                 tar_z=q
                !if (block(a_blk_no)%cell(loc_x,loc_y) .eq.0)then
-               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) .ne.1)then
+               if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) /=1)then
       ! if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .ne. 1 .and. &
       !       block(a_blk_no)%cell(loc_x+1,loc_y-1) .ne. 1 .and. &
       !       block(a_blk_no)%cell(loc_x+1,loc_y+1) .ne. 1 .and. &

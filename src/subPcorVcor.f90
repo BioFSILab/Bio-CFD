@@ -479,7 +479,7 @@
          !IF (mod(isum,2000).EQ.0)WRITE(*,*) isum, derr, derr2
          !IF (ita.LE.2.AND.isum.LT.50000) GOTO 3
          !IF (derr.gt.epsi) GOTO 3
-         IF (derr4.GE.epsi) GOTO 3
+         IF (derr4>=epsi) GOTO 3
          !IF (ita.lt.15.AND.isum.lt.100) GOTO 3
       END SUBROUTINE REDBLACKSOR_old
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
@@ -500,10 +500,10 @@
 
          gg=g
                 ! omega = 1.955
-            if (gg .eq. 1)then
+            if (gg == 1)then
                  !omega = 1.98_rk
                  omega = omega1
-           elseif (gg .eq. 2) then
+           elseif (gg == 2) then
                 !omega=1.96_rk
                  omega=omega2
         !  elseif (gg .eq. 3) then
@@ -595,7 +595,7 @@
         !$acc end parallel
 
 
-       if(mod(block(gg)%nIterPcor,100) .eq.0)then
+       if(mod(block(gg)%nIterPcor,100) ==0)then
        derr4=0.
         !$acc parallel loop gang vector reduction(max:derr4) default(present) private (i, j, k, var)
         !$omp parallel do private (i,j,k,n,var) reduction(max:derr4) num_threads(48)
@@ -634,7 +634,7 @@
          !IF (mod(isum,2000).EQ.0)WRITE(*,*) isum, derr, derr2
          !IF (ita.LE.2.AND.isum.LT.50000) GOTO 3
          !IF (derr.gt.epsi) GOTO 3
-         IF (derr4.GE.epsi .and. block(g)%nIterPcor .le. pcItaMax) GOTO 3
+         IF (derr4>=epsi .and. block(g)%nIterPcor <= pcItaMax) GOTO 3
          !IF (ita.lt.15.AND.isum.lt.100) GOTO 3
       END SUBROUTINE REDBLACKSOR
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
@@ -655,13 +655,13 @@
 
          gg=g
                 ! omega = 1.955
-            if (gg .eq. 1)then
+            if (gg == 1)then
                  !omega = 1.98_rk
                  omega = omega1
-           elseif (gg .eq. 2) then
+           elseif (gg == 2) then
                 !omega=1.96_rk
                  omega=omega2
-           elseif (gg .eq. 3) then
+           elseif (gg == 3) then
                 !omega=1.96_rk
                  omega=omega3
            else
@@ -747,7 +747,7 @@
         !$acc end parallel
 
 
-       if(mod(block(gg)%nIterPcor,5) .eq.0)then
+       if(mod(block(gg)%nIterPcor,5) ==0)then
        derr4=0.
         !$acc parallel loop gang vector reduction(max:derr4) default(present) private (i, j, k, var)
         !$omp parallel do private (i,j,k,n,var) reduction(max:derr4) num_threads(48)
@@ -785,7 +785,7 @@
          !IF (ita.LE.2.AND.isum.LT.50000) GOTO 3
          !IF (derr.gt.epsi) GOTO 3
          !IF (derr4.GE.epsi) GOTO 3
-         IF (derr4.GE.epsi .and. block(g)%nIterPcor .le. pcItaMax) GOTO 3
+         IF (derr4>=epsi .and. block(g)%nIterPcor <= pcItaMax) GOTO 3
          !IF (ita.lt.15.AND.isum.lt.100) GOTO 3
       END SUBROUTINE REDBLACKSOR_linear
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
@@ -800,7 +800,7 @@
         !!$acc parallel loop present (u, ut, v, vt)
         !DO g = blk_start, nblocks
 !        print*,g,'inside_pcor'
-        if (block(g)%move_check .eq. 1) then
+        if (block(g)%move_check == 1) then
         !$acc parallel loop gang vector collapse(2) default(present)
         DO 70 k = 1, block(g)%nz+2
         DO 70 j = 1, block(g)%ny+2

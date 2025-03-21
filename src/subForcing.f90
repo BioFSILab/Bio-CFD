@@ -27,7 +27,7 @@ SUBROUTINE pressureForcing1
       DO n = 1, block(g)%ibCellCount
 
          !dpdn = (-(v_curr-v_prev)/deltat)*block(g)%cosBeta(block(g)%nelp(n))
-         IF (block(g)%ibSurfId(block(g)%nelp(n)).EQ.50) THEN
+         IF (block(g)%ibSurfId(block(g)%nelp(n))==50) THEN
             !dpdn = 0.
             ac_z = 0.!-block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
             ac_y = 0.!-block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
@@ -37,7 +37,7 @@ SUBROUTINE pressureForcing1
             ac_y_al = 0.
             at_x_al = 0.
             at_y_al = 0.
-        ELSEIF (block(g)%ibSurfId(block(g)%nelp(n)).EQ.51) THEN
+        ELSEIF (block(g)%ibSurfId(block(g)%nelp(n))==51) THEN
             block(g)%thetaDot  = block(g)%thetaDot1
             block(g)%thetaDDot = block(g)%thetaDDot1
             ac_z = -block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(n)) - block(g)%piv_z)
@@ -49,7 +49,7 @@ SUBROUTINE pressureForcing1
           !!at_x_al =  block(g)%alphaDDot*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
           !!at_y_al = -block(g)%alphaDDot*(block(g)%xcent(block(g)%nelp(n)) - block(g)%piv_x)
             !dpdn = -((ac_z + at_z)*block(g)%cosAlpha(block(g)%nelp(n)) + (ac_y + at_y)*block(g)%cosBeta(block(g)%nelp(n)) !+ yddot*block(g)%cosBeta(block(g)%nelp(n)))
-        ELSEIF (block(g)%ibSurfId(block(g)%nelp(n)).EQ.52) THEN
+        ELSEIF (block(g)%ibSurfId(block(g)%nelp(n))==52) THEN
             block(g)%thetaDot  = block(g)%thetaDot2
             block(g)%thetaDDot = block(g)%thetaDDot2
             ac_z = -block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(n)) - block(g)%piv_z)
@@ -80,15 +80,15 @@ SUBROUTINE pressureForcing1
 
           !$acc loop seq
          DO il = 1, block(g)%nx+1
-            if(pos1_x.ge.block(g)%xp(il).and.pos1_x.lt.block(g)%xp(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xp(il).and.pos1_x<block(g)%xp(il+1)) i_x1 = il
          END DO
           !$acc loop seq
          DO jl = 1, block(g)%ny+1
-            if(pos1_y.ge.block(g)%yp(jl).and.pos1_y.lt.block(g)%yp(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yp(jl).and.pos1_y<block(g)%yp(jl+1)) i_y1 = jl
          END DO
           !$acc loop seq
          DO kl = 1, block(g)%nz+1
-            if(pos1_z.ge.block(g)%zp(kl).and.pos1_z.lt.block(g)%zp(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zp(kl).and.pos1_z<block(g)%zp(kl+1)) i_z1 = kl
          END DO
 
          !interpolation along x  @ z1 plane
@@ -214,12 +214,12 @@ SUBROUTINE velocityForcing1
       DO n = 1, block(g)%ibCellCount
 
          !usurf = 0._rk
-         IF (block(g)%ibSurfID(block(g)%nelu2(n)).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelu2(n))==50) THEN
              usurf = 0. + block(g)%xdot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelu2(n)).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelu2(n))==51) THEN
              usurf = 0. + block(g)%xdot
            !!usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(n)) - block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelu2(n)).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelu2(n))==52) THEN
              usurf = 0. +block(g)%xdot
            !!usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(n)) - block(g)%piv_y)
          ENDIF
@@ -240,21 +240,21 @@ SUBROUTINE velocityForcing1
 
          !$acc loop seq
          DO il = 1, block(g)%nx+2
-            if(pos1_x.ge.block(g)%xu(il).and.pos1_x.lt.block(g)%xu(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xu(il).and.pos1_x<block(g)%xu(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = 1, block(g)%ny+1
-            if(pos1_y.ge.block(g)%yu(jl).and.pos1_y.lt.block(g)%yu(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yu(jl).and.pos1_y<block(g)%yu(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = 1, block(g)%nz+1
-            if(pos1_z.ge.block(g)%zu(kl).and.pos1_z.lt.block(g)%zu(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zu(kl).and.pos1_z<block(g)%zu(kl+1)) i_z1 = kl
          END DO
 
          !IF(i_x1.EQ.1) i_x1 = 2
          !IF(i_y1.EQ.1) i_y1 = 2
          !IF(i_z1.EQ.1) i_z1 = 2
-         IF(i_x1.EQ.block(g)%nx+2) i_x1 = block(g)%nx+1
+         IF(i_x1==block(g)%nx+2) i_x1 = block(g)%nx+1
          !IF(i_y1.EQ.block(g)%ny+2) i_y1 = block(g)%ny+1
          !IF(i_z1.EQ.block(g)%nz+2) i_z1 = block(g)%nz+1
 
@@ -313,12 +313,12 @@ SUBROUTINE velocityForcing1
 !******************************U(i-1,j,k)*******************************
          !usurf = u_curr
          !usurf = 0._rk
-         IF (block(g)%ibSurfID(block(g)%nelu1(n)).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelu1(n))==50) THEN
              usurf = 0. + block(g)%xdot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelu1(n)).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelu1(n))==51) THEN
              usurf = 0. + block(g)%xdot
            !!usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(n)) - block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelu1(n)).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelu1(n))==52) THEN
              usurf = 0. + block(g)%xdot
            !!usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(n)) - block(g)%piv_y)
          ENDIF
@@ -333,18 +333,18 @@ SUBROUTINE velocityForcing1
 
          !$acc loop seq
          DO il = 1, block(g)%nx+1
-            if(pos1_x.ge.block(g)%xu(il).and.pos1_x.lt.block(g)%xu(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xu(il).and.pos1_x<block(g)%xu(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = 1, block(g)%ny+1
-            if(pos1_y.ge.block(g)%yu(jl).and.pos1_y.lt.block(g)%yu(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yu(jl).and.pos1_y<block(g)%yu(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = 1, block(g)%nz+1
-            if(pos1_z.ge.block(g)%zu(kl).and.pos1_z.lt.block(g)%zu(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zu(kl).and.pos1_z<block(g)%zu(kl+1)) i_z1 = kl
          END DO
 
-         IF(i_x1.EQ.1) i_x1 = 2
+         IF(i_x1==1) i_x1 = 2
          !IF(i_y1.EQ.1) i_y1 = 2
          !IF(i_z1.EQ.1) i_z1 = 2
          !IF(i_x1.EQ.block(g)%nx+2) i_x1 = block(g)%nx+1
@@ -406,13 +406,13 @@ SUBROUTINE velocityForcing1
 !**************************V(i,j,k)*************************************
          !vsurf = v_curr
          !vsurf = 0._rk
-         IF (block(g)%ibSurfID(block(g)%nelv2(n)).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelv2(n))==50) THEN
                  vsurf = 0. + block(g)%ydot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelv2(n)).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelv2(n))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z) + block(g)%ydot
            !!vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z) + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv2(n))-block(g)%piv_x)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelv2(n)).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelv2(n))==52) THEN
            block(g)%thetaDot =  block(g)%thetaDot2
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z)+ block(g)%ydot ! + ydot
            !!vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z) + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv2(n))-block(g)%piv_x)
@@ -429,22 +429,22 @@ SUBROUTINE velocityForcing1
 
          !$acc loop seq
          DO il = 1, block(g)%nx+1
-            if(pos1_x.ge.block(g)%xv(il).and.pos1_x.lt.block(g)%xv(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xv(il).and.pos1_x<block(g)%xv(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = 1, block(g)%ny+2
-            if(pos1_y.ge.block(g)%yv(jl).and.pos1_y.lt.block(g)%yv(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yv(jl).and.pos1_y<block(g)%yv(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = 1, block(g)%nz+1
-            if(pos1_z.ge.block(g)%zv(kl).and.pos1_z.lt.block(g)%zv(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
          END DO
 
          !IF(i_x1.EQ.1) i_x1 = 2
          !IF(i_y1.EQ.1) i_y1 = 2
          !IF(i_z1.EQ.1) i_z1 = 2
          !IF(i_x1.EQ.block(g)%nx+2) i_x1 = block(g)%nx+1
-         IF(i_y1.EQ.block(g)%ny+2) i_y1 = block(g)%ny+1
+         IF(i_y1==block(g)%ny+2) i_y1 = block(g)%ny+1
          !IF(i_z1.EQ.block(g)%nz+2) i_z1 = block(g)%nz+1
 
          !interpolation along x @ z1 plane
@@ -503,13 +503,13 @@ SUBROUTINE velocityForcing1
 !**************************V(i,j-1,k)*************************************
          !vsurf = v_curr
          !vsurf = 0._rk
-         IF (block(g)%ibSurfID(block(g)%nelv1(n)).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelv1(n))==50) THEN
            vsurf = 0.+ block(g)%ydot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelv1(n)).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelv1(n))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z) + block(g)%ydot
            !!vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)  + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv1(n))-block(g)%piv_x)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelv1(n)).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelv1(n))==52) THEN
            block(g)%thetaDot =  block(g)%thetaDot2
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)+ block(g)%ydot ! + ydot
            !!vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)  + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv1(n))-block(g)%piv_x)
@@ -525,19 +525,19 @@ SUBROUTINE velocityForcing1
 
          !$acc loop seq
          DO il = 1, block(g)%nx+1
-            if(pos1_x.ge.block(g)%xv(il).and.pos1_x.lt.block(g)%xv(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xv(il).and.pos1_x<block(g)%xv(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = 1, block(g)%ny+1
-            if(pos1_y.ge.block(g)%yv(jl).and.pos1_y.lt.block(g)%yv(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yv(jl).and.pos1_y<block(g)%yv(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = 1, block(g)%nz+1
-            if(pos1_z.ge.block(g)%zv(kl).and.pos1_z.lt.block(g)%zv(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
          END DO
 
          !IF(i_x1.EQ.1) i_x1 = 2
-         IF(i_y1.EQ.1) i_y1 = 2
+         IF(i_y1==1) i_y1 = 2
          !IF(i_z1.EQ.1) i_z1 = 2
          !IF(i_x1.EQ.block(g)%nx+2) i_x1 = block(g)%nx+1
          !IF(i_y1.EQ.block(g)%ny+2) i_y1 = block(g)%ny+1
@@ -599,12 +599,12 @@ SUBROUTINE velocityForcing1
 !**************************W(i,j,k)*************************************
          !wsurf = w_curr
          !wsurf = 0._rk
-         IF (block(g)%ibSurfID(block(g)%nelw2(n)).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelw2(n))==50) THEN
            wsurf = 0.
-         ELSEIF (block(g)%ibSurfID(block(g)%nelw2(n)).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelw2(n))==51) THEN
            block(g)%thetaDot = block(g)%thetaDot1
            wsurf    = block(g)%thetaDot*(block(g)%ycent(block(g)%nelw2(n)) - block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelw2(n)).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelw2(n))==52) THEN
            block(g)%thetaDot = block(g)%thetaDot2
            wsurf    = block(g)%thetaDot*(block(g)%ycent(block(g)%nelw2(n)) - block(g)%piv_y)! + ydot
          ENDIF
@@ -619,15 +619,15 @@ SUBROUTINE velocityForcing1
 
          !$acc loop seq
          DO il = 1, block(g)%nx+1
-            if(pos1_x.ge.block(g)%xw(il).and.pos1_x.lt.block(g)%xw(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xw(il).and.pos1_x<block(g)%xw(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = 1, block(g)%ny+1
-            if(pos1_y.ge.block(g)%yw(jl).and.pos1_y.lt.block(g)%yw(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yw(jl).and.pos1_y<block(g)%yw(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = 1, block(g)%nz+2
-            if(pos1_z.ge.block(g)%zw(kl).and.pos1_z.lt.block(g)%zw(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zw(kl).and.pos1_z<block(g)%zw(kl+1)) i_z1 = kl
          END DO
 
          !IF(i_x1.EQ.1) i_x1 = 2
@@ -635,7 +635,7 @@ SUBROUTINE velocityForcing1
          !IF(i_z1.EQ.1) i_z1 = 2
          !IF(i_x1.EQ.block(g)%nx+2) i_x1 = block(g)%nx+1
          !IF(i_y1.EQ.block(g)%ny+2) i_y1 = block(g)%ny+1
-         IF(i_z1.EQ.block(g)%nz+2) i_z1 = block(g)%nz+1
+         IF(i_z1==block(g)%nz+2) i_z1 = block(g)%nz+1
 
          !interpolation along x @ z1 plane
          w_x1_z1 = block(g)%wt(i_x1, i_y1, i_z1-1)   + (block(g)%wt(i_x1+1, i_y1, i_z1-1) - block(g)%wt(i_x1, i_y1, i_z1-1))*(pos1_x - block(g)%xw(i_x1))/(block(g)%xw(i_x1+1) - block(g)%xw(i_x1))
@@ -692,12 +692,12 @@ SUBROUTINE velocityForcing1
 !**************************W(i,j,k-1)*************************************
          !wsurf = w_curr
          wsurf = 0._rk
-         IF (block(g)%ibSurfID(block(g)%nelw1(n)).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelw1(n))==50) THEN
            wsurf = 0.
-         ELSEIF (block(g)%ibSurfID(block(g)%nelw1(n)).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelw1(n))==51) THEN
            block(g)%thetaDot = block(g)%thetaDot1
            wsurf    = block(g)%thetaDot*(block(g)%ycent(block(g)%nelw1(n)) - block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelw1(n)).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelw1(n))==52) THEN
            block(g)%thetaDot = block(g)%thetaDot2
            wsurf    = block(g)%thetaDot*(block(g)%ycent(block(g)%nelw1(n)) - block(g)%piv_y)! + ydot
          ENDIF
@@ -712,20 +712,20 @@ SUBROUTINE velocityForcing1
 
          !$acc loop seq
          DO il = 1, block(g)%nx+1
-            if(pos1_x.ge.block(g)%xw(il).and.pos1_x.lt.block(g)%xw(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xw(il).and.pos1_x<block(g)%xw(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = 1, block(g)%ny+1
-            if(pos1_y.ge.block(g)%yw(jl).and.pos1_y.lt.block(g)%yw(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yw(jl).and.pos1_y<block(g)%yw(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = 1, block(g)%nz+1
-            if(pos1_z.ge.block(g)%zw(kl).and.pos1_z.lt.block(g)%zw(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zw(kl).and.pos1_z<block(g)%zw(kl+1)) i_z1 = kl
          END DO
 
          !IF(i_x1.EQ.1) i_x1 = 2
          !IF(i_y1.EQ.1) i_y1 = 2
-         IF(i_z1.EQ.1) i_z1 = 2
+         IF(i_z1==1) i_z1 = 2
          !IF(i_x1.EQ.block(g)%nx+2) i_x1 = block(g)%nx+1
          !IF(i_y1.EQ.block(g)%ny+2) i_y1 = block(g)%ny+1
          !IF(i_z1.EQ.block(g)%nz+2) i_z1 = block(g)%nz+1
@@ -824,7 +824,7 @@ SUBROUTINE pressureForcingGhost
         k = block(g)%TSIndexPtr(n, 3)
         !PRINT*,I,J,K
        ! IF (block(g)%cell2(i,j,k).EQ.2) THEN
-        IF (block(g)%ibSurfId(block(g)%nelp(block(g)%index_ts(n))).EQ.50) THEN
+        IF (block(g)%ibSurfId(block(g)%nelp(block(g)%index_ts(n)))==50) THEN
             !dpdn = 0.
             ac_z = 0.!-block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
             ac_y = 0.!-block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
@@ -834,7 +834,7 @@ SUBROUTINE pressureForcingGhost
             ac_y_al = 0.
             at_x_al = 0.
             at_y_al = 0.
-        ELSEIF (block(g)%ibSurfId(block(g)%nelp(block(g)%index_ts(n))).EQ.51) THEN
+        ELSEIF (block(g)%ibSurfId(block(g)%nelp(block(g)%index_ts(n)))==51) THEN
             block(g)%thetaDot  = block(g)%thetaDot1
             block(g)%thetaDDot = block(g)%thetaDDot1
             ac_z = -block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
@@ -848,7 +848,7 @@ SUBROUTINE pressureForcingGhost
           !!at_y_al = -block(g)%alphaDDot*(block(g)%xcent(block(g)%index_ts(n)) - block(g)%piv_x)
 
             !dpdn = -((ac_z + at_z)*-block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n))) + (ac_y + at_y)*-block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n))))  !+ yddot*block(g)%cosBeta(block(g)%nelp(n)))
-        ELSEIF (block(g)%ibSurfId(block(g)%nelp(block(g)%index_ts(n))).EQ.52) THEN
+        ELSEIF (block(g)%ibSurfId(block(g)%nelp(block(g)%index_ts(n)))==52) THEN
             block(g)%thetaDot  = block(g)%thetaDot2
             block(g)%thetaDDot = block(g)%thetaDDot2
             ac_z = -block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
@@ -878,15 +878,15 @@ SUBROUTINE pressureForcingGhost
          !dpdn = -((ac_x + at_x)*-block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n))) + (ac_y + at_y)*-block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n))) + yddot*-block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n))))
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xp(il).and.pos1_x.lt.block(g)%xp(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xp(il).and.pos1_x<block(g)%xp(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yp(jl).and.pos1_y.lt.block(g)%yp(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yp(jl).and.pos1_y<block(g)%yp(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zp(kl).and.pos1_z.lt.block(g)%zp(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zp(kl).and.pos1_z<block(g)%zp(kl+1)) i_z1 = kl
          END DO
          !IF (cell(i_x1, i_y1, i_z1).EQ.0) THEN
          !interpolation along x  @ z1 plane
@@ -991,12 +991,12 @@ SUBROUTINE velocityForcingGhost
         !IF (block(g)%cell2(i,j,k).EQ.2) THEN
 !***********************U(i,j,k)****************************************
          !usurf = u_curr
-         IF (block(g)%ibSurfID(block(g)%nelu2(block(g)%index_ts(n))).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelu2(block(g)%index_ts(n)))==50) THEN
              usurf = 0. + block(g)%xdot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelu2(block(g)%index_ts(n))).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelu2(block(g)%index_ts(n)))==51) THEN
              usurf = 0. + block(g)%xdot
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(block(g)%index_ts(n))) -block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelu2(block(g)%index_ts(n))).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelu2(block(g)%index_ts(n)))==52) THEN
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(block(g)%index_ts(n)))-block(g)%piv_y)
            usurf = 0. + block(g)%xdot
          ENDIF
@@ -1013,15 +1013,15 @@ SUBROUTINE velocityForcingGhost
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xu(il).and.pos1_x.lt.block(g)%xu(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xu(il).and.pos1_x<block(g)%xu(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yu(jl).and.pos1_y.lt.block(g)%yu(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yu(jl).and.pos1_y<block(g)%yu(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zu(kl).and.pos1_z.lt.block(g)%zu(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zu(kl).and.pos1_z<block(g)%zu(kl+1)) i_z1 = kl
          END DO
 
          !IF (cell(i_x1, i_y1, i_z1).EQ.0) THEN
@@ -1083,12 +1083,12 @@ SUBROUTINE velocityForcingGhost
 
 !******************************U(i-1,j,k)*******************************
          !usurf = u_curr
-         IF (block(g)%ibSurfID(block(g)%nelu1(block(g)%index_ts(n))).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelu1(block(g)%index_ts(n)))==50) THEN
              usurf = 0. + block(g)%xdot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelu1(block(g)%index_ts(n))).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelu1(block(g)%index_ts(n)))==51) THEN
              usurf = 0. + block(g)%xdot
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(block(g)%index_ts(n)))-block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelu1(block(g)%index_ts(n))).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelu1(block(g)%index_ts(n)))==52) THEN
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(block(g)%index_ts(n)))-block(g)%piv_y)
            usurf = 0. + block(g)%xdot
          ENDIF
@@ -1106,15 +1106,15 @@ SUBROUTINE velocityForcingGhost
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xu(il).and.pos1_x.lt.block(g)%xu(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xu(il).and.pos1_x<block(g)%xu(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yu(jl).and.pos1_y.lt.block(g)%yu(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yu(jl).and.pos1_y<block(g)%yu(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zu(kl).and.pos1_z.lt.block(g)%zu(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zu(kl).and.pos1_z<block(g)%zu(kl+1)) i_z1 = kl
          END DO
 
          !IF (cell(i_x1, i_y1, i_z1).EQ.0) THEN
@@ -1176,12 +1176,12 @@ SUBROUTINE velocityForcingGhost
 
 !**************************V(i,j,k)*************************************
          !vsurf = v_curr
-         IF (block(g)%ibSurfID(block(g)%nelv2(block(g)%index_ts(n))).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelv2(block(g)%index_ts(n)))==50) THEN
            vsurf = 0.+ block(g)%ydot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelv2(block(g)%index_ts(n))).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelv2(block(g)%index_ts(n)))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(block(g)%index_ts(n))) - block(g)%piv_z) + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv2(block(g)%index_ts(n))) - block(g)%piv_x)+ block(g)%ydot
-         ELSEIF (block(g)%ibSurfId(block(g)%nelv2(block(g)%index_ts(n))).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelv2(block(g)%index_ts(n)))==52) THEN
            block(g)%thetaDot =  block(g)%thetaDot2
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(block(g)%index_ts(n))) - block(g)%piv_z) + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv2(block(g)%index_ts(n))) - block(g)%piv_x) + block(g)%ydot  ! + ydot
          ENDIF
@@ -1198,15 +1198,15 @@ SUBROUTINE velocityForcingGhost
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xv(il).and.pos1_x.lt.block(g)%xv(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xv(il).and.pos1_x<block(g)%xv(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yv(jl).and.pos1_y.lt.block(g)%yv(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yv(jl).and.pos1_y<block(g)%yv(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zv(kl).and.pos1_z.lt.block(g)%zv(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
          END DO
 
          ! IF (cell(i_x1, i_y1, i_z1).EQ.0) THEN
@@ -1269,12 +1269,12 @@ SUBROUTINE velocityForcingGhost
 
 !**************************V(i,j-1,k)*************************************
          !vsurf = v_curr
-         IF (block(g)%ibSurfID(block(g)%nelv1(block(g)%index_ts(n))).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelv1(block(g)%index_ts(n)))==50) THEN
            vsurf = 0.+ block(g)%ydot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelv1(block(g)%index_ts(n))).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelv1(block(g)%index_ts(n)))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(block(g)%index_ts(n))) - block(g)%piv_z)  + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv1(block(g)%index_ts(n))) - block(g)%piv_x) + block(g)%ydot
-         ELSEIF (block(g)%ibSurfId(block(g)%nelv1(block(g)%index_ts(n))).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelv1(block(g)%index_ts(n)))==52) THEN
            block(g)%thetaDot =  block(g)%thetaDot2
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(block(g)%index_ts(n))) - block(g)%piv_z)  + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv1(block(g)%index_ts(n))) - block(g)%piv_x)+ block(g)%ydot ! + ydot
          ENDIF
@@ -1292,15 +1292,15 @@ SUBROUTINE velocityForcingGhost
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xv(il).and.pos1_x.lt.block(g)%xv(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xv(il).and.pos1_x<block(g)%xv(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yv(jl).and.pos1_y.lt.block(g)%yv(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yv(jl).and.pos1_y<block(g)%yv(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zv(kl).and.pos1_z.lt.block(g)%zv(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
          END DO
 
          !IF (cell(i_x1, i_y1, i_z1).EQ.0) THEN
@@ -1364,12 +1364,12 @@ SUBROUTINE velocityForcingGhost
 !**************************W(i,j,k)*************************************
          !wsurf = w_curr
          wsurf = 0._rk
-         IF (block(g)%ibSurfID(block(g)%nelw2(block(g)%index_ts(n))).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelw2(block(g)%index_ts(n)))==50) THEN
            wsurf = 0.
-         ELSEIF (block(g)%ibSurfID(block(g)%nelw2(block(g)%index_ts(n))).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelw2(block(g)%index_ts(n)))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            wsurf    =  block(g)%thetaDot*(block(g)%ycent(block(g)%nelw2(block(g)%index_ts(n))) - block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelw2(block(g)%index_ts(n))).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelw2(block(g)%index_ts(n)))==52) THEN
            block(g)%thetaDot =  block(g)%thetaDot2
            wsurf    =  block(g)%thetaDot*(block(g)%ycent(block(g)%nelw2(block(g)%index_ts(n))) - block(g)%piv_y)! + ydot
          ENDIF
@@ -1386,15 +1386,15 @@ SUBROUTINE velocityForcingGhost
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xw(il).and.pos1_x.lt.block(g)%xw(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xw(il).and.pos1_x<block(g)%xw(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yw(jl).and.pos1_y.lt.block(g)%yw(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yw(jl).and.pos1_y<block(g)%yw(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zw(kl).and.pos1_z.lt.block(g)%zw(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zw(kl).and.pos1_z<block(g)%zw(kl+1)) i_z1 = kl
          END DO
          !IF (cell(i_x1, i_y1, i_z1).EQ.0) THEN
          !interpolation along x @ z1 plane
@@ -1457,12 +1457,12 @@ SUBROUTINE velocityForcingGhost
 !**************************W(i,j,k-1)*************************************
          !wsurf = w_curr
          wsurf = 0._rk
-         IF (block(g)%ibSurfID(block(g)%nelw1(block(g)%index_ts(n))).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelw1(block(g)%index_ts(n)))==50) THEN
            wsurf = 0.
-         ELSEIF (block(g)%ibSurfID(block(g)%nelw1(block(g)%index_ts(n))).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelw1(block(g)%index_ts(n)))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            wsurf    =  block(g)%thetaDot*(block(g)%ycent(block(g)%nelw1(block(g)%index_ts(n))) - block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelw1(block(g)%index_ts(n))).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelw1(block(g)%index_ts(n)))==52) THEN
            block(g)%thetaDot =  block(g)%thetaDot2
            wsurf    =  block(g)%thetaDot*(block(g)%ycent(block(g)%nelw1(block(g)%index_ts(n))) - block(g)%piv_y)! + ydot
          ENDIF
@@ -1479,15 +1479,15 @@ SUBROUTINE velocityForcingGhost
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xw(il).and.pos1_x.lt.block(g)%xw(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xw(il).and.pos1_x<block(g)%xw(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yw(jl).and.pos1_y.lt.block(g)%yw(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yw(jl).and.pos1_y<block(g)%yw(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zw(kl).and.pos1_z.lt.block(g)%zw(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zw(kl).and.pos1_z<block(g)%zw(kl+1)) i_z1 = kl
          END DO
          !IF (cell(i_x1, i_y1, i_z1).EQ.0) THEN
          !interpolation along x @ z1 plane
@@ -1574,7 +1574,7 @@ SUBROUTINE pressureForcingField
  !$acc default(present)  &
  !$acc firstprivate (block(g)%nx, block(g)%ny,block(g)%nz)
       DO n = 1, block(g)%ibCellCount
-         IF (block(g)%ibSurfId(block(g)%nelp(n)).EQ.50) THEN
+         IF (block(g)%ibSurfId(block(g)%nelp(n))==50) THEN
             !dpdn = 0.
             ac_z = 0.!-block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
             ac_y = 0.!-block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
@@ -1584,7 +1584,7 @@ SUBROUTINE pressureForcingField
             ac_y_al = 0.
             at_x_al = 0.
             at_y_al = 0.
-        ELSEIF (block(g)%ibSurfId(block(g)%nelp(n)).EQ.51) THEN
+        ELSEIF (block(g)%ibSurfId(block(g)%nelp(n))==51) THEN
             block(g)%thetaDot  = block(g)%thetaDot1
             block(g)%thetaDDot = block(g)%thetaDDot1
             ac_z = -block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(n)) - block(g)%piv_z)
@@ -1596,7 +1596,7 @@ SUBROUTINE pressureForcingField
           !!at_x_al =  block(g)%alphaDDot*(block(g)%ycent(block(g)%nelp(n)) -block(g)%piv_y )
           !!at_y_al = -block(g)%alphaDDot*(block(g)%xcent(block(g)%nelp(n)) -block(g)%piv_x )
             !dpdn = -((ac_z + at_z)*block(g)%cosAlpha(block(g)%nelp(n)) + (ac_y + at_y)*block(g)%cosBeta(block(g)%nelp(n)) !+ yddot*block(g)%cosBeta(block(g)%nelp(n)))
-        ELSEIF (block(g)%ibSurfId(block(g)%nelp(n)).EQ.52) THEN
+        ELSEIF (block(g)%ibSurfId(block(g)%nelp(n))==52) THEN
             block(g)%thetaDot  = block(g)%thetaDot2
             block(g)%thetaDDot = block(g)%thetaDDot2
             ac_z = -block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(n)) - block(g)%piv_z)
@@ -1633,15 +1633,15 @@ SUBROUTINE pressureForcingField
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xp(il).and.pos1_x.lt.block(g)%xp(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xp(il).and.pos1_x<block(g)%xp(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yp(jl).and.pos1_y.lt.block(g)%yp(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yp(jl).and.pos1_y<block(g)%yp(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zp(kl).and.pos1_z.lt.block(g)%zp(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zp(kl).and.pos1_z<block(g)%zp(kl+1)) i_z1 = kl
          END DO
 
          !interpolation along x  @ z1 plane
@@ -1740,12 +1740,12 @@ SUBROUTINE velocityForcingField
 
 !***********************U(i,j,k)****************************************
          !usurf = u_curr
-         IF (block(g)%ibSurfID(block(g)%nelu2(n)).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelu2(n))==50) THEN
              usurf = 0.+ block(g)%xdot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelu2(n)).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelu2(n))==51) THEN
              usurf = 0. + block(g)%xdot
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(n)) - block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelu2(n)).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelu2(n))==52) THEN
              usurf = 0. + block(g)%xdot
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(n)) - block(g)%piv_y)
          ENDIF
@@ -1762,15 +1762,15 @@ SUBROUTINE velocityForcingField
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xu(il).and.pos1_x.lt.block(g)%xu(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xu(il).and.pos1_x<block(g)%xu(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yu(jl).and.pos1_y.lt.block(g)%yu(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yu(jl).and.pos1_y<block(g)%yu(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zu(kl).and.pos1_z.lt.block(g)%zu(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zu(kl).and.pos1_z<block(g)%zu(kl+1)) i_z1 = kl
          END DO
 
          !interpolation along x @ z1 plane
@@ -1827,12 +1827,12 @@ SUBROUTINE velocityForcingField
 
 !******************************U(i-1,j,k)*******************************
          !usurf = u_curr
-         IF (block(g)%ibSurfID(block(g)%nelu1(n)).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelu1(n))==50) THEN
              usurf = 0. + block(g)%xdot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelu1(n)).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelu1(n))==51) THEN
              usurf = 0. + block(g)%xdot
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(n)) - block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelu1(n)).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelu1(n))==52) THEN
              usurf = 0. + block(g)%xdot
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(n)) - block(g)%piv_y)
          ENDIF
@@ -1849,15 +1849,15 @@ SUBROUTINE velocityForcingField
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xu(il).and.pos1_x.lt.block(g)%xu(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xu(il).and.pos1_x<block(g)%xu(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yu(jl).and.pos1_y.lt.block(g)%yu(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yu(jl).and.pos1_y<block(g)%yu(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zu(kl).and.pos1_z.lt.block(g)%zu(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zu(kl).and.pos1_z<block(g)%zu(kl+1)) i_z1 = kl
          END DO
 
          !interpolation along x @ z1 plane
@@ -1914,13 +1914,13 @@ SUBROUTINE velocityForcingField
 
 !**************************V(i,j,k)*************************************
          !vsurf = v_curr
-         IF (block(g)%ibSurfID(block(g)%nelv2(n)).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelv2(n))==50) THEN
            vsurf = 0.+ block(g)%ydot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelv2(n)).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelv2(n))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            !vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z)
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z) + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv2(n)) - block(g)%piv_x)+ block(g)%ydot
-         ELSEIF (block(g)%ibSurfId(block(g)%nelv2(n)).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelv2(n))==52) THEN
            block(g)%thetaDot =  block(g)%thetaDot2
            !vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z)! + ydot
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z) + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv2(n)) - block(g)%piv_x)+ block(g)%ydot
@@ -1938,15 +1938,15 @@ SUBROUTINE velocityForcingField
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xv(il).and.pos1_x.lt.block(g)%xv(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xv(il).and.pos1_x<block(g)%xv(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yv(jl).and.pos1_y.lt.block(g)%yv(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yv(jl).and.pos1_y<block(g)%yv(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zv(kl).and.pos1_z.lt.block(g)%zv(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
          END DO
 
          !interpolation along x @ z1 plane
@@ -2004,13 +2004,13 @@ SUBROUTINE velocityForcingField
 
 !**************************V(i,j-1,k)*************************************
          !vsurf = v_curr
-         IF (block(g)%ibSurfID(block(g)%nelv1(n)).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelv1(n))==50) THEN
            vsurf = 0.+ block(g)%ydot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelv1(n)).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelv1(n))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            !vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)  + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv1(n)) - block(g)%piv_x) + block(g)%ydot
-         ELSEIF (block(g)%ibSurfId(block(g)%nelv1(n)).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelv1(n))==52) THEN
            block(g)%thetaDot =  block(g)%thetaDot2
            !vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)! + ydot
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)  + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv1(n)) - block(g)%piv_x) + block(g)%ydot
@@ -2028,15 +2028,15 @@ SUBROUTINE velocityForcingField
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xv(il).and.pos1_x.lt.block(g)%xv(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xv(il).and.pos1_x<block(g)%xv(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yv(jl).and.pos1_y.lt.block(g)%yv(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yv(jl).and.pos1_y<block(g)%yv(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zv(kl).and.pos1_z.lt.block(g)%zv(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
          END DO
 
          !interpolation along x @ z1 plane
@@ -2094,12 +2094,12 @@ SUBROUTINE velocityForcingField
 
 !**************************W(i,j,k)*************************************
          !wsurf = w_curr
-         IF (block(g)%ibSurfID(block(g)%nelw2(n)).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelw2(n))==50) THEN
            wsurf = 0.
-         ELSEIF (block(g)%ibSurfID(block(g)%nelw2(n)).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelw2(n))==51) THEN
            block(g)%thetaDot = block(g)%thetaDot1
            wsurf    = block(g)%thetaDot*(block(g)%ycent(block(g)%nelw2(n)) - block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelw2(n)).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelw2(n))==52) THEN
            block(g)%thetaDot = block(g)%thetaDot2
            wsurf    = block(g)%thetaDot*(block(g)%ycent(block(g)%nelw2(n)) - block(g)%piv_y)! + ydot
          ENDIF
@@ -2115,15 +2115,15 @@ SUBROUTINE velocityForcingField
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xw(il).and.pos1_x.lt.block(g)%xw(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xw(il).and.pos1_x<block(g)%xw(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yw(jl).and.pos1_y.lt.block(g)%yw(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yw(jl).and.pos1_y<block(g)%yw(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zw(kl).and.pos1_z.lt.block(g)%zw(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zw(kl).and.pos1_z<block(g)%zw(kl+1)) i_z1 = kl
          END DO
 
          !interpolation along x @ z1 plane
@@ -2181,12 +2181,12 @@ SUBROUTINE velocityForcingField
 !**************************W(i,j,k-1)*************************************
          !wsurf = w_curr
          wsurf = 0._rk
-         IF (block(g)%ibSurfID(block(g)%nelw1(n)).EQ.50) THEN
+         IF (block(g)%ibSurfID(block(g)%nelw1(n))==50) THEN
            wsurf = 0.
-         ELSEIF (block(g)%ibSurfID(block(g)%nelw1(n)).EQ.51) THEN
+         ELSEIF (block(g)%ibSurfID(block(g)%nelw1(n))==51) THEN
            block(g)%thetaDot = block(g)%thetaDot1
            wsurf    = block(g)%thetaDot*(block(g)%ycent(block(g)%nelw1(n)) - block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelw1(n)).EQ.52) THEN
+         ELSEIF (block(g)%ibSurfId(block(g)%nelw1(n))==52) THEN
            block(g)%thetaDot = block(g)%thetaDot2
            wsurf    = block(g)%thetaDot*(block(g)%ycent(block(g)%nelw1(n)) - block(g)%piv_y)! + ydot
          ENDIF
@@ -2202,15 +2202,15 @@ SUBROUTINE velocityForcingField
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x.ge.block(g)%xw(il).and.pos1_x.lt.block(g)%xw(il+1)) i_x1 = il
+            if(pos1_x>=block(g)%xw(il).and.pos1_x<block(g)%xw(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y.ge.block(g)%yw(jl).and.pos1_y.lt.block(g)%yw(jl+1)) i_y1 = jl
+            if(pos1_y>=block(g)%yw(jl).and.pos1_y<block(g)%yw(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z.ge.block(g)%zw(kl).and.pos1_z.lt.block(g)%zw(kl+1)) i_z1 = kl
+            if(pos1_z>=block(g)%zw(kl).and.pos1_z<block(g)%zw(kl+1)) i_z1 = kl
          END DO
 
          !interpolation along x @ z1 plane

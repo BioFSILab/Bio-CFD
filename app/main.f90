@@ -34,8 +34,8 @@
         CALL cellCount_solid_coarse
         print*,'14'
         !CALL cellCount
-        IF (iStart.eq.0) CALL initialConditions
-        IF (iStart.eq.1) CALL lastConditions
+        IF (iStart==0) CALL initialConditions
+        IF (iStart==1) CALL lastConditions
         CALL computeNormDistance
         CALL findTScells
         !ita = 1
@@ -243,7 +243,7 @@
         CALL pressureForcingGhost
      !!   print*,'15'
         CALL cpu_time(dFinish1)
-        IF(ita.lt.itamax) GOTO 1
+        IF(ita<itamax) GOTO 1
       END PROGRAM main
 
 
