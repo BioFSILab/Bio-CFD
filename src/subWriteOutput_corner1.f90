@@ -608,7 +608,7 @@
           CLOSE(857)
          END IF
           END DO
-        END SUBROUTINE
+        end subroutine body_plot
 
 !****************************************************************************
 
@@ -1074,7 +1074,7 @@
          CLOSE(111)
 
 
-        END SUBROUTINE
+        end subroutine write_fl_points
 !!!cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 !!      SUBROUTINE writeOutput
 !!       USE global

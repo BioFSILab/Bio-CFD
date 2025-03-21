@@ -303,7 +303,7 @@
         enddo
         enddo
         ENDDO
-        END SUBROUTINE
+        end subroutine coarseUpdate
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -869,7 +869,7 @@
         enddo
         enddo
         ENDDO
-        END SUBROUTINE
+        end subroutine coarseUpdate_newv
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         subroutine coarseUpdate_pc
         use global
@@ -976,5 +976,5 @@
         enddo
         enddo
         ENDDO
-        END SUBROUTINE
+        end subroutine coarseUpdate_pc
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11

@@ -544,7 +544,7 @@
         CLOSE(51)
 
         !print*,a_blk(1),a_msh(1),a_intf(1),b_blk(1),b_msh(1),b_intf(1),xintf_start(1),xintf_end(1),yintf_start(1),yintf_end(1)
-         END SUBROUTINE
+         end subroutine readBlockInterface
 
 
 

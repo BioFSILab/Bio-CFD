@@ -1582,7 +1582,7 @@ ENDIF
 	ENDDO
       !  !$omp end parallel do
     ! return
-      end subroutine
+      end subroutine nsMomentum2order
 !sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
       SUBROUTINE nsMomentum
 !***********************************************************************

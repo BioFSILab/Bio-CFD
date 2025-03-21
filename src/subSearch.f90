@@ -29,7 +29,7 @@
         ENDIF
         ENDDO
         ENDDO
-        END SUBROUTINE
+        end subroutine findDistnode
 
 !***********************************************************************
      SUBROUTINE shiftSurfaceNodesInitial
@@ -1703,7 +1703,7 @@ block(g)%fluidCellCount = flcnt
       !!ENDDO
 
 
-        END SUBROUTINE
+        end subroutine fine_block_cell
 !**************************************************************************
 !**************************************************************************
         SUBROUTINE cellCount_coarse_new
@@ -2010,7 +2010,7 @@ block(g)%fluidCellCount = flcnt
     !!  ENDDO
 
 
-        END SUBROUTINE
+        end subroutine fine_block_cell_mv
 !**************************************************************************
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -2286,7 +2286,7 @@ block(g)%fluidCellCount = flcnt
         endif
 
         ENDDO
-        END SUBROUTINE
+        end subroutine block_move_check
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !**********************************************************************
@@ -2573,7 +2573,7 @@ block(g)%fluidCellCount = flcnt
 
 
 
-        END SUBROUTINE
+        end subroutine change_block_coords
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE change_block_interface
@@ -2747,7 +2747,7 @@ block(g)%fluidCellCount = flcnt
         endif
         ENDDO
 
-        END SUBROUTINE
+        end subroutine change_block_interface
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !******************************************************************
 
@@ -3373,7 +3373,7 @@ block(g)%fluidCellCount = flcnt
         CLOSE(12)
         END DO
 
-        END SUBROUTINE
+        end subroutine readTagging
 
 !***********************************************************************
 
