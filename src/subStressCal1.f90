@@ -2,22 +2,22 @@
        SUBROUTINE stressCal1
        USE global
        IMPLICIT NONE
-       INTEGER, PARAMETER :: rk = selected_real_kind(8)     
-       
+       INTEGER, PARAMETER :: rk = selected_real_kind(8)
+
        INTEGER:: i, j, k, ielem, inode, i_x1, i_y1, i_z1
-       
+
        INTEGER:: i_cell, j_cell, k_cell,g, nvib,n
 
        REAL(KIND = 8):: diagdis, normdis, aval, bval, cval, stx1, sty1, stz1, del_X, del_Y, del_Z
 
-       REAL(KIND = 8):: xsurf, ysurf, zsurf, pos1_x, pos1_y, pos1_z,              & 
+       REAL(KIND = 8):: xsurf, ysurf, zsurf, pos1_x, pos1_y, pos1_z,              &
                         psurf, p_pos1, dpdn, p_x1, p_x2, p_y1, p_y2, p_z1, p_z2,  &
                         p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,     &
                         p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, &
                         usurf, u_pos1, u_x1, u_x2, u_y1, u_y2, u_z1, u_z2,        &
                         vsurf, v_pos1, v_x1, v_x2, v_y1, v_y2, v_z1, v_z2,        &
                         wsurf, w_pos1, w_x1, w_x2, w_y1, w_y2, w_z1, w_z2,        &
-                        dudn_e, dudx_e, dudy_e, dudz_e, dvdn_e, dvdx_e, dvdy_e,   & 
+                        dudn_e, dudx_e, dudy_e, dudz_e, dvdn_e, dvdx_e, dvdy_e,   &
                         dvdz_e, dwdn_e, dwdx_e, dwdy_e, dwdz_e, u_x1_z1, u_x2_z1, &
                         u_x1_z2, u_x2_z2, u_z1_x1, u_z2_x1, u_z1_x2, u_z2_x2,     &
                         v_x1_z1, v_x2_z1, v_x1_z2, v_x2_z2, v_z1_x1, v_z2_x1,     &
@@ -29,17 +29,17 @@
 
 
 
-       !REAL(KIND = 8):: alen, area  
-  
-       !REAL(KIND = 8), DIMENSION(ibNodes):: Anode, Afnode, stressNode, TAWSS, OSI       
-       
-       !REAL(KIND = 8), DIMENSION(ibElems):: stressElem     
-       
+       !REAL(KIND = 8):: alen, area
+
+       !REAL(KIND = 8), DIMENSION(ibNodes):: Anode, Afnode, stressNode, TAWSS, OSI
+
+       !REAL(KIND = 8), DIMENSION(ibElems):: stressElem
+
 
        !CHARACTER(LEN=70):: filename1
-       
+
        REAL(KIND = 8):: alen, area, area_xz, area_yz, area_xy
-     
+
        REAL(KIND = 8):: shear_x_force, shear_y_force, shear_z_force,  &
                         f_surf, f_surf_x, f_surf_y, f_surf_z
 
@@ -47,16 +47,16 @@
                         pressureLift, viscousDragcoefficient, pressureDragcoefficient, &
                         viscousLiftcoefficient, PressureLiftcoefficient, area_Sx,      &
                         area_Sy, surf_area
-         
+
         REAL(KIND = 8):: modStressNode, modSIGNWSS
 
         CHARACTER*150 filename1
 
        DO g=blk_start,nblocks
-       
+
        ALLOCATE(block(g)%Elemcell(block(g)%ibElems,3), block(g)%ucell(block(g)%ibElems,3), block(g)%vcell(block(g)%ibElems,3), block(g)%wcell(block(g)%ibElems,3), block(g)%pcell(block(g)%ibElems,3))
        ALLOCATE(block(g)%areaElem(block(g)%ibElems), block(g)%stressElem(block(g)%ibElems,3))
-     
+
 
        block(g)% areaElem = 0._rk
        block(g)%stressElem = 0._rk
@@ -71,18 +71,18 @@
        block(g)%Total_P_Fx = 0._rk
 
        block(g)%Total_V_Fy = 0._rk
-       block(g)%Total_P_Fy = 0._rk       
+       block(g)%Total_P_Fy = 0._rk
        !!$acc parallel loop gang vector reduction(+: pressureDrag, viscousDrag, viscousLift, pressureLift, area_Sx, area_Sy, surf_area)  &
        !!$acc private (i_x1, i_y1, i_z1, i_cell, j_cell, k_cell, diagdis, normdis,                    &
        !!$acc          aval, bval, cval, stx1, sty1, stz1, del_X, del_Y, del_Z,                       &
-       !!$acc          xsurf, ysurf, zsurf, pos1_x, pos1_y, pos1_z,                                   & 
+       !!$acc          xsurf, ysurf, zsurf, pos1_x, pos1_y, pos1_z,                                   &
        !!$acc          psurf, p_pos1, dpdn, p_x1, p_x2, p_y1, p_y2, p_z1, p_z2,                       &
        !!$acc          p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                          &
        !!$acc          p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e,                      &
        !!$acc          usurf, u_pos1, u_x1, u_x2, u_y1, u_y2, u_z1, u_z2,                             &
        !!$acc          vsurf, v_pos1, v_x1, v_x2, v_y1, v_y2, v_z1, v_z2,                             &
        !!$acc          wsurf, w_pos1, w_x1, w_x2, w_y1, w_y2, w_z1, w_z2,                             &
-       !!$acc          dudn_e, dudx_e, dudy_e, dudz_e, dvdn_e, dvdx_e, dvdy_e,                        & 
+       !!$acc          dudn_e, dudx_e, dudy_e, dudz_e, dvdn_e, dvdx_e, dvdy_e,                        &
        !!$acc          dvdz_e, dwdn_e, dwdx_e, dwdy_e, dwdz_e, u_x1_z1, u_x2_z1,                      &
        !!$acc          u_x1_z2, u_x2_z2, u_z1_x1, u_z2_x1, u_z1_x2, u_z2_x2,                          &
        !!$acc          v_x1_z1, v_x2_z1, v_x1_z2, v_x2_z2, v_z1_x1, v_z2_x1,                          &
@@ -98,14 +98,14 @@
         !!$acc parallel loop gang vector   &
         !!$acc private (i_x1, i_y1, i_z1, i_cell, j_cell, k_cell, diagdis, normdis,                    &
         !!$acc          aval, bval, cval, stx1, sty1, stz1, del_X, del_Y, del_Z,                       &
-        !!$acc          xsurf, ysurf, zsurf, pos1_x, pos1_y, pos1_z,                                   & 
+        !!$acc          xsurf, ysurf, zsurf, pos1_x, pos1_y, pos1_z,                                   &
         !!$acc          psurf, p_pos1, dpdn, p_x1, p_x2, p_y1, p_y2, p_z1, p_z2,                       &
         !!$acc          p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                          &
         !!$acc          p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e,                      &
         !!$acc          usurf, u_pos1, u_x1, u_x2, u_y1, u_y2, u_z1, u_z2,                             &
         !!$acc          vsurf, v_pos1, v_x1, v_x2, v_y1, v_y2, v_z1, v_z2,                             &
         !!$acc          wsurf, w_pos1, w_x1, w_x2, w_y1, w_y2, w_z1, w_z2,                             &
-        !!$acc          dudn_e, dudx_e, dudy_e, dudz_e, dvdn_e, dvdx_e, dvdy_e,                        & 
+        !!$acc          dudn_e, dudx_e, dudy_e, dudz_e, dvdn_e, dvdx_e, dvdy_e,                        &
         !!$acc          dvdz_e, dwdn_e, dwdx_e, dwdy_e, dwdz_e, u_x1_z1, u_x2_z1,                      &
          !!$acc          u_x1_z2, u_x2_z2, u_z1_x1, u_z2_x1, u_z1_x2, u_z2_x2,                          &
          !!$acc          v_x1_z1, v_x2_z1, v_x1_z2, v_x2_z2, v_z1_x1, v_z2_x1,                          &
@@ -137,11 +137,11 @@
        k_cell = k
        end if
        end do
-       
+
        block(g)%Elemcell(ielem,1) = i_cell
        block(g)%Elemcell(ielem,2) = j_cell
        block(g)%Elemcell(ielem,3) = k_cell
-       
+
        xsurf = block(g)%xcent(ielem)
        ysurf = block(g)%ycent(ielem)
        zsurf = block(g)%zcent(ielem)
@@ -157,22 +157,22 @@
 	pos1_y = ysurf + normdis*block(g)%cosBeta(ielem)
 	pos1_z = zsurf + normdis*block(g)%cosGamma(ielem)
 
-!**************************velocity and pressure at the surface**********************	
+!**************************velocity and pressure at the surface**********************
        IF (block(g)%ibSurfID(ielem).EQ.50) THEN
-        block(g)% thetaDot  =  0.   
+        block(g)% thetaDot  =  0.
         block(g)% thetaDDot =  0.
          usurf     =  0.
-	      vsurf     =  0. 
+	      vsurf     =  0.
 	      wsurf     =  0.
 	      ac_z      =  0.!-thetaDot**2*(zcent(nelp(index_ts(n))) - piv_z)
          ac_y      =  0.!-thetaDot**2*(ycent(nelp(index_ts(n))) - piv_y)
          at_z      =  0.! thetaDDot*(ycent(nelp(index_ts(n))) - piv_y)
          at_y      =  0.!
        ELSEIF (block(g)%ibSurfID(ielem).EQ.51) THEN
-        block(g)% thetaDot  = block(g)% thetaDot1	   
+        block(g)% thetaDot  = block(g)% thetaDot1
 	     block(g)% thetaDDot = block(g)% thetaDDot1
-         !usurf     =  0. 		 
-         !vsurf     = -thetaDot*(zcent(ielem) - piv_z) 
+         !usurf     =  0.
+         !vsurf     = -thetaDot*(zcent(ielem) - piv_z)
 	      !wsurf     =  thetaDot*(ycent(ielem) - piv_y)
 	      ac_z      = -block(g)%thetaDot**2*(block(g)%zcent(ielem) -block(g)% piv_z)
          ac_y      = -block(g)%thetaDot**2*(block(g)%ycent(ielem) -block(g)% piv_y)
@@ -180,19 +180,19 @@
          at_y      = -block(g)%thetaDDot*(block(g)%zcent(ielem)-block(g)% piv_z)
        ELSEIF (block(g)%ibSurfId(ielem).EQ.52) THEN
 	     block(g)% thetaDot  = block(g)% thetaDot2
-	     block(g)% thetaDDot = block(g)% thetaDDot2		 
+	     block(g)% thetaDDot = block(g)% thetaDDot2
          !usurf     =  0.
 	      !wsurf     =  thetaDot*(ycent(ielem) - piv_y)
-         !vsurf     = -thetaDot*(zcent(ielem) - piv_z) 
+         !vsurf     = -thetaDot*(zcent(ielem) - piv_z)
 	      ac_z      = -block(g)%thetaDot**2*(block(g)%zcent(ielem) -block(g)% piv_z)
          ac_y      = -block(g)%thetaDot**2*(block(g)%ycent(ielem) - block(g)%piv_y)
          at_z      =  block(g)%thetaDDot*(block(g)%ycent(ielem) -block(g)% piv_y)
-         at_y      = -block(g)%thetaDDot*(block(g)%zcent(ielem) - block(g)%piv_z)		 
-       ENDIF	
+         at_y      = -block(g)%thetaDDot*(block(g)%zcent(ielem) - block(g)%piv_z)
+       ENDIF
        usurf     =  0.
        wsurf     = block(g)% thetaDot*(block(g)%ycent(ielem) -block(g)% piv_y)
-       vsurf     = -block(g)%thetaDot*(block(g)%zcent(ielem) -block(g)% piv_z) 
-       dpdn      = -((ac_z + at_z)*block(g)%cosAlpha(ielem)  + (ac_y + at_y)*block(g)%cosBeta(ielem))    
+       vsurf     = -block(g)%thetaDot*(block(g)%zcent(ielem) -block(g)% piv_z)
+       dpdn      = -((ac_z + at_z)*block(g)%cosAlpha(ielem)  + (ac_y + at_y)*block(g)%cosBeta(ielem))
 !*******************velocity interpolation at point 2******************
 
 !******************u velocity interpolation at point 2******************
@@ -208,58 +208,58 @@
        DO k = 2, block(g)%nz+1
        if(pos1_z.ge.block(g)%zu(k).and.pos1_z.lt.block(g)%zu(k+1)) i_z1 = k
        END DO
-     
+
        block(g)%ucell(ielem,1) = i_x1
        block(g)%ucell(ielem,2) = i_y1
        block(g)%ucell(ielem,3) = i_z1
-       
-       !interpolation along x @ z1 plane 
+
+       !interpolation along x @ z1 plane
          u_x1_z1 = block(g)%ut(i_x1-1, i_y1, i_z1)   + (block(g)%ut(i_x1, i_y1, i_z1)   - block(g)%ut(i_x1-1, i_y1, i_z1))  *(pos1_x - block(g)%xu(i_x1))/(block(g)%xu(i_x1+1) - block(g)%xu(i_x1))
          u_x2_z1 = block(g)%ut(i_x1-1, i_y1+1, i_z1) + (block(g)%ut(i_x1, i_y1+1, i_z1) - block(g)%ut(i_x1-1, i_y1+1, i_z1))*(pos1_x - block(g)%xu(i_x1))/(block(g)%xu(i_x1+1) - block(g)%xu(i_x1))
-         
-         !interpolation along x @ z2 plane 
+
+         !interpolation along x @ z2 plane
          u_x1_z2 = block(g)%ut(i_x1-1, i_y1, i_z1+1)   + (block(g)%ut(i_x1, i_y1, i_z1+1)   - block(g)%ut(i_x1-1, i_y1, i_z1+1))  *(pos1_x - block(g)%xu(i_x1))/(block(g)%xu(i_x1+1) - block(g)%xu(i_x1))
          u_x2_z2 = block(g)%ut(i_x1-1, i_y1+1, i_z1+1) + (block(g)%ut(i_x1, i_y1+1, i_z1+1) - block(g)%ut(i_x1-1, i_y1+1, i_z1+1))*(pos1_x - block(g)%xu(i_x1))/(block(g)%xu(i_x1+1) - block(g)%xu(i_x1))
-         
+
          !This will be used for dudz calculation point 1
          u_z1 = u_x1_z1 + (u_x2_z1 - u_x1_z1)*(pos1_y - block(g)%yu(i_y1))/(block(g)%yu(i_y1+1)-block(g)%yu(i_y1))
          u_z2 = u_x1_z2 + (u_x2_z2 - u_x1_z2)*(pos1_y - block(g)%yu(i_y1))/(block(g)%yu(i_y1+1)-block(g)%yu(i_y1))
-         
+
          !This will be used for dudy calculation at point 1
          u_y1 = u_x1_z1 + (u_x1_z2 - u_x1_z1)*(pos1_z - block(g)%zu(i_z1))/(block(g)%zu(i_z1+1)-block(g)%zu(i_z1))
          u_y2 = u_x2_z1 + (u_x2_z2 - u_x2_z1)*(pos1_z - block(g)%zu(i_z1))/(block(g)%zu(i_z1+1)-block(g)%zu(i_z1))
-         
+
          !interpolation along z @ x1 plane
          u_z1_x1 = block(g)%ut(i_x1-1, i_y1, i_z1)   + (block(g)%ut(i_x1-1, i_y1, i_z1+1) - block(g)%ut(i_x1-1, i_y1, i_z1))  *(pos1_z - block(g)%zu(i_z1))/(block(g)%zu(i_z1+1) - block(g)%zu(i_z1))
          u_z2_x1 = block(g)%ut(i_x1-1, i_y1+1, i_z1)   + (block(g)%ut(i_x1-1, i_y1+1, i_z1+1) - block(g)%ut(i_x1-1, i_y1+1, i_z1))  *(pos1_z - block(g)%zu(i_z1))/(block(g)%zu(i_z1+1) - block(g)%zu(i_z1))
-         
+
          !interpolation along z @ x2 plane
          u_z1_x2 = block(g)%ut(i_x1, i_y1, i_z1)   + (block(g)%ut(i_x1, i_y1, i_z1+1) - block(g)%ut(i_x1, i_y1, i_z1))  *(pos1_z - block(g)%zu(i_z1))/(block(g)%zu(i_z1+1) - block(g)%zu(i_z1))
          u_z2_x2 = block(g)%ut(i_x1, i_y1+1, i_z1)   + (block(g)%ut(i_x1, i_y1+1, i_z1+1) - block(g)%ut(i_x1, i_y1+1, i_z1))  *(pos1_z - block(g)%zu(i_z1))/(block(g)%zu(i_z1+1) - block(g)%zu(i_z1))
-         
+
          !This will be used for dudx calculation at point 1
          u_x1 = u_z1_x1 + (u_z2_x1 - u_z1_x1)*(pos1_y - block(g)%yu(i_y1))/(block(g)%yu(i_y1+1)-block(g)%yu(i_y1))
          u_x2 = u_z1_x2 + (u_z2_x2 - u_z1_x2)*(pos1_y - block(g)%yu(i_y1))/(block(g)%yu(i_y1+1)-block(g)%yu(i_y1))
-         
-         u_pos1 = u_x1 + (u_x2 - u_x1)*(pos1_x - block(g)%xu(i_x1))/(block(g)%xu(i_x1+1)-block(g)%xu(i_x1)) 
-         
+
+         u_pos1 = u_x1 + (u_x2 - u_x1)*(pos1_x - block(g)%xu(i_x1))/(block(g)%xu(i_x1+1)-block(g)%xu(i_x1))
+
          h2 = dabs(block(g)%xu(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xu(i_x1)   - pos1_x)
          dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
-         
+
          h2 = dabs(block(g)%yu(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yu(i_y1)   - pos1_y)
          dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
-         
+
          h2 = dabs(block(g)%zu(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zu(i_z1)   - pos1_z)
          dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
 
-         dudn_e = dudx_e*block(g)%cosAlpha(ielem) + dudy_e*block(g)%cosBeta(ielem) + dudz_e*block(g)%cosGamma(ielem)         
+         dudn_e = dudx_e*block(g)%cosAlpha(ielem) + dudy_e*block(g)%cosBeta(ielem) + dudz_e*block(g)%cosGamma(ielem)
 
          dudn_s = (2./normdis)*(u_pos1 - usurf) - dudn_e
-         
-!******************v velocity interpolation in point 2******************	 
+
+!******************v velocity interpolation in point 2******************
        !!$acc loop seq
        DO i = 2, block(g)%nx+1
        if(pos1_x.ge.block(g)%xv(i).and.pos1_x.lt.block(g)%xv(i+1)) i_x1 = i
@@ -268,62 +268,62 @@
        DO j = 2, block(g)%ny+1
        if(pos1_y.ge.block(g)%yv(j).and.pos1_y.lt.block(g)%yv(j+1)) i_y1 = j
        END DO
-       !!$acc loop seq 
+       !!$acc loop seq
        DO k = 2, block(g)%nz+1
        if(pos1_z.ge.block(g)%zv(k).and.pos1_z.lt.block(g)%zv(k+1)) i_z1 = k
        END DO
-	
+
 	block(g)%vcell(ielem,1) = i_x1
        block(g)%vcell(ielem,2) = i_y1
        block(g)%vcell(ielem,3) = i_z1
-       
-       !interpolation along x @ z1 plane 
+
+       !interpolation along x @ z1 plane
          v_x1_z1 = block(g)%vt(i_x1, i_y1-1, i_z1)   + (block(g)%vt(i_x1+1, i_y1-1, i_z1) - block(g)%vt(i_x1, i_y1-1, i_z1))*(pos1_x - block(g)%xv(i_x1))/(block(g)%xv(i_x1+1) - block(g)%xv(i_x1))
          v_x2_z1 = block(g)%vt(i_x1, i_y1, i_z1)     + (block(g)%vt(i_x1+1, i_y1, i_z1)   - block(g)%vt(i_x1, i_y1, i_z1))*(pos1_x - block(g)%xv(i_x1))/(block(g)%xv(i_x1+1) - block(g)%xv(i_x1))
-         
-         !interpolation along x @ z2 plane 
+
+         !interpolation along x @ z2 plane
          v_x1_z2 = block(g)%vt(i_x1, i_y1-1, i_z1+1)   + (block(g)%vt(i_x1+1, i_y1-1, i_z1+1) - block(g)%vt(i_x1, i_y1-1, i_z1+1))*(pos1_x - block(g)%xv(i_x1))/(block(g)%xv(i_x1+1) - block(g)%xv(i_x1))
          v_x2_z2 = block(g)%vt(i_x1, i_y1, i_z1+1)     + (block(g)%vt(i_x1+1, i_y1, i_z1+1)   - block(g)%vt(i_x1, i_y1, i_z1+1))*(pos1_x - block(g)%xv(i_x1))/(block(g)%xv(i_x1+1) - block(g)%xv(i_x1))
-         
+
          !This will be used for dvdz calculation point 1
          v_z1 = v_x1_z1 + (v_x2_z1 - v_x1_z1)*(pos1_y - block(g)%yv(i_y1))/(block(g)%yv(i_y1+1)-block(g)%yv(i_y1))
          v_z2 = v_x1_z2 + (v_x2_z2 - v_x1_z2)*(pos1_y - block(g)%yv(i_y1))/(block(g)%yv(i_y1+1)-block(g)%yv(i_y1))
-         
+
          !This will be used for dvdy calculation at point 1
          v_y1 = v_x1_z1 + (v_x1_z2 - v_x1_z1)*(pos1_z - block(g)%zv(i_z1))/(block(g)%zv(i_z1+1)-block(g)%zv(i_z1))
          v_y2 = v_x2_z1 + (v_x2_z2 - v_x2_z1)*(pos1_z - block(g)%zv(i_z1))/(block(g)%zv(i_z1+1)-block(g)%zv(i_z1))
-         
+
          !interpolation along z @ x1 plane
          v_z1_x1 = block(g)%vt(i_x1, i_y1-1, i_z1)   + (block(g)%vt(i_x1, i_y1-1, i_z1+1) - block(g)%vt(i_x1, i_y1-1, i_z1))  *(pos1_z - block(g)%zv(i_z1))/(block(g)%zv(i_z1+1) - block(g)%zv(i_z1))
          v_z2_x1 = block(g)%vt(i_x1, i_y1, i_z1)   + (block(g)%vt(i_x1, i_y1, i_z1+1) - block(g)%vt(i_x1, i_y1, i_z1))  *(pos1_z - block(g)%zv(i_z1))/(block(g)%zv(i_z1+1) - block(g)%zv(i_z1))
-         
+
          !interpolation along z @ x2 plane
          v_z1_x2 = block(g)%vt(i_x1+1, i_y1-1, i_z1)   + (block(g)%vt(i_x1+1, i_y1-1, i_z1+1) - block(g)%vt(i_x1+1, i_y1-1, i_z1))  *(pos1_z - block(g)%zv(i_z1))/(block(g)%zv(i_z1+1) - block(g)%zv(i_z1))
          v_z2_x2 = block(g)%vt(i_x1+1, i_y1, i_z1)   + (block(g)%vt(i_x1+1, i_y1, i_z1+1) - block(g)%vt(i_x1+1, i_y1, i_z1))  *(pos1_z - block(g)%zv(i_z1))/(block(g)%zv(i_z1+1) - block(g)%zv(i_z1))
-         
+
          !This will be used for dvdx calculation at point 1
          v_x1 = v_z1_x1 + (v_z2_x1 - v_z1_x1)*(pos1_y - block(g)%yv(i_y1))/(block(g)%yv(i_y1+1)-block(g)%yv(i_y1))
          v_x2 = v_z1_x2 + (v_z2_x2 - v_z1_x2)*(pos1_y - block(g)%yv(i_y1))/(block(g)%yv(i_y1+1)-block(g)%yv(i_y1))
-         
+
          v_pos1 = v_x1 + (v_x2 - v_x1)*(pos1_x - block(g)%xv(i_x1))/(block(g)%xv(i_x1+1)-block(g)%xv(i_x1))
-         
+
          h2 = dabs(block(g)%xv(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xv(i_x1)   - pos1_x)
          dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
-         
+
          h2 = dabs(block(g)%yv(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yv(i_y1)   - pos1_y)
          dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
-         
+
          h2 = dabs(block(g)%zv(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zv(i_z1)   - pos1_z)
          dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
-         
+
 
          dvdn_e = dvdx_e*block(g)%cosAlpha(ielem) + dvdy_e*block(g)%cosBeta(ielem) +  dvdz_e*block(g)%cosGamma(ielem)
 
 	  dvdn_s = (2./normdis)*(v_pos1 - vsurf) - dvdn_e
-	  
+
 !******************w velocity interpolation in point 2******************
        !!$acc loop seq
        DO i = 2, block(g)%nx+1
@@ -333,63 +333,63 @@
        DO j = 2, block(g)%ny+1
        if(pos1_y.ge.block(g)%yw(j).and.pos1_y.lt.block(g)%yw(j+1)) i_y1 = j
        END DO
-       !!$acc loop seq 
+       !!$acc loop seq
        DO k = 2, block(g)%nz+1
        if(pos1_z.ge.block(g)%zw(k).and.pos1_z.lt.block(g)%zw(k+1)) i_z1 = k
        END DO
-	
+
 	block(g)%wcell(ielem,1) = i_x1
        block(g)%wcell(ielem,2) = i_y1
        block(g)%wcell(ielem,3) = i_z1
-       
-       !interpolation along x @ z1 plane 
+
+       !interpolation along x @ z1 plane
          w_x1_z1 = block(g)%wt(i_x1, i_y1, i_z1-1)   + (block(g)%wt(i_x1+1, i_y1, i_z1-1) - block(g)%wt(i_x1, i_y1, i_z1-1))*(pos1_x - block(g)%xw(i_x1))/(block(g)%xw(i_x1+1) - block(g)%xw(i_x1))
          w_x2_z1 = block(g)%wt(i_x1, i_y1+1, i_z1-1)   + (block(g)%wt(i_x1+1, i_y1+1, i_z1-1) - block(g)%wt(i_x1, i_y1+1, i_z1-1))*(pos1_x - block(g)%xw(i_x1))/(block(g)%xw(i_x1+1) - block(g)%xw(i_x1))
-         !interpolation along x @ z2 plane 
+         !interpolation along x @ z2 plane
          w_x1_z2 = block(g)%wt(i_x1, i_y1, i_z1)   + (block(g)%wt(i_x1+1, i_y1, i_z1) - block(g)%wt(i_x1, i_y1, i_z1))*(pos1_x - block(g)%xw(i_x1))/(block(g)%xw(i_x1+1) - block(g)%xw(i_x1))
          w_x2_z2 = block(g)%wt(i_x1, i_y1+1, i_z1)   + (block(g)%wt(i_x1+1, i_y1+1, i_z1) - block(g)%wt(i_x1, i_y1+1, i_z1))*(pos1_x - block(g)%xw(i_x1))/(block(g)%xw(i_x1+1) - block(g)%xw(i_x1))
-         
+
          !This will be used for dwdz calculation point 1
          w_z1 = w_x1_z1 + (w_x2_z1 - w_x1_z1)*(pos1_y - block(g)%yw(i_y1))/(block(g)%yw(i_y1+1)-block(g)%yw(i_y1))
          w_z2 = w_x1_z2 + (w_x2_z2 - w_x1_z2)*(pos1_y - block(g)%yw(i_y1))/(block(g)%yw(i_y1+1)-block(g)%yw(i_y1))
-         
+
          !This will be used for dwdy calculation at point 1
          w_y1 = w_x1_z1 + (w_x1_z2 - w_x1_z1)*(pos1_z - block(g)%zw(i_z1))/(block(g)%zw(i_z1+1)-block(g)%zw(i_z1))
          w_y2 = w_x2_z1 + (w_x2_z2 - w_x2_z1)*(pos1_z - block(g)%zw(i_z1))/(block(g)%zw(i_z1+1)-block(g)%zw(i_z1))
-         
+
          !interpolation along z @ x1 plane
          w_z1_x1 = block(g)%wt(i_x1, i_y1, i_z1-1)   + (block(g)%wt(i_x1, i_y1, i_z1) - block(g)%wt(i_x1, i_y1, i_z1-1))  *(pos1_z - block(g)%zw(i_z1))/(block(g)%zw(i_z1+1) - block(g)%zw(i_z1))
          w_z2_x1 = block(g)%wt(i_x1, i_y1+1, i_z1-1)   + (block(g)%wt(i_x1, i_y1+1, i_z1) - block(g)%wt(i_x1, i_y1+1, i_z1-1))  *(pos1_z - block(g)%zw(i_z1))/(block(g)%zw(i_z1+1) - block(g)%zw(i_z1))
-         
+
          !interpolation along z @ x2 plane
          w_z1_x2 = block(g)%wt(i_x1+1, i_y1, i_z1-1)   + (block(g)%wt(i_x1+1, i_y1, i_z1) - block(g)%wt(i_x1+1, i_y1, i_z1-1))  *(pos1_z - block(g)%zw(i_z1))/(block(g)%zw(i_z1+1) - block(g)%zw(i_z1))
          w_z2_x2 = block(g)%wt(i_x1+1, i_y1+1, i_z1-1)   + (block(g)%wt(i_x1+1, i_y1+1, i_z1) - block(g)%wt(i_x1+1, i_y1+1, i_z1-1))  *(pos1_z - block(g)%zw(i_z1))/(block(g)%zw(i_z1+1) - block(g)%zw(i_z1))
-         
+
          !This will be used for dwdx calculation at point 1
          w_x1 = w_z1_x1 + (w_z2_x1 - w_z1_x1)*(pos1_y - block(g)%yw(i_y1))/(block(g)%yw(i_y1+1)-block(g)%yw(i_y1))
          w_x2 = w_z1_x2 + (w_z2_x2 - w_z1_x2)*(pos1_y - block(g)%yw(i_y1))/(block(g)%yw(i_y1+1)-block(g)%yw(i_y1))
-         
+
          w_pos1 = w_x1 + (w_x2 - w_x1)*(pos1_x - block(g)%xw(i_x1))/(block(g)%xw(i_x1+1)-block(g)%xw(i_x1))
-         
+
          h2 = dabs(block(g)%xw(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xw(i_x1)   - pos1_x)
          dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
-         
+
          h2 = dabs(block(g)%yw(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yw(i_y1)   - pos1_y)
          dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
-         
+
          h2 = dabs(block(g)%zw(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zw(i_z1)   - pos1_z)
          dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
-         
+
 
          dwdn_e = dwdx_e*block(g)%cosAlpha(ielem) + dwdy_e*block(g)%cosBeta(ielem) +  dwdz_e*block(g)%cosGamma(ielem)
-       
+
          dwdn_s = (2./normdis)*(w_pos1 - wsurf) - dwdn_e
-         
-!***********************calculate area of the elements******************    
-       alen = sqrt(block(g)%alpha3(ielem)**2.+block(g)%beta3(ielem)**2.+ block(g)%gamma3(ielem)**2.) 
+
+!***********************calculate area of the elements******************
+       alen = sqrt(block(g)%alpha3(ielem)**2.+block(g)%beta3(ielem)**2.+ block(g)%gamma3(ielem)**2.)
        area = alen/2.
        area_yz = 0.5*abs(block(g)%alpha3(ielem))
        area_xz = 0.5*abs(block(g)%beta3(ielem))
@@ -406,22 +406,22 @@
        shear_x_force = (1.0/re)*stx1*area*block(g)%rhof
 
        shear_y_force = (1.0/re)*sty1*area*block(g)%rhof
-       
-       shear_z_force = (1.0/re)*stz1*area*block(g)%rhof
-       
-      !shear_x_force = (1.0/re)*stx1*area              
 
-      !shear_y_force = (1.0/re)*sty1*area              
+       shear_z_force = (1.0/re)*stz1*area*block(g)%rhof
+
+      !shear_x_force = (1.0/re)*stx1*area
+
+      !shear_y_force = (1.0/re)*sty1*area
       !
-      !shear_z_force = (1.0/re)*stz1*area              
+      !shear_z_force = (1.0/re)*stz1*area
        !stressElem(ielem,1) = 0.0035*stx1
 !      block(g)%stressElem(ielem, 1) = (1.0/re)*stx1*block(g)%rhof
 !     block(g)% stressElem(ielem, 2) = (1.0/re)*sty1*block(g)%rhof
 !    block(g)% stressElem(ielem, 3) = (1.0/re)*stz1*block(g)%rhof
 
-       block(g)%stressElem(ielem, 1) = (1.0/re)*stx1              
-      block(g)% stressElem(ielem, 2) = (1.0/re)*sty1              
-     block(g)% stressElem(ielem, 3) = (1.0/re)*stz1              
+       block(g)%stressElem(ielem, 1) = (1.0/re)*stx1
+      block(g)% stressElem(ielem, 2) = (1.0/re)*sty1
+     block(g)% stressElem(ielem, 3) = (1.0/re)*stz1
 !************************presssure interpolation************************
 
 !*******************pressure interpolation at point 2*******************
@@ -437,74 +437,74 @@
        DO k = 1, block(g)%nz+2
        if(pos1_z.ge.block(g)%zp(k).and.pos1_z.lt.block(g)%zp(k+1)) i_z1 = k
        END DO
-       
+
        block(g)%pcell(ielem,1) = i_x1
        block(g)%pcell(ielem,2) = i_y1
        block(g)%pcell(ielem,3) = i_z1
-	
+
         !interpolation along x  @ z1 plane
          p_x1_z1 = block(g)%p(i_x1, i_y1, i_z1)   + (block(g)%p(i_x1+1, i_y1, i_z1)   - block(g)%p(i_x1, i_y1, i_z1))  *(pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1) - block(g)%xp(i_x1))
          p_x2_z1 = block(g)%p(i_x1, i_y1+1, i_z1) + (block(g)%p(i_x1+1, i_y1+1, i_z1) - block(g)%p(i_x1, i_y1+1, i_z1))*(pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1) - block(g)%xp(i_x1))
-               
+
          !interpolation along x  @ z2 plane
          p_x1_z2 = block(g)%p(i_x1, i_y1, i_z1+1)   + (block(g)%p(i_x1+1, i_y1, i_z1+1)   - block(g)%p(i_x1, i_y1, i_z1+1))  *(pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1) - block(g)%xp(i_x1))
          p_x2_z2 = block(g)%p(i_x1, i_y1+1, i_z1+1) + (block(g)%p(i_x1+1, i_y1+1, i_z1+1) - block(g)%p(i_x1, i_y1+1, i_z1+1))*(pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1) - block(g)%xp(i_x1))
-                 
+
          !This will be used for dpdz calculation point 1
          p_z1 = p_x1_z1 + (p_x2_z1 - p_x1_z1)*(pos1_y - block(g)%yp(i_y1))/(block(g)%yp(i_y1+1)-block(g)%yp(i_y1))
          p_z2 = p_x1_z2 + (p_x2_z2 - p_x1_z2)*(pos1_y - block(g)%yp(i_y1))/(block(g)%yp(i_y1+1)-block(g)%yp(i_y1))
-         
+
          !This will be used for dpdy calculation at point 1
          p_y1 = p_x1_z1 + (p_x1_z2 - p_x1_z1)*(pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1)-block(g)%zp(i_z1))
          p_y2 = p_x2_z1 + (p_x2_z2 - p_x2_z1)*(pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1)-block(g)%zp(i_z1))
-                  
+
          !interpolation along z @ x1 plane
          p_z1_x1 = block(g)%p(i_x1, i_y1, i_z1)   + (block(g)%p(i_x1, i_y1, i_z1+1) - block(g)%p(i_x1, i_y1, i_z1))  *(pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1) - block(g)%zp(i_z1))
          p_z2_x1 = block(g)%p(i_x1, i_y1+1, i_z1)   + (block(g)%p(i_x1, i_y1+1, i_z1+1) - block(g)%p(i_x1, i_y1+1, i_z1))  *(pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1) - block(g)%zp(i_z1))
-         
+
          !interpolation along z @ x2 plane
          p_z1_x2 = block(g)%p(i_x1+1, i_y1, i_z1)   + (block(g)%p(i_x1+1, i_y1, i_z1+1) - block(g)%p(i_x1+1, i_y1, i_z1))  *(pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1) - block(g)%zp(i_z1))
          p_z2_x2 = block(g)%p(i_x1+1, i_y1+1, i_z1)   + (block(g)%p(i_x1+1, i_y1+1, i_z1+1) - block(g)%p(i_x1+1, i_y1+1, i_z1))  *(pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1) - block(g)%zp(i_z1))
-         
+
          !This will be used for dpdx calculation at point 1
          p_x1 = p_z1_x1 + (p_z2_x1 - p_z1_x1)*(pos1_y - block(g)%yp(i_y1))/(block(g)%yp(i_y1+1)-block(g)%yp(i_y1))
          p_x2 = p_z1_x2 + (p_z2_x2 - p_z1_x2)*(pos1_y - block(g)%yp(i_y1))/(block(g)%yp(i_y1+1)-block(g)%yp(i_y1))
-         
+
          p_pos1 = p_x1 + (p_x2 - p_x1)*(pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1)-block(g)%xp(i_x1))
-         
+
          h2 = dabs(block(g)%xp(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xp(i_x1)   - pos1_x)
          dpdx_e = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
-         
+
          h2 = dabs(block(g)%yp(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yp(i_y1)   - pos1_y)
          dpdy_e = (h1**2*p_y2 - h2**2*p_y1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
-         
+
          h2 = dabs(block(g)%zp(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zp(i_z1)   - pos1_z)
          dpdz_e = (h1**2*p_z2 - h2**2*p_z1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
 
-         dpdn_e = dpdx_e*block(g)%cosAlpha(ielem) + dpdy_e*block(g)%cosBeta(ielem) + dpdz_e*block(g)%cosGamma(ielem)        
- 
+         dpdn_e = dpdx_e*block(g)%cosAlpha(ielem) + dpdy_e*block(g)%cosBeta(ielem) + dpdz_e*block(g)%cosGamma(ielem)
+
          bval = dpdn  !dpdn=-dudt
          aval = (dpdn_e - dpdn)/(2*diagdis)
          cval = p_pos1 - (dpdn_e + dpdn)*diagdis*.5
 
          psurf = cval
 
-         f_surf = cval*area 
+         f_surf = cval*area
 
         !f_surf_x = -f_surf*block(g)%cosAlpha(ielem)*block(g)%rhof
 
         !f_surf_y = -f_surf*block(g)%cosBeta(ielem)*block(g)%rhof
 
 	! f_surf_z = -f_surf*block(g)%cosGamma(ielem)*block(g)%rhof
-       
-         f_surf_x = -f_surf*block(g)%cosAlpha(ielem)              
 
-         f_surf_y = -f_surf*block(g)%cosBeta(ielem)              
+         f_surf_x = -f_surf*block(g)%cosAlpha(ielem)
 
-	  f_surf_z = -f_surf*block(g)%cosGamma(ielem) 
+         f_surf_y = -f_surf*block(g)%cosBeta(ielem)
+
+	  f_surf_z = -f_surf*block(g)%cosGamma(ielem)
 !***********************drag calculation********************************
 	  viscousDrag = viscousDrag + shear_x_force
          pressureDrag = pressureDrag + f_surf_x
@@ -513,21 +513,21 @@
          surf_area = surf_area + area
 	  area_Sx = area_Sx + area_xz
          area_Sy = area_Sy + area_yz
-!***********************************************************************      
+!***********************************************************************
         block(g)%Total_V_Fx = block(g)%Total_V_Fx + shear_x_force
         block(g)%Total_P_Fx = block(g)%Total_P_Fx + f_surf_x
 
         block(g)%Total_V_Fy = block(g)%Total_V_Fy + shear_y_force
-        block(g)%Total_P_Fy = block(g)%Total_P_Fy + f_surf_y       
+        block(g)%Total_P_Fy = block(g)%Total_P_Fy + f_surf_y
 !	END IF
 	END DO
 	!!$acc end parallel
 !***********************************************************************
          block(g)%Total_VP_FX = block(g)%Total_V_Fx + block(g)%Total_P_Fx
-         block(g)%Total_VP_FY = block(g)%Total_V_Fy + block(g)%Total_P_Fy      
+         block(g)%Total_VP_FY = block(g)%Total_V_Fy + block(g)%Total_P_Fy
 
-        !!$acc update host (stressElem, areaElem) 
-      !!$acc wait 
+        !!$acc update host (stressElem, areaElem)
+      !!$acc wait
         !area_Sx= 0.5 * area_Sx
         !area_Sy= 0.5 * area_Sy
         area_Sx= 1.!0.5 * area_Sx

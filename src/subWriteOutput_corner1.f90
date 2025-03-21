@@ -1,19 +1,19 @@
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 !     SUBROUTINE writeOutput
 !      USE global
-!      INTEGER, PARAMETER :: rk = selected_real_kind(8) 
+!      INTEGER, PARAMETER :: rk = selected_real_kind(8)
 !      CHARACTER*120  filename1
 !      CHARACTER*70  filename2
-!      INTEGER  :: k, i, j  ,g 
-!      REAL (KIND = 8) :: u1, v1, w1       
+!      INTEGER  :: k, i, j  ,g
+!      REAL (KIND = 8) :: u1, v1, w1
 
-!       IF(mod(ita,100).EQ.0)THEN        
+!       IF(mod(ita,100).EQ.0)THEN
 !       DO g=1,nblocks
 !           WRITE(filename1,1) ita,g
 !1          FORMAT('out/fielddata.',i9.9,'.',i3.3,".dat")
 !           OPEN(UNIT = 786, FILE = filename1, STATUS = 'unknown')
-!           WRITE(786,*)'variables= "x","y","z","u","v","w","p","totime","cellid"'	    	     
-!           WRITE(786,*) 'zone, ', 'i = ', block(g)%nx+1,' j = ', block(g)%ny+1, ' k = ', block(g)%nz+1   
+!           WRITE(786,*)'variables= "x","y","z","u","v","w","p","totime","cellid"'
+!           WRITE(786,*) 'zone, ', 'i = ', block(g)%nx+1,' j = ', block(g)%ny+1, ' k = ', block(g)%nz+1
 !           !k = block(g)%nz/2
 !           DO 30 k = 1, block(g)%nz+1
 !           DO 30 j = 1, block(g)%ny+1
@@ -49,7 +49,7 @@
 !            p_new2=bl_interp_ans
 
 
-!            
+!
 !            l_intp_valx=block(g)%z1(k+1)
 !            l_intp_x1= 0.5*(block(g)%z1(k)+block(g)%z1(k+1))
 !            l_intp_x2= 0.5*(block(g)%z1(k+1)+block(g)%z1(k+2))
@@ -103,11 +103,11 @@
 
 
 
-!              WRITE(786,*) block(g)%x1(i+1), block(g)%y1(j+1), block(g)%z1(k+1), u_new, v_new, w_new, p_final, totime, block(g)%cell(i,j,k)      
-!30         CONTINUE 
-!           CLOSE(786) 
-!       END DO     
-!        ENDIF        
+!              WRITE(786,*) block(g)%x1(i+1), block(g)%y1(j+1), block(g)%z1(k+1), u_new, v_new, w_new, p_final, totime, block(g)%cell(i,j,k)
+!30         CONTINUE
+!           CLOSE(786)
+!       END DO
+!        ENDIF
 !     END SUBROUTINE writeOutput
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
       SUBROUTINE writeOutput1
@@ -136,9 +136,9 @@
          IF((mod(ita,200) .eq.0 .or. ita .le. 2 ))then ! .or. &
          !   (ita .gt. 250 .and. mod(ita,1) .eq. 0)) THEN
          !IF(mod(ita,100) .eq.0 )THEN
-        
+
 !!      Do g=1,nblocks
-!!        
+!!
 !!       nx_var=block(g)%nx
 !!       ny_var=block(g)%ny
 !!       nz_var=block(g)%nz
@@ -219,9 +219,9 @@
 !!     !iStat = tecDat142(nTotalPts,     zp(2:nz_var,4)    , 0)
 !!     iStat = tecDat142(nTotalPts, real(  block(g)%p(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),0)
 !!     !iStat = tecDat142(nTotalPts, real( dmiu(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),     0)
-!!     iStat = tecDat142(nTotalPts, real( block(g)%cell(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),0)    
-!!     iStat = tecDat142(nTotalPts, real( block(g)%cell_n(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),0)    
-!!     iStat = tecDat142(nTotalPts, real( block(g)%cell_pr(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),0)    
+!!     iStat = tecDat142(nTotalPts, real( block(g)%cell(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),0)
+!!     iStat = tecDat142(nTotalPts, real( block(g)%cell_n(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),0)
+!!     iStat = tecDat142(nTotalPts, real( block(g)%cell_pr(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),0)
 !!     iStat = tecDat142(nTotalPts, real(un1(2:nx_var+1,2:ny_var+1,2:nz_var+1),4), 0)
 !!     iStat = tecDat142(nTotalPts, real(vn1(2:nx_var+1,2:ny_var+1,2:nz_var+1),4), 0)
 !!     iStat = tecDat142(nTotalPts, real(wn1(2:nx_var+1,2:ny_var+1,2:nz_var+1),4), 0)
@@ -229,7 +229,7 @@
 !!     iStat = tecEnd142()
 !!
 !!       DEALLOCATE(un1,vn1,wn1)
-!!      end do   
+!!      end do
 
 !             WRITE(filename1,1) ita
 
@@ -240,78 +240,78 @@
        WRITE(filename1,1)char_f,ita,g,re,block(2)%dx,nblocks
 1     FORMAT('out/',A3,'_butter_fielddata.',i9.9,'.',i3.3,'.',f7.1,'.',f8.6,'.',i3.3,".dat")
            OPEN(UNIT = 786, FILE = filename1, STATUS = 'unknown')
-            WRITE(786,*)'variables="x","y","z","u","v","w","p","totime","cellid","cell_n","cell_pr"'                     
-            WRITE(786,*) 'zone, ', 'i = ', block(g)%nx,' j = ', block(g)%ny, ' k = ', block(g)%nz   
+            WRITE(786,*)'variables="x","y","z","u","v","w","p","totime","cellid","cell_n","cell_pr"'
+            WRITE(786,*) 'zone, ', 'i = ', block(g)%nx,' j = ', block(g)%ny, ' k = ', block(g)%nz
             !k = block(g)%nz/2
             DO 30 k = 2, block(g)%nz+1
             DO 30 j = 2, block(g)%ny+1
             DO 30 i = 2, block(g)%nx+1
                u1 = 0.5*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))
                v1 = 0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
-               w1 = 0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1)) 
-               WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u1, v1, w1, block(g)%p(i,j,k), totime, block(g)%cell(i,j,k) , block(g)%cell_n(i,j,k) , block(g)%cell_pr(i,j,k)      
- 30         CONTINUE 
-            CLOSE(786)   
-        end do  
-        !$acc wait 
-         ENDIF        
+               w1 = 0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
+               WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u1, v1, w1, block(g)%p(i,j,k), totime, block(g)%cell(i,j,k) , block(g)%cell_n(i,j,k) , block(g)%cell_pr(i,j,k)
+ 30         CONTINUE
+            CLOSE(786)
+        end do
+        !$acc wait
+         ENDIF
       END SUBROUTINE writeOutput1
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 
 !***********************************************************************
 
 !***********************************************************************
-      SUBROUTINE writeResult     
+      SUBROUTINE writeResult
         USE global
-        implicit none 
+        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER::  i, j, k,g    
+        INTEGER::  i, j, k,g
        CHARACTER*70  filename1
-        IF(mod(ita,500).EQ.0)THEN   
+        IF(mod(ita,500).EQ.0)THEN
            Do g=1,nblocks
            WRITE(filename1,22)char_f,g,re,block(2)%dx
  !22          FORMAT('out/4blk/aorta_chkpt.',i3.3,'.',f6.1,".dat")
  22          FORMAT('out/Chkpt/',A3,'_butter_chkpt.',i3.3,'.',f6.1,'.',f8.6,".dat")
-        OPEN (1,FILE=filename1,FORM='formatted')     
+        OPEN (1,FILE=filename1,FORM='formatted')
  	 DO 30 k = 1, block(g)%nz+2
         DO 30 j = 1, block(g)%ny+2
-        DO 30 i = 1, block(g)%nx+2       
+        DO 30 i = 1, block(g)%nx+2
           WRITE(1,*) block(g)%u(i,j,k), block(g)%v(i,j,k), block(g)%w(i,j,k), &
         block(g)%p(i,j,k), totime, ita, ita1
- 30     CONTINUE 
- 	 CLOSE(22) 
+ 30     CONTINUE
+ 	 CLOSE(22)
         END DO
- 	 END IF	
+ 	 END IF
       END SUBROUTINE writeResult
 !***********************************************************************
 
 !***********************************************************************
      SUBROUTINE writeTagging
        USE global
-       INTEGER, PARAMETER :: rk = selected_real_kind(8) 
+       INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER*70  filename1
        CHARACTER*70  filename2
-       INTEGER  :: k, i, j,g 
-        g=2                       
+       INTEGER  :: k, i, j,g
+        g=2
             WRITE(filename1,1) geo_num,ita
  1          FORMAT('out/',i6.6,'/tag/tagdata.',i2.2,".dat")
             OPEN(UNIT = 786, FILE = filename1, STATUS = 'unknown')
-            WRITE(786,*)'variables= "x","y","z","cellid"'	    	     
-          WRITE(786,*) 'zone, ', 'i = ', block(g)%nx,' j = ', block(g)%ny, ' k = ', block(g)%nz     
+            WRITE(786,*)'variables= "x","y","z","cellid"'
+          WRITE(786,*) 'zone, ', 'i = ', block(g)%nx,' j = ', block(g)%ny, ' k = ', block(g)%nz
             !k = block(g)%nz/2
             DO 30 k = 2, block(g)%nz+1
             DO 30 j = 2, block(g)%ny+1
             DO 30 i = 2, block(g)%nx+1
-               WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), block(g)%cell(i,j,k)      
- 30         CONTINUE 
-            CLOSE(786)             
+               WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), block(g)%cell(i,j,k)
+ 30         CONTINUE
+            CLOSE(786)
       END SUBROUTINE writeTagging
 !***********************************************************************
 
 !***********************************************************************
       SUBROUTINE computeSumData
        USE global
-       INTEGER, PARAMETER :: rk = selected_real_kind(8) 
+       INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER         :: i, j, k,g
              DO g=1,nblocks
            !$acc parallel loop gang vector collapse (3) default(present)
@@ -320,61 +320,61 @@
              DO 30 i = 1, block(g)%nx+2
                block(g)%u_sum(i,j,k) = block(g)%u_sum(i,j,k) + block(g)%u(i,j,k)
                block(g)%v_sum(i,j,k) = block(g)%v_sum(i,j,k) + block(g)%v(i,j,k)
-               block(g)%w_sum(i,j,k) = block(g)%w_sum(i,j,k) + block(g)%w(i,j,k)			   
-               block(g)%p_sum(i,j,k) = block(g)%p_sum(i,j,k) + block(g)%p(i,j,k)			                                                            
- 30         CONTINUE                 
+               block(g)%w_sum(i,j,k) = block(g)%w_sum(i,j,k) + block(g)%w(i,j,k)
+               block(g)%p_sum(i,j,k) = block(g)%p_sum(i,j,k) + block(g)%p(i,j,k)
+ 30         CONTINUE
             !$acc end parallel
 
             END DO
-      END SUBROUTINE computeSumData  
+      END SUBROUTINE computeSumData
 !***********************************************************************
 
 !***********************************************************************
-      SUBROUTINE writeComputeSumData    
+      SUBROUTINE writeComputeSumData
         USE global
-        implicit none 
+        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER::  i, j, k, g    
+        INTEGER::  i, j, k, g
        CHARACTER*70  filename1
 
 
-        IF(mod(ita1,1000).EQ.0)THEN  
+        IF(mod(ita1,1000).EQ.0)THEN
         DO g=1,nblocks
         WRITE(filename1,22)g,re
  22     FORMAT('out/4blk/aorta_sumdata.',i3.3,'.',f6.1,".dat")
-         OPEN (1,FILE=filename1,FORM='formatted')     
+         OPEN (1,FILE=filename1,FORM='formatted')
  	 DO 30 k = 1, block(g)%nz+2
         DO 30 j = 1, block(g)%ny+2
-        DO 30 i = 1, block(g)%nx+2       
+        DO 30 i = 1, block(g)%nx+2
           WRITE(1,*) block(g)%u_sum(i,j,k), block(g)%v_sum(i,j,k), block(g)%w_sum(i,j,k),block(g)%p_sum(i,j,k), ita, ita1
- 30     CONTINUE 
+ 30     CONTINUE
  	 CLOSE(1)
-        END DO 
- 	 END IF	
+        END DO
+ 	 END IF
       END SUBROUTINE  writeComputeSumData
 !***********************************************************************
 
-      SUBROUTINE writeComputeSumSqData    
+      SUBROUTINE writeComputeSumSqData
         USE global
-        implicit none 
+        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER::  i, j, k, g    
+        INTEGER::  i, j, k, g
        CHARACTER*70  filename1
 
 
-        IF(mod(ita1,1000).EQ.0)THEN  
+        IF(mod(ita1,1000).EQ.0)THEN
         DO g=1,nblocks
         WRITE(filename1,22)g,re
  22     FORMAT('out/4blk/aorta_sumsqdata.',i3.3,'.',f6.1,".dat")
-         OPEN (1,FILE=filename1,FORM='formatted')     
+         OPEN (1,FILE=filename1,FORM='formatted')
  	 DO 30 k = 1, block(g)%nz+2
         DO 30 j = 1, block(g)%ny+2
-        DO 30 i = 1, block(g)%nx+2       
+        DO 30 i = 1, block(g)%nx+2
           WRITE(1,*) block(g)%u2_sum(i,j,k), block(g)%v2_sum(i,j,k), block(g)%w2_sum(i,j,k), block(g)%p2_sum(i,j,k), block(g)%uv_sum(i,j,k), block(g)%vw_sum(i,j,k), block(g)%uw_sum(i,j,k)
- 30     CONTINUE 
+ 30     CONTINUE
  	 CLOSE(1)
-        END DO 
- 	 END IF	
+        END DO
+ 	 END IF
       END SUBROUTINE  writeComputeSumSqData
 !***********************************************************************
       SUBROUTINE readComputeSumData
@@ -441,20 +441,20 @@
       END SUBROUTINE readstressData
 !***********************************************************************
 
-!***********************************************************************      
+!***********************************************************************
       SUBROUTINE computeAvgData
        USE global
-       INTEGER, PARAMETER :: rk = selected_real_kind(8) 
+       INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER  :: n, k, i, j, g
-             DO 30 g=1,nblocks    
+             DO 30 g=1,nblocks
 	     DO 30 k = 1, block(g)%nz+2
              DO 30 j = 1, block(g)%ny+2
-             DO 30 i = 1, block(g)%nx+2              	   
-               block(g)%u_avg(i,j,k) = block(g)%u_sum(i,j,k)/ita1  
-               block(g)%v_avg(i,j,k) = block(g)%v_sum(i,j,k)/ita1    
-               block(g)%w_avg(i,j,k) = block(g)%w_sum(i,j,k)/ita1    			   
-               block(g)%p_avg(i,j,k) = block(g)%p_sum(i,j,k)/ita1                                                           
- 30         CONTINUE                  
+             DO 30 i = 1, block(g)%nx+2
+               block(g)%u_avg(i,j,k) = block(g)%u_sum(i,j,k)/ita1
+               block(g)%v_avg(i,j,k) = block(g)%v_sum(i,j,k)/ita1
+               block(g)%w_avg(i,j,k) = block(g)%w_sum(i,j,k)/ita1
+               block(g)%p_avg(i,j,k) = block(g)%p_sum(i,j,k)/ita1
+ 30         CONTINUE
       END SUBROUTINE computeAvgData
 !***********************************************************************
 
@@ -462,11 +462,11 @@
       SUBROUTINE writeAvgoutput
        USE global
 !!tec       USE mod_tecio
-       INTEGER, PARAMETER :: rk = selected_real_kind(8) 
+       INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER*70  filename1
        CHARACTER*70  filename2
-       INTEGER  :: k, i, j, g   
-       REAL (KIND = 8) :: u_avg1, v_avg1, w_avg1    
+       INTEGER  :: k, i, j, g
+       REAL (KIND = 8) :: u_avg1, v_avg1, w_avg1
 !!tec         CHARACTER*1 NULLCHR
 !!tec       INTEGER*4 iStat, FileFormat, FileType, Debug, VIsDouble
 !!tec       integer*4 ZoneType, IMax, JMax, KMax, ICellMax, JCellMax,KCellMax
@@ -556,20 +556,20 @@
 !!tec     !iStat = tecDat142(nTotalPts,     zp(2:nz_var,4)    , 0)
 !!tec     iStat = tecDat142(nTotalPts, real(  block(g)%p_avg(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),0)
 !!tec     !iStat = tecDat142(nTotalPts, real( dmiu(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),     0)
-!!tec     iStat = tecDat142(nTotalPts, real( block(g)%cell(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),0)    
+!!tec     iStat = tecDat142(nTotalPts, real( block(g)%cell(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),0)
 !!tec     iStat = tecDat142(nTotalPts, real(un1(2:nx_var+1,2:ny_var+1,2:nz_var+1),4), 0)
 !!tec     iStat = tecDat142(nTotalPts, real(vn1(2:nx_var+1,2:ny_var+1,2:nz_var+1),4), 0)
 !!tec     iStat = tecDat142(nTotalPts, real(wn1(2:nx_var+1,2:ny_var+1,2:nz_var+1),4), 0)
 !!tec     iStat = tecEnd142()
 !!tec
 !!tec       DEALLOCATE(un1,vn1,wn1)
-!!tec      end do   
+!!tec      end do
 
-           DO g=1,nblocks 
+           DO g=1,nblocks
            WRITE(filename1,1) ita1, g
 1          FORMAT('avgout/fielddata.',i9.9,'.',i3.3,".dat")
            OPEN(UNIT = 786, FILE = filename1, STATUS = 'unknown')
-           WRITE(786,*)'variables= "x","y","z","u_avg","v_avg","w_avg","p_avg","totime","cellid"'	    	     
+           WRITE(786,*)'variables= "x","y","z","u_avg","v_avg","w_avg","p_avg","totime","cellid"'
            WRITE(786,*) 'zone, ', 'i = ', block(g)%nx,' j = ', block(g)%ny, ' k = ', block(g)%nz
            !k = block(g)%nz/2
            DO 30 k = 2, block(g)%nz+1
@@ -578,22 +578,22 @@
               u_avg1 = 0.5*(block(g)%u_avg(i,j,k)+block(g)%u_avg(i-1,j,k))
               v_avg1 = 0.5*(block(g)%v_avg(i,j,k)+block(g)%v_avg(i,j-1,k))
               w_avg1 = 0.5*(block(g)%w_avg(i,j,k)+block(g)%w_avg(i,j,k-1))
-              WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u_avg1, v_avg1, w_avg1, block(g)%p_avg(i,j,k), totime, block(g)%cell(i,j,k)      
-30         CONTINUE 
-           CLOSE(786)    
-           END DO  
+              WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u_avg1, v_avg1, w_avg1, block(g)%p_avg(i,j,k), totime, block(g)%cell(i,j,k)
+30         CONTINUE
+           CLOSE(786)
+           END DO
       END SUBROUTINE writeAvgoutput
 !***********************************************************************
          SUBROUTINE body_plot
-         USE global 
+         USE global
          IMPLICIT NONE
          INTEGER(KIND=8) :: inode, ielem, g
           CHARACTER*150 filename1
-       
-          DO g=1,nblocks 
+
+          DO g=1,nblocks
           if (ita .eq. 1 )then
           !DO g=1,nblocks
-          WRITE(filename1,108) 
+          WRITE(filename1,108)
   108     FORMAT("out/butterfly.dat")
           OPEN(UNIT=857,FILE=filename1,STATUS='unknown')
           WRITE(857,*) 'TITLE = "FEstressplot"'
@@ -615,18 +615,18 @@
 
       SUBROUTINE computeSumSqData
        USE global
-       INTEGER, PARAMETER :: rk = selected_real_kind(8) 
+       INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER  :: n, k, i, j, g
 	    DO  g=1,nblocks
-                
+
            !!$acc parallel loop gang vector collapse (3) default(present)
             DO 30 k = 2, block(g)%nz+2
             DO 30 j = 2, block(g)%ny+2
-            DO 30 i = 2, block(g)%nx+2              	   
+            DO 30 i = 2, block(g)%nx+2
              !block(g)% u_sum(i,j,k,ph) =block(g)% u_sum(i,j,k,ph) + 0.5*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))
              !block(g)% v_sum(i,j,k,ph) =block(g)% v_sum(i,j,k,ph) + 0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
-             !block(g)% w_sum(i,j,k,ph) =block(g)% w_sum(i,j,k,ph) + 0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))			   
-             !block(g)% p_sum(i,j,k,ph) =block(g)% p_sum(i,j,k,ph) + block(g)%p(i,j,k)			                                                           
+             !block(g)% w_sum(i,j,k,ph) =block(g)% w_sum(i,j,k,ph) + 0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
+             !block(g)% p_sum(i,j,k,ph) =block(g)% p_sum(i,j,k,ph) + block(g)%p(i,j,k)
              !block(g)%uv_sum(i,j,k,ph) = block(g)%uv_sum(i,j,k,ph) + 0.5*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))*0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
              !block(g)%vw_sum(i,j,k,ph) = block(g)%vw_sum(i,j,k,ph) + 0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))*0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
              !block(g)%uw_sum(i,j,k,ph) =block(g)% uw_sum(i,j,k,ph) + 0.5*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))*0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
@@ -635,7 +635,7 @@
              !block(g)%v2_sum(i,j,k,ph) = block(g)%v2_sum(i,j,k,ph) + (0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k)))**2
              !block(g)%w2_sum(i,j,k,ph) =block(g)% w2_sum(i,j,k,ph) + (0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1)))**2
              !block(g)%p2_sum(i,j,k,ph) = block(g)%p2_sum(i,j,k,ph) + block(g)%p(i,j,k)*block(g)%p(i,j,k)
-             
+
 
                block(g)%uv_sum(i,j,k) = block(g)%uv_sum(i,j,k) + (block(g)%u(i,j,k) *block(g)%v(i,j,k))
                block(g)%vw_sum(i,j,k) = block(g)%vw_sum(i,j,k) + (block(g)%v(i,j,k) *block(g)%w(i,j,k))
@@ -650,31 +650,31 @@
 
            END DO
       END SUBROUTINE computeSumSqData
-!***********************************************************************      
+!***********************************************************************
       SUBROUTINE computePhaseAvgData
        USE global
-       INTEGER, PARAMETER :: rk = selected_real_kind(8) 
-       INTEGER  :: n, k, i, j,g 
+       INTEGER, PARAMETER :: rk = selected_real_kind(8)
+       INTEGER  :: n, k, i, j,g
 
        !print*, nCycle, ph, phdif(ph)
 
            !!$acc update host(u_sum, v_sum, w_sum, p_sum, u2_sum, v2_sum, w2_sum, p2_sum, uv_sum, vw_sum,  uw_sum)
 
             DO g=1, nblocks
-            
+
            !!$acc parallel loop gang vector collapse (3) default(present)
             DO 30 k = 1, block(g)%nz+2
             DO 30 j = 1, block(g)%ny+2
-            DO 30 i = 1, block(g)%nx+2              	   
-              !block(g)%u_avg(i,j,k,ph) = block(g)%u_sum(i,j,k,ph)/(nCycle*phdif(ph))  
-              !block(g)%v_avg(i,j,k,ph) = block(g)%v_sum(i,j,k,ph)/(nCycle*phdif(ph))  
-              !block(g)%w_avg(i,j,k,ph) = block(g)%w_sum(i,j,k,ph)/(nCycle*phdif(ph))  
-              !block(g)%p_avg(i,j,k,ph) = block(g)%p_sum(i,j,k,ph)/(nCycle*phdif(ph))  
+            DO 30 i = 1, block(g)%nx+2
+              !block(g)%u_avg(i,j,k,ph) = block(g)%u_sum(i,j,k,ph)/(nCycle*phdif(ph))
+              !block(g)%v_avg(i,j,k,ph) = block(g)%v_sum(i,j,k,ph)/(nCycle*phdif(ph))
+              !block(g)%w_avg(i,j,k,ph) = block(g)%w_sum(i,j,k,ph)/(nCycle*phdif(ph))
+              !block(g)%p_avg(i,j,k,ph) = block(g)%p_sum(i,j,k,ph)/(nCycle*phdif(ph))
 
-              !block(g)%u2_avg(i,j,k,ph) = block(g)%u2_sum(i,j,k,ph)/(nCycle*phdif(ph))  
-              !block(g)%v2_avg(i,j,k,ph) = block(g)%v2_sum(i,j,k,ph)/(nCycle*phdif(ph))    
-              !block(g)%w2_avg(i,j,k,ph) = block(g)%w2_sum(i,j,k,ph)/(nCycle*phdif(ph))    			   
-              !block(g)%p2_avg(i,j,k,ph) = block(g)%p2_sum(i,j,k,ph)/(nCycle*phdif(ph))                                                           
+              !block(g)%u2_avg(i,j,k,ph) = block(g)%u2_sum(i,j,k,ph)/(nCycle*phdif(ph))
+              !block(g)%v2_avg(i,j,k,ph) = block(g)%v2_sum(i,j,k,ph)/(nCycle*phdif(ph))
+              !block(g)%w2_avg(i,j,k,ph) = block(g)%w2_sum(i,j,k,ph)/(nCycle*phdif(ph))
+              !block(g)%p2_avg(i,j,k,ph) = block(g)%p2_sum(i,j,k,ph)/(nCycle*phdif(ph))
 
               !block(g)%uv_avg(i,j,k,ph) = block(g)%uv_sum(i,j,k,ph)/(nCycle*phdif(ph))
               !block(g)%vw_avg(i,j,k,ph) = block(g)%vw_sum(i,j,k,ph)/(nCycle*phdif(ph))
@@ -683,8 +683,8 @@
 
               !block(g)%uflu_avg(i,j,k,ph) =   block(g)%u2_avg(i,j,k,ph) -  block(g)%u_avg(i,j,k,ph)**2
               !block(g)%vflu_avg(i,j,k,ph) =   block(g)%v2_avg(i,j,k,ph) -  block(g)%v_avg(i,j,k,ph)**2
-              !block(g)%wflu_avg(i,j,k,ph) =   block(g)%w2_avg(i,j,k,ph) -  block(g)%w_avg(i,j,k,ph)**2   		   
-              !block(g)%pflu_avg(i,j,k,ph) =   block(g)%p2_avg(i,j,k,ph) -  block(g)%p_avg(i,j,k,ph)**2                                                      
+              !block(g)%wflu_avg(i,j,k,ph) =   block(g)%w2_avg(i,j,k,ph) -  block(g)%w_avg(i,j,k,ph)**2
+              !block(g)%pflu_avg(i,j,k,ph) =   block(g)%p2_avg(i,j,k,ph) -  block(g)%p_avg(i,j,k,ph)**2
 
               !block(g)%uvflu_avg(i,j,k,ph)=   block(g)%uv_avg(i,j,k,ph) -    block(g)%u_avg(i,j,k,ph)*block(g)%v_avg(i,j,k,ph)
               !block(g)%vwflu_avg(i,j,k,ph)=   block(g)%vw_avg(i,j,k,ph) -    block(g)%v_avg(i,j,k,ph)*block(g)%w_avg(i,j,k,ph)
@@ -694,16 +694,16 @@
               !block(g)%vflu_rms(i,j,k,ph) = sqrt(abs(block(g)%vflu_avg(i,j,k,ph)))
               !block(g)%wflu_rms(i,j,k,ph) = sqrt(abs(block(g)%wflu_avg(i,j,k,ph)))
               !block(g)%pflu_rms(i,j,k,ph) = sqrt(abs(block(g)%pflu_avg(i,j,k,ph)))
-                
-               block(g)%u_avg(i,j,k) = block(g)%u_sum(i,j,k)/(ita1)  
-               block(g)%v_avg(i,j,k) = block(g)%v_sum(i,j,k)/(ita1)  
-               block(g)%w_avg(i,j,k) = block(g)%w_sum(i,j,k)/(ita1)  
-               block(g)%p_avg(i,j,k) = block(g)%p_sum(i,j,k)/(ita1)  
 
-               block(g)%u2_avg(i,j,k) = block(g)%u2_sum(i,j,k)/(ita1)  
-               block(g)%v2_avg(i,j,k) = block(g)%v2_sum(i,j,k)/(ita1)    
-               block(g)%w2_avg(i,j,k) = block(g)%w2_sum(i,j,k)/(ita1)    			   
-               block(g)%p2_avg(i,j,k) = block(g)%p2_sum(i,j,k)/(ita1)                                                           
+               block(g)%u_avg(i,j,k) = block(g)%u_sum(i,j,k)/(ita1)
+               block(g)%v_avg(i,j,k) = block(g)%v_sum(i,j,k)/(ita1)
+               block(g)%w_avg(i,j,k) = block(g)%w_sum(i,j,k)/(ita1)
+               block(g)%p_avg(i,j,k) = block(g)%p_sum(i,j,k)/(ita1)
+
+               block(g)%u2_avg(i,j,k) = block(g)%u2_sum(i,j,k)/(ita1)
+               block(g)%v2_avg(i,j,k) = block(g)%v2_sum(i,j,k)/(ita1)
+               block(g)%w2_avg(i,j,k) = block(g)%w2_sum(i,j,k)/(ita1)
+               block(g)%p2_avg(i,j,k) = block(g)%p2_sum(i,j,k)/(ita1)
 
                block(g)%uv_avg(i,j,k) = block(g)%uv_sum(i,j,k)/(ita1)
                block(g)%vw_avg(i,j,k) = block(g)%vw_sum(i,j,k)/(ita1)
@@ -712,8 +712,8 @@
 
                block(g)%uflu_avg(i,j,k) =   block(g)%u2_avg(i,j,k) -  block(g)%u_avg(i,j,k)**2
                block(g)%vflu_avg(i,j,k) =   block(g)%v2_avg(i,j,k) -  block(g)%v_avg(i,j,k)**2
-               block(g)%wflu_avg(i,j,k) =   block(g)%w2_avg(i,j,k) -  block(g)%w_avg(i,j,k)**2   		   
-               block(g)%pflu_avg(i,j,k) =   block(g)%p2_avg(i,j,k) -  block(g)%p_avg(i,j,k)**2                                                      
+               block(g)%wflu_avg(i,j,k) =   block(g)%w2_avg(i,j,k) -  block(g)%w_avg(i,j,k)**2
+               block(g)%pflu_avg(i,j,k) =   block(g)%p2_avg(i,j,k) -  block(g)%p_avg(i,j,k)**2
   block(g)%uvflu_avg(i,j,k)=block(g)%uv_avg(i,j,k)-block(g)%u_avg(i,j,k)*block(g)%v_avg(i,j,k)
   block(g)%vwflu_avg(i,j,k)=block(g)%vw_avg(i,j,k)-block(g)%v_avg(i,j,k)*block(g)%w_avg(i,j,k)
   block(g)%uwflu_avg(i,j,k)=block(g)%uw_avg(i,j,k)-block(g)%u_avg(i,j,k)*block(g)%w_avg(i,j,k)
@@ -722,18 +722,18 @@
                block(g)%vflu_rms(i,j,k) = sqrt(abs(block(g)%vflu_avg(i,j,k)))
                block(g)%wflu_rms(i,j,k) = sqrt(abs(block(g)%wflu_avg(i,j,k)))
                block(g)%pflu_rms(i,j,k) = sqrt(abs(block(g)%pflu_avg(i,j,k)))
- 30         CONTINUE                 
+ 30         CONTINUE
             !!$acc end parallel
 
         END DO
- 
+
       END SUBROUTINE computePhaseAvgData
 !!***********************************************************************
-    ! SUBROUTINE writeComputeSqSumData    
+    ! SUBROUTINE writeComputeSqSumData
     !   USE global
-    !   implicit none 
+    !   implicit none
     !   INTEGER, PARAMETER :: rk = selected_real_kind(8)
-    !   INTEGER::  i, j, k    
+    !   INTEGER::  i, j, k
     !  CHARACTER*70  filename1
 
     !  !IF(mod(ita1,5000).EQ.0.or.mod(ita1,86000).EQ.0)THEN! &
@@ -742,67 +742,67 @@
     !   !$acc update host(u_sum, v_sum, w_sum, p_sum, u2_sum, v2_sum, w2_sum, p2_sum, uv_sum, vw_sum, uw_sum)
 !   !       WRITE(filename1,1) nCycle, ita1
 !1  !   FORMAT('out_gg/Results/result.',i2,2,'.',i9.9,".io")
-!1  !   FORMAT('out_gg/Results/sumdata.',i2.2,'.',i9.9,".io") 
-!   !       OPEN (1,FILE=filename1,FORM='formatted')    
-    !  !OPEN (1,FILE=filename1,FORM='unformatted',access='stream')     
+!1  !   FORMAT('out_gg/Results/sumdata.',i2.2,'.',i9.9,".io")
+!   !       OPEN (1,FILE=filename1,FORM='formatted')
+    !  !OPEN (1,FILE=filename1,FORM='unformatted',access='stream')
     !   OPEN (1,FILE='out_gg/Results/sumdata4k.io',FORM='unformatted',access='stream')
 
 !   !    DO 30 k = 1, nz+2
 !   !    DO 30 j = 1, ny+2
-!   !    DO 30 i = 1, nx+2       
+!   !    DO 30 i = 1, nx+2
     !     !WRITE(1,*) u_sum(i,j,k,ph), v_sum(i,j,k,ph), w_sum(i,j,k,ph), p_sum(i,j,k,ph),  u2_sum(i,j,k,ph), v2_sum(i,j,k,ph), w2_sum(i,j,k,ph), p2_sum(i,j,k,ph), uv_sum(i,j,k,ph), vw_sum(i,j,k,ph),  uw_sum(i,j,k,ph), ph
     !     WRITE(1) u_sum, v_sum, w_sum, p_sum,  u2_sum, v2_sum, w2_sum, p2_sum, uv_sum, vw_sum, uw_sum
-! 30!    CONTINUE 
-    !    CLOSE(1) 
-    !    END IF	
+! 30!    CONTINUE
+    !    CLOSE(1)
+    !    END IF
     !   IF(mod(ita1,5000).EQ.0)THEN! &
 !   !        .or. ita1.eq.ph5e .or. ita1.eq.ph6e .or. ita1.eq.ph7e)THEN
     !   !$acc update host(u_sum, v_sum, w_sum, p_sum, u2_sum, v2_sum, w2_sum, p2_sum, uv_sum, vw_sum, uw_sum)
 !   !       WRITE(filename1,1) nCycle, ita1
 !1  !   FORMAT('out_gg/Results/result.',i2,2,'.',i9.9,".io")
-!1  !   FORMAT('out_gg/Results/sumdata.',i2.2,'.',i9.9,".io") 
-!   !       OPEN (1,FILE=filename1,FORM='formatted')    
-    !  !OPEN (1,FILE=filename1,FORM='unformatted',access='stream')     
+!1  !   FORMAT('out_gg/Results/sumdata.',i2.2,'.',i9.9,".io")
+!   !       OPEN (1,FILE=filename1,FORM='formatted')
+    !  !OPEN (1,FILE=filename1,FORM='unformatted',access='stream')
     !   OPEN (1,FILE='out_gg/Results/sumdata5k.io',FORM='unformatted',access='stream')
 
 !   !    DO 30 k = 1, nz+2
 !   !    DO 30 j = 1, ny+2
-!   !    DO 30 i = 1, nx+2       
+!   !    DO 30 i = 1, nx+2
     !     !WRITE(1,*) u_sum(i,j,k,ph), v_sum(i,j,k,ph), w_sum(i,j,k,ph), p_sum(i,j,k,ph),  u2_sum(i,j,k,ph), v2_sum(i,j,k,ph), w2_sum(i,j,k,ph), p2_sum(i,j,k,ph), uv_sum(i,j,k,ph), vw_sum(i,j,k,ph),  uw_sum(i,j,k,ph), ph
     !     WRITE(1) u_sum, v_sum, w_sum, p_sum,  u2_sum, v2_sum, w2_sum, p2_sum, uv_sum, vw_sum, uw_sum
-! 30!    CONTINUE 
-    !    CLOSE(1) 
-    !    END IF	
+! 30!    CONTINUE
+    !    CLOSE(1)
+    !    END IF
     !   IF(mod(ita1,86000).EQ.0)THEN! &
 !   !        .or. ita1.eq.ph5e .or. ita1.eq.ph6e .or. ita1.eq.ph7e)THEN
     !   !$acc update host(u_sum, v_sum, w_sum, p_sum, u2_sum, v2_sum, w2_sum, p2_sum, uv_sum, vw_sum, uw_sum)
 !   !       WRITE(filename1,1) nCycle, ita1
 !1  !   FORMAT('out_gg/Results/result.',i2,2,'.',i9.9,".io")
-!1  !   FORMAT('out_gg/Results/sumdata.',i2.2,'.',i9.9,".io") 
-!   !       OPEN (1,FILE=filename1,FORM='formatted')    
-    !  !OPEN (1,FILE=filename1,FORM='unformatted',access='stream')     
+!1  !   FORMAT('out_gg/Results/sumdata.',i2.2,'.',i9.9,".io")
+!   !       OPEN (1,FILE=filename1,FORM='formatted')
+    !  !OPEN (1,FILE=filename1,FORM='unformatted',access='stream')
     !   OPEN (1,FILE='out_gg/Results/sumdata86k.io',FORM='unformatted',access='stream')
 
 !   !    DO 30 k = 1, nz+2
 !   !    DO 30 j = 1, ny+2
-!   !    DO 30 i = 1, nx+2       
+!   !    DO 30 i = 1, nx+2
     !     !WRITE(1,*) u_sum(i,j,k,ph), v_sum(i,j,k,ph), w_sum(i,j,k,ph), p_sum(i,j,k,ph),  u2_sum(i,j,k,ph), v2_sum(i,j,k,ph), w2_sum(i,j,k,ph), p2_sum(i,j,k,ph), uv_sum(i,j,k,ph), vw_sum(i,j,k,ph),  uw_sum(i,j,k,ph), ph
     !     WRITE(1) u_sum, v_sum, w_sum, p_sum,  u2_sum, v2_sum, w2_sum, p2_sum, uv_sum, vw_sum, uw_sum
-! 30!    CONTINUE 
-    !    CLOSE(1) 
-    !    END IF	
-    ! END SUBROUTINE  writeComputeSqSumData    
+! 30!    CONTINUE
+    !    CLOSE(1)
+    !    END IF
+    ! END SUBROUTINE  writeComputeSqSumData
 !***********************************************************************
 
 
       SUBROUTINE writeAvgoutput_fl
        USE global
 !!tec       USE mod_tecio
-       INTEGER, PARAMETER :: rk = selected_real_kind(8) 
+       INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER*70  filename1
        CHARACTER*70  filename2
-       INTEGER  :: k, i, j, g   
-       REAL (KIND = 8) :: u_avg1, v_avg1, w_avg1    
+       INTEGER  :: k, i, j, g
+       REAL (KIND = 8) :: u_avg1, v_avg1, w_avg1
 !!tec         CHARACTER*1 NULLCHR
 !!tec       INTEGER*4 iStat, FileFormat, FileType, Debug, VIsDouble
 !!tec       integer*4 ZoneType, IMax, JMax, KMax, ICellMax, JCellMax,KCellMax
@@ -892,20 +892,20 @@
 !!tec     !iStat = tecDat142(nTotalPts,     zp(2:nz_var,4)    , 0)
 !!tec     iStat = tecDat142(nTotalPts, real(  block(g)%pflu_rms(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),0)
 !!tec     !iStat = tecDat142(nTotalPts, real( dmiu(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),     0)
-!!tec     iStat = tecDat142(nTotalPts, real( block(g)%cell(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),0)    
+!!tec     iStat = tecDat142(nTotalPts, real( block(g)%cell(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),0)
 !!tec     iStat = tecDat142(nTotalPts, real(un1(2:nx_var+1,2:ny_var+1,2:nz_var+1),4), 0)
 !!tec     iStat = tecDat142(nTotalPts, real(vn1(2:nx_var+1,2:ny_var+1,2:nz_var+1),4), 0)
 !!tec     iStat = tecDat142(nTotalPts, real(wn1(2:nx_var+1,2:ny_var+1,2:nz_var+1),4), 0)
 !!tec     iStat = tecEnd142()
 !!tec
 !!tec       DEALLOCATE(un1,vn1,wn1)
-!!tec      end do   
+!!tec      end do
 
-           DO g=1,nblocks 
+           DO g=1,nblocks
            WRITE(filename1,1) ita1, g
 1          FORMAT('avgout/fielddata.',i9.9,'.',i3.3,".dat")
            OPEN(UNIT = 786, FILE = filename1, STATUS = 'unknown')
-           WRITE(786,*)'variables= "x","y","z","u_avg","v_avg","w_avg","p_avg","totime","cellid"'	    	     
+           WRITE(786,*)'variables= "x","y","z","u_avg","v_avg","w_avg","p_avg","totime","cellid"'
            WRITE(786,*) 'zone, ', 'i = ', block(g)%nx,' j = ', block(g)%ny, ' k = ', block(g)%nz
            !k = block(g)%nz/2
            DO 30 k = 2, block(g)%nz+1
@@ -914,16 +914,16 @@
               u_avg1 = 0.5*(block(g)%u_avg(i,j,k)+block(g)%u_avg(i-1,j,k))
               v_avg1 = 0.5*(block(g)%v_avg(i,j,k)+block(g)%v_avg(i,j-1,k))
               w_avg1 = 0.5*(block(g)%w_avg(i,j,k)+block(g)%w_avg(i,j,k-1))
-              WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u_avg1, v_avg1, w_avg1, block(g)%p_avg(i,j,k), totime, block(g)%cell(i,j,k)      
-30         CONTINUE 
-           CLOSE(786)    
-           END DO  
+              WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u_avg1, v_avg1, w_avg1, block(g)%p_avg(i,j,k), totime, block(g)%cell(i,j,k)
+30         CONTINUE
+           CLOSE(786)
+           END DO
       END SUBROUTINE writeAvgoutput_fl
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE write_fl_points
 
-       USE global 
- 
+       USE global
+
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER*150  filename1
        CHARACTER*150  filename2
@@ -933,20 +933,20 @@
         g=1
 
 
-           if ( mod(block(g)%nx+1,2) .eq. 0) then 
+           if ( mod(block(g)%nx+1,2) .eq. 0) then
                 i=(block(g)%nx+1)/2
            else
-               
+
                 i=((block(g)%nx+1)/2) +1
            endif
 
-           if ( mod(block(g)%nz+1,2) .eq. 0) then 
+           if ( mod(block(g)%nz+1,2) .eq. 0) then
                 k=(block(g)%nz+1)/2
            else
-               
+
                 k=((block(g)%nz+1)/2) +1
            endif
-     
+
  126      FORMAT(' ',7F15.7)
             do n=1,block(g)%ny+2
 
@@ -955,7 +955,7 @@
                         exit
                 end if
             enddo
-        
+
                 uu= block(g)%u(i,j,k)**2
                 vv= block(g)%v(i,j,k)**2
                 ww= block(g)%w(i,j,k)**2
@@ -967,7 +967,7 @@
  1          FORMAT('out/fl_val_',i6.6,'.dat')
          OPEN(111,FILE=filename1,ACCESS='Append',STATUS='unknown')
          WRITE(111,126)  uu,vv,ww,uv,vw,wu, totime
-         CLOSE(111)	 
+         CLOSE(111)
 
 
             do n=1,block(g)%ny+2
@@ -977,7 +977,7 @@
                         exit
                 end if
             enddo
-        
+
                 uu= block(g)%u(i,j,k)**2
                 vv= block(g)%v(i,j,k)**2
                 ww= block(g)%w(i,j,k)**2
@@ -989,7 +989,7 @@
  11          FORMAT('out/fl_val_',i6.6,'.dat')
          OPEN(111,FILE=filename1,ACCESS='Append',STATUS='unknown')
          WRITE(111,126)  uu,vv,ww,uv,vw,wu, totime
-         CLOSE(111)	 
+         CLOSE(111)
 
 
 
@@ -1000,7 +1000,7 @@
                         exit
                 end if
             enddo
-        
+
                 uu= block(g)%u(i,j,k)**2
                 vv= block(g)%v(i,j,k)**2
                 ww= block(g)%w(i,j,k)**2
@@ -1012,7 +1012,7 @@
  111          FORMAT('out/fl_val_',i6.6,'.dat')
          OPEN(111,FILE=filename1,ACCESS='Append',STATUS='unknown')
          WRITE(111,126)  uu,vv,ww,uv,vw,wu, totime
-         CLOSE(111)	 
+         CLOSE(111)
 
             do n=1,block(g)%ny+2
 
@@ -1021,7 +1021,7 @@
                         exit
                 end if
             enddo
-        
+
                 uu= block(g)%u(i,j,k)**2
                 vv= block(g)%v(i,j,k)**2
                 ww= block(g)%w(i,j,k)**2
@@ -1033,22 +1033,22 @@
  1111    FORMAT('out/fl_val_',i6.6,'.dat')
          OPEN(111,FILE=filename1,ACCESS='Append',STATUS='unknown')
          WRITE(111,126)  uu,vv,ww,uv,vw,wu, totime
-         CLOSE(111)	
+         CLOSE(111)
 
 
- 
+
           g=2
-           if ( mod(block(g)%nx+1,2) .eq. 0) then 
+           if ( mod(block(g)%nx+1,2) .eq. 0) then
                 i=(block(g)%nx+1)/2
            else
-               
+
                 i=((block(g)%nx+1)/2) +1
            endif
 
-           if ( mod(block(g)%nz+1,2) .eq. 0) then 
+           if ( mod(block(g)%nz+1,2) .eq. 0) then
                 k=(block(g)%nz+1)/2
            else
-               
+
                 k=((block(g)%nz+1)/2) +1
            endif
 
@@ -1059,7 +1059,7 @@
                         exit
                 end if
             enddo
-        
+
                 uu= block(g)%u(i,j,k)**2
                 vv= block(g)%v(i,j,k)**2
                 ww= block(g)%w(i,j,k)**2
@@ -1071,7 +1071,7 @@
 11111    FORMAT('out/fl_val_',i6.6,'.dat')
          OPEN(111,FILE=filename1,ACCESS='Append',STATUS='unknown')
          WRITE(111,126)  uu,vv,ww,uv,vw,wu, totime
-         CLOSE(111)	 
+         CLOSE(111)
 
 
         END SUBROUTINE
@@ -1079,11 +1079,11 @@
 !!      SUBROUTINE writeOutput
 !!       USE global
 !!       USE mod_tecio
-!!       INTEGER, PARAMETER :: rk = selected_real_kind(8) 
+!!       INTEGER, PARAMETER :: rk = selected_real_kind(8)
 !!       CHARACTER*120  filename1
 !!       CHARACTER*70  filename2
-!!       INTEGER  :: k, i, j  ,g 
-!!       REAL (KIND = 8) :: u1, v1, w1       
+!!       INTEGER  :: k, i, j  ,g
+!!       REAL (KIND = 8) :: u1, v1, w1
 !!
 !!         CHARACTER*1 NULLCHR
 !!       INTEGER*4 iStat, FileFormat, FileType, Debug, VIsDouble
@@ -1095,13 +1095,13 @@
 !!       real*8    SolTime
 !!       REAL (KIND = 8), ALLOCATABLE, DIMENSION(:,:,:) :: un1, vn1, wn1, pn1
 !!
-!!        IF(mod(ita,2).EQ.0 )THEN        
+!!        IF(mod(ita,2).EQ.0 )THEN
 !!        DO g=1,nblocks
 !!!           WRITE(filename1,1) ita,g
 !!!1          FORMAT('out/w_fielddata.',i9.9,'.',i3.3,".dat")
 !!!           OPEN(UNIT = 786, FILE = filename1, STATUS = 'unknown')
-!!!           WRITE(786,*)'variables= "x","y","z","u","v","w","p","totime","cellid"'	    	     
-!!!           WRITE(786,*) 'zone, ', 'i = ', block(g)%nx+1,' j = ', block(g)%ny+1, ' k = ', block(g)%nz+1   
+!!!           WRITE(786,*)'variables= "x","y","z","u","v","w","p","totime","cellid"'
+!!!           WRITE(786,*) 'zone, ', 'i = ', block(g)%nx+1,' j = ', block(g)%ny+1, ' k = ', block(g)%nz+1
 !!            !k = block(g)%nz/2
 !!       nx_var=block(g)%nx
 !!       ny_var=block(g)%ny
@@ -1141,7 +1141,7 @@
 !!             p_new2=bl_interp_ans
 !!
 !!
-!!             
+!!
 !!             l_intp_valx=block(g)%z1(k+1)
 !!             l_intp_x1= 0.5*(block(g)%z1(k)+block(g)%z1(k+1))
 !!             l_intp_x2= 0.5*(block(g)%z1(k+1)+block(g)%z1(k+2))
@@ -1199,10 +1199,10 @@
 !!             pn1(i,j,k)=p_final
 !!
 !!
-!!              ! WRITE(786,*) block(g)%x1(i+1), block(g)%y1(j+1), block(g)%z1(k+1), u_new, v_new, w_new, p_final, totime, block(g)%cell(i,j,k)           
-!!             
-!! 30         CONTINUE 
-!!             CLOSE(786) 
+!!              ! WRITE(786,*) block(g)%x1(i+1), block(g)%y1(j+1), block(g)%z1(k+1), u_new, v_new, w_new, p_final, totime, block(g)%cell(i,j,k)
+!!
+!! 30         CONTINUE
+!!             CLOSE(786)
 !!      WRITE(filename1,1)ita,g,re
 !!1     FORMAT('out/w_fielddata.',i9.9,'.',i3.3,'.',f6.1,".plt")
 !!     NULLCHR = CHAR(0)
@@ -1276,14 +1276,14 @@
 !!     !iStat = tecDat142(nTotalPts,     zp(2:nz_var,4)    , 0)
 !!     iStat = tecDat142(nTotalPts, real(  pn1(1:nx_var+1,1:ny_var+1,1:nz_var+1),4),0)
 !!     !iStat = tecDat142(nTotalPts, real( dmiu(2:nx_var+1,2:ny_var+1,2:nz_var+1),4),     0)
-!!     iStat = tecDat142(nTotalPts, real( block(g)%cell(1:nx_var+1,1:ny_var+1,1:nz_var+1),4),0)    
+!!     iStat = tecDat142(nTotalPts, real( block(g)%cell(1:nx_var+1,1:ny_var+1,1:nz_var+1),4),0)
 !!     iStat = tecDat142(nTotalPts, real(un1(1:nx_var+1,1:ny_var+1,1:nz_var+1),4), 0)
 !!     iStat = tecDat142(nTotalPts, real(vn1(1:nx_var+1,1:ny_var+1,1:nz_var+1),4), 0)
 !!     iStat = tecDat142(nTotalPts, real(wn1(1:nx_var+1,1:ny_var+1,1:nz_var+1),4), 0)
 !!     iStat = tecEnd142()
 !!
 !!       DEALLOCATE(un1,vn1,wn1,pn1)
-!!        END DO     
-!!         ENDIF        
+!!        END DO
+!!         ENDIF
 !!      END SUBROUTINE writeOutput
 !!!cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
