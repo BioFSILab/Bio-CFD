@@ -213,6 +213,6 @@
 !           block(f)%A(counter,4)=block(f)%A(counter,4) + block(f)%A(counter,3)
 !           block(f)%A(counter,3)= 0.
 
-      END SUBROUTINE
+      end subroutine coefficientMatrix
 
 

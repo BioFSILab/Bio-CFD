@@ -17,7 +17,7 @@
         bl_interp_ans=(bl_intp_num/bl_intp_deno)
 
 
-        END SUBROUTINE
+        end subroutine billinearInterp
 
 
         SUBROUTINE distancePts(d_fine_x1, d_fine_y1,d_coarse_x1,d_coarse_y1, d_val_x1, d_val_y1,d_fine_frac,d_coarse_frac)
@@ -32,7 +32,7 @@
         d_coarse_frac=fine_d/tot_d
         d_fine_frac=1-d_fine_frac
 
-        END SUBROUTINE
+        end subroutine distancePts
 
         SUBROUTINE linearInterp(l_intp_valx, l_intp_x1,l_intp_x2, l_intp_y1, l_intp_y2, l_intp_valy)
 
@@ -44,4 +44,4 @@
         !print*,'valx',l_intp_valx,'x1',l_intp_x1,'x2',l_intp_x2,'varr',varr,'1-varr',1-varr
         l_intp_valy=(l_intp_y1*(1.-varr))+(l_intp_y2*varr)
 
-        END SUBROUTINE
+        end subroutine linearInterp
