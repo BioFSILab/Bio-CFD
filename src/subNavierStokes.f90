@@ -663,8 +663,8 @@
 !c***********************************************************************
       !write(6,*)'has entered nseqcp'   
 	  IMPLICIT NONE
-	  INTEGER :: i, j, k, g, n ,nx_var,ny_var,nz_var, n1, nn, i11, j11, k11, index_ip1, index_im1, index_jp1, index_jm1, index_kp1, index_km1
-	  REAL :: dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14, &
+	  INTEGER (KIND = 8) :: i, j, k, g, n ,nx_var,ny_var,nz_var, n1, nn, i11, j11, k11, index_ip1, index_im1, index_jp1, index_jm1, index_kp1, index_km1
+	  REAL (KIND = 8) :: dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14, &
 	          u15,u16,v1a,v22,v3,v4,v5,v6,v7,v8,v9,v10,v11,v12,v13,v14,v15,v16, &
 			  w1a,w22,w3,w4,w5,w6,w7,w8,w9,w10,w11,w12,w13,w14,w15,w16,dx2xr, &
 			  dx2xl,dy2ye,dy2yw, dxr, dx, dxl, dye, dy, dyw, dzt, dz, dzb, &
