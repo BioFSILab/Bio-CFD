@@ -572,7 +572,7 @@
         INTEGER :: st_idx, en_idx
         INTEGER :: st_idy, en_idy
         INTEGER :: st_idz, en_idz
-        CHARACTER*150 filename1
+        CHARACTER(len=150) filename1
 
        !bl_intp_deno= (bl_intp_x2-bl_intp_x1) * (bl_intp_y2-bl_intp_y1)
        !bl_intp_xtx= (bl_intp_x2 -bl_intp_valx)
