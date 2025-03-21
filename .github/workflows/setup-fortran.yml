@@ -1,0 +1,35 @@
+name: Setup Fortran
+
+on:
+  pull_requests:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        toolchain:
+          - {compiler: gcc, version: 13}
+          - {compiler: intel, version: '2025.0'}
+          - {compiler: intel-classic, version: '2021.10'}
+          - {compiler: nvidia-hpc, version: '25.1'}
+          - {compiler: lfortran, version: '0.45.0'}
+    steps:
+      - uses: fortran-lang/setup-fortran@v1
+        id: setup-fortran
+        with:
+          compiler: ${{ matrix.toolchain.compiler }}
+          version: ${{ matrix.toolchain.version }}
+
+      - run: |
+          ${{ env.FC }} ... # environment vars FC, CC, and CXX are set
+          ${{ steps.setup-fortran.outputs.fc }} ... # outputs work too
