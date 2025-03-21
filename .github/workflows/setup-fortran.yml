@@ -24,6 +24,9 @@ jobs:
           - {compiler: nvidia-hpc, version: '25.1'}
           - {compiler: lfortran, version: '0.45.0'}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: fortran-lang/setup-fortran@v1
         id: setup-fortran
         with:
