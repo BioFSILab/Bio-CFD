@@ -121,19 +121,19 @@
 !***********************interpolation points****************************
        !!$acc loop seq
        do i = 2, block(g)%nx+1
-       if((block(g)%xcent(ielem).ge.block(g)%x1(i)).and.(block(g)%xcent(ielem).lt.block(g)%x1(i+1)))then
+       if((block(g)%xcent(ielem)>=block(g)%x1(i)).and.(block(g)%xcent(ielem)<block(g)%x1(i+1)))then
        i_cell = i
        end if
        end do
        !!$acc loop seq
        do j = 2, block(g)%ny+1
-       if((block(g)%ycent(ielem).ge.block(g)%y1(j)).and.(block(g)%ycent(ielem).lt.block(g)%y1(j+1)))then
+       if((block(g)%ycent(ielem)>=block(g)%y1(j)).and.(block(g)%ycent(ielem)<block(g)%y1(j+1)))then
        j_cell = j
        end if
        end do
        !!$acc loop seq
        do k = 2, block(g)%nz+1
-       if((block(g)%zcent(ielem).ge.block(g)%z1(k)).and.(block(g)%zcent(ielem).lt.block(g)%z1(k+1)))then
+       if((block(g)%zcent(ielem)>=block(g)%z1(k)).and.(block(g)%zcent(ielem)<block(g)%z1(k+1)))then
        k_cell = k
        end if
        end do
@@ -158,7 +158,7 @@
 	pos1_z = zsurf + normdis*block(g)%cosGamma(ielem)
 
 !**************************velocity and pressure at the surface**********************
-       IF (block(g)%ibSurfID(ielem).EQ.50) THEN
+       IF (block(g)%ibSurfID(ielem)==50) THEN
         block(g)% thetaDot  =  0.
         block(g)% thetaDDot =  0.
          usurf     =  0.
@@ -168,7 +168,7 @@
          ac_y      =  0.!-thetaDot**2*(ycent(nelp(index_ts(n))) - piv_y)
          at_z      =  0.! thetaDDot*(ycent(nelp(index_ts(n))) - piv_y)
          at_y      =  0.!
-       ELSEIF (block(g)%ibSurfID(ielem).EQ.51) THEN
+       ELSEIF (block(g)%ibSurfID(ielem)==51) THEN
         block(g)% thetaDot  = block(g)% thetaDot1
 	     block(g)% thetaDDot = block(g)% thetaDDot1
          !usurf     =  0.
@@ -178,7 +178,7 @@
          ac_y      = -block(g)%thetaDot**2*(block(g)%ycent(ielem) -block(g)% piv_y)
          at_z      = block(g)% thetaDDot*(block(g)%ycent(ielem)-block(g)% piv_y)
          at_y      = -block(g)%thetaDDot*(block(g)%zcent(ielem)-block(g)% piv_z)
-       ELSEIF (block(g)%ibSurfId(ielem).EQ.52) THEN
+       ELSEIF (block(g)%ibSurfId(ielem)==52) THEN
 	     block(g)% thetaDot  = block(g)% thetaDot2
 	     block(g)% thetaDDot = block(g)% thetaDDot2
          !usurf     =  0.
@@ -198,15 +198,15 @@
 !******************u velocity interpolation at point 2******************
        !!$acc loop seq
        DO i = 2, block(g)%nx+1
-       if(pos1_x.ge.block(g)%xu(i).and.pos1_x.lt.block(g)%xu(i+1)) i_x1 = i
+       if(pos1_x>=block(g)%xu(i).and.pos1_x<block(g)%xu(i+1)) i_x1 = i
        END DO
 	!!$acc loop seq
        DO j = 2, block(g)%ny+1
-       if(pos1_y.ge.block(g)%yu(j).and.pos1_y.lt.block(g)%yu(j+1)) i_y1 = j
+       if(pos1_y>=block(g)%yu(j).and.pos1_y<block(g)%yu(j+1)) i_y1 = j
        END DO
 	!!$acc loop seq
        DO k = 2, block(g)%nz+1
-       if(pos1_z.ge.block(g)%zu(k).and.pos1_z.lt.block(g)%zu(k+1)) i_z1 = k
+       if(pos1_z>=block(g)%zu(k).and.pos1_z<block(g)%zu(k+1)) i_z1 = k
        END DO
 
        block(g)%ucell(ielem,1) = i_x1
@@ -262,15 +262,15 @@
 !******************v velocity interpolation in point 2******************
        !!$acc loop seq
        DO i = 2, block(g)%nx+1
-       if(pos1_x.ge.block(g)%xv(i).and.pos1_x.lt.block(g)%xv(i+1)) i_x1 = i
+       if(pos1_x>=block(g)%xv(i).and.pos1_x<block(g)%xv(i+1)) i_x1 = i
        END DO
 	!!$acc loop seq
        DO j = 2, block(g)%ny+1
-       if(pos1_y.ge.block(g)%yv(j).and.pos1_y.lt.block(g)%yv(j+1)) i_y1 = j
+       if(pos1_y>=block(g)%yv(j).and.pos1_y<block(g)%yv(j+1)) i_y1 = j
        END DO
        !!$acc loop seq
        DO k = 2, block(g)%nz+1
-       if(pos1_z.ge.block(g)%zv(k).and.pos1_z.lt.block(g)%zv(k+1)) i_z1 = k
+       if(pos1_z>=block(g)%zv(k).and.pos1_z<block(g)%zv(k+1)) i_z1 = k
        END DO
 
 	block(g)%vcell(ielem,1) = i_x1
@@ -327,15 +327,15 @@
 !******************w velocity interpolation in point 2******************
        !!$acc loop seq
        DO i = 2, block(g)%nx+1
-       if(pos1_x.ge.block(g)%xw(i).and.pos1_x.lt.block(g)%xw(i+1)) i_x1 = i
+       if(pos1_x>=block(g)%xw(i).and.pos1_x<block(g)%xw(i+1)) i_x1 = i
        END DO
 	!!$acc loop seq
        DO j = 2, block(g)%ny+1
-       if(pos1_y.ge.block(g)%yw(j).and.pos1_y.lt.block(g)%yw(j+1)) i_y1 = j
+       if(pos1_y>=block(g)%yw(j).and.pos1_y<block(g)%yw(j+1)) i_y1 = j
        END DO
        !!$acc loop seq
        DO k = 2, block(g)%nz+1
-       if(pos1_z.ge.block(g)%zw(k).and.pos1_z.lt.block(g)%zw(k+1)) i_z1 = k
+       if(pos1_z>=block(g)%zw(k).and.pos1_z<block(g)%zw(k+1)) i_z1 = k
        END DO
 
 	block(g)%wcell(ielem,1) = i_x1
@@ -427,15 +427,15 @@
 !*******************pressure interpolation at point 2*******************
        !$acc loop seq
        DO i = 2, block(g)%nx+1
-       if(pos1_x.ge.block(g)%xp(i).and.pos1_x.lt.block(g)%xp(i+1)) i_x1 = i
+       if(pos1_x>=block(g)%xp(i).and.pos1_x<block(g)%xp(i+1)) i_x1 = i
        END DO
 	!$acc loop seq
        DO j = 2, block(g)%ny+1
-       if(pos1_y.ge.block(g)%yp(j).and.pos1_y.lt.block(g)%yp(j+1)) i_y1 = j
+       if(pos1_y>=block(g)%yp(j).and.pos1_y<block(g)%yp(j+1)) i_y1 = j
        END DO
 	!$acc loop seq
        DO k = 1, block(g)%nz+2
-       if(pos1_z.ge.block(g)%zp(k).and.pos1_z.lt.block(g)%zp(k+1)) i_z1 = k
+       if(pos1_z>=block(g)%zp(k).and.pos1_z<block(g)%zp(k+1)) i_z1 = k
        END DO
 
        block(g)%pcell(ielem,1) = i_x1

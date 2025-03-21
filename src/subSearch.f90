@@ -11,18 +11,18 @@
         dist1=999999.
         dist2=0.
         DO i = 1, block(g)%ibnodes
-        IF (block(g)%ibNodeId(i).EQ.51) THEN
-                if (abs(block(g)%znode(i)) .gt. dist)then
+        IF (block(g)%ibNodeId(i)==51) THEN
+                if (abs(block(g)%znode(i)) > dist)then
                         dist=block(g)%znode(i)
                         block(g)%mk=i
                 endif
         ENDIF
-        IF (block(g)%ibNodeId(i).EQ.51) THEN
-                if (abs(block(g)%xnode(i)) .lt. dist1)then
+        IF (block(g)%ibNodeId(i)==51) THEN
+                if (abs(block(g)%xnode(i)) < dist1)then
                         dist1=block(g)%xnode(i)
                         block(g)%mkx1=i
                 endif
-                if (abs(block(g)%xnode(i)) .gt. dist2)then
+                if (abs(block(g)%xnode(i)) > dist2)then
                         dist2=block(g)%xnode(i)
                         block(g)%mkx2=i
                 endif
@@ -141,7 +141,7 @@
        !!$acc parallel loop gang vector present (xnode1, ynode1, znode1, xnode, ynode, znode) &
        !!$acc private (xr, yr, zr) firstprivate (xshift, block(g)%yshift, block(g)%zshift)
         DO i = 1, block(g)%ibnodes
-        IF (block(g)%ibNodeId(i).EQ.51) THEN
+        IF (block(g)%ibNodeId(i)==51) THEN
             xr1 =  block(g)%xnode(i)
           !!zr1 =  zShift +(block(g)%ynode(i)-yShift)*sin(aoa1) + (block(g)%znode(i)-zShift)*cos(aoa1)
           !!yr1 =  yShift +(block(g)%ynode(i)-yShift)*cos(aoa1) - (block(g)%znode(i)-zShift)*sin(aoa1)
@@ -150,7 +150,7 @@
             !!xr1 =  block(g)%xnode(i)
             !!zr1 = block(g)% znode(i)*cos(theta_t) +block(g)% ynode(i)*sin(theta_t) + piv_pt - piv_pt*cos(theta_t)
             !!yr1 = -block(g)%znode(i)*sin(theta_t) +block(g)% ynode(i)*cos(theta_t) + piv_pt*sin(theta_t)
-         ELSEIF (block(g)%ibNodeId(i).EQ.52) THEN
+         ELSEIF (block(g)%ibNodeId(i)==52) THEN
              !xr1 = block(g)% xnode(i)
              !zr1 = block(g)% znode(i)*cos(-theta_t) +block(g)% ynode(i)*sin(-theta_t) + piv_pt - piv_pt*cos(-theta_t)
              !yr1 = -block(g)%znode(i)*sin(-theta_t) +block(g)% ynode(i)*cos(-theta_t) + piv_pt*sin(-theta_t)
@@ -271,7 +271,7 @@
         print*,'centn',block(g)%nxty_cent,'centi',block(g)%inity_cent,'mv',block(g)%ychg
        !!$acc parallel loop gang vector default(present) private(xr1,yr1,zr1) firstprivate(aoa1,aoa,piv_pt,g, xshift, block(g)%yshift, block(g)%zshift)
       DO i = 1, block(g)%ibnodes
-      IF (block(g)%ibNodeId(i).EQ.51) THEN
+      IF (block(g)%ibNodeId(i)==51) THEN
              xr1 =  block(g)%xnode(i)
              zr1 =  block(g)%znode(i)*cos(aoa1) + block(g)%ynode(i)*sin(aoa1) + piv_pt - piv_pt*cos(aoa1)
              yr1 = -block(g)%znode(i)*sin(aoa1) + block(g)%ynode(i)*cos(aoa1) + piv_pt*sin(aoa1)
@@ -283,7 +283,7 @@
              !xnode1(i) = xr + piv_pt - piv_pt*cos(aoa1) + xshift
              !ynode1(i) = yr + piv_pt*sin(aoa1) + yt + block(g)%yshift
              !znode1(i) = znode(i) + block(g)%zshift
-         ELSEIF (block(g)%ibNodeId(i).EQ.52) THEN
+         ELSEIF (block(g)%ibNodeId(i)==52) THEN
              xr1 =  block(g)%xnode(i)
              zr1 =  block(g)%znode(i)*cos(aoa2) + block(g)%ynode(i)*sin(aoa2)  + piv_pt - piv_pt*cos(aoa2)
              yr1 = -block(g)%znode(i)*sin(aoa2) + block(g)%ynode(i)*cos(aoa2)  + piv_pt*sin(aoa2)
@@ -473,12 +473,12 @@
            cent_z = block(g)%zcent(m)
               dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
               dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
-              IF (dis_cen.LT.minDis) THEN
+              IF (dis_cen<minDis) THEN
                 !print*,'1',i,j,k
                  minDis    = dis_cen
                  nel2Cen   = m
               ENDIF
-              IF (dis_pnt.LT.minDis1) THEN
+              IF (dis_pnt<minDis1) THEN
                 !print*,'2',i,j,k
                  minDis1   = dis_pnt
                  nel2Pnt   = m
@@ -486,9 +486,9 @@
            ENDDO
             !    write(*,*)block(g)%x1(i),xcent(nel2Cen)
  ! 112          FORMAT(' ',I8,' ',I8,' ',I8,' ',I8)
-            IF((block(g)%x1(i).LE.block(g)%xcent(nel2Cen).AND.block(g)%x1(i+1).GE.block(g)%xcent(nel2Cen)).AND. &
-                (block(g)%y1(j).LE.block(g)%ycent(nel2Cen).AND.block(g)%y1(j+1).GE.block(g)%ycent(nel2Cen)).AND. &
-                (block(g)%z1(k).LE.block(g)%zcent(nel2Cen).AND.block(g)%z1(k+1).GE.block(g)%zcent(nel2Cen))) THEN
+            IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen).AND.block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
+                (block(g)%y1(j)<=block(g)%ycent(nel2Cen).AND.block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
+                (block(g)%z1(k)<=block(g)%zcent(nel2Cen).AND.block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
                 !print*,i,j,k
                 block(g)%cell(i,j,k) = 2
 
@@ -498,7 +498,7 @@
                           (n2y - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
                           (n2z - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
 
-           IF (n2dotn.GE.-1e-16) THEN
+           IF (n2dotn>=-1e-16) THEN
               block(g)%nodeIdTag(i,j,k) = 0
            ELSE
               block(g)%nodeIdTag(i,j,k) = 1
@@ -510,13 +510,13 @@
            DO 20 k = block(g)%k_startSearch, block(g)%k_endSearch
            DO 20 j = block(g)%j_startSearch, block(g)%j_endSearch
            DO 20 i = block(g)%i_startSearch, block(g)%i_endSearch
-           IF (block(g)%cell(i,j,k).NE.2) THEN
+           IF (block(g)%cell(i,j,k)/=2) THEN
               sumNodeId = 0
               sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
                         + block(g)%nodeIdTag(i,j+1,k)    + block(g)%nodeIdTag(i+1,j+1,k)   &
                         + block(g)%nodeIdTag(i,j,k+1)    + block(g)%nodeIdTag(i+1,j,k+1)     &
                         + block(g)%nodeIdTag(i,j+1,k+1)  + block(g)%nodeIdTag(i+1,j+1,k+1)
-              IF (sumNodeId.EQ.8) THEN
+              IF (sumNodeId==8) THEN
                  block(g)%cell(i,j,k) = 1
               ENDIF
            ENDIF
@@ -546,11 +546,11 @@
          DO 30 j = 2, block(g)%ny+1
          DO 30 i = 2, block(g)%nx+1
             !n       = i-1  + nx*(j-2)  + nx*ny*(k-2)
-            IF (block(g)%cell(i,j,k).eq.1) THEN
+            IF (block(g)%cell(i,j,k)==1) THEN
                 block(g)%solidCellCount = block(g)%solidCellCount + 1
-            ELSEIF (block(g)%cell(i,j,k).eq.0) THEN
+            ELSEIF (block(g)%cell(i,j,k)==0) THEN
                block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
-            ELSEIF (block(g)%cell(i,j,k).eq.2) THEN
+            ELSEIF (block(g)%cell(i,j,k)==2) THEN
                 block(g)%ibCellCount = block(g)%ibCellCount + 1
             ENDIF
  30      CONTINUE
@@ -565,7 +565,7 @@
        do j = 2, block(g)%ny+1
        do i = 2, block(g)%nx+1
     n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-       if(block(g)%cell(i,j,k).eq.2)then
+       if(block(g)%cell(i,j,k)==2)then
        write(82,*) block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), block(g)%cell(i,j,k)
        endif
        end do
@@ -581,7 +581,7 @@
        do j = 2,block(g)% ny+1
        do i = 2, block(g)%nx+1
     n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-       if(block(g)%cell(i,j,k).eq.0)then
+       if(block(g)%cell(i,j,k)==0)then
        write(83,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 0
        endif
        end do
@@ -597,7 +597,7 @@
        do j = 2, block(g)%ny+1
        do i = 2, block(g)%nx+1
     n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-       if(block(g)%cell(i,j,k).eq.1)then
+       if(block(g)%cell(i,j,k)==1)then
        write(84,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 1
        endif
        end do
@@ -636,7 +636,7 @@
         !g=2
         !g=2
         DO g=blk_start,nblocks
-        if ( block(g)%move_check .eq. 1)then
+        if ( block(g)%move_check == 1)then
             block(g)% ibCellCount = 0
         block(g)%fluidCellCount = 0
         block(g)% solidCellCount = 0
@@ -672,12 +672,12 @@
            cent_z = block(g)%zcent(m)
               dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
               dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
-              IF (dis_cen.LT.minDis) THEN
+              IF (dis_cen<minDis) THEN
                 !print*,'1',i,j,k
                  minDis    = dis_cen
                  nel2Cen   = m
               ENDIF
-              IF (dis_pnt.LT.minDis1) THEN
+              IF (dis_pnt<minDis1) THEN
                 !print*,'2',i,j,k
                  minDis1   = dis_pnt
                  nel2Pnt   = m
@@ -685,9 +685,9 @@
            ENDDO
             !    write(*,*)block(g)%x1(i),xcent(nel2Cen)
  ! 112          FORMAT(' ',I8,' ',I8,' ',I8,' ',I8)
-            IF((block(g)%x1(i).LE.block(g)%xcent(nel2Cen).AND.block(g)%x1(i+1).GE.block(g)%xcent(nel2Cen)).AND. &
-                (block(g)%y1(j).LE.block(g)%ycent(nel2Cen).AND.block(g)%y1(j+1).GE.block(g)%ycent(nel2Cen)).AND. &
-                (block(g)%z1(k).LE.block(g)%zcent(nel2Cen).AND.block(g)%z1(k+1).GE.block(g)%zcent(nel2Cen))) THEN
+            IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen).AND.block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
+                (block(g)%y1(j)<=block(g)%ycent(nel2Cen).AND.block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
+                (block(g)%z1(k)<=block(g)%zcent(nel2Cen).AND.block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
                 !print*,i,j,k
                 block(g)%cell(i,j,k) = 2
 
@@ -697,7 +697,7 @@
                           (n2y - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
                           (n2z - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
 
-           IF (n2dotn.GE.-1e-16) THEN
+           IF (n2dotn>=-1e-16) THEN
               block(g)%nodeIdTag(i,j,k) = 0
            ELSE
               block(g)%nodeIdTag(i,j,k) = 1
@@ -709,13 +709,13 @@
            DO 20 k = block(g)%k_startSearch, block(g)%k_endSearch
            DO 20 j = block(g)%j_startSearch, block(g)%j_endSearch
            DO 20 i = block(g)%i_startSearch, block(g)%i_endSearch
-           IF (block(g)%cell(i,j,k).NE.2) THEN
+           IF (block(g)%cell(i,j,k)/=2) THEN
               sumNodeId = 0
               sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
                         + block(g)%nodeIdTag(i,j+1,k)    + block(g)%nodeIdTag(i+1,j+1,k)   &
                         + block(g)%nodeIdTag(i,j,k+1)    + block(g)%nodeIdTag(i+1,j,k+1)     &
                         + block(g)%nodeIdTag(i,j+1,k+1)  + block(g)%nodeIdTag(i+1,j+1,k+1)
-              IF (sumNodeId.EQ.8) THEN
+              IF (sumNodeId==8) THEN
                  block(g)%cell(i,j,k) = 1
               ENDIF
            ENDIF
@@ -785,11 +785,11 @@
          DO 30 j = 2, block(g)%ny+1
          DO 30 i = 2, block(g)%nx+1
             !n       = i-1  + nx*(j-2)  + nx*ny*(k-2)
-            IF (block(g)%cell(i,j,k).eq.1) THEN
+            IF (block(g)%cell(i,j,k)==1) THEN
                 block(g)%solidCellCount = block(g)%solidCellCount + 1
-            ELSEIF (block(g)%cell(i,j,k).eq.0) THEN
+            ELSEIF (block(g)%cell(i,j,k)==0) THEN
                block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
-            ELSEIF (block(g)%cell(i,j,k).eq.2) THEN
+            ELSEIF (block(g)%cell(i,j,k)==2) THEN
                 block(g)%ibCellCount = block(g)%ibCellCount + 1
             ENDIF
  30      CONTINUE
@@ -804,7 +804,7 @@
        do j = 2, block(g)%ny+1
        do i = 2, block(g)%nx+1
 	n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-       if(block(g)%cell(i,j,k).eq.2)then
+       if(block(g)%cell(i,j,k)==2)then
        write(82,*) block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), block(g)%cell(i,j,k)
        endif
        end do
@@ -820,7 +820,7 @@
        do j = 2,block(g)% ny+1
        do i = 2, block(g)%nx+1
 	n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-       if(block(g)%cell(i,j,k).eq.0)then
+       if(block(g)%cell(i,j,k)==0)then
        write(83,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 0
        endif
        end do
@@ -836,7 +836,7 @@
        do j = 2, block(g)%ny+1
        do i = 2, block(g)%nx+1
 	n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-       if(block(g)%cell(i,j,k).eq.1)then
+       if(block(g)%cell(i,j,k)==1)then
        write(84,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 1
        endif
        end do
@@ -856,7 +856,7 @@
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
 
-        if ( block(b_blk_no)%move_check .eq. 1)then
+        if ( block(b_blk_no)%move_check == 1)then
         !print*,'inside tag_mv'
        call fineUpdate_mv(g)
        call fineUpdate_bd_mv(g)
@@ -926,7 +926,7 @@
                   !block(g)%cell2(i, j, k) = 0
                   !IF(block(g)%cell(i_x1, i_y1, i_z1).EQ.0 .AND. block(g)%cell(i_x2, i_y2, i_z2).EQ.0) block(g)%cell2(i, j, k) = 2
          1  CONTINUE
-         IF(block(g)%ibSurfID(block(g)%nelp(n)).EQ.51.OR.block(g)%ibSurfID(block(g)%nelp(n)).EQ.52) block(g)%cell2(i, j, k) = 2
+         IF(block(g)%ibSurfID(block(g)%nelp(n))==51.OR.block(g)%ibSurfID(block(g)%nelp(n))==52) block(g)%cell2(i, j, k) = 2
 
          10     CONTINUE
         !$acc end parallel
@@ -938,7 +938,7 @@
                  DO 20 k = 2, block(g)%nz+1
                  DO 20 j = 2, block(g)%ny+1
                  DO 20 i = 2, block(g)%nx+1
-                    IF (block(g)%cell2(i,j,k).eq.2) THEN
+                    IF (block(g)%cell2(i,j,k)==2) THEN
                         !block(g)%TSCellCount = block(g)%TSCellCount + 1
                         tscnt = tscnt + 1
                     ENDIF
@@ -956,7 +956,7 @@
                  DO 30 k = 0, block(g)%nz+3
                  DO 30 j = 0, block(g)%ny+3
                  DO 30 i = 0, block(g)%nx+3
-                    IF (block(g)%cell2(i,j,k).eq.2) THEN
+                    IF (block(g)%cell2(i,j,k)==2) THEN
                        iPt1 = iPt1 + 1
                        block(g)%TSIndexPtr(iPt1, 1) = i
                            block(g)%TSIndexPtr(iPt1, 2) = j
@@ -986,7 +986,7 @@
            i1 = block(g)%interceptedIndexPtr(m, 1)
            j1 = block(g)%interceptedIndexPtr(m, 2)
            k1 = block(g)%interceptedIndexPtr(m, 3)
-              IF (i1.EQ.i .AND. j1.EQ.j .AND. k1.EQ.k) THEN
+              IF (i1==i .AND. j1==j .AND. k1==k) THEN
                   block(g)%index_ts(n) = m
               ENDIF
            ENDDO
@@ -1020,7 +1020,7 @@
                do j = 2, block(g)%ny+1
                do i = 2, block(g)%nx+1
         	!n = i-1  + nx*(j-2)  + nx*ny*(k-2)
-                  if(block(g)%cell2(i,j,k).eq.2)then
+                  if(block(g)%cell2(i,j,k)==2)then
                       write(82,*) block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), block(g)%cell2(i,j,k)
                   endif
                end do
@@ -1052,7 +1052,7 @@
         !g=2
         !g=2
        DO g=blk_start,nblocks
-        if( block(g)%blk_mv_tag .eq.0)then
+        if( block(g)%blk_mv_tag ==0)then
 !!!$acc parallel loop present(interceptedIndexPtr, nodeIdTag, xp, yp, zp, x1, y1, z1, xcent, ycent, zcent, cosAlpha, cosBeta, cosGamma, cell)
 !$acc parallel loop gang vector default(present)
         DO nn = 1, block(g)%ibCellCount
@@ -1083,18 +1083,18 @@
            cent_z = block(g)%zcent(m)
               dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
               dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
-              IF (dis_cen.LT.minDis) THEN
+              IF (dis_cen<minDis) THEN
                  minDis    = dis_cen
                  nel2Cen   = m
               ENDIF
-              IF (dis_pnt.LT.minDis1) THEN
+              IF (dis_pnt<minDis1) THEN
                  minDis1   = dis_pnt
                  nel2Pnt   = m
               ENDIF
            ENDDO
-           IF((block(g)%x1(i).LE.block(g)%xcent(nel2Cen).AND.block(g)%x1(i+1).GE.block(g)%xcent(nel2Cen)).AND. &
-               (block(g)%y1(j).LE.block(g)%ycent(nel2Cen).AND.block(g)%y1(j+1).GE.block(g)%ycent(nel2Cen)).AND. &
-               (block(g)%z1(k).LE.block(g)%zcent(nel2Cen).AND.block(g)%z1(k+1).GE.block(g)%zcent(nel2Cen))) THEN
+           IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen).AND.block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
+               (block(g)%y1(j)<=block(g)%ycent(nel2Cen).AND.block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
+               (block(g)%z1(k)<=block(g)%zcent(nel2Cen).AND.block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
                    block(g)%cell(i,j,k) = 2
            ENDIF
 
@@ -1102,7 +1102,7 @@
                           (n2y - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
                           (n2z - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
 
-           IF (n2dotn.GE.-1e-16) THEN
+           IF (n2dotn>=-1e-16) THEN
               block(g)%nodeIdTag(i,j,k) = 0
            ELSE
               block(g)%nodeIdTag(i,j,k) = 1
@@ -1121,13 +1121,13 @@
            DO 15 k = k1-1, k1+1
            DO 15 j = j1-1, j1+1
            DO 15 i = i1-1, i1+1
-             IF (block(g)%cell(i,j,k).NE.2) THEN
+             IF (block(g)%cell(i,j,k)/=2) THEN
                 sumNodeId = 0
                 sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
                           + block(g)%nodeIdTag(i,j+1,k)    + block(g)%nodeIdTag(i+1,j+1,k)   &
                           + block(g)%nodeIdTag(i,j,k+1)    + block(g)%nodeIdTag(i+1,j,k+1)     &
                           + block(g)%nodeIdTag(i,j+1,k+1)  + block(g)%nodeIdTag(i+1,j+1,k+1)
-                IF (sumNodeId.EQ.8) THEN
+                IF (sumNodeId==8) THEN
                    block(g)%cell(i,j,k) = 1
                 ELSE
                    block(g)%cell(i,j,k) = 0
@@ -1231,13 +1231,13 @@ ibcnt=0
          DO 20 j = 2, block(g)%ny+1
          DO 20 i = 2, block(g)%nx+1
             n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-            IF (block(g)%cell(i,j,k).eq.1) THEN
+            IF (block(g)%cell(i,j,k)==1) THEN
                 !block(g)%solidCellCount = block(g)%solidCellCount + 1
                 sdcnt = sdcnt + 1
-            ELSEIF (block(g)%cell(i,j,k).eq.0) THEN
+            ELSEIF (block(g)%cell(i,j,k)==0) THEN
                !block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
                flcnt  = flcnt + 1
-            ELSEIF (block(g)%cell(i,j,k).eq.2) THEN
+            ELSEIF (block(g)%cell(i,j,k)==2) THEN
                ! block(g)%ibCellCount = block(g)%ibCellCount + 1
                 ibcnt = ibcnt + 1
             ENDIF
@@ -1327,17 +1327,17 @@ block(g)%fluidCellCount = flcnt
          DO 30 i = 2, block(g)%nx+1
             !n  = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
 
-            IF (block(g)%cell(i,j,k).eq.0) THEN
+            IF (block(g)%cell(i,j,k)==0) THEN
                iPt1 = iPt1 + 1
                block(g)%fluidIndexPtr(iPt1, 1) = i
                block(g)%fluidIndexPtr(iPt1, 2) = j
                block(g)%fluidIndexPtr(iPt1, 3) = k
-            ELSEIF (block(g)%cell(i,j,k).eq.1) THEN
+            ELSEIF (block(g)%cell(i,j,k)==1) THEN
                iPt2 = iPt2 + 1
                block(g)%solidIndexPtr(iPt2, 1) = i
                block(g)%solidIndexPtr(iPt2, 2) = j
                block(g)%solidIndexPtr(iPt2, 3) = k
-            ELSEIF (block(g)%cell(i,j,k).eq.2) THEN
+            ELSEIF (block(g)%cell(i,j,k)==2) THEN
                iPt = iPt + 1
                block(g)%interceptedIndexPtr(iPt, 1) = i
                block(g)%interceptedIndexPtr(iPt, 2) = j
@@ -1352,7 +1352,7 @@ block(g)%fluidCellCount = flcnt
             j = block(g)%fluidIndexPtr(n, 2)
 	     k = block(g)%fluidIndexPtr(n, 3)
 
-            IF (mod(i+j+k,2).EQ.1) THEN
+            IF (mod(i+j+k,2)==1) THEN
                block(g)%redCellCount = block(g)%redCellCount + 1
             ELSE
                block(g)%blackCellCount = block(g)%blackCellCount + 1
@@ -1366,7 +1366,7 @@ block(g)%fluidCellCount = flcnt
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
 
-            IF (mod(i+j+k,2).EQ.1) THEN
+            IF (mod(i+j+k,2)==1) THEN
                iPt = iPt + 1
                block(g)%redCellIndexPtr(iPt, 1) = i
                block(g)%redCellIndexPtr(iPt, 2) = j
@@ -1443,7 +1443,7 @@ block(g)%fluidCellCount = flcnt
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
-            IF (mod(i+j,2).EQ.1) THEN
+            IF (mod(i+j,2)==1) THEN
                !block(g)%redCellCount = block(g)%redCellCount + 1
                rccount = rccount + 1
             ELSE
@@ -1463,7 +1463,7 @@ block(g)%fluidCellCount = flcnt
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
-            IF (mod(i+j+k,2).EQ.1) THEN
+            IF (mod(i+j+k,2)==1) THEN
                iPt = iPt + 1
                block(g)%redCellIndexPtr(iPt, 1) = i
                block(g)%redCellIndexPtr(iPt, 2) = j
@@ -1543,31 +1543,31 @@ block(g)%fluidCellCount = flcnt
               dis4  = dsqrt( (n3y-cent_y)**2 + (n1x-cent_x)**2 + (n1z-cent_z)**2 )
               dis5  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2 + (n2z-cent_z)**2 )
               dis6  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2 + (n3z-cent_z)**2 )
-	       IF (dis.LT.minDis) THEN
+	       IF (dis<minDis) THEN
                  minDis   = dis
                  nel2p    = m
               ENDIF
-              IF (dis1.LT.minDis1) THEN
+              IF (dis1<minDis1) THEN
                  minDis1   = dis1
                  nel2u1    = m
               ENDIF
-              IF (dis2.LT.minDis2) THEN
+              IF (dis2<minDis2) THEN
                  minDis2   = dis2
                  nel2u2    = m
               ENDIF
-              IF (dis3.LT.minDis3) THEN
+              IF (dis3<minDis3) THEN
                  minDis3   = dis3
                  nel2v1    = m
               ENDIF
-              IF (dis4.LT.minDis4) THEN
+              IF (dis4<minDis4) THEN
                  minDis4   = dis4
                  nel2v2    = m
               ENDIF
-              IF (dis5.LT.minDis5) THEN
+              IF (dis5<minDis5) THEN
                  minDis5   = dis5
                  nel2w1    = m
               ENDIF
-              IF (dis6.LT.minDis6) THEN
+              IF (dis6<minDis6) THEN
                  minDis6   = dis6
                  nel2w2    = m
               ENDIF
@@ -1666,24 +1666,24 @@ block(g)%fluidCellCount = flcnt
          DO j = 2, block(a_blk_no)%ny +1
          DO i = 2, block(a_blk_no)%nx +1
 
-        if ( block(a_blk_no)%xp(i) .ge. intfr(g)%xintf_start+ block(b_blk_no)%cintp*block(a_blk_no)%dx .and. &
-             block(a_blk_no)%xp(i) .le. intfr(g)%xintf_end - block(b_blk_no)%cintp*block(a_blk_no)%dx   .and. &
-             block(a_blk_no)%zp(k) .ge. intfr(g)%zintf_start+ block(b_blk_no)%cintp*block(a_blk_no)%dz .and. &
-             block(a_blk_no)%zp(k) .le. intfr(g)%zintf_end - block(b_blk_no)%cintp*block(a_blk_no)%dz   .and. &
-             block(a_blk_no)%yp(j) .ge. intfr(g)%yintf_start + block(b_blk_no)%cintp*block(a_blk_no)%dy .and. &
-             block(a_blk_no)%yp(j) .le. intfr(g)%yintf_end - block(b_blk_no)%cintp*block(a_blk_no)%dy     )then
+        if ( block(a_blk_no)%xp(i) >= intfr(g)%xintf_start+ block(b_blk_no)%cintp*block(a_blk_no)%dx .and. &
+             block(a_blk_no)%xp(i) <= intfr(g)%xintf_end - block(b_blk_no)%cintp*block(a_blk_no)%dx   .and. &
+             block(a_blk_no)%zp(k) >= intfr(g)%zintf_start+ block(b_blk_no)%cintp*block(a_blk_no)%dz .and. &
+             block(a_blk_no)%zp(k) <= intfr(g)%zintf_end - block(b_blk_no)%cintp*block(a_blk_no)%dz   .and. &
+             block(a_blk_no)%yp(j) >= intfr(g)%yintf_start + block(b_blk_no)%cintp*block(a_blk_no)%dy .and. &
+             block(a_blk_no)%yp(j) <= intfr(g)%yintf_end - block(b_blk_no)%cintp*block(a_blk_no)%dy     )then
 
                 block(a_blk_no)%cell_n(i,j,k)=1
                 block(a_blk_no)%cell(i,j,k)=1
                 !print*,block(a_blk_no)%xp(i),block(a_blk_no)%yp(j),block(a_blk_no)%cell(i,j)
 
         endif
-        if ( block(a_blk_no)%xp(i) .ge. intfr(g)%xintf_start .and. &
-             block(a_blk_no)%xp(i) .le. intfr(g)%xintf_end   .and. &
-             block(a_blk_no)%zp(k) .ge. intfr(g)%zintf_start .and. &
-             block(a_blk_no)%zp(k) .le. intfr(g)%zintf_end   .and. &
-             block(a_blk_no)%yp(j) .ge. intfr(g)%yintf_start .and. &
-             block(a_blk_no)%yp(j) .le. intfr(g)%yintf_end   )then
+        if ( block(a_blk_no)%xp(i) >= intfr(g)%xintf_start .and. &
+             block(a_blk_no)%xp(i) <= intfr(g)%xintf_end   .and. &
+             block(a_blk_no)%zp(k) >= intfr(g)%zintf_start .and. &
+             block(a_blk_no)%zp(k) <= intfr(g)%zintf_end   .and. &
+             block(a_blk_no)%yp(j) >= intfr(g)%yintf_start .and. &
+             block(a_blk_no)%yp(j) <= intfr(g)%yintf_end   )then
 
                 block(a_blk_no)%cell_pr(i,j,k)=1
                 !print*,block(a_blk_no)%xp(i),block(a_blk_no)%yp(j),block(a_blk_no)%cell(i,j)
@@ -1744,13 +1744,13 @@ block(g)%fluidCellCount = flcnt
          DO i = 2, block(g)%nx +1
         !DO j = st_rc_y, en_rc_y
         !DO i = st_rc_x, en_rc_x
-                if( block(g)%cell(i,j,k) .eq. 0)then
+                if( block(g)%cell(i,j,k) == 0)then
                 block(g)%fluidCellCount=block(g)%fluidCellCount +1
                 endif
          end do
          end do
          end do
-        if ( block(g)%move_check .eq. 1)then
+        if ( block(g)%move_check == 1)then
          DEALLOCATE (block(g)%fluidIndexPtr)
         endif
 
@@ -1766,7 +1766,7 @@ block(g)%fluidCellCount = flcnt
         !DO 30 j = st_rc_y, en_rc_y
         !DO 30 i = st_rc_x, en_rc_x
           !   IF (cell(i,j).eq.0) THEN
-                if( block(g)%cell(i,j,k) .eq. 0)then
+                if( block(g)%cell(i,j,k) == 0)then
               iPt1 = iPt1 + 1
               block(g)%fluidIndexPtr(iPt1, 1) = i
               block(g)%fluidIndexPtr(iPt1, 2) = j
@@ -1789,8 +1789,8 @@ block(g)%fluidCellCount = flcnt
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
-                if( block(g)%cell(i,j,k) .eq. 0)then
-            IF (mod(i+j+k,2).EQ.1) THEN
+                if( block(g)%cell(i,j,k) == 0)then
+            IF (mod(i+j+k,2)==1) THEN
                block(g)%redCellCount = block(g)%redCellCount + 1
             ELSE
                block(g)%blackCellCount = block(g)%blackCellCount + 1
@@ -1812,7 +1812,7 @@ block(g)%fluidCellCount = flcnt
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
                 !if( block(g)%cell(i,j,k) .eq. 0)then
-            IF (mod(i+j+k,2).EQ.1) THEN
+            IF (mod(i+j+k,2)==1) THEN
                iPt = iPt + 1
                block(g)%redCellIndexPtr(iPt, 1) = i
                block(g)%redCellIndexPtr(iPt, 2) = j
@@ -1846,7 +1846,7 @@ block(g)%fluidCellCount = flcnt
         integer (kind=4) :: st_rc_x, en_rc_x, st_rc_y, en_rc_y
         g=1
 
-        if ( coarse_flcnt_check .eq. 1)then
+        if ( coarse_flcnt_check == 1)then
       ! nx_var_r=block(g)%irc
          !end do
       ! ny_var_r=block(g)%jrc
@@ -1865,7 +1865,7 @@ block(g)%fluidCellCount = flcnt
          DO k = 2, block(g)%nz +1
          DO j = 2, block(g)%ny +1
          DO i = 2, block(g)%nx +1
-            IF (block(g)%cell(i,j,k).eq.0) THEN
+            IF (block(g)%cell(i,j,k)==0) THEN
                 block(g)%fluidCellCount=block(g)%fluidCellCount +1
             ENDIF
          end do
@@ -1885,7 +1885,7 @@ block(g)%fluidCellCount = flcnt
         !DO 30 i = st_rc_x, en_rc_x
             !n   = (j-st_rc_y)*nx_var_r + (i-st_rc_x+1)
             n=    i-1  + (block(g)%nx)*(j-2)
-            IF (block(g)%cell(i,j,k).eq.0) THEN
+            IF (block(g)%cell(i,j,k)==0) THEN
                iPt1 = iPt1 + 1
                block(g)%fluidIndexPtr(iPt1, 1) = i
                block(g)%fluidIndexPtr(iPt1, 2) = j
@@ -1909,7 +1909,7 @@ block(g)%fluidCellCount = flcnt
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
-            IF (mod(i+j+k,2).EQ.1) THEN
+            IF (mod(i+j+k,2)==1) THEN
                block(g)%redCellCount = block(g)%redCellCount + 1
             ELSE
                block(g)%blackCellCount = block(g)%blackCellCount + 1
@@ -1926,7 +1926,7 @@ block(g)%fluidCellCount = flcnt
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
-            IF (mod(i+j+k,2).EQ.1) THEN
+            IF (mod(i+j+k,2)==1) THEN
                iPt = iPt + 1
                block(g)%redCellIndexPtr(iPt, 1) = i
                block(g)%redCellIndexPtr(iPt, 2) = j
@@ -1984,12 +1984,12 @@ block(g)%fluidCellCount = flcnt
          DO j = 2, block(a_blk_no)%ny +1
          DO i = 2, block(a_blk_no)%nx +1
 
-        if ( block(a_blk_no)%xp(i) .ge. intfr(g)%xintf_start+ block(b_blk_no)%cintp*block(a_blk_no)%dx .and. &
-             block(a_blk_no)%xp(i) .le. intfr(g)%xintf_end - block(b_blk_no)%cintp*block(a_blk_no)%dx   .and. &
-             block(a_blk_no)%zp(k) .ge. intfr(g)%zintf_start+ block(b_blk_no)%cintp*block(a_blk_no)%dz .and. &
-             block(a_blk_no)%zp(k) .le. intfr(g)%zintf_end - block(b_blk_no)%cintp*block(a_blk_no)%dz   .and. &
-             block(a_blk_no)%yp(j) .ge. intfr(g)%yintf_start + block(b_blk_no)%cintp*block(a_blk_no)%dy .and. &
-             block(a_blk_no)%yp(j) .le. intfr(g)%yintf_end - block(b_blk_no)%cintp*block(a_blk_no)%dy     )then
+        if ( block(a_blk_no)%xp(i) >= intfr(g)%xintf_start+ block(b_blk_no)%cintp*block(a_blk_no)%dx .and. &
+             block(a_blk_no)%xp(i) <= intfr(g)%xintf_end - block(b_blk_no)%cintp*block(a_blk_no)%dx   .and. &
+             block(a_blk_no)%zp(k) >= intfr(g)%zintf_start+ block(b_blk_no)%cintp*block(a_blk_no)%dz .and. &
+             block(a_blk_no)%zp(k) <= intfr(g)%zintf_end - block(b_blk_no)%cintp*block(a_blk_no)%dz   .and. &
+             block(a_blk_no)%yp(j) >= intfr(g)%yintf_start + block(b_blk_no)%cintp*block(a_blk_no)%dy .and. &
+             block(a_blk_no)%yp(j) <= intfr(g)%yintf_end - block(b_blk_no)%cintp*block(a_blk_no)%dy     )then
 
                 !block(a_blk_no)%cell_n(i,j)=1
                 block(a_blk_no)%cell(i,j,k)=1
@@ -2055,12 +2055,12 @@ block(g)%fluidCellCount = flcnt
        !print*,block(b_blk_no)%ynode(block(b_blk_no)%bt_pt),intfr(g)%yintf_start,abs(block(b_blk_no)%ynode(block(b_blk_no)%bt_pt) - intfr(g)%yintf_start)
       ! print*,(abs(block(b_blk_no)%piv_y - intfr(g)%yintf_start) )
       ! print*,(abs(block(b_blk_no)%piv_y - intfr(g)%yintf_end)   )
-        if ( (abs(xval_lt - intfr(g)%xintf_start)      .le. marginx )  .or. &
+        if ( (abs(xval_lt - intfr(g)%xintf_start)      <= marginx )  .or. &
              !(abs(xval_rt - intfr(g)%xintf_end)        .le. marginx ) .or. &
-             (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start)      .le. marginz )  .or. &
-             (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end)        .le. marginz )  .or. &
-             ((abs(yval_dw - intfr(g)%yintf_start) .le. marginy ) )   .or. &
-             ((abs(yval_up - intfr(g)%yintf_end)  .le. marginy ) ) )then
+             (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start)      <= marginz )  .or. &
+             (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end)        <= marginz )  .or. &
+             ((abs(yval_dw - intfr(g)%yintf_start) <= marginy ) )   .or. &
+             ((abs(yval_up - intfr(g)%yintf_end)  <= marginy ) ) )then
             ! ((abs(block(b_blk_no)%nxty_cent-y_dw_lt - intfr(g)%yintf_start) .le. marginy ) .and. block(g)%ydot .le.0)   .or. &
             ! ((abs(block(b_blk_no)%nxty_cent+y_up_lt - intfr(g)%yintf_end)  .le. marginy ) .and. block(g)%ydot .ge.0) )then
 
@@ -2072,21 +2072,21 @@ block(g)%fluidCellCount = flcnt
              !   if( ydisp1 .lt. marginy)then
             !if( (abs(block(b_blk_no)%nxty_cent - y_dw_lt - intfr(g)%yintf_start) .le. marginy  ) .or. &
             !    (abs(block(b_blk_no)%nxty_cent + y_up_lt - intfr(g)%yintf_end) .le. marginy))then
-            if( abs(yval_dw - intfr(g)%yintf_start) .le. marginy    .or. &
-                (abs(yval_up - intfr(g)%yintf_end)  .le. marginy ) )then
+            if( abs(yval_dw - intfr(g)%yintf_start) <= marginy    .or. &
+                (abs(yval_up - intfr(g)%yintf_end)  <= marginy ) )then
 
                 block(b_blk_no)%move_amty=floor((block(b_blk_no)%nxty_cent -block(b_blk_no)%inity_cent)/block(b_blk_no)%dy)
                !print*,block(b_blk_no)%move_amty,block(b_blk_no)%nxty_cent -block(b_blk_no)%inity_cent,block(b_blk_no)%dy
                !print*,block(b_blk_no)%nxty_cent ,block(b_blk_no)%inity_cent
-                if ( abs(block(b_blk_no)%move_amty) .lt. factor)then
-                        if ( block(b_blk_no)%move_amty .lt. 0)then
+                if ( abs(block(b_blk_no)%move_amty) < factor)then
+                        if ( block(b_blk_no)%move_amty < 0)then
                         block(b_blk_no)%move_amty=-factor
                         else
                         block(b_blk_no)%move_amty=factor
                         endif
 
                 else
-                        if ( block(b_blk_no)%move_amty .lt. 0)then
+                        if ( block(b_blk_no)%move_amty < 0)then
                         block(b_blk_no)%move_amty=block(b_blk_no)%move_amty + mod(abs(block(b_blk_no)%move_amty),factor)
                         else
                         block(b_blk_no)%move_amty=block(b_blk_no)%move_amty - mod(abs(block(b_blk_no)%move_amty),factor)
@@ -2097,19 +2097,19 @@ block(g)%fluidCellCount = flcnt
 
                 endif
                 !if( xdisp1 .lt. dmin1((0.390-0.320-mg1),(0.490-0.390-mg1)))then
-        if ( (abs(xval_lt- intfr(g)%xintf_start) .lt. marginx ) )then
+        if ( (abs(xval_lt- intfr(g)%xintf_start) < marginx ) )then
 !             (abs(xval_rt- intfr(g)%xintf_end)   .lt. marginx )) then
                 block(b_blk_no)%move_amtx=floor((block(b_blk_no)%nxtx_cent -block(b_blk_no)%initx_cent)/block(b_blk_no)%dx)-factor
                 print*,'move_amtx',block(b_blk_no)%move_amtx
-                if ( abs(block(b_blk_no)%move_amtx) .lt. factor)then
-                        if ( block(b_blk_no)%move_amtx .lt. 0)then
+                if ( abs(block(b_blk_no)%move_amtx) < factor)then
+                        if ( block(b_blk_no)%move_amtx < 0)then
                         block(b_blk_no)%move_amtx=-factor
                         else
                         block(b_blk_no)%move_amtx=factor
                         endif
 
                 else
-                        if ( block(b_blk_no)%move_amtx .lt. 0)then
+                        if ( block(b_blk_no)%move_amtx < 0)then
                         block(b_blk_no)%move_amtx=block(b_blk_no)%move_amtx + mod(abs(block(b_blk_no)%move_amtx),factor)
                         else
                         block(b_blk_no)%move_amtx=block(b_blk_no)%move_amtx - mod(abs(block(b_blk_no)%move_amtx),factor)
@@ -2119,18 +2119,18 @@ block(g)%fluidCellCount = flcnt
                 block(b_blk_no)%initx_cent=block(b_blk_no)%nxtx_cent
                 endif
                 !if( zdisp1 .lt. dmin1((0.600-0.500-mg1),(0.500-0.410-mg1)))then
-            if( (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start) .lt. (0.500-0.410-mg1))  .or. &
-             (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end)   .lt. (0.600-0.500-mg1) ))then
+            if( (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start) < (0.500-0.410-mg1))  .or. &
+             (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end)   < (0.600-0.500-mg1) ))then
                 block(b_blk_no)%move_amtz=floor((block(b_blk_no)%nxtz_cent -block(b_blk_no)%initz_cent)/block(b_blk_no)%dz)
-                if ( abs(block(b_blk_no)%move_amtz) .lt. factor)then
-                        if ( block(b_blk_no)%move_amtz .lt. 0)then
+                if ( abs(block(b_blk_no)%move_amtz) < factor)then
+                        if ( block(b_blk_no)%move_amtz < 0)then
                         block(b_blk_no)%move_amtz=-factor
                         else
                         block(b_blk_no)%move_amtz=factor
                         endif
 
                 else
-                        if ( block(b_blk_no)%move_amtz .lt. 0)then
+                        if ( block(b_blk_no)%move_amtz < 0)then
                         block(b_blk_no)%move_amtz=block(b_blk_no)%move_amtz + mod(abs(block(b_blk_no)%move_amtz),factor)
                         else
                         block(b_blk_no)%move_amtz=block(b_blk_no)%move_amtz - mod(abs(block(b_blk_no)%move_amtz),factor)
@@ -2223,7 +2223,7 @@ block(g)%fluidCellCount = flcnt
        !ENDDO
        !ENDDO
         DO i=1,block(b_blk_no)%nx+2
-           if( block(b_blk_no)%xp(i) .gt. intfr(g)%xintf_st_new)then
+           if( block(b_blk_no)%xp(i) > intfr(g)%xintf_st_new)then
                 block(b_blk_no)%cpy_x_start=i
                 print*,'xpst',block(b_blk_no)%xp(i),'i',i
                 exit
@@ -2231,14 +2231,14 @@ block(g)%fluidCellCount = flcnt
         ENDDO
 
         DO i=block(b_blk_no)%cpy_x_start,block(b_blk_no)%nx+2
-           if( block(b_blk_no)%xp(i) .gt. intfr(g)%xintf_en_new)then
+           if( block(b_blk_no)%xp(i) > intfr(g)%xintf_en_new)then
                 block(b_blk_no)%cpy_x_end=i-1
                 print*,'xpen',block(b_blk_no)%xp(i-1),'i',i-1
                 exit
           endif
         ENDDO
         DO j=1,block(b_blk_no)%ny+2
-           if( block(b_blk_no)%yp(j) .gt. intfr(g)%yintf_st_new)then
+           if( block(b_blk_no)%yp(j) > intfr(g)%yintf_st_new)then
                 block(b_blk_no)%cpy_y_start=j
                 print*,'ypst',block(b_blk_no)%yp(j),'j',j
                 exit
@@ -2246,7 +2246,7 @@ block(g)%fluidCellCount = flcnt
         ENDDO
 
         DO j=block(b_blk_no)%cpy_y_start,block(b_blk_no)%ny+2
-           if( block(b_blk_no)%yp(j) .gt. intfr(g)%yintf_en_new)then
+           if( block(b_blk_no)%yp(j) > intfr(g)%yintf_en_new)then
                 block(b_blk_no)%cpy_y_end=j-1
                 print*,'ypen',block(b_blk_no)%yp(j-1),'j',j-1
                 exit
@@ -2254,7 +2254,7 @@ block(g)%fluidCellCount = flcnt
         ENDDO
 
         DO k=1,block(b_blk_no)%nz+2
-           if( block(b_blk_no)%zp(k) .gt. intfr(g)%zintf_st_new)then
+           if( block(b_blk_no)%zp(k) > intfr(g)%zintf_st_new)then
                 block(b_blk_no)%cpy_z_start=k
                 print*,'zpst',block(b_blk_no)%zp(k),'k',k
                 exit
@@ -2262,7 +2262,7 @@ block(g)%fluidCellCount = flcnt
         ENDDO
 
         DO k=block(b_blk_no)%cpy_z_start,block(b_blk_no)%nz+2
-           if( block(b_blk_no)%zp(k) .gt. intfr(g)%zintf_en_new)then
+           if( block(b_blk_no)%zp(k) > intfr(g)%zintf_en_new)then
                 block(b_blk_no)%cpy_z_end=k-1
                 print*,'zpen',block(b_blk_no)%zp(k-1),'k',k-1
                 exit
@@ -2301,7 +2301,7 @@ block(g)%fluidCellCount = flcnt
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         DO g=blk_start,nblocks
 
-        if ( block(g)% move_check .eq. 1) then
+        if ( block(g)% move_check == 1) then
 
 
        change_z_f= block(g)%move_amtz * block(g)%dz
@@ -2466,17 +2466,17 @@ block(g)%fluidCellCount = flcnt
         DO g=1,intflines
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
-        if ( block(b_blk_no)% move_check .eq. 1) then
+        if ( block(b_blk_no)% move_check == 1) then
         block(b_blk_no)%cell_n=0
         DO k=1,block(b_blk_no)%nz+2
         DO j=1,block(b_blk_no)%ny+2
         DO i=1,block(b_blk_no)%nx+2
-        if( block(b_blk_no)%xp(i) .gt. (intfr(g)%xintf_st_new  + block(b_blk_no)%dx) .and. &
-               block(b_blk_no)%xp(i) .lt. (intfr(g)%xintf_en_new  - block(b_blk_no)%dx).and. &
-               block(b_blk_no)%zp(k) .gt. (intfr(g)%zintf_st_new  + block(b_blk_no)%dz) .and. &
-               block(b_blk_no)%zp(k) .lt. (intfr(g)%zintf_en_new  - block(b_blk_no)%dz).and. &
-               block(b_blk_no)%yp(j) .gt. (intfr(g)%yintf_st_new  + block(b_blk_no)%dy).and. &
-               block(b_blk_no)%yp(j) .lt. (intfr(g)%yintf_en_new  - block(b_blk_no)%dy))then
+        if( block(b_blk_no)%xp(i) > (intfr(g)%xintf_st_new  + block(b_blk_no)%dx) .and. &
+               block(b_blk_no)%xp(i) < (intfr(g)%xintf_en_new  - block(b_blk_no)%dx).and. &
+               block(b_blk_no)%zp(k) > (intfr(g)%zintf_st_new  + block(b_blk_no)%dz) .and. &
+               block(b_blk_no)%zp(k) < (intfr(g)%zintf_en_new  - block(b_blk_no)%dz).and. &
+               block(b_blk_no)%yp(j) > (intfr(g)%yintf_st_new  + block(b_blk_no)%dy).and. &
+               block(b_blk_no)%yp(j) < (intfr(g)%yintf_en_new  - block(b_blk_no)%dy))then
 
                 block(b_blk_no)%cell_n(i,j,k)=1
 
@@ -2488,7 +2488,7 @@ block(g)%fluidCellCount = flcnt
         ENDDO
 
         DO i=1,block(b_blk_no)%nx+2
-           if( block(b_blk_no)%xp(i) .gt. intfr(g)%xintf_st_new)then
+           if( block(b_blk_no)%xp(i) > intfr(g)%xintf_st_new)then
                 block(b_blk_no)%cpy_x_start_mv=i
                 print*,'xpst_f',block(b_blk_no)%xp(i),'i',i
                 exit
@@ -2496,14 +2496,14 @@ block(g)%fluidCellCount = flcnt
         ENDDO
 
         DO i=block(b_blk_no)%cpy_x_start_mv,block(b_blk_no)%nx+2
-           if( block(b_blk_no)%xp(i) .gt. intfr(g)%xintf_en_new)then
+           if( block(b_blk_no)%xp(i) > intfr(g)%xintf_en_new)then
                 block(b_blk_no)%cpy_x_end_mv=i-1
                 print*,'xpen_f',block(b_blk_no)%xp(i-1),'i',i-1
                 exit
           endif
         ENDDO
         DO j=1,block(b_blk_no)%ny+2
-           if( block(b_blk_no)%yp(j) .gt. intfr(g)%yintf_st_new)then
+           if( block(b_blk_no)%yp(j) > intfr(g)%yintf_st_new)then
                 block(b_blk_no)%cpy_y_start_mv=j
                 print*,'ypst_f',block(b_blk_no)%yp(j),'j',j
                 exit
@@ -2511,14 +2511,14 @@ block(g)%fluidCellCount = flcnt
         ENDDO
 
         DO j=block(b_blk_no)%cpy_y_start_mv,block(b_blk_no)%ny+2
-           if( block(b_blk_no)%yp(j) .gt. intfr(g)%yintf_en_new)then
+           if( block(b_blk_no)%yp(j) > intfr(g)%yintf_en_new)then
                 block(b_blk_no)%cpy_y_end_mv=j-1
                 print*,'ypen_f',block(b_blk_no)%yp(j-1),'j',j-1
                 exit
           endif
         ENDDO
         DO j=1,block(b_blk_no)%nz+2
-           if( block(b_blk_no)%zp(j) .gt. intfr(g)%zintf_st_new)then
+           if( block(b_blk_no)%zp(j) > intfr(g)%zintf_st_new)then
                 block(b_blk_no)%cpy_z_start_mv=j
                 print*,'zpst_f',block(b_blk_no)%zp(j),'k',j
                 exit
@@ -2526,7 +2526,7 @@ block(g)%fluidCellCount = flcnt
         ENDDO
 
         DO j=block(b_blk_no)%cpy_z_start_mv,block(b_blk_no)%nz+2
-           if( block(b_blk_no)%zp(j) .gt. intfr(g)%zintf_en_new)then
+           if( block(b_blk_no)%zp(j) > intfr(g)%zintf_en_new)then
                 block(b_blk_no)%cpy_z_end_mv=j-1
                 print*,'zpen_f',block(b_blk_no)%zp(j-1),'k',j-1
                 exit
@@ -2590,7 +2590,7 @@ block(g)%fluidCellCount = flcnt
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
          factor=intfr(g)%b_msh/intfr(g)%a_msh
-        if ( block(b_blk_no)% move_check .eq. 1) then
+        if ( block(b_blk_no)% move_check == 1) then
         DO j=1,intfr(g)%counterxp
 
         intfr(g)%px_interface_det(1,j)= intfr(g)%px_interface_det(1,j) + (block(b_blk_no)%move_amtx/factor)
@@ -2764,7 +2764,7 @@ block(g)%fluidCellCount = flcnt
         CHARACTER(LEN=100) :: cLine
         CHARACTER*150  filename1
         DO g=blk_start,nblocks
-        if ( block(g)%move_check .eq. 1)then
+        if ( block(g)%move_check == 1)then
 	 ALLOCATE(block(g)%minElemcell(block(g)%nx+2,block(g)%ny+2,block(g)%nz+2))
 
 
@@ -2822,7 +2822,7 @@ block(g)%fluidCellCount = flcnt
               cent_y = block(g)%ycent(m)
               cent_z = block(g)%zcent(m)
               dis  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
-              IF (dis.LT.minDis) THEN
+              IF (dis<minDis) THEN
                  minDis   = dis
                  nel2n    = m
               ENDIF
@@ -2867,11 +2867,11 @@ block(g)%fluidCellCount = flcnt
 
            !n       = i-1  + nx*(j-2)  + block(g)%nx*ny*(k-2)
 
-           IF ( n2dotn.LE.-1e-16 .AND. n3dotn.LE.-1e-16 .AND. n4dotn.LE.-1e-16 .AND. n5dotn.LE.-1e-16  &
-               .AND. n6dotn.LE.-1e-16 .AND. n7dotn.LE.-1e-16 .AND. n8dotn.LE.-1e-16 .AND. n9dotn.LE.-1e-16) THEN
+           IF ( n2dotn<=-1e-16 .AND. n3dotn<=-1e-16 .AND. n4dotn<=-1e-16 .AND. n5dotn<=-1e-16  &
+               .AND. n6dotn<=-1e-16 .AND. n7dotn<=-1e-16 .AND. n8dotn<=-1e-16 .AND. n9dotn<=-1e-16) THEN
         	    block(g)%cell(i,j,k) = 1
-           ELSEIF (n2dotn.GT.-1e-16 .AND. n3dotn.GT.-1e-16 .AND. n4dotn.GT.-1e-16 .AND. n5dotn.GT.-1e-16 &
-        	    .AND. n6dotn.GT.-1e-16 .AND. n7dotn.GT.-1e-16 .AND. n8dotn.GT.-1e-16 .AND. n9dotn.GT.-1e-16) THEN
+           ELSEIF (n2dotn>-1e-16 .AND. n3dotn>-1e-16 .AND. n4dotn>-1e-16 .AND. n5dotn>-1e-16 &
+        	    .AND. n6dotn>-1e-16 .AND. n7dotn>-1e-16 .AND. n8dotn>-1e-16 .AND. n9dotn>-1e-16) THEN
                   block(g)%cell(i,j,k) = 0
            ELSE
                   block(g)%cell(i,j,k) = 2
@@ -2892,11 +2892,11 @@ block(g)%fluidCellCount = flcnt
          DO 20 j = 2, block(g)%ny+1
          DO 20 i = 2, block(g)%nx+1
             !n       = i-1  + nx*(j-2)  + block(g)%nx*block(g)%block(g)%ny*(k-2)
-            IF (block(g)%cell(i,j,k).eq.1) THEN
+            IF (block(g)%cell(i,j,k)==1) THEN
                block(g)%solidCellCount = block(g)%solidCellCount + 1
-            ELSEIF (block(g)%cell(i,j,k).eq.0) THEN
+            ELSEIF (block(g)%cell(i,j,k)==0) THEN
                block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
-            ELSEIF (block(g)%cell(i,j,k).eq.2) THEN
+            ELSEIF (block(g)%cell(i,j,k)==2) THEN
                block(g)%ibCellCount = block(g)%ibCellCount + 1
             ENDIF
  20      CONTINUE
@@ -2912,7 +2912,7 @@ block(g)%fluidCellCount = flcnt
        do j = 2, block(g)%ny+1
        do i = 2, block(g)%nx+1
         !n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-       if(block(g)%cell(i,j,k).eq.2)then
+       if(block(g)%cell(i,j,k)==2)then
       ! write(82,*) block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 2
        read(82,*) block(g)%xp(i),block(g)%yp(j),block(g)%zp(k)
        read(82,*) block(g)%cell(i,j,k)
@@ -2931,7 +2931,7 @@ block(g)%fluidCellCount = flcnt
        do j = 2, block(g)%ny+1
        do i = 2, block(g)%nx+1
         !n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
-       if(block(g)%cell(i,j,k).eq.0)then
+       if(block(g)%cell(i,j,k)==0)then
       ! write(83,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 0
        read(83,*) block(g)%xp(i),block(g)%yp(j),block(g)%zp(k)
        read(83,*) block(g)%cell(i,j,k)
@@ -2950,7 +2950,7 @@ block(g)%fluidCellCount = flcnt
        do j = 2, block(g)%ny+1
        do i = 2, block(g)%nx+1
         !n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
-       if(block(g)%cell(i,j,k).eq.1)then
+       if(block(g)%cell(i,j,k)==1)then
       ! write(84,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 1
        read(84,*) block(g)%xp(i),block(g)%yp(j),block(g)%zp(k)
        read(84,*) block(g)%cell(i,j,k)
@@ -2971,7 +2971,7 @@ block(g)%fluidCellCount = flcnt
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
 
-        if ( block(b_blk_no)%move_check .eq. 1)then
+        if ( block(b_blk_no)%move_check == 1)then
         !print*,'inside tag_mv'
        call fineUpdate_mv(g)
        call fineUpdate_bd_mv(g)
@@ -3020,7 +3020,7 @@ block(g)%fluidCellCount = flcnt
          DO k = 2, block(g)%nz +1
          DO j = 2, block(g)%ny +1
          DO i = 2, block(g)%nx +1
-            IF (block(g)%cell(i,j,k).eq.0) THEN
+            IF (block(g)%cell(i,j,k)==0) THEN
                 block(g)%fluidCellCount=block(g)%fluidCellCount +1
             ENDIF
          end do
@@ -3037,7 +3037,7 @@ block(g)%fluidCellCount = flcnt
         !DO 30 i = st_rc_x, en_rc_x
             !n   = (j-st_rc_y)*nx_var_r + (i-st_rc_x+1)
            ! n=    i-1  + (block(g)%nx)*(j-2)
-            IF (block(g)%cell(i,j,k).eq.0) THEN
+            IF (block(g)%cell(i,j,k)==0) THEN
                iPt1 = iPt1 + 1
                block(g)%fluidIndexPtr(iPt1, 1) = i
                block(g)%fluidIndexPtr(iPt1, 2) = j
@@ -3061,7 +3061,7 @@ block(g)%fluidCellCount = flcnt
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
-            IF (mod(i+j+k,2).EQ.1) THEN
+            IF (mod(i+j+k,2)==1) THEN
                block(g)%redCellCount = block(g)%redCellCount + 1
             ELSE
                block(g)%blackCellCount = block(g)%blackCellCount + 1
@@ -3078,7 +3078,7 @@ block(g)%fluidCellCount = flcnt
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
-            IF (mod(i+j+k,2).EQ.1) THEN
+            IF (mod(i+j+k,2)==1) THEN
                iPt = iPt + 1
                block(g)%redCellIndexPtr(iPt, 1) = i
                block(g)%redCellIndexPtr(iPt, 2) = j

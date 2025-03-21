@@ -63,13 +63,13 @@
         block(g)%zshift=block(g)%zshift*0.001
         END DO
         CLOSE(77)
-        if ( alpha_m .ne. 0 .and. theta_m .ne.0 ) then
+        if ( alpha_m /= 0 .and. theta_m /=0 ) then
                 char_f = 'bot'
         end if
-        if ( alpha_m .eq. 0 .and. theta_m .ne.0 ) then
+        if ( alpha_m == 0 .and. theta_m /=0 ) then
                 char_f = 'amp'
         end if
-        if ( alpha_m .ne. 0 .and. theta_m .eq.0 ) then
+        if ( alpha_m /= 0 .and. theta_m ==0 ) then
                 char_f = 'ang'
         end if
         pi = 4.D0*ATAN(1.D0)
@@ -490,18 +490,18 @@
        !end do
        ! ibElems= num
        DO n = 1, block(g)%ibElems
-       IF (block(g)%ibSurfId(n).EQ.51) THEN
+       IF (block(g)%ibSurfId(n)==51) THEN
            block(g)%ibNodeId(block(g)%ibELP1(n)) = 51
            block(g)%ibNodeId(block(g)%ibELP2(n)) = 51
            block(g)%ibNodeId(block(g)%ibELP3(n)) = 51
-           ELSEIF (block(g)%ibSurfId(n).EQ.52) THEN
+           ELSEIF (block(g)%ibSurfId(n)==52) THEN
            block(g)%ibNodeId(block(g)%ibELP1(n)) = 52
            block(g)%ibNodeId(block(g)%ibELP2(n)) = 52
            block(g)%ibNodeId(block(g)%ibELP3(n)) = 52
           ENDIF
         ENDDO
         DO n = 1, block(g)%ibElems
-        IF (block(g)%ibSurfId(n).EQ.50) THEN
+        IF (block(g)%ibSurfId(n)==50) THEN
             block(g)%ibNodeId(block(g)%ibELP1(n)) = 50
             block(g)%ibNodeId(block(g)%ibELP2(n)) = 50
             block(g)%ibNodeId(block(g)%ibELP3(n)) = 50

@@ -129,7 +129,7 @@
 	pos1_z = zsurf + normdis*block(g)%cosGamma(ielem)
 
 !**************************velocity at the surface**********************
-       IF (block(g)%ibSurfID(ielem).EQ.50) THEN
+       IF (block(g)%ibSurfID(ielem)==50) THEN
         block(g)% thetaDot  =  0.
         block(g)% thetaDDot =  0.
          usurf     =  0.
@@ -139,7 +139,7 @@
          ac_y      =  0.!-thetaDot**2*(ycent(nelp(index_ts(n))) - piv_y)
          at_z      =  0.! thetaDDot*(ycent(nelp(index_ts(n))) - piv_y)
          at_y      =  0.!
-       ELSEIF (block(g)%ibSurfID(ielem).EQ.51) THEN
+       ELSEIF (block(g)%ibSurfID(ielem)==51) THEN
         block(g)% thetaDot  = block(g)% thetaDot1
 	     block(g)% thetaDDot = block(g)% thetaDDot1
          !usurf     =  0.
@@ -149,7 +149,7 @@
          ac_y      = -block(g)%thetaDot**2*(block(g)%ycent(ielem) -block(g)% piv_y)
          at_z      = block(g)% thetaDDot*(block(g)%ycent(ielem)-block(g)% piv_y)
          at_y      = -block(g)%thetaDDot*(block(g)%zcent(ielem)-block(g)% piv_z)
-       ELSEIF (block(g)%ibSurfId(ielem).EQ.52) THEN
+       ELSEIF (block(g)%ibSurfId(ielem)==52) THEN
 	     block(g)% thetaDot  = block(g)% thetaDot2
 	     block(g)% thetaDDot = block(g)% thetaDDot2
          !usurf     =  0.
@@ -358,15 +358,15 @@
 !*******************pressure interpolation at point 2*******************
        !$acc loop seq
        DO i = 2, block(g)%nx+1
-       if(pos1_x.ge.block(g)%xp(i).and.pos1_x.lt.block(g)%xp(i+1)) i_x1 = i
+       if(pos1_x>=block(g)%xp(i).and.pos1_x<block(g)%xp(i+1)) i_x1 = i
        END DO
 	!$acc loop seq
        DO j = 2, block(g)%ny+1
-       if(pos1_y.ge.block(g)%yp(j).and.pos1_y.lt.block(g)%yp(j+1)) i_y1 = j
+       if(pos1_y>=block(g)%yp(j).and.pos1_y<block(g)%yp(j+1)) i_y1 = j
        END DO
 	!$acc loop seq
        DO k = 1, block(g)%nz+2
-       if(pos1_z.ge.block(g)%zp(k).and.pos1_z.lt.block(g)%zp(k+1)) i_z1 = k
+       if(pos1_z>=block(g)%zp(k).and.pos1_z<block(g)%zp(k+1)) i_z1 = k
        END DO
 
        block(g)%pcell(ielem,1) = i_x1
@@ -616,7 +616,7 @@
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER::  i, j, k, inode, g
         DO g=1,nblocks
-       IF(mod(ita,5000).EQ.0.OR.ita.EQ.itamax)THEN
+       IF(mod(ita,5000)==0.OR.ita==itamax)THEN
        OPEN (1,FILE='stressdata',FORM='formatted')
         DO inode = 1, block(g)%ibNodes
          WRITE(1,*) SQSUMWSS(inode),SUMWSS(inode), SIGNWSS(inode,1), SIGNWSS(inode,2), SIGNWSS(inode,3), ita1, ita

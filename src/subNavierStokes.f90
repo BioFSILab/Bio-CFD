@@ -308,7 +308,7 @@
         ny_var=block(g)%ny
         nz_var=block(g)%nz
 	do i=2,nx_var
-	if(i.eq.2)then
+	if(i==2)then
 	tmp_dx1=block(g)%deltax(i-1)
 	else
 	tmp_dx1=0.5*(block(g)%deltax(i-1)+block(g)%deltax(i-2))
@@ -417,7 +417,7 @@
         ny_var=block(g)%ny
         nz_var=block(g)%nz
 	do j=2,ny_var
-	if(j.eq.2)then
+	if(j==2)then
 	tmp_dy1=block(g)%deltay(j-1)
 	else
 	tmp_dy1=0.5*(block(g)%deltay(j-1)+block(g)%deltay(j-2))
@@ -526,7 +526,7 @@
         ny_var=block(g)%ny
         nz_var=block(g)%nz
 	do k=2,nz_var
-	if(k.eq.2)then
+	if(k==2)then
 	tmp_dz1=block(g)%deltaz(k-1)
 	else
 	tmp_dz1=0.5*(block(g)%deltaz(k-1)+block(g)%deltaz(k-2))
@@ -739,14 +739,14 @@
       index_km1 = 0
       n1 = i-1 + nx_var*(j-2) + nx_var*ny_var*(k-2)
       !GOTO 11
-      IF (block(g)%cell2(i+1, j, k).EQ.2 .OR. block(g)%cell2(i-1, j, k).EQ.2 .OR. block(g)%cell2(i, j+1, k).EQ.2 .OR. block(g)%cell2(i, j-1, k).EQ.2 .OR. block(g)%cell2(i, j, k+1).EQ.2.OR. block(g)%cell2(i, j, k-1).EQ.2) THEN
+      IF (block(g)%cell2(i+1, j, k)==2 .OR. block(g)%cell2(i-1, j, k)==2 .OR. block(g)%cell2(i, j+1, k)==2 .OR. block(g)%cell2(i, j-1, k)==2 .OR. block(g)%cell2(i, j, k+1)==2.OR. block(g)%cell2(i, j, k-1)==2) THEN
         !$acc loop seq
              DO nn = 1, block(g)%TSCellCount
                 i11 = block(g)%TSIndexPtr(nn, 1)
                 j11 = block(g)%TSIndexPtr(nn, 2)
                 k11 = block(g)%TSIndexPtr(nn, 3)
 
-                IF (block(g)%cell2(i+1, j, k).EQ.2) THEN
+                IF (block(g)%cell2(i+1, j, k)==2) THEN
                    index_ip1 = nn
                    temp_u2dotn = 0.
                    temp_u1dotn = 0.
@@ -776,7 +776,7 @@
                    temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_ip1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_ip1)))  +  &
                                  (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_ip1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_ip1)))   +  &
                                  (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_ip1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_ip1)))
-                   IF (temp_u2dotn.LT.0) THEN
+                   IF (temp_u2dotn<0) THEN
                       block(g)%u(i+1,j,k) = block(g)%u2_ghost(index_ip1)
                    !ELSE
                    !   block(g)%u(i+1,j,k) = block(g)%u2t_ghost(index_ip1)
@@ -786,34 +786,34 @@
                    !ELSE
                       !block(g)%u(i,j,k) = block(g)%u1t_ghost(index_ip1)
                    !ENDIF
-                   IF (temp_v2dotn.LT.0) THEN
+                   IF (temp_v2dotn<0) THEN
                       block(g)%v(i+1,j,k) = block(g)%v2_ghost(index_ip1)
                    !ELSE
                    !   block(g)%v(i+1,j,k) = block(g)%v2t_ghost(index_ip1)
                    ENDIF
-                   IF (temp_v1dotn.LT.0) THEN
+                   IF (temp_v1dotn<0) THEN
                       block(g)%v(i+1,j-1,k) = block(g)%v1_ghost(index_ip1)
                    !ELSE
                       !block(g)%v(i+1,j-1,k) = block(g)%v1t_ghost(index_ip1)
                    ENDIF
-                   IF (temp_w2dotn.LT.0) THEN
+                   IF (temp_w2dotn<0) THEN
                       block(g)%w(i+1,j,k) = block(g)%w2_ghost(index_ip1)
                    !ELSE
                       !block(g)%w(i+1,j,k) = block(g)%w2t_ghost(index_ip1)
                    ENDIF
-                   IF (temp_w1dotn.LT.0) THEN
+                   IF (temp_w1dotn<0) THEN
                       block(g)%w(i+1,j,k-1) = block(g)%w1_ghost(index_ip1)
                    !ELSE
                       !block(g)%w(i+1,j,k-1) = block(g)%w1t_ghost(index_ip1)
                    ENDIF
-                   IF (temp_pdotn.LT.0) THEN
+                   IF (temp_pdotn<0) THEN
                       block(g)%p(i+1,j,k) = block(g)%p_ghost(index_ip1)
                    !ELSE
                       !block(g)%p(i+1,j,k) = block(g)%pt_ghost(index_ip1)
                    ENDIF
                 ENDIF
 
-                IF (block(g)%cell2(i-1, j, k).EQ.2) THEN
+                IF (block(g)%cell2(i-1, j, k)==2) THEN
                    index_im1 = nn
                    temp_u2dotn = 0.
                    temp_u1dotn = 0.
@@ -848,39 +848,39 @@
                    !ELSE
                       !block(g)%u(i-1,j,k) = block(g)%u2t_ghost(index_im1)
                    !ENDIF
-                   IF (temp_u1dotn.LT.0) THEN
+                   IF (temp_u1dotn<0) THEN
                       block(g)%u(i-2,j,k) = block(g)%u1_ghost(index_im1)
                    !ELSE
                       !block(g)%u(i-2,j,k) = block(g)%u1t_ghost(index_im1)
                    ENDIF
-                   IF (temp_v2dotn.LT.0) THEN
+                   IF (temp_v2dotn<0) THEN
                       block(g)%v(i-1,j,k) = block(g)%v2_ghost(index_im1)
                    !ELSE
                       !block(g)%v(i-1,j,k) = block(g)%v2t_ghost(index_im1)
                    ENDIF
-                   IF (temp_v1dotn.LT.0) THEN
+                   IF (temp_v1dotn<0) THEN
                       block(g)%v(i-1,j-1,k) = block(g)%v1_ghost(index_im1)
                    !ELSE
                       !block(g)%v(i-1,j-1,k) = block(g)%v1t_ghost(index_im1)
                    ENDIF
-		             IF (temp_w2dotn.LT.0) THEN
+		             IF (temp_w2dotn<0) THEN
                       block(g)%w(i-1,j,k) = block(g)%w2_ghost(index_im1)
                    !ELSE
                       !block(g)%w(i-1,j,k) = block(g)%w2t_ghost(index_im1)
                    ENDIF
-		             IF (temp_w1dotn.LT.0) THEN
+		             IF (temp_w1dotn<0) THEN
                       block(g)%w(i-1,j,k-1) = block(g)%w1_ghost(index_im1)
                    !ELSE
                       !block(g)%w(i-1,j,k-1) = block(g)%w1t_ghost(index_im1)
                    ENDIF
-                   IF (temp_pdotn.LT.0) THEN
+                   IF (temp_pdotn<0) THEN
                       block(g)%p(i-1,j,k) = block(g)%p_ghost(index_im1)
                    !ELSE
                       !block(g)%p(i-1,j,k) = block(g)%pt_ghost(index_im1)
                    ENDIF
                 ENDIF
 
-                IF (block(g)%cell2(i, j+1, k).EQ.2) THEN
+                IF (block(g)%cell2(i, j+1, k)==2) THEN
                    index_jp1 = nn
                    temp_u2dotn = 0.
                    temp_u1dotn = 0.
@@ -910,17 +910,17 @@
                    temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_jp1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_jp1)))  +  &
 		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_jp1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_jp1)))   +  &
 				                     (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_jp1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_jp1)))
-                   IF (temp_u2dotn.LT.0) THEN
+                   IF (temp_u2dotn<0) THEN
                       block(g)%u(i,j+1,k) = block(g)%u2_ghost(index_jp1)
                    !ELSE
                       !block(g)%u(i,j+1,k) = block(g)%u2t_ghost(index_jp1)
                    ENDIF
-                   IF (temp_u1dotn.LT.0) THEN
+                   IF (temp_u1dotn<0) THEN
                       block(g)%u(i-1,j+1,k) = block(g)%u1_ghost(index_jp1)
                    !ELSE
                       !block(g)%u(i-1,j+1,k) = block(g)%u1t_ghost(index_jp1)
                    ENDIF
-                   IF (temp_v2dotn.LT.0) THEN
+                   IF (temp_v2dotn<0) THEN
                       block(g)%v(i,j+1,k) = block(g)%v2_ghost(index_jp1)
                    !ELSE
                       !block(g)%v(i,j+1,k) = block(g)%v2t_ghost(index_jp1)
@@ -930,24 +930,24 @@
                    !ELSE
                    !   block(g)%v(i,j,k) = block(g)%v1t_ghost(index_jp1)
                    !ENDIF
-		             IF (temp_w2dotn.LT.0) THEN
+		             IF (temp_w2dotn<0) THEN
                       block(g)%w(i,j+1,k) = block(g)%w2_ghost(index_jp1)
                    !ELSE
                       !block(g)%w(i,j+1,k) = block(g)%w2t_ghost(index_jp1)
                    ENDIF
-		             IF (temp_w1dotn.LT.0) THEN
+		             IF (temp_w1dotn<0) THEN
                       block(g)%w(i,j+1,k-1) = block(g)%w1_ghost(index_jp1)
                    !ELSE
                       !block(g)%w(i,j+1,k-1) = block(g)%w1t_ghost(index_jp1)
                    ENDIF
-                   IF (temp_pdotn.LT.0) THEN
+                   IF (temp_pdotn<0) THEN
                       block(g)%p(i,j+1,k) = block(g)%p_ghost(index_jp1)
                    !ELSE
                       !block(g)%p(i,j+1,k) = block(g)%pt_ghost(index_jp1)
                    ENDIF
                 ENDIF
 
-		          IF (block(g)%cell2(i, j-1, k).EQ.2) THEN
+		          IF (block(g)%cell2(i, j-1, k)==2) THEN
                    index_jm1 = nn
                    temp_u2dotn = 0.
                    temp_u1dotn = 0.
@@ -977,12 +977,12 @@
                    temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_jm1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_jm1)))  +  &
 		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_jm1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_jm1)))   +  &
 				                     (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_jm1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_jm1)))
-                   IF (temp_u2dotn.LT.0) THEN
+                   IF (temp_u2dotn<0) THEN
                       block(g)%u(i,j-1,k) = block(g)%u2_ghost(index_jm1)
                    !ELSE
                       !block(g)%u(i,j-1,k) = block(g)%u2t_ghost(index_jm1)
                    ENDIF
-                   IF (temp_u1dotn.LT.0) THEN
+                   IF (temp_u1dotn<0) THEN
                       block(g)%u(i-1,j-1,k) = block(g)%u1_ghost(index_jm1)
                    !ELSE
                       !block(g)%u(i-1,j-1,k) = block(g)%u1t_ghost(index_jm1)
@@ -992,29 +992,29 @@
                    !ELSE
                    !   block(g)%v(i,j-1,k) = block(g)%v2t_ghost(index_jm1)
                    !ENDIF
-                   IF (temp_v1dotn.LT.0) THEN
+                   IF (temp_v1dotn<0) THEN
                       block(g)%v(i,j-2,k) = block(g)%v1_ghost(index_jm1)
                    !ELSE
                       !block(g)%v(i,j-2,k) = block(g)%v1t_ghost(index_jm1)
                    ENDIF
-                   IF (temp_w2dotn.LT.0) THEN
+                   IF (temp_w2dotn<0) THEN
                       block(g)%w(i,j-1,k) = block(g)%w2_ghost(index_jm1)
                    !ELSE
                       !block(g)%w(i,j-1,k) = block(g)%w2t_ghost(index_jm1)
                    ENDIF
-                   IF (temp_w1dotn.LT.0) THEN
+                   IF (temp_w1dotn<0) THEN
                       block(g)%w(i,j-1,k-1) = block(g)%w1_ghost(index_jm1)
                    !ELSE
                       !block(g)%w(i,j-1,k-1) = block(g)%w1t_ghost(index_jm1)
                    ENDIF
-                   IF (temp_pdotn.LT.0) THEN
+                   IF (temp_pdotn<0) THEN
                       block(g)%p(i,j-1,k) = block(g)%p_ghost(index_jm1)
                    !ELSE
                       !block(g)%p(i,j-1,k) = block(g)%pt_ghost(index_jm1)
                    ENDIF
                 ENDIF
 
-                IF (block(g)%cell2(i, j, k+1).EQ.2) THEN
+                IF (block(g)%cell2(i, j, k+1)==2) THEN
                    index_kp1 = nn
                    temp_u2dotn = 0.
                    temp_u1dotn = 0.
@@ -1044,27 +1044,27 @@
                    temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_kp1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_kp1)))  +  &
                                  (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_kp1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_kp1)))   +  &
                                  (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_kp1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_kp1)))
-                   IF (temp_u2dotn.LT.0) THEN
+                   IF (temp_u2dotn<0) THEN
                       block(g)%u(i,j,k+1) = block(g)%u2_ghost(index_kp1)
                    !ELSE
                       !block(g)%u(i,j,k+1) = block(g)%u2t_ghost(index_kp1)
                    ENDIF
-                   IF (temp_u1dotn.LT.0) THEN
+                   IF (temp_u1dotn<0) THEN
                       block(g)%u(i-1,j,k+1) = block(g)%u1_ghost(index_kp1)
                    !ELSE
                       !block(g)%u(i-1,j,k+1) = block(g)%u1t_ghost(index_kp1)
                    ENDIF
-                   IF (temp_v2dotn.LT.0) THEN
+                   IF (temp_v2dotn<0) THEN
                       block(g)%v(i,j,k+1) = block(g)%v2_ghost(index_kp1)
                    !ELSE
                       !block(g)%v(i,j,k+1) = block(g)%v2t_ghost(index_kp1)
                    ENDIF
-                   IF (temp_v1dotn.LT.0) THEN
+                   IF (temp_v1dotn<0) THEN
                       block(g)%v(i,j-1,k+1) = block(g)%v1_ghost(index_kp1)
                    !ELSE
                       !block(g)%v(i,j-1,k+1) = block(g)%v1t_ghost(index_kp1)
                    ENDIF
-                   IF (temp_w2dotn.LT.0) THEN
+                   IF (temp_w2dotn<0) THEN
                       block(g)%w(i,j,k+1) = block(g)%w2_ghost(index_kp1)
                    !ELSE
                       !block(g)%w(i,j,k+1) = block(g)%w2t_ghost(index_kp1)
@@ -1074,14 +1074,14 @@
                    !ELSE
                       !block(g)%w(i,j,k) = block(g)%w1t_ghost(index_kp1)
                    !ENDIF
-                   IF (temp_pdotn.LT.0) THEN
+                   IF (temp_pdotn<0) THEN
                       block(g)%p(i,j,k+1) = block(g)%p_ghost(index_kp1)
                    !ELSE
                       !block(g)%p(i,j,k+1) = block(g)%pt_ghost(index_kp1)
                    ENDIF
                 ENDIF
 
-                IF (block(g)%cell2(i, j, k-1).EQ.2) THEN
+                IF (block(g)%cell2(i, j, k-1)==2) THEN
                    index_km1 = nn
                    temp_u2dotn = 0.
                    temp_u1dotn = 0.
@@ -1111,22 +1111,22 @@
                    temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_km1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_km1)))  +  &
                                  (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_km1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_km1)))   +  &
                                  (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_km1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_km1)))
-                   IF (temp_u2dotn.LT.0) THEN
+                   IF (temp_u2dotn<0) THEN
                       block(g)%u(i,j,k-1) = block(g)%u2_ghost(index_km1)
                    !ELSE
                       !block(g)%u(i,j,k-1) = block(g)%u2t_ghost(index_km1)
                    ENDIF
-                   IF (temp_u1dotn.LT.0) THEN
+                   IF (temp_u1dotn<0) THEN
                       block(g)%u(i-1,j,k-1) = block(g)%u1_ghost(index_km1)
                    !ELSE
                       !block(g)%u(i-1,j,k-1) = block(g)%u1t_ghost(index_km1)
                    ENDIF
-                   IF (temp_v2dotn.LT.0) THEN
+                   IF (temp_v2dotn<0) THEN
                       block(g)%v(i,j,k-1) = block(g)%v2_ghost(index_km1)
                    !ELSE
                       !block(g)%v(i,j,k-1) = block(g)%v2t_ghost(index_km1)
                    ENDIF
-                   IF (temp_v1dotn.LT.0) THEN
+                   IF (temp_v1dotn<0) THEN
                       block(g)%v(i,j-1,k-1) = block(g)%v1_ghost(index_km1)
                    !ELSE
                       !block(g)%v(i,j-1,k-1) = block(g)%v1t_ghost(index_km1)
@@ -1136,12 +1136,12 @@
                !    ELSE
                !       block(g)%w(i,j,k-1) = block(g)%w2t_ghost(index_km1)
                 !   ENDIF
-                   IF (temp_w1dotn.LT.0) THEN
+                   IF (temp_w1dotn<0) THEN
                       block(g)%w(i,j,k-2) = block(g)%w1_ghost(index_km1)
                    !ELSE
                       !block(g)%w(i,j,k-2) = block(g)%w1t_ghost(index_km1)
                    ENDIF
-                   IF (temp_pdotn.LT.0) THEN
+                   IF (temp_pdotn<0) THEN
                       block(g)%p(i,j,k-1) = block(g)%p_ghost(index_km1)
                    !ELSE
                       !block(g)%p(i,j,k-1) = block(g)%pt_ghost(index_km1)
@@ -1267,14 +1267,14 @@
 	    w_in_um=0.5*(wu_n+wu_s)
 
 !cccccccccccccc---Third Order Upwinding ----ccccccccccccccccccccccccccccc
-       if(i.GT.2.and.i.lt.nx_var.and.j.GT.2.and.j.lt.ny_var+1.and. &
-      k.GT.2.and.k.lt.nz_var+1.and.block(g)%cell(i+1,j,k).ne.2.and.     &
-      block(g)%cell(i-1,j,k).ne.2.and.block(g)%cell(i,j+1,k).ne.2.and.       &
-      block(g)%cell(i,j-1,k).ne.2.and.block(g)%cell(i,j,k+1).ne.2.and.       &
-      block(g)%cell(i,j,k-1).ne.2.and.block(g)%cell2(i+2,j,k).ne.2.and. &
-      block(g)%cell2(i,j+2,k).ne.2.and.block(g)%cell2(i,j,k+2).ne.2.and. &
-      block(g)%cell2(i-2,j,k).ne.2.and.block(g)%cell2(i,j-2,k).ne.2.and. &
-      block(g)%cell2(i,j,k-2).ne.2) THEN
+       if(i>2.and.i<nx_var.and.j>2.and.j<ny_var+1.and. &
+      k>2.and.k<nz_var+1.and.block(g)%cell(i+1,j,k)/=2.and.     &
+      block(g)%cell(i-1,j,k)/=2.and.block(g)%cell(i,j+1,k)/=2.and.       &
+      block(g)%cell(i,j-1,k)/=2.and.block(g)%cell(i,j,k+1)/=2.and.       &
+      block(g)%cell(i,j,k-1)/=2.and.block(g)%cell2(i+2,j,k)/=2.and. &
+      block(g)%cell2(i,j+2,k)/=2.and.block(g)%cell2(i,j,k+2)/=2.and. &
+      block(g)%cell2(i-2,j,k)/=2.and.block(g)%cell2(i,j-2,k)/=2.and. &
+      block(g)%cell2(i,j,k-2)/=2) THEN
 
 
 	    ddy=0.5*(block(g)%deltay(j)+block(g)%deltay(j-1))
@@ -1357,14 +1357,14 @@
 	w_in_vm=0.5*(wv_n+wv_s)
 
 !cccccccccccccc---Third Order Upwinding ----cccccccccccccccccccccccccccc
-     if(i.GT.2.and.i.lt.nx_var+1.and.j.GT.2.and.j.lt.ny_var.and. &
-      k.GT.2.and.k.lt.nz_var+1.and.block(g)%cell(i+1,j,k).ne.2.and.  &
-      block(g)%cell(i-1,j,k).ne.2.and.block(g)%cell(i,j+1,k).ne.2.and. &
-      block(g)%cell(i,j-1,k).ne.2.and.block(g)%cell(i,j,k+1).ne.2.and. &
-      block(g)%cell(i,j,k-1).ne.2.and.block(g)%cell2(i+2,j,k).ne.2.and. &
-      block(g)%cell2(i,j+2,k).ne.2.and.block(g)%cell2(i,j,k+2).ne.2.and. &
-      block(g)%cell2(i-2,j,k).ne.2.and.block(g)%cell2(i,j-2,k).ne.2.and. &
-      block(g)%cell2(i,j,k-2).ne.2) THEN
+     if(i>2.and.i<nx_var+1.and.j>2.and.j<ny_var.and. &
+      k>2.and.k<nz_var+1.and.block(g)%cell(i+1,j,k)/=2.and.  &
+      block(g)%cell(i-1,j,k)/=2.and.block(g)%cell(i,j+1,k)/=2.and. &
+      block(g)%cell(i,j-1,k)/=2.and.block(g)%cell(i,j,k+1)/=2.and. &
+      block(g)%cell(i,j,k-1)/=2.and.block(g)%cell2(i+2,j,k)/=2.and. &
+      block(g)%cell2(i,j+2,k)/=2.and.block(g)%cell2(i,j,k+2)/=2.and. &
+      block(g)%cell2(i-2,j,k)/=2.and.block(g)%cell2(i,j-2,k)/=2.and. &
+      block(g)%cell2(i,j,k-2)/=2) THEN
 	ddx=0.5*(block(g)%deltax(i)+block(g)%deltax(i-1))
        ddxr=0.5*(block(g)%deltax(i)+block(g)%deltax(i+1))
        ddz=0.5*(block(g)%deltaz(k)+block(g)%deltaz(k-1))
@@ -1445,14 +1445,14 @@
 	v_in_wm=0.5*(vw_n+vw_s)
 
 !cccccccccccccc---Third Order Upwinding ----ccccccccccccccccccccccccccccc
-     if(i.GT.2.and.i.lt.nx_var+1.and.j.GT.2.and.j.lt.ny_var+1.and. &
-      k.GT.2.and.k.lt.nz_var.and.block(g)%cell(i+1,j,k).ne.2.and. &
-      block(g)%cell(i-1,j,k).ne.2.and.block(g)%cell(i,j+1,k).ne.2.and. &
-      block(g)%cell(i,j-1,k).ne.2.and.block(g)%cell(i,j,k+1).ne.2.and. &
-      block(g)%cell(i,j,k-1).ne.2.and.block(g)%cell2(i+2,j,k).ne.2.and. &
-      block(g)%cell2(i,j+2,k).ne.2.and.block(g)%cell2(i,j,k+2).ne.2.and. &
-      block(g)%cell2(i-2,j,k).ne.2.and.block(g)%cell2(i,j-2,k).ne.2.and. &
-      block(g)%cell2(i,j,k-2).ne.2) THEN
+     if(i>2.and.i<nx_var+1.and.j>2.and.j<ny_var+1.and. &
+      k>2.and.k<nz_var.and.block(g)%cell(i+1,j,k)/=2.and. &
+      block(g)%cell(i-1,j,k)/=2.and.block(g)%cell(i,j+1,k)/=2.and. &
+      block(g)%cell(i,j-1,k)/=2.and.block(g)%cell(i,j,k+1)/=2.and. &
+      block(g)%cell(i,j,k-1)/=2.and.block(g)%cell2(i+2,j,k)/=2.and. &
+      block(g)%cell2(i,j+2,k)/=2.and.block(g)%cell2(i,j,k+2)/=2.and. &
+      block(g)%cell2(i-2,j,k)/=2.and.block(g)%cell2(i,j-2,k)/=2.and. &
+      block(g)%cell2(i,j,k-2)/=2) THEN
 
 	ddx=0.5*(block(g)%deltax(i)+block(g)%deltax(i-1))
        ddxr=0.5*(block(g)%deltax(i)+block(g)%deltax(i+1))
@@ -1525,7 +1525,7 @@
        block(g)%resi_w(i,j,k)=residw
 !c***********************************************************************
 
-IF (block(g)%cell2(i+1, j, k).EQ.2) THEN
+IF (block(g)%cell2(i+1, j, k)==2) THEN
    block(g)%u(i+1,j,k)   = block(g)%u2t_ghost(index_ip1)
    block(g)%v(i+1,j,k)   = block(g)%v2t_ghost(index_ip1)
    block(g)%v(i+1,j-1,k) = block(g)%v1t_ghost(index_ip1)
@@ -1533,7 +1533,7 @@ IF (block(g)%cell2(i+1, j, k).EQ.2) THEN
    block(g)%w(i+1,j,k-1) = block(g)%w1t_ghost(index_ip1)
    block(g)%p(i+1,j,k)   = block(g)%pt_ghost(index_ip1)
 ENDIF
-IF (block(g)%cell2(i-1, j, k).EQ.2) THEN
+IF (block(g)%cell2(i-1, j, k)==2) THEN
    block(g)%u(i-2,j,k)   = block(g)%u1t_ghost(index_im1)
    block(g)%v(i-1,j,k)   = block(g)%v2t_ghost(index_im1)
    block(g)%v(i-1,j-1,k) = block(g)%v1t_ghost(index_im1)
@@ -1541,7 +1541,7 @@ IF (block(g)%cell2(i-1, j, k).EQ.2) THEN
    block(g)%w(i-1,j,k-1) = block(g)%w1t_ghost(index_im1)
    block(g)%p(i-1,j,k)   = block(g)%pt_ghost(index_im1)
 ENDIF
-IF (block(g)%cell2(i, j+1, k).EQ.2) THEN
+IF (block(g)%cell2(i, j+1, k)==2) THEN
    block(g)%u(i,j+1,k)   = block(g)%u2t_ghost(index_jp1)
    block(g)%u(i-1,j+1,k) = block(g)%u1t_ghost(index_jp1)
    block(g)%v(i,j+1,k)   = block(g)%v2t_ghost(index_jp1)
@@ -1549,7 +1549,7 @@ IF (block(g)%cell2(i, j+1, k).EQ.2) THEN
    block(g)%w(i,j+1,k-1) = block(g)%w1t_ghost(index_jp1)
    block(g)%p(i,j+1,k)   = block(g)%pt_ghost(index_jp1)
 ENDIF
-IF (block(g)%cell2(i, j-1, k).EQ.2) THEN
+IF (block(g)%cell2(i, j-1, k)==2) THEN
    block(g)%u(i,j-1,k)   = block(g)%u2t_ghost(index_jm1)
    block(g)%u(i-1,j-1,k) = block(g)%u1t_ghost(index_jm1)
    block(g)%v(i,j-2,k)   = block(g)%v1t_ghost(index_jm1)
@@ -1557,7 +1557,7 @@ IF (block(g)%cell2(i, j-1, k).EQ.2) THEN
    block(g)%w(i,j-1,k-1) = block(g)%w1t_ghost(index_jm1)
    block(g)%p(i,j-1,k)   = block(g)%pt_ghost(index_jm1)
 ENDIF
-IF (block(g)%cell2(i, j, k+1).EQ.2) THEN
+IF (block(g)%cell2(i, j, k+1)==2) THEN
    block(g)%u(i,j,k+1)   = block(g)%u2t_ghost(index_kp1)
    block(g)%u(i-1,j,k+1) = block(g)%u1t_ghost(index_kp1)
    block(g)%v(i,j,k+1)   = block(g)%v2t_ghost(index_kp1)
@@ -1565,7 +1565,7 @@ IF (block(g)%cell2(i, j, k+1).EQ.2) THEN
    block(g)%w(i,j,k+1)   = block(g)%w2t_ghost(index_kp1)
    block(g)%p(i,j,k+1)   = block(g)%pt_ghost(index_kp1)
 ENDIF
-IF (block(g)%cell2(i, j, k-1).EQ.2) THEN
+IF (block(g)%cell2(i, j, k-1)==2) THEN
    block(g)%u(i,j,k-1)   = block(g)%u2t_ghost(index_km1)
    block(g)%u(i-1,j,k-1) = block(g)%u1t_ghost(index_km1)
    block(g)%v(i,j,k-1)   = block(g)%v2t_ghost(index_km1)
@@ -1693,14 +1693,14 @@ ENDIF
       index_km1 = 0
       n1 = i-1 + nx_var*(j-2) + nx_var*ny_var*(k-2)
       !GOTO 11
-      IF (block(g)%cell2(i+1, j, k).EQ.2 .OR. block(g)%cell2(i-1, j, k).EQ.2 .OR. block(g)%cell2(i, j+1, k).EQ.2 .OR. block(g)%cell2(i, j-1, k).EQ.2 .OR. block(g)%cell2(i, j, k+1).EQ.2.OR. block(g)%cell2(i, j, k-1).EQ.2) THEN
+      IF (block(g)%cell2(i+1, j, k)==2 .OR. block(g)%cell2(i-1, j, k)==2 .OR. block(g)%cell2(i, j+1, k)==2 .OR. block(g)%cell2(i, j-1, k)==2 .OR. block(g)%cell2(i, j, k+1)==2.OR. block(g)%cell2(i, j, k-1)==2) THEN
         !!$acc loop seq
              DO nn = 1, block(g)%TSCellCount
                 i11 = block(g)%TSIndexPtr(nn, 1)
                 j11 = block(g)%TSIndexPtr(nn, 2)
                 k11 = block(g)%TSIndexPtr(nn, 3)
 
-                IF (block(g)%cell2(i+1, j, k).EQ.2) THEN
+                IF (block(g)%cell2(i+1, j, k)==2) THEN
                    index_ip1 = nn
                    temp_u2dotn = 0.
                    temp_u1dotn = 0.
@@ -1730,7 +1730,7 @@ ENDIF
                    temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_ip1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_ip1)))  +  &
                                  (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_ip1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_ip1)))   +  &
                                  (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_ip1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_ip1)))
-                   IF (temp_u2dotn.LT.0) THEN
+                   IF (temp_u2dotn<0) THEN
                       block(g)%u(i+1,j,k) = block(g)%u2_ghost(index_ip1)
                    !ELSE
                    !   u(i+1,j,k) = block(g)%u2t_ghost(index_ip1)
@@ -1740,34 +1740,34 @@ ENDIF
                    !ELSE
                       !block(g)%u(i,j,k) = block(g)%u1t_ghost(index_ip1)
                    !ENDIF
-                   IF (temp_v2dotn.LT.0) THEN
+                   IF (temp_v2dotn<0) THEN
                       block(g)%v(i+1,j,k) = block(g)%v2_ghost(index_ip1)
                    !ELSE
                    !   v(i+1,j,k) = block(g)%v2t_ghost(index_ip1)
                    ENDIF
-                   IF (temp_v1dotn.LT.0) THEN
+                   IF (temp_v1dotn<0) THEN
                       block(g)%v(i+1,j-1,k) = block(g)%v1_ghost(index_ip1)
                    !ELSE
                       !v(i+1,j-1,k) = block(g)%v1t_ghost(index_ip1)
                    ENDIF
-                   IF (temp_w2dotn.LT.0) THEN
+                   IF (temp_w2dotn<0) THEN
                       block(g)%w(i+1,j,k) = block(g)%w2_ghost(index_ip1)
                    !ELSE
                       !w(i+1,j,k) = block(g)%w2t_ghost(index_ip1)
                    ENDIF
-                   IF (temp_w1dotn.LT.0) THEN
+                   IF (temp_w1dotn<0) THEN
                       block(g)%w(i+1,j,k-1) = block(g)%w1_ghost(index_ip1)
                    !ELSE
                       !w(i+1,j,k-1) = block(g)%w1t_ghost(index_ip1)
                    ENDIF
-                   IF (temp_pdotn.LT.0) THEN
+                   IF (temp_pdotn<0) THEN
                       block(g)%p(i+1,j,k) = block(g)%p_ghost(index_ip1)
                    !ELSE
                       !p(i+1,j,k) = block(g)%pt_ghost(index_ip1)
                    ENDIF
                 ENDIF
 
-                IF (block(g)%cell2(i-1, j, k).EQ.2) THEN
+                IF (block(g)%cell2(i-1, j, k)==2) THEN
                    index_im1 = nn
                    temp_u2dotn = 0.
                    temp_u1dotn = 0.
@@ -1802,39 +1802,39 @@ ENDIF
                    !ELSE
                       !block(g)%u(i-1,j,k) = block(g)%u2t_ghost(index_im1)
                    !ENDIF
-                   IF (temp_u1dotn.LT.0) THEN
+                   IF (temp_u1dotn<0) THEN
                       block(g)%u(i-2,j,k) = block(g)%u1_ghost(index_im1)
                    !ELSE
                       !block(g)%u(i-2,j,k) = block(g)%u1t_ghost(index_im1)
                    ENDIF
-                   IF (temp_v2dotn.LT.0) THEN
+                   IF (temp_v2dotn<0) THEN
                       block(g)%v(i-1,j,k) = block(g)%v2_ghost(index_im1)
                    !ELSE
                       !v(i-1,j,k) = block(g)%v2t_ghost(index_im1)
                    ENDIF
-                   IF (temp_v1dotn.LT.0) THEN
+                   IF (temp_v1dotn<0) THEN
                       block(g)%v(i-1,j-1,k) = block(g)%v1_ghost(index_im1)
                    !ELSE
                       !v(i-1,j-1,k) = block(g)%v1t_ghost(index_im1)
                    ENDIF
-		             IF (temp_w2dotn.LT.0) THEN
+		             IF (temp_w2dotn<0) THEN
                       block(g)%w(i-1,j,k) = block(g)%w2_ghost(index_im1)
                    !ELSE
                       !block(g)%w(i-1,j,k) = block(g)%w2t_ghost(index_im1)
                    ENDIF
-		             IF (temp_w1dotn.LT.0) THEN
+		             IF (temp_w1dotn<0) THEN
                       block(g)%w(i-1,j,k-1) = block(g)%w1_ghost(index_im1)
                    !ELSE
                       !w(i-1,j,k-1) = block(g)%w1t_ghost(index_im1)
                    ENDIF
-                   IF (temp_pdotn.LT.0) THEN
+                   IF (temp_pdotn<0) THEN
                       block(g)%p(i-1,j,k) = block(g)%p_ghost(index_im1)
                    !ELSE
                       !block(g)%p(i-1,j,k) = block(g)%pt_ghost(index_im1)
                    ENDIF
                 ENDIF
 
-                IF (block(g)%cell2(i, j+1, k).EQ.2) THEN
+                IF (block(g)%cell2(i, j+1, k)==2) THEN
                    index_jp1 = nn
                    temp_u2dotn = 0.
                    temp_u1dotn = 0.
@@ -1864,17 +1864,17 @@ ENDIF
                    temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_jp1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_jp1)))  +  &
 		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_jp1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_jp1)))   +  &
 				                     (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_jp1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_jp1)))
-                   IF (temp_u2dotn.LT.0) THEN
+                   IF (temp_u2dotn<0) THEN
                       block(g)%u(i,j+1,k) = block(g)%u2_ghost(index_jp1)
                    !ELSE
                       !block(g)%u(i,j+1,k) = block(g)%u2t_ghost(index_jp1)
                    ENDIF
-                   IF (temp_u1dotn.LT.0) THEN
+                   IF (temp_u1dotn<0) THEN
                       block(g)%u(i-1,j+1,k) = block(g)%u1_ghost(index_jp1)
                    !ELSE
                       !block(g)%u(i-1,j+1,k) = block(g)%u1t_ghost(index_jp1)
                    ENDIF
-                   IF (temp_v2dotn.LT.0) THEN
+                   IF (temp_v2dotn<0) THEN
                       block(g)%v(i,j+1,k) = block(g)%v2_ghost(index_jp1)
                    !ELSE
                       !v(i,j+1,k) = block(g)%v2t_ghost(index_jp1)
@@ -1884,24 +1884,24 @@ ENDIF
                    !ELSE
                    !   v(i,j,k) = block(g)%v1t_ghost(index_jp1)
                    !ENDIF
-		             IF (temp_w2dotn.LT.0) THEN
+		             IF (temp_w2dotn<0) THEN
                       block(g)%w(i,j+1,k) = block(g)%w2_ghost(index_jp1)
                    !ELSE
                       !w(i,j+1,k) = block(g)%w2t_ghost(index_jp1)
                    ENDIF
-		             IF (temp_w1dotn.LT.0) THEN
+		             IF (temp_w1dotn<0) THEN
                       block(g)%w(i,j+1,k-1) = block(g)%w1_ghost(index_jp1)
                    !ELSE
                       !w(i,j+1,k-1) = block(g)%w1t_ghost(index_jp1)
                    ENDIF
-                   IF (temp_pdotn.LT.0) THEN
+                   IF (temp_pdotn<0) THEN
                       block(g)%p(i,j+1,k) = block(g)%p_ghost(index_jp1)
                    !ELSE
                       !p(i,j+1,k) = block(g)%pt_ghost(index_jp1)
                    ENDIF
                 ENDIF
 
-		          IF (block(g)%cell2(i, j-1, k).EQ.2) THEN
+		          IF (block(g)%cell2(i, j-1, k)==2) THEN
                    index_jm1 = nn
                    temp_u2dotn = 0.
                    temp_u1dotn = 0.
@@ -1931,12 +1931,12 @@ ENDIF
                    temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_jm1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_jm1)))  +  &
 		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_jm1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_jm1)))   +  &
 				                     (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_jm1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_jm1)))
-                   IF (temp_u2dotn.LT.0) THEN
+                   IF (temp_u2dotn<0) THEN
                       block(g)%u(i,j-1,k) = block(g)%u2_ghost(index_jm1)
                    !ELSE
                       !block(g)%u(i,j-1,k) = block(g)%u2t_ghost(index_jm1)
                    ENDIF
-                   IF (temp_u1dotn.LT.0) THEN
+                   IF (temp_u1dotn<0) THEN
                       block(g)%u(i-1,j-1,k) = block(g)%u1_ghost(index_jm1)
                    !ELSE
                       !block(g)%u(i-1,j-1,k) = block(g)%u1t_ghost(index_jm1)
@@ -1946,29 +1946,29 @@ ENDIF
                    !ELSE
                    !   v(i,j-1,k) = block(g)%v2t_ghost(index_jm1)
                    !ENDIF
-                   IF (temp_v1dotn.LT.0) THEN
+                   IF (temp_v1dotn<0) THEN
                       block(g)%v(i,j-2,k) = block(g)%v1_ghost(index_jm1)
                    !ELSE
                       !block(g)%v(i,j-2,k) = block(g)%v1t_ghost(index_jm1)
                    ENDIF
-                   IF (temp_w2dotn.LT.0) THEN
+                   IF (temp_w2dotn<0) THEN
                       block(g)%w(i,j-1,k) = block(g)%w2_ghost(index_jm1)
                    !ELSE
                       !block(g)%w(i,j-1,k) = block(g)%w2t_ghost(index_jm1)
                    ENDIF
-                   IF (temp_w1dotn.LT.0) THEN
+                   IF (temp_w1dotn<0) THEN
                       block(g)%w(i,j-1,k-1) = block(g)%w1_ghost(index_jm1)
                    !ELSE
                       !block(g)%w(i,j-1,k-1) = block(g)%w1t_ghost(index_jm1)
                    ENDIF
-                   IF (temp_pdotn.LT.0) THEN
+                   IF (temp_pdotn<0) THEN
                       block(g)%p(i,j-1,k) = block(g)%p_ghost(index_jm1)
                    !ELSE
                       !block(g)%p(i,j-1,k) = block(g)%pt_ghost(index_jm1)
                    ENDIF
                 ENDIF
 
-                IF (block(g)%cell2(i, j, k+1).EQ.2) THEN
+                IF (block(g)%cell2(i, j, k+1)==2) THEN
                    index_kp1 = nn
                    temp_u2dotn = 0.
                    temp_u1dotn = 0.
@@ -1998,27 +1998,27 @@ ENDIF
                    temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_kp1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_kp1)))  +  &
                                  (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_kp1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_kp1)))   +  &
                                  (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_kp1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_kp1)))
-                   IF (temp_u2dotn.LT.0) THEN
+                   IF (temp_u2dotn<0) THEN
                       block(g)%u(i,j,k+1) = block(g)%u2_ghost(index_kp1)
                    !ELSE
                       !block(g)%u(i,j,k+1) = block(g)%u2t_ghost(index_kp1)
                    ENDIF
-                   IF (temp_u1dotn.LT.0) THEN
+                   IF (temp_u1dotn<0) THEN
                       block(g)%u(i-1,j,k+1) = block(g)%u1_ghost(index_kp1)
                    !ELSE
                       !block(g)%u(i-1,j,k+1) = block(g)%u1t_ghost(index_kp1)
                    ENDIF
-                   IF (temp_v2dotn.LT.0) THEN
+                   IF (temp_v2dotn<0) THEN
                       block(g)%v(i,j,k+1) = block(g)%v2_ghost(index_kp1)
                    !ELSE
                       !block(g)%v(i,j,k+1) = block(g)%v2t_ghost(index_kp1)
                    ENDIF
-                   IF (temp_v1dotn.LT.0) THEN
+                   IF (temp_v1dotn<0) THEN
                       block(g)%v(i,j-1,k+1) = block(g)%v1_ghost(index_kp1)
                    !ELSE
                       !v(i,j-1,k+1) = block(g)%v1t_ghost(index_kp1)
                    ENDIF
-                   IF (temp_w2dotn.LT.0) THEN
+                   IF (temp_w2dotn<0) THEN
                       block(g)%w(i,j,k+1) = block(g)%w2_ghost(index_kp1)
                    !ELSE
                       !block(g)%w(i,j,k+1) = block(g)%w2t_ghost(index_kp1)
@@ -2028,14 +2028,14 @@ ENDIF
                    !ELSE
                       !block(g)%w(i,j,k) = block(g)%w1t_ghost(index_kp1)
                    !ENDIF
-                   IF (temp_pdotn.LT.0) THEN
+                   IF (temp_pdotn<0) THEN
                       block(g)%p(i,j,k+1) = block(g)%p_ghost(index_kp1)
                    !ELSE
                       !block(g)%p(i,j,k+1) = block(g)%pt_ghost(index_kp1)
                    ENDIF
                 ENDIF
 
-                IF (block(g)%cell2(i, j, k-1).EQ.2) THEN
+                IF (block(g)%cell2(i, j, k-1)==2) THEN
                    index_km1 = nn
                    temp_u2dotn = 0.
                    temp_u1dotn = 0.
@@ -2065,22 +2065,22 @@ ENDIF
                    temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_km1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_km1)))  +  &
                                  (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_km1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_km1)))   +  &
                                  (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_km1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_km1)))
-                   IF (temp_u2dotn.LT.0) THEN
+                   IF (temp_u2dotn<0) THEN
                       block(g)%u(i,j,k-1) = block(g)%u2_ghost(index_km1)
                    !ELSE
                       !block(g)%u(i,j,k-1) = block(g)%u2t_ghost(index_km1)
                    ENDIF
-                   IF (temp_u1dotn.LT.0) THEN
+                   IF (temp_u1dotn<0) THEN
                       block(g)%u(i-1,j,k-1) = block(g)%u1_ghost(index_km1)
                    !ELSE
                       !block(g)%u(i-1,j,k-1) = block(g)%u1t_ghost(index_km1)
                    ENDIF
-                   IF (temp_v2dotn.LT.0) THEN
+                   IF (temp_v2dotn<0) THEN
                       block(g)%v(i,j,k-1) = block(g)%v2_ghost(index_km1)
                    !ELSE
                       !v(i,j,k-1) = block(g)%v2t_ghost(index_km1)
                    ENDIF
-                   IF (temp_v1dotn.LT.0) THEN
+                   IF (temp_v1dotn<0) THEN
                       block(g)%v(i,j-1,k-1) = block(g)%v1_ghost(index_km1)
                    !ELSE
                       !block(g)%v(i,j-1,k-1) = block(g)%v1t_ghost(index_km1)
@@ -2090,12 +2090,12 @@ ENDIF
                !    ELSE
                !     block(g)% w(i,j,k-1) = block(g)%w2t_ghost(index_km1)
                 !   ENDIF
-                   IF (temp_w1dotn.LT.0) THEN
+                   IF (temp_w1dotn<0) THEN
                       block(g)%w(i,j,k-2) = block(g)%w1_ghost(index_km1)
                    !ELSE
                       !block(g)%w(i,j,k-2) = block(g)%w1t_ghost(index_km1)
                    ENDIF
-                   IF (temp_pdotn.LT.0) THEN
+                   IF (temp_pdotn<0) THEN
                       block(g)%p(i,j,k-1) = block(g)%p_ghost(index_km1)
                    !ELSE
                       !block(g)%p(i,j,k-1) = block(g)%pt_ghost(index_km1)
@@ -2222,11 +2222,11 @@ ENDIF
 	w_in_um=0.5*(wu_n+wu_s)
 
 !cccccccccccccc---Third Order Upwinding ----ccccccccccccccccccccccccccccc
-       if(i.ne.2.and.i.lt.nx_var.and.j.ne.2.and.j.lt.ny_var+1.and.    &
-       k.ne.2.and.k.lt.nz_var+1.and.block(g)%cell(i+1,j,k).ne.2.and.       &
-       block(g)%cell(i-1,j,k).ne.2.and.block(g)%cell(i,j+1,k).ne.2.and.         &
-       block(g)%cell(i,j-1,k).ne.2.and.block(g)%cell(i,j,k+1).ne.2.and.         &
-       block(g)%cell(i,j,k-1).ne.2) then
+       if(i/=2.and.i<nx_var.and.j/=2.and.j<ny_var+1.and.    &
+       k/=2.and.k<nz_var+1.and.block(g)%cell(i+1,j,k)/=2.and.       &
+       block(g)%cell(i-1,j,k)/=2.and.block(g)%cell(i,j+1,k)/=2.and.         &
+       block(g)%cell(i,j-1,k)/=2.and.block(g)%cell(i,j,k+1)/=2.and.         &
+       block(g)%cell(i,j,k-1)/=2) then
 
 	ddy=0.5*(block(g)%deltay(j)+block(g)%deltay(j-1))
        ddye=0.5*(block(g)%deltay(j)+block(g)%deltay(j+1))
@@ -2331,11 +2331,11 @@ ENDIF
 	w_in_vm=0.5*(wv_n+wv_s)
 
 !cccccccccccccc---Third Order Upwinding ----cccccccccccccccccccccccccccc
-      if(i.ne.2.and.i.lt.nx_var+1.and.j.ne.2.and.j.lt.ny_var.and. &
-      k.ne.2.and.k.lt.nz_var+1.and.block(g)%cell(i+1,j,k).ne.2.and.    &
-      block(g)%cell(i-1,j,k).ne.2.and.block(g)%cell(i,j+1,k).ne.2.and.      &
-      block(g)%cell(i,j-1,k).ne.2.and.block(g)%cell(i,j,k+1).ne.2.and.      &
-      block(g)%cell(i,j,k-1).ne.2) then
+      if(i/=2.and.i<nx_var+1.and.j/=2.and.j<ny_var.and. &
+      k/=2.and.k<nz_var+1.and.block(g)%cell(i+1,j,k)/=2.and.    &
+      block(g)%cell(i-1,j,k)/=2.and.block(g)%cell(i,j+1,k)/=2.and.      &
+      block(g)%cell(i,j-1,k)/=2.and.block(g)%cell(i,j,k+1)/=2.and.      &
+      block(g)%cell(i,j,k-1)/=2) then
 
 	ddx=0.5*(block(g)%deltax(i)+block(g)%deltax(i-1))
        ddxr=0.5*(block(g)%deltax(i)+block(g)%deltax(i+1))
@@ -2440,11 +2440,11 @@ ENDIF
 	v_in_wm=0.5*(vw_n+vw_s)
 
 !cccccccccccccc---Third Order Upwinding ----ccccccccccccccccccccccccccccc
-      if(i.ne.2.and.i.lt.nx_var+1.and.j.ne.2.and.j.lt.ny_var+1.and. &
-      k.ne.2.and.k.lt.nz_var.and.block(g)%cell(i+1,j,k).ne.2.and.        &
-      block(g)%cell(i-1,j,k).ne.2.and.block(g)%cell(i,j+1,k).ne.2.and.        &
-      block(g)%cell(i,j-1,k).ne.2.and.block(g)%cell(i,j,k+1).ne.2.and.        &
-      block(g)%cell(i,j,k-1).ne.2) then
+      if(i/=2.and.i<nx_var+1.and.j/=2.and.j<ny_var+1.and. &
+      k/=2.and.k<nz_var.and.block(g)%cell(i+1,j,k)/=2.and.        &
+      block(g)%cell(i-1,j,k)/=2.and.block(g)%cell(i,j+1,k)/=2.and.        &
+      block(g)%cell(i,j-1,k)/=2.and.block(g)%cell(i,j,k+1)/=2.and.        &
+      block(g)%cell(i,j,k-1)/=2) then
 
 	ddx=0.5*(block(g)%deltax(i)+block(g)%deltax(i-1))
        ddxr=0.5*(block(g)%deltax(i)+block(g)%deltax(i+1))
@@ -2540,7 +2540,7 @@ ENDIF
        block(g)%resi_w(i,j,k)=residw
 !***********************************************************************
 
-        IF (block(g)%cell2(i+1, j, k).EQ.2) THEN
+        IF (block(g)%cell2(i+1, j, k)==2) THEN
      block(g)%u(i+1,j,k)   = block(g)%u2t_ghost(index_ip1)
      block(g)%v(i+1,j,k)   = block(g)%v2t_ghost(index_ip1)
      block(g)%v(i+1,j-1,k) = block(g)%v1t_ghost(index_ip1)
@@ -2548,7 +2548,7 @@ ENDIF
      block(g)%w(i+1,j,k-1) = block(g)%w1t_ghost(index_ip1)
      block(g)%p(i+1,j,k)   = block(g)%pt_ghost(index_ip1)
      ENDIF
-     IF (block(g)%cell2(i-1, j, k).EQ.2) THEN
+     IF (block(g)%cell2(i-1, j, k)==2) THEN
         block(g)%u(i-2,j,k)   = block(g)%u1t_ghost(index_im1)
        block(g)% v(i-1,j,k)   = block(g)%v2t_ghost(index_im1)
         block(g)%v(i-1,j-1,k) = block(g)%v1t_ghost(index_im1)
@@ -2556,7 +2556,7 @@ ENDIF
         block(g)%w(i-1,j,k-1) = block(g)%w1t_ghost(index_im1)
         block(g)%p(i-1,j,k)   = block(g)%pt_ghost(index_im1)
      ENDIF
-     IF (block(g)%cell2(i, j+1, k).EQ.2) THEN
+     IF (block(g)%cell2(i, j+1, k)==2) THEN
         block(g)%u(i,j+1,k)   = block(g)%u2t_ghost(index_jp1)
         block(g)%u(i-1,j+1,k) = block(g)%u1t_ghost(index_jp1)
         block(g)%v(i,j+1,k)   = block(g)%v2t_ghost(index_jp1)
@@ -2564,7 +2564,7 @@ ENDIF
         block(g)%w(i,j+1,k-1) = block(g)%w1t_ghost(index_jp1)
         block(g)%p(i,j+1,k)   = block(g)%pt_ghost(index_jp1)
      ENDIF
-     IF (block(g)%cell2(i, j-1, k).EQ.2) THEN
+     IF (block(g)%cell2(i, j-1, k)==2) THEN
         block(g)%u(i,j-1,k)   = block(g)%u2t_ghost(index_jm1)
         block(g)%u(i-1,j-1,k) = block(g)%u1t_ghost(index_jm1)
         block(g)%v(i,j-2,k)   = block(g)%v1t_ghost(index_jm1)
@@ -2572,7 +2572,7 @@ ENDIF
         block(g)%w(i,j-1,k-1) = block(g)%w1t_ghost(index_jm1)
         block(g)%p(i,j-1,k)   = block(g)%pt_ghost(index_jm1)
      ENDIF
-     IF (block(g)%cell2(i, j, k+1).EQ.2) THEN
+     IF (block(g)%cell2(i, j, k+1)==2) THEN
         block(g)%u(i,j,k+1)   = block(g)%u2t_ghost(index_kp1)
         block(g)%u(i-1,j,k+1) = block(g)%u1t_ghost(index_kp1)
         block(g)%v(i,j,k+1)   = block(g)%v2t_ghost(index_kp1)
@@ -2580,7 +2580,7 @@ ENDIF
         block(g)%w(i,j,k+1)   = block(g)%w2t_ghost(index_kp1)
         block(g)%p(i,j,k+1)   = block(g)%pt_ghost(index_kp1)
      ENDIF
-     IF (block(g)%cell2(i, j, k-1).EQ.2) THEN
+     IF (block(g)%cell2(i, j, k-1)==2) THEN
         block(g)%u(i,j,k-1)   = block(g)%u2t_ghost(index_km1)
         block(g)%u(i-1,j,k-1) = block(g)%u1t_ghost(index_km1)
         block(g)%v(i,j,k-1)   = block(g)%v2t_ghost(index_km1)
