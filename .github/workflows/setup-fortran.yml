@@ -34,8 +34,5 @@ jobs:
           version: ${{ matrix.toolchain.version }}
 
       - run: |
-          # environment vars FC, CC, and CXX are set
-          ${{ env.FC }} -c src/modGlobal.f90
-          # We run this twice because of the hacky way we are
-          # building, remove once we have a proper build system
-          ${{ env.FC }} src/*f90 -o test
+          # Build with FPM
+          fpm build --compiler ${{ env.FPM_FC }}
