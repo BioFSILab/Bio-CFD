@@ -3,13 +3,13 @@
         USE global
         IMPLICIT NONE
         INTEGER(KIND=8) :: i, j,k, n, g, gg1, f, co
-        INTEGER, PARAMETER :: rk = selected_real_kind(8) 
+        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         REAL (KIND = 8)    :: dalt, div, dab, dudt, dvdt, dwdt
         REAL (KIND = 8)    :: max_derr1, max_derr2, max_div, max_derrStdSt
         REAL (KIND = 8)    :: er_dudt, er_dvdt, er_dwdt, err_ds
         INTEGER(KIND=8) :: max_nIterPcor, max_nit
-        CHARACTER*160 filename1                 
-        
+        CHARACTER(len=160) :: filename1
+
 
 
       ! DO g=1,nblocks
@@ -21,20 +21,20 @@
           max_derr2=0._rk
           max_nIterPcor=0
           max_div=0._rk
-          max_nit=0._rk      
-          err_ds=0._rk      
+          max_nit=0._rk
+          err_ds=0._rk
           er_dudt=0.
           er_dvdt=0.
           er_dwdt=0.
          !derrStdSt = 0._rk
 
          !initialize variables
-         !nIterPcor = 0  
+         !nIterPcor = 0
          !divmax = 0._rk
-         !dalt   = 0._rk         
+         !dalt   = 0._rk
          !derr1  = 0._rk
-        
-        
+
+
         DO g=1,nblocks
         !$acc parallel loop gang vector collapse (3) default(present)
         DO k = 1, block(g)%nz+2
@@ -43,7 +43,7 @@
            block(g)%b(i,j,k)  = 0.
            block(g)%pc(i,j,k) = 0.
            block(g)%pco(i,j,k)= 0.
-           
+
         END DO
         END DO
         END DO
@@ -62,7 +62,7 @@
 !               print*,'before swap in ps'
 !              ! pause
 !       endif
-       
+
         solverTime=0.
      CALL cpu_time(dStart)
         CALL fineUpdate_newv_bd
@@ -74,14 +74,14 @@
       !         print*,'after swap in ps'
       !         pause
       ! endif
-       
+
 !      CALL writeOutput1
 !   print*,ita,'before rbsor'
 !      !pause
      CALL cpu_time(dfinish)
-        coupTime=coupTime + dfinish -dstart 
+        coupTime=coupTime + dfinish -dstart
         DO g=1,nblocks
-               CALL computeDiv(g)    !divergence vector 
+               CALL computeDiv(g)    !divergence vector
         END DO
         DO g=2,nblocks
          CALL cpu_time(dStart)
@@ -116,16 +116,16 @@
 
 !    call cpu_time(dstart)
 
-       DO g=1,nblocks 
-               CALL correctPressure(g)!pressure correction
-               CALL correctVelocity(g) !velocity correction
+       DO g=1,nblocks
+               CALL correctPressure(g)  !pressure correction
+               CALL correctVelocity(g)  !velocity correction
 
         END DO
          CALL velocityBC      !correct velocity at boundaries
 !       CALL writeOutput1
 !   print*,ita,'after rbsor'
 !       !pause
-        
+
         !$omp parallel do private( n,i,j,k,er_dudt,er_dvdt,er_dwdt, err_ds,g) num_threads(3)
          DO g=1,nblocks
          err_ds=0.
@@ -134,21 +134,21 @@
         !$acc default(present) reduction (max: err_ds)
          DO n = 1, block(g)%fluidCellCount
            i = block(g)%fluidIndexPtr(n, 1)
-           j = block(g)%fluidIndexPtr(n, 2)  
-           k = block(g)%fluidIndexPtr(n, 3)  
+           j = block(g)%fluidIndexPtr(n, 2)
+           k = block(g)%fluidIndexPtr(n, 3)
            !block(g)%dudt = dabs((block(g)%ut(i,j,k) - block(g)%u(i,j,k)))/deltat
            !block(g)%dvdt = dabs((block(g)%vt(i,j,k) - block(g)%v(i,j,k)))/deltat
            !block(g)% dwdt = dabs((block(g)%wt(i,j,k) - block(g)%w(i,j,k)))/deltat
-           !block(g)%derrStdSt = dmax1(block(g)%derrStdSt, block(g)%dudt,block(g)%dvdt, block(g)%dwdt)    
+           !block(g)%derrStdSt = dmax1(block(g)%derrStdSt, block(g)%dudt,block(g)%dvdt, block(g)%dwdt)
            er_dudt = dabs((block(g)%ut(i,j,k) - block(g)%u(i,j,k)))/deltat
            er_dvdt = dabs((block(g)%vt(i,j,k) - block(g)%v(i,j,k)))/deltat
            er_dwdt = dabs((block(g)%wt(i,j,k) - block(g)%w(i,j,k)))/deltat
-           err_ds = dmax1(err_ds, er_dudt,er_dvdt, er_dwdt)    
+           err_ds = dmax1(err_ds, er_dudt,er_dvdt, er_dwdt)
          ENDDO
          !$acc end parallel
-           block(g)%derrStdSt = err_ds    
-         
-        
+           block(g)%derrStdSt = err_ds
+
+
          ENDDO
         !$omp end parallel do
 
@@ -176,7 +176,7 @@
               end if
           end do
 
-            WRITE(filename1,1) 
+            WRITE(filename1,1)
  1          FORMAT('sphere_iter.dat')
          OPEN(111,FILE=filename1,ACCESS='Append',STATUS='unknown')
          !WRITE(111,126)   ita, block(1)%nIterPcor, block(2)%nIterPcor, block(3)%nIterPcor,max_derr2, max_derrStdSt, dmid(1),dmid(2), dmid(3)
@@ -188,14 +188,14 @@
 !126      FORMAT(' ',I8, 3I10, 7E15.6)
  126      FORMAT(' ',I8, 2I10, 2F6.2,F14.9)
  16      FORMAT(' ',I8, I10, 4E15.6)
-         CLOSE(111)	 
+         CLOSE(111)
 !         OPEN(111,FILE='iter.dat',ACCESS='Append',STATUS='unknown')
         !WRITE(111,16) ita, nIterPcor, derr2, derrStdSt, dfinish-dstart
 !         WRITE(*,16) ita, max_nIterPcor, max_derr2, max_derrStdSt, totime
        ! WRITE(*,16) ita, max_nit, max_derrStdSt, totalTime
 ! 16      FORMAT(' ',I8, I10, 4E15.6)
-!         CLOSE(111)	 
-         
+!         CLOSE(111)
+
          DO g=1,nblocks
         !$omp parallel do collapse(3) private (i,j,k)  num_threads(48)
         !$acc parallel loop gang vector default(present) collapse (3)
@@ -245,16 +245,16 @@
          nx_var=block(g)%nx
          ny_var=block(g)%ny
         !!$acc parallel loop gang vector private (i, j, k)   &
-        !!$acc present (block(g)%fluidIndexPtr, b, ut, vt, wt, block(g)%deltax, block(g)%deltay, block(g)%deltaz)         
+        !!$acc present (block(g)%fluidIndexPtr, b, ut, vt, wt, block(g)%deltax, block(g)%deltay, block(g)%deltaz)
         !$omp parallel do private (i,j,k,counter)  num_threads(48)
          !DO g=1,nblocks
         !$acc parallel loop gang vector private (i, j, k,counter)   &
-        !$acc default(present)         
+        !$acc default(present)
          DO n = 1, block(gg)%fluidCellCount
            i = block(gg)%fluidIndexPtr(n, 1)
-           j = block(gg)%fluidIndexPtr(n, 2)  
-           k = block(gg)%fluidIndexPtr(n, 3)  	
-           counter =i-1  + nx_var*(j-2)  + nx_var*ny_var*(k-2)           	   
+           j = block(gg)%fluidIndexPtr(n, 2)
+           k = block(gg)%fluidIndexPtr(n, 3)
+           counter =i-1  + nx_var*(j-2)  + nx_var*ny_var*(k-2)
            block(gg)%b(i,j,k) =  (block(gg)%ut(i,j,k) - block(gg)%ut(i-1,j,k))/block(gg)%deltax(i) +  &
                        (block(gg)%vt(i,j,k) - block(gg)%vt(i,j-1,k))/block(gg)%deltay(j) +  &
                        (block(gg)%wt(i,j,k) - block(gg)%wt(i,j,k-1))/block(gg)%deltaz(k)
@@ -321,14 +321,14 @@
         !$omp parallel do private (i,j,k)  num_threads(48)
         !$acc parallel loop gang vector private (i, j, k)   &
         !$acc default(present)
-         DO n = 1, block(gg)%fluidCellCount 
+         DO n = 1, block(gg)%fluidCellCount
             i = block(gg)%fluidIndexPtr(n, 1)
-            j = block(gg)%fluidIndexPtr(n, 2) 
-            k = block(gg)%fluidIndexPtr(n, 3) 			
-            block(gg)%p(i,j,k) = block(gg)%p(i,j,k) + block(gg)%pc(i,j,k) 
+            j = block(gg)%fluidIndexPtr(n, 2)
+            k = block(gg)%fluidIndexPtr(n, 3)
+            block(gg)%p(i,j,k) = block(gg)%p(i,j,k) + block(gg)%pc(i,j,k)
         END DO
         !$omp end parallel do
-        !$acc end parallel   
+        !$acc end parallel
       END SUBROUTINE correctPressure
 
 
@@ -345,28 +345,28 @@
         !$omp parallel do private (i,j,k) firstprivate(deltat) num_threads(48)
         !$acc parallel loop gang vector private (i, j, k) firstprivate (deltat) &
         !$acc default(present)
-         DO 30 n = 1, block(gg)%fluidCellCount 
+         DO 30 n = 1, block(gg)%fluidCellCount
             i = block(gg)%fluidIndexPtr(n, 1)
-            j = block(gg)%fluidIndexPtr(n, 2) 
-            k = block(gg)%fluidIndexPtr(n, 3) 			
-			
+            j = block(gg)%fluidIndexPtr(n, 2)
+            k = block(gg)%fluidIndexPtr(n, 3)
+
             block(gg)%ut(i,j,k) = block(gg)%ut(i,j,k) - deltat/(0.5d0*(block(gg)%deltax(i+1)+block(gg)%deltax(i)))*(block(gg)%pc(i+1,j,k)-block(gg)%pc(i,j,k))
-            block(gg)%vt(i,j,k) = block(gg)%vt(i,j,k) - deltat/(0.5d0*(block(gg)%deltay(j+1)+block(gg)%deltay(j)))*(block(gg)%pc(i,j+1,k)-block(gg)%pc(i,j,k))  
-            block(gg)%wt(i,j,k) = block(gg)%wt(i,j,k) - deltat/(0.5d0*(block(gg)%deltaz(k+1)+block(gg)%deltaz(k)))*(block(gg)%pc(i,j,k+1)-block(gg)%pc(i,j,k))  			
+            block(gg)%vt(i,j,k) = block(gg)%vt(i,j,k) - deltat/(0.5d0*(block(gg)%deltay(j+1)+block(gg)%deltay(j)))*(block(gg)%pc(i,j+1,k)-block(gg)%pc(i,j,k))
+            block(gg)%wt(i,j,k) = block(gg)%wt(i,j,k) - deltat/(0.5d0*(block(gg)%deltaz(k+1)+block(gg)%deltaz(k)))*(block(gg)%pc(i,j,k+1)-block(gg)%pc(i,j,k))
  30      CONTINUE
          !$acc end parallel
         !$omp end parallel do
       END SUBROUTINE correctVelocity
-      
+
 !***********************************************************************
 
 !***********************************************************************
-          
-      !SUBROUTINE REDBLACKSOR(epsi, isum, derr, derr2)      
-      SUBROUTINE REDBLACKSOR_old(g)      
+
+      !SUBROUTINE REDBLACKSOR(epsi, isum, derr, derr2)
+      SUBROUTINE REDBLACKSOR_old(g)
          USE global
          IMPLICIT NONE
-         INTEGER, PARAMETER :: rk = selected_real_kind(8)   
+         INTEGER, PARAMETER :: rk = selected_real_kind(8)
          INTEGER(KIND=8) :: n, i, j, k, gg, ip, nx_var, ny_var, nz_var
          !REAL (KIND = 8) :: derr, derr2,omega, derr3, errSum,var,derr4
          REAL (KIND = 8) :: derr, derr2, derr3, errSum,var,derr4
@@ -376,113 +376,113 @@
          INTEGER(KIND=8),INTENT(IN) ::g
 
          gg=g
-         !isum = 0   
+         !isum = 0
         ! if (gg .eq. 3)then
-        !        omega = 1.67_rk 
-        !else 
+        !        omega = 1.67_rk
+        !else
                 !omega=1.96_rk
                 omega=1.955_rk
-        !endif     
-         !block(g)%derr = 0._rk 
+        !endif
+         !block(g)%derr = 0._rk
 
           nx_var=block(gg)%nx
           ny_var=block(gg)%ny
-          nz_var=block(gg)%nz 
+          nz_var=block(gg)%nz
 
          block(g)%derr2 = 0._rk
          errSum = 0._rk
- 3       block(g)%nIterPcor=block(g)%nIterPcor+1 
+ 3       block(g)%nIterPcor=block(g)%nIterPcor+1
 
         derr4=0.
         var=0.
-        !isum = isum + 1  
-		 
-        !$acc parallel loop gang vector default(present) firstprivate(deltat, omega) private (i, j, k) 
+        !isum = isum + 1
+
+        !$acc parallel loop gang vector default(present) firstprivate(deltat, omega) private (i, j, k)
         !$omp parallel do private (i,ip,j,k,n) num_threads(48)
-         DO 10 n = 1, block(gg)%redCellCount 
+         DO 10 n = 1, block(gg)%redCellCount
              i = block(gg)%redCellIndexPtr(n, 1)
-             j = block(gg)%redCellIndexPtr(n, 2)  
-             k = block(gg)%redCellIndexPtr(n, 3)  
+             j = block(gg)%redCellIndexPtr(n, 2)
+             k = block(gg)%redCellIndexPtr(n, 3)
 !             ip =i-1  + nx_var*(j-2)  + nx_var*ny_var*(k-2)
 !            block(gg)%pc(i,j,k) = (block(gg)%b(i,j,k)/deltat &
 !     &        -block(gg)%A(ip,3)*block(gg)%pco(i-1,j,k) -block(gg)%A(ip,5)*block(gg)%pco(i+1,j,k) &
 !     &        -block(gg)%A(ip,2)*block(gg)%pco(i,j-1,k) -block(gg)%A(ip,6)*block(gg)%pco(i,j+1,k) &
-!     &        -block(gg)%A(ip,1)*block(gg)%pco(i,j,k-1) -block(gg)%A(ip,7)*block(gg)%pco(i,j,k+1))/(block(gg)%A(ip,4)) 
+!     &        -block(gg)%A(ip,1)*block(gg)%pco(i,j,k-1) -block(gg)%A(ip,7)*block(gg)%pco(i,j,k+1))/(block(gg)%A(ip,4))
 !            block(gg)%pc(i,j,k) = (1._rk-omega)*block(gg)%pco(i,j,k) + omega*block(gg)%pc(i,j,k)
 
             block(gg)%pc(i,j,k) = (block(gg)%b(i,j,k)/deltat &
      &        -block(gg)%Acx(i-1,1)*block(gg)%pco(i-1,j,k) -block(gg)%Acx(i-1,3)*block(gg)%pco(i+1,j,k) &
      &        -block(gg)%Acy(j-1,1)*block(gg)%pco(i,j-1,k) -block(gg)%Acy(j-1,3)*block(gg)%pco(i,j+1,k) &
-     &        -block(gg)%Acz(k-1,1)*block(gg)%pco(i,j,k-1) -block(gg)%Acz(k-1,3)*block(gg)%pco(i,j,k+1))/(block(gg)%Acx(i-1,2)+block(gg)%Acy(j-1,2)+block(gg)%Acz(k-1,2)) 
+     &        -block(gg)%Acz(k-1,1)*block(gg)%pco(i,j,k-1) -block(gg)%Acz(k-1,3)*block(gg)%pco(i,j,k+1))/(block(gg)%Acx(i-1,2)+block(gg)%Acy(j-1,2)+block(gg)%Acz(k-1,2))
             block(gg)%pc(i,j,k) = (1._rk-omega)*block(gg)%pco(i,j,k) + omega*block(gg)%pc(i,j,k)
 
- 10      CONTINUE 
+ 10      CONTINUE
         !$omp end parallel do
-        !$acc end parallel  
-		 
+        !$acc end parallel
+
         !$acc parallel loop gang vector default(present) firstprivate(deltat, omega) private (i, j, k)
         !$omp parallel do private (i,ip,j,k,n) num_threads(48)
-         DO 20 n = 1, block(gg)%blackCellCount   
+         DO 20 n = 1, block(gg)%blackCellCount
              i = block(gg)%blackCellIndexPtr(n, 1)
-             j = block(gg)%blackCellIndexPtr(n, 2)  
-             k = block(gg)%blackCellIndexPtr(n, 3) 
+             j = block(gg)%blackCellIndexPtr(n, 2)
+             k = block(gg)%blackCellIndexPtr(n, 3)
 
 !             ip =i-1  + nx_var*(j-2)  + nx_var*ny_var*(k-2)
 !            block(gg)%pc(i,j,k) = (block(gg)%b(i,j,k)/deltat &
 !     &        -block(gg)%A(ip,3)*block(gg)%pc(i-1,j,k) -block(gg)%A(ip,5)*block(gg)%pc(i+1,j,k) &
 !     &        -block(gg)%A(ip,2)*block(gg)%pc(i,j-1,k) -block(gg)%A(ip,6)*block(gg)%pc(i,j+1,k) &
-!     &        -block(gg)%A(ip,1)*block(gg)%pc(i,j,k-1) -block(gg)%A(ip,7)*block(gg)%pc(i,j,k+1))/(block(gg)%A(ip,4)) 
+!     &        -block(gg)%A(ip,1)*block(gg)%pc(i,j,k-1) -block(gg)%A(ip,7)*block(gg)%pc(i,j,k+1))/(block(gg)%A(ip,4))
 !            block(gg)%pc(i,j,k) = (1._rk-omega)*block(gg)%pco(i,j,k) + omega*block(gg)%pc(i,j,k)
 
 
             block(gg)%pc(i,j,k) = (block(gg)%b(i,j,k)/deltat &
      &        -block(gg)%Acx(i-1,1)*block(gg)%pc(i-1,j,k) -block(gg)%Acx(i-1,3)*block(gg)%pc(i+1,j,k) &
      &        -block(gg)%Acy(j-1,1)*block(gg)%pc(i,j-1,k) -block(gg)%Acy(j-1,3)*block(gg)%pc(i,j+1,k) &
-     &        -block(gg)%Acz(k-1,1)*block(gg)%pc(i,j,k-1) -block(gg)%Acz(k-1,3)*block(gg)%pc(i,j,k+1))/(block(gg)%Acx(i-1,2)+block(gg)%Acy(j-1,2)+block(gg)%Acz(k-1,2)) 
+     &        -block(gg)%Acz(k-1,1)*block(gg)%pc(i,j,k-1) -block(gg)%Acz(k-1,3)*block(gg)%pc(i,j,k+1))/(block(gg)%Acx(i-1,2)+block(gg)%Acy(j-1,2)+block(gg)%Acz(k-1,2))
             block(gg)%pc(i,j,k) = (1._rk-omega)*block(gg)%pco(i,j,k) + omega*block(gg)%pc(i,j,k)
 
- 20      CONTINUE          
-        !$omp end parallel do
-        !$acc end parallel  
-              
-        !$acc parallel loop gang vector reduction(max:derr2) default(present) private (i, j, k) 
-        !$omp parallel do private (i,j,k,n,var) reduction(max:derr4) num_threads(48)
-         DO 30 n = 1, block(gg)%fluidCellCount   
-             i = block(gg)%fluidIndexPtr(n, 1)
-             j = block(gg)%fluidIndexPtr(n, 2) 
-             k = block(gg)%fluidIndexPtr(n, 3) 			 
-            var = abs(block(gg)%pc(i,j,k)-block(gg)%pco(i,j,k))     
-            derr4=dmax1(derr4,var)
-            !errSum = errSum + (block(g)%pc(i,j,k)-block(g)%pco(i,j,k))**2       
-           ! block(gg)%pco(i,j,k) = block(gg)%pc(i,j,k)  
- 30      CONTINUE 
+ 20      CONTINUE
         !$omp end parallel do
         !$acc end parallel
-	
-        !$acc parallel loop gang vector collapse(3) default(present) private (i, j, k) 
+
+        !$acc parallel loop gang vector reduction(max:derr2) default(present) private (i, j, k)
+        !$omp parallel do private (i,j,k,n,var) reduction(max:derr4) num_threads(48)
+         DO 30 n = 1, block(gg)%fluidCellCount
+             i = block(gg)%fluidIndexPtr(n, 1)
+             j = block(gg)%fluidIndexPtr(n, 2)
+             k = block(gg)%fluidIndexPtr(n, 3)
+            var = abs(block(gg)%pc(i,j,k)-block(gg)%pco(i,j,k))
+            derr4=dmax1(derr4,var)
+            !errSum = errSum + (block(g)%pc(i,j,k)-block(g)%pco(i,j,k))**2
+           ! block(gg)%pco(i,j,k) = block(gg)%pc(i,j,k)
+ 30      CONTINUE
+        !$omp end parallel do
+        !$acc end parallel
+
+        !$acc parallel loop gang vector collapse(3) default(present) private (i, j, k)
         !$omp parallel do collapse (3) private (i,j,k) num_threads(48)
         DO k = 1, block(gg)%nz+2
         DO j = 1, block(gg)%ny+2
         DO i = 1, block(gg)%nx+2
-            block(gg)%pco(i,j,k) = block(gg)%pc(i,j,k)  
-           
+            block(gg)%pco(i,j,k) = block(gg)%pc(i,j,k)
+
         END DO
         END DO
         END DO
         !$omp end parallel do
         !$acc end parallel
-        
+
          block(g)%derr2=derr4
-         !derr = dsqrt(errSum/block(g)%fluidCellCount) 
+         !derr = dsqrt(errSum/block(g)%fluidCellCount)
          !derr3 = dmin1(derr, derr2)
          !WRITE(*,*) g,block(g)%nIterPcor, derr4
          !IF (mod(isum,2000).EQ.0)WRITE(*,*) isum, derr, derr2
          !IF (ita.LE.2.AND.isum.LT.50000) GOTO 3
          !IF (derr.gt.epsi) GOTO 3
-         IF (derr4.GE.epsi) GOTO 3
-         !IF (ita.lt.15.AND.isum.lt.100) GOTO 3         
+         IF (derr4>=epsi) GOTO 3
+         !IF (ita.lt.15.AND.isum.lt.100) GOTO 3
       END SUBROUTINE REDBLACKSOR_old
-!cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss   
+!cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 !***********************************************************************
 
       !SUBROUTINE REDBLACKSOR(epsi, isum, derr, derr2)
@@ -500,16 +500,16 @@
 
          gg=g
                 ! omega = 1.955
-            if (gg .eq. 1)then
+            if (gg == 1)then
                  !omega = 1.98_rk
                  omega = omega1
-           elseif (gg .eq. 2) then
+           elseif (gg == 2) then
                 !omega=1.96_rk
                  omega=omega2
         !  elseif (gg .eq. 3) then
         !       !omega=1.96_rk
         !        omega=omega3
-        !  else         
+        !  else
         !       omega =omega4
           endif
 
@@ -595,7 +595,7 @@
         !$acc end parallel
 
 
-       if(mod(block(gg)%nIterPcor,100) .eq.0)then
+       if(mod(block(gg)%nIterPcor,100) ==0)then
        derr4=0.
         !$acc parallel loop gang vector reduction(max:derr4) default(present) private (i, j, k, var)
         !$omp parallel do private (i,j,k,n,var) reduction(max:derr4) num_threads(48)
@@ -634,7 +634,7 @@
          !IF (mod(isum,2000).EQ.0)WRITE(*,*) isum, derr, derr2
          !IF (ita.LE.2.AND.isum.LT.50000) GOTO 3
          !IF (derr.gt.epsi) GOTO 3
-         IF (derr4.GE.epsi .and. block(g)%nIterPcor .le. pcItaMax) GOTO 3
+         IF (derr4>=epsi .and. block(g)%nIterPcor <= pcItaMax) GOTO 3
          !IF (ita.lt.15.AND.isum.lt.100) GOTO 3
       END SUBROUTINE REDBLACKSOR
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
@@ -655,16 +655,16 @@
 
          gg=g
                 ! omega = 1.955
-            if (gg .eq. 1)then
+            if (gg == 1)then
                  !omega = 1.98_rk
                  omega = omega1
-           elseif (gg .eq. 2) then
+           elseif (gg == 2) then
                 !omega=1.96_rk
                  omega=omega2
-           elseif (gg .eq. 3) then
+           elseif (gg == 3) then
                 !omega=1.96_rk
                  omega=omega3
-           else         
+           else
                 omega =omega4
           endif
 
@@ -747,7 +747,7 @@
         !$acc end parallel
 
 
-       if(mod(block(gg)%nIterPcor,5) .eq.0)then
+       if(mod(block(gg)%nIterPcor,5) ==0)then
        derr4=0.
         !$acc parallel loop gang vector reduction(max:derr4) default(present) private (i, j, k, var)
         !$omp parallel do private (i,j,k,n,var) reduction(max:derr4) num_threads(48)
@@ -773,7 +773,7 @@
 
         END DO
         END DO
-        END DO 
+        END DO
         !$omp end parallel do
         !$acc end parallel
 
@@ -785,7 +785,7 @@
          !IF (ita.LE.2.AND.isum.LT.50000) GOTO 3
          !IF (derr.gt.epsi) GOTO 3
          !IF (derr4.GE.epsi) GOTO 3
-         IF (derr4.GE.epsi .and. block(g)%nIterPcor .le. pcItaMax) GOTO 3
+         IF (derr4>=epsi .and. block(g)%nIterPcor <= pcItaMax) GOTO 3
          !IF (ita.lt.15.AND.isum.lt.100) GOTO 3
       END SUBROUTINE REDBLACKSOR_linear
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
@@ -800,7 +800,7 @@
         !!$acc parallel loop present (u, ut, v, vt)
         !DO g = blk_start, nblocks
 !        print*,g,'inside_pcor'
-        if (block(g)%move_check .eq. 1) then
+        if (block(g)%move_check == 1) then
         !$acc parallel loop gang vector collapse(2) default(present)
         DO 70 k = 1, block(g)%nz+2
         DO 70 j = 1, block(g)%ny+2
@@ -812,15 +812,15 @@
            block(g)%wt(i,j,k) = block(g)%w(i,j,k)
 !         WRITE(111,*)g,i,j, block(g)%u(i,j), block(g)%v(i,j)
 !111          FORMAT('',3I4,2F12.4)
- 70    CONTINUE 
+ 70    CONTINUE
        !$acc end parallel
         endif
        ! END DO
-     
+
       END SUBROUTINE updateVelocity_newv
 
 !********************************************************************
-              
+
 
 
 

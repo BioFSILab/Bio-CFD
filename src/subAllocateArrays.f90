@@ -4,14 +4,14 @@
 
         integer(kind=4) :: i
         integer(kind=4) :: nx_var, ny_var, nz_var
-                
+
         DO i=1,nblocks
         nx_var=block(i)%nx
         ny_var=block(i)%ny
         nz_var=block(i)%nz
 
         ALLOCATE ( block(i)%u(nx_var+2,ny_var+2,nz_var+2), block(i)%ut(nx_var+2,ny_var+2,nz_var+2), block(i)%v(nx_var+2,ny_var+2,nz_var+2), &
-                block(i)%vt(nx_var+2,ny_var+2,nz_var+2), block(i)%w(nx_var+2,ny_var+2,nz_var+2), block(i)%wt(nx_var+2,ny_var+2,nz_var+2),  & 
+                block(i)%vt(nx_var+2,ny_var+2,nz_var+2), block(i)%w(nx_var+2,ny_var+2,nz_var+2), block(i)%wt(nx_var+2,ny_var+2,nz_var+2),  &
                 block(i)%p(nx_var+2,ny_var+2,nz_var+2), block(i)%u_sum(nx_var+2,ny_var+2,nz_var+2), block(i)%v_sum(nx_var+2,ny_var+2,nz_var+2), &
                  block(i)%w_sum(nx_var+2,ny_var+2,nz_var+2), block(i)%p_sum(nx_var+2,ny_var+2,nz_var+2), block(i)%u_avg(nx_var+2,ny_var+2,nz_var+2), &
                 block(i)%v_avg(nx_var+2,ny_var+2,nz_var+2),  block(i)%w_avg(nx_var+2,ny_var+2,nz_var+2), block(i)%p_avg(nx_var+2,ny_var+2, nz_var+2), &
@@ -24,7 +24,7 @@
         ALLOCATE ( block(i)%b(nx_var+2,ny_var+2,nz_var+2) )
         ALLOCATE ( block(i)%cell_n(nx_var+2,ny_var+2,nz_var+2) )
         ALLOCATE ( block(i)%Acx(nx_var,3), block(i)%Acy(ny_var,3), block(i)%Acz(nz_var,3) )
-        ALLOCATE ( block(i)%pc(nx_var+2,ny_var+2, nz_var+2), block(i)%pco(nx_var+2,ny_var+2, nz_var+2) ) 
+        ALLOCATE ( block(i)%pc(nx_var+2,ny_var+2, nz_var+2), block(i)%pco(nx_var+2,ny_var+2, nz_var+2) )
        ALLOCATE ( block(i)%Ac(nx_var*ny_var*nz_var,7) )
        ALLOCATE ( block(i)%An(nx_var*ny_var*nz_var,7) )
 
@@ -38,7 +38,7 @@
         ALLOCATE( block(i)%ufl(nx_var+2, ny_var+2, nz_var+2), block(i)%vfl(nx_var+2, ny_var+2, nz_var+2), block(i)%wfl(nx_var+2,ny_var+2,nz_var +2))
 
 
-         END DO 
+         END DO
       ! ALLOCATE ( SUMWSS(ibNodes), SIGNWSS(ibNodes,3) )
       ! ALLOCATE ( INSTWSS(ibNodes))
       ! ALLOCATE ( SQSUMWSS(ibNodes))

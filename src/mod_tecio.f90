@@ -22,7 +22,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)        :: gridFileHandle
         type(c_ptr), intent(out)              :: fileHandle
     end function tecFileWriterOpen
-    
+
     integer(c_int32_t) function tecFileSetDiagnosticsLevel( &
         fileHandle, &
         level) &
@@ -32,7 +32,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)        :: fileHandle
         integer(c_int32_t), value, intent(in) :: level
     end function tecFileSetDiagnosticsLevel
-    
+
     integer(c_int32_t) function tecMPIInitialize( &
         fileHandle, &
         communicator, &
@@ -44,7 +44,7 @@ module mod_tecio
         integer(c_int32_t), value, intent(in) :: communicator
         integer(c_int32_t), value, intent(in) :: mainRank
     end function tecMPIInitialize
-    
+
     integer(c_int32_t) function tecZoneCreateIJK( &
         fileHandle, &
         zoneTitle, &
@@ -76,7 +76,7 @@ module mod_tecio
         integer(c_int32_t), value, intent(in)  :: faceNeighborMode
         integer(c_int32_t), intent(out)        :: zone
     end function tecZoneCreateIJK
-    
+
     integer(c_int32_t) function tecZoneCreateFE( &
         fileHandle, &
         zoneTitle, &
@@ -108,7 +108,7 @@ module mod_tecio
         integer(c_int32_t), value, intent(in)  :: faceNeighborMode
         integer(c_int32_t), intent(out)        :: zone
     end function tecZoneCreateFE
-    
+
     integer(c_int32_t) function tecZoneCreatePoly( &
         fileHandle, &
         zoneTitle, &
@@ -144,7 +144,7 @@ module mod_tecio
         integer(c_int64_t), value, intent(in)  :: totalNumBoundaryConnections
         integer(c_int32_t), intent(out)        :: zone
     end function tecZoneCreatePoly
-    
+
     integer(c_int32_t) function tecZoneSetUnsteadyOptions( &
         fileHandle, &
         zone, &
@@ -158,7 +158,7 @@ module mod_tecio
         real(c_double), value, intent(in)     :: solutionTime
         integer(c_int32_t), value, intent(in) :: strandID
     end function tecZoneSetUnsteadyOptions
-    
+
     integer(c_int32_t) function tecZoneSetParentZone( &
         fileHandle, &
         zone, &
@@ -170,7 +170,7 @@ module mod_tecio
         integer(c_int32_t), value, intent(in) :: zone
         integer(c_int32_t), value, intent(in) :: parentZone
     end function tecZoneSetParentZone
-    
+
     integer(c_int32_t) function tecZoneMapPartitionsToMPIRanks( &
         fileHandle, &
         zone, &
@@ -184,7 +184,7 @@ module mod_tecio
         integer(c_int32_t), value, intent(in) :: numPartitions
         integer(c_int32_t), intent(in)        :: mpiRanksForPartitions(*)
         end function tecZoneMapPartitionsToMPIRanks
-    
+
     integer(c_int32_t) function tecFEPartitionCreate32( &
         fileHandle, &
         zone, &
@@ -212,7 +212,7 @@ module mod_tecio
         integer(c_int64_t), value, intent(in) :: numGhostCells
         integer(c_int32_t), intent(in)        :: ghostCells(*)
     end function tecFEPartitionCreate32
-    
+
     integer(c_int32_t) function tecFEPartitionCreate64( &
         fileHandle, &
         zone, &
@@ -240,7 +240,7 @@ module mod_tecio
         integer(c_int64_t), value, intent(in) :: numGhostCells
         integer(c_int64_t), intent(in)        :: ghostCells(*)
     end function tecFEPartitionCreate64
-    
+
     integer(c_int32_t) function tecIJKPartitionCreate64( &
         fileHandle, &
         zone, &
@@ -264,7 +264,7 @@ module mod_tecio
         integer(c_int64_t), value, intent(in) :: jmax
         integer(c_int64_t), value, intent(in) :: kmax
     end function tecIJKPartitionCreate64
-    
+
     integer(c_int32_t) function tecZoneVarWriteDoubleValues( &
         fileHandle, &
         zone, &
@@ -282,7 +282,7 @@ module mod_tecio
         integer(c_int64_t), value, intent(in) :: count
         real(c_double), intent(in)            :: values(*)
     end function tecZoneVarWriteDoubleValues
-    
+
     integer(c_int32_t) function tecZoneVarWriteFloatValues( &
         fileHandle, &
         zone, &
@@ -300,7 +300,7 @@ module mod_tecio
         integer(c_int64_t), value, intent(in) :: count
         real(c_float), intent(in)             :: values(*)
     end function tecZoneVarWriteFloatValues
-    
+
     integer(c_int32_t) function tecZoneVarWriteInt32Values( &
         fileHandle, &
         zone, &
@@ -318,7 +318,7 @@ module mod_tecio
         integer(c_int64_t), value, intent(in) :: count
         integer(c_int32_t), intent(in)        :: values(*)
     end function tecZoneVarWriteInt32Values
-    
+
     integer(c_int32_t) function tecZoneVarWriteInt16Values( &
         fileHandle, &
         zone, &
@@ -336,7 +336,7 @@ module mod_tecio
         integer(c_int64_t), value, intent(in) :: count
         integer(c_int16_t), intent(in)        :: values(*)
     end function tecZoneVarWriteInt16Values
-    
+
     integer(c_int32_t) function tecZoneVarWriteUInt8Values( &
         fileHandle, &
         zone, &
@@ -354,7 +354,7 @@ module mod_tecio
         integer(c_int64_t), value, intent(in) :: count
         integer(c_int8_t), intent(in)         :: values(*)
     end function tecZoneVarWriteUInt8Values
-    
+
     integer(c_int32_t) function tecZoneNodeMapWrite32( &
         fileHandle, &
         zone, &
@@ -372,7 +372,7 @@ module mod_tecio
         integer(c_int64_t), value, intent(in) :: count
         integer(c_int32_t), intent(in)        :: nodes(*)
     end function tecZoneNodeMapWrite32
-    
+
     integer(c_int32_t) function tecZoneNodeMapWrite64( &
         fileHandle, &
         zone, &
@@ -390,7 +390,7 @@ module mod_tecio
         integer(c_int64_t), value, intent(in) :: count
         integer(c_int64_t), intent(in)        :: nodes(*)
     end function tecZoneNodeMapWrite64
-    
+
     integer(c_int32_t) function tecZoneFaceNbrWriteConnections32( &
         fileHandle, &
         zone, &
@@ -402,7 +402,7 @@ module mod_tecio
         integer(c_int32_t), value, intent(in) :: zone
         integer(c_int32_t), intent(in)        :: faceNeighbors(*)
     end function tecZoneFaceNbrWriteConnections32
-    
+
     integer(c_int32_t) function tecZoneFaceNbrWriteConnections64( &
         fileHandle, &
         zone, &
@@ -414,7 +414,7 @@ module mod_tecio
         integer(c_int32_t), value, intent(in) :: zone
         integer(c_int64_t), intent(in)        :: faceNeighbors(*)
     end function tecZoneFaceNbrWriteConnections64
-    
+
     integer(c_int32_t) function tecZoneWritePolyFaces32( &
         fileHandle, &
         zone, &
@@ -438,7 +438,7 @@ module mod_tecio
         integer(c_int32_t), intent(in)        :: faceRightElems(*)
         integer(c_int32_t), value, intent(in) :: isOneBased
     end function tecZoneWritePolyFaces32
-    
+
     integer(c_int32_t) function tecZoneWritePolyFaces64( &
         fileHandle, &
         zone, &
@@ -462,7 +462,7 @@ module mod_tecio
         integer(c_int64_t), intent(in)        :: faceRightElems(*)
         integer(c_int32_t), value, intent(in) :: isOneBased
     end function tecZoneWritePolyFaces64
-    
+
     integer(c_int32_t) function tecZoneWritePolyBoundaryConnections32( &
         fileHandle, &
         zone, &
@@ -484,7 +484,7 @@ module mod_tecio
         integer(c_int32_t), intent(in)        :: faceBoundaryConnectionZones(*)
         integer(c_int32_t), value, intent(in) :: isOneBased
         end function tecZoneWritePolyBoundaryConnections32
-    
+
     integer(c_int32_t) function tecZoneWritePolyBoundaryConnections64( &
         fileHandle, &
         zone, &
@@ -506,7 +506,7 @@ module mod_tecio
         integer(c_int32_t), intent(in)        :: faceBoundaryConnectionZones(*)
         integer(c_int32_t), value, intent(in) :: isOneBased
     end function tecZoneWritePolyBoundaryConnections64
-    
+
     integer(c_int32_t) function tecDataSetAddAuxData( &
         fileHandle, &
         name, &
@@ -518,7 +518,7 @@ module mod_tecio
         character(c_char), intent(in)        :: name(*)
         character(c_char), intent(in)        :: value(*)
     end function tecDataSetAddAuxData
-    
+
     integer(c_int32_t) function tecVarAddAuxData( &
         fileHandle, &
         var, &
@@ -532,7 +532,7 @@ module mod_tecio
         character(c_char), intent(in)         :: name(*)
         character(c_char), intent(in)         :: value(*)
     end function tecVarAddAuxData
-    
+
     integer(c_int32_t) function tecZoneAddAuxData( &
         fileHandle, &
         zone, &
@@ -546,7 +546,7 @@ module mod_tecio
         character(c_char), intent(in)         :: name(*)
         character(c_char), intent(in)         :: value(*)
     end function tecZoneAddAuxData
-    
+
     integer(c_int32_t) function tecGeom2DLineSegmentsBegin( &
         fileHandle, &
         xOrigin, &
@@ -566,7 +566,7 @@ module mod_tecio
         real(c_double), intent(in)            :: relativeY(*)
         integer(c_int32_t), value, intent(in) :: posCoordMode
     end function tecGeom2DLineSegmentsBegin
-    
+
     integer(c_int32_t) function tecGeom2DMultiLineSegmentsBegin( &
         fileHandle, &
         xOrigin, &
@@ -588,7 +588,7 @@ module mod_tecio
         real(c_double), intent(in)            :: relativeY(*)
         integer(c_int32_t), value, intent(in) :: posCoordMode
     end function tecGeom2DMultiLineSegmentsBegin
-    
+
     integer(c_int32_t) function tecGeom3DLineSegmentsBegin( &
         fileHandle, &
         xOrigin, &
@@ -610,7 +610,7 @@ module mod_tecio
         real(c_double), intent(in)            :: relativeY(*)
         real(c_double), intent(in)            :: relativeZ(*)
     end function tecGeom3DLineSegmentsBegin
-    
+
     integer(c_int32_t) function tecGeom3DMultiLineSegmentsBegin( &
         fileHandle, &
         xOrigin, &
@@ -634,7 +634,7 @@ module mod_tecio
         real(c_double), intent(in)            :: relativeY(*)
         real(c_double), intent(in)            :: relativeZ(*)
     end function tecGeom3DMultiLineSegmentsBegin
-    
+
     integer(c_int32_t) function tecGeomCircleBegin( &
         fileHandle, &
         xCenter, &
@@ -650,7 +650,7 @@ module mod_tecio
         real(c_double), value, intent(in)     :: radius
         integer(c_int32_t), value, intent(in) :: posCoordMode
     end function tecGeomCircleBegin
-    
+
     integer(c_int32_t) function tecGeomEllipseBegin( &
         fileHandle, &
         xCenter, &
@@ -668,7 +668,7 @@ module mod_tecio
         real(c_double), value, intent(in)     :: height
         integer(c_int32_t), value, intent(in) :: posCoordMode
     end function tecGeomEllipseBegin
-    
+
     integer(c_int32_t) function tecGeomRectangleBegin( &
         fileHandle, &
         xMin, &
@@ -686,7 +686,7 @@ module mod_tecio
         real(c_double), value, intent(in)     :: yMax
         integer(c_int32_t), value, intent(in) :: posCoordMode
     end function tecGeomRectangleBegin
-    
+
     integer(c_int32_t) function tecGeomSquareBegin( &
         fileHandle, &
         xMin, &
@@ -702,7 +702,7 @@ module mod_tecio
         real(c_double), value, intent(in)     :: size
         integer(c_int32_t), value, intent(in) :: posCoordMode
     end function tecGeomSquareBegin
-    
+
     integer(c_int32_t) function tecGeomArrowheadSetInfo( &
         fileHandle, &
         angle, &
@@ -718,7 +718,7 @@ module mod_tecio
         real(c_double), value, intent(in)     :: size
         integer(c_int32_t), value, intent(in) :: style
     end function tecGeomArrowheadSetInfo
-    
+
     integer(c_int32_t) function tecGeomEllipseSetNumPoints( &
         fileHandle, &
         numEllipsePoints) &
@@ -728,7 +728,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)        :: fileHandle
         integer(c_int32_t), value, intent(in) :: numEllipsePoints
     end function tecGeomEllipseSetNumPoints
-    
+
     integer(c_int32_t) function tecGeomSetClipping( &
         fileHandle, &
         clipping) &
@@ -738,7 +738,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)        :: fileHandle
         integer(c_int32_t), value, intent(in) :: clipping
     end function tecGeomSetClipping
-    
+
     integer(c_int32_t) function tecGeomSetLineInfo( &
         fileHandle, &
         linePattern, &
@@ -754,7 +754,7 @@ module mod_tecio
         real(c_double), value, intent(in)     :: thickness
         integer(c_int32_t), value, intent(in) :: color
     end function tecGeomSetLineInfo
-    
+
     integer(c_int32_t) function tecGeomSetMacroFunctionCmd( &
         fileHandle, &
         macroFunctionCmd) &
@@ -764,7 +764,7 @@ module mod_tecio
         type(c_ptr), value, intent(in) :: fileHandle
         character(c_char), intent(in)  :: macroFunctionCmd(*)
     end function tecGeomSetMacroFunctionCmd
-    
+
     integer(c_int32_t) function tecGeomSetScope( &
         fileHandle, &
         scope) &
@@ -774,7 +774,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)        :: fileHandle
         integer(c_int32_t), value, intent(in) :: scope
     end function tecGeomSetScope
-    
+
     integer(c_int32_t) function tecGeomAttachToZone( &
         fileHandle, &
         zone) &
@@ -784,7 +784,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)        :: fileHandle
         integer(c_int32_t), value, intent(in) :: zone
     end function tecGeomAttachToZone
-    
+
     integer(c_int32_t) function tecGeomFill( &
         fileHandle, &
         fillColor) &
@@ -794,7 +794,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)        :: fileHandle
         integer(c_int32_t), value, intent(in) :: fillColor
         end function tecGeomFill
-    
+
     integer(c_int32_t) function tecGeomEnd( &
         fileHandle) &
         bind(c, name="tecGeomEnd")
@@ -802,7 +802,7 @@ module mod_tecio
         implicit none
         type(c_ptr), value, intent(in) :: fileHandle
     end function tecGeomEnd
-    
+
     integer(c_int32_t) function tecCustomLabelsAddSet( &
         fileHandle, &
         labels) &
@@ -812,7 +812,7 @@ module mod_tecio
         type(c_ptr), value, intent(in) :: fileHandle
         character(c_char), intent(in)  :: labels(*)
     end function tecCustomLabelsAddSet
-    
+
     integer(c_int32_t) function tecText2DBegin( &
         fileHandle, &
         string, &
@@ -832,7 +832,7 @@ module mod_tecio
         real(c_double), value, intent(in)     :: height
         integer(c_int32_t), value, intent(in) :: sizeUnits
     end function tecText2DBegin
-    
+
     integer(c_int32_t) function tecText3DBegin( &
         fileHandle, &
         string, &
@@ -852,7 +852,7 @@ module mod_tecio
         real(c_double), value, intent(in)     :: height
         integer(c_int32_t), value, intent(in) :: sizeUnits
     end function tecText3DBegin
-    
+
     integer(c_int32_t) function tecTextAttachToZone( &
         fileHandle, &
         zone) &
@@ -862,7 +862,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)        :: fileHandle
         integer(c_int32_t), value, intent(in) :: zone
     end function tecTextAttachToZone
-    
+
     integer(c_int32_t) function tecTextBoxSetInfo( &
         fileHandle, &
         boxType, &
@@ -880,7 +880,7 @@ module mod_tecio
         real(c_double), value, intent(in)     :: lineThickness
         real(c_double), value, intent(in)     :: margin
     end function tecTextBoxSetInfo
-    
+
     integer(c_int32_t) function tecTextSetAnchor( &
         fileHandle, &
         anchor) &
@@ -890,7 +890,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)        :: fileHandle
         integer(c_int32_t), value, intent(in) :: anchor
     end function tecTextSetAnchor
-    
+
     integer(c_int32_t) function tecTextSetAngle( &
         fileHandle, &
         angle) &
@@ -900,7 +900,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)    :: fileHandle
         real(c_double), value, intent(in) :: angle
     end function tecTextSetAngle
-    
+
     integer(c_int32_t) function tecTextSetClipping( &
         fileHandle, &
         clipping) &
@@ -910,7 +910,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)        :: fileHandle
         integer(c_int32_t), value, intent(in) :: clipping
     end function tecTextSetClipping
-    
+
     integer(c_int32_t) function tecTextSetColor( &
         fileHandle, &
         color) &
@@ -920,7 +920,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)        :: fileHandle
         integer(c_int32_t), value, intent(in) :: color
     end function tecTextSetColor
-    
+
     integer(c_int32_t) function tecTextSetTypeface( &
         fileHandle, &
         family, &
@@ -934,7 +934,7 @@ module mod_tecio
         integer(c_int32_t), value, intent(in) :: isBold
         integer(c_int32_t), value, intent(in) :: isItalic
     end function tecTextSetTypeface
-    
+
     integer(c_int32_t) function tecTextSetLineSpacing( &
         fileHandle, &
         lineSpacing) &
@@ -944,7 +944,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)    :: fileHandle
         real(c_double), value, intent(in) :: lineSpacing
     end function tecTextSetLineSpacing
-    
+
     integer(c_int32_t) function tecTextSetMacroFunctionCmd( &
         fileHandle, &
         macroFunctionCmd) &
@@ -954,7 +954,7 @@ module mod_tecio
         type(c_ptr), value, intent(in) :: fileHandle
         character(c_char), intent(in)  :: macroFunctionCmd(*)
     end function tecTextSetMacroFunctionCmd
-    
+
     integer(c_int32_t) function tecTextSetScope( &
         fileHandle, &
         scope) &
@@ -964,7 +964,7 @@ module mod_tecio
         type(c_ptr), value, intent(in)        :: fileHandle
         integer(c_int32_t), value, intent(in) :: scope
     end function tecTextSetScope
-    
+
     integer(c_int32_t) function tecTextEnd( &
         fileHandle) &
         bind(c, name="tecTextEnd")
@@ -972,7 +972,7 @@ module mod_tecio
         implicit none
         type(c_ptr), value, intent(in) :: fileHandle
     end function tecTextEnd
-    
+
     integer(c_int32_t) function tecUserRecAdd( &
         fileHandle, &
         userRec) &
@@ -982,7 +982,7 @@ module mod_tecio
         type(c_ptr), value, intent(in) :: fileHandle
         character(c_char), intent(in)  :: userRec(*)
     end function tecUserRecAdd
-        
+
     integer(c_int32_t) function tecFileWriterFlush( &
         fileHandle, &
         numZonesToRetain, &
@@ -994,7 +994,7 @@ module mod_tecio
         integer(c_int32_t), value, intent(in) :: numZonesToRetain
         integer(c_int32_t), intent(in)        :: zonesToRetain(*)
     end function tecFileWriterFlush
-    
+
     integer(c_int32_t) function tecFileWriterClose( &
         fileHandle) &
         bind(c, name="tecFileWriterClose")
@@ -1002,7 +1002,7 @@ module mod_tecio
         implicit none
         type(c_ptr), intent(inout) :: fileHandle
     end function tecFileWriterClose
-    
+
     ! Input routine interfaces
     integer(c_int32_t) function tecCustomLabelsGetNumSets( &
       fileHandle, &
@@ -1013,7 +1013,7 @@ module mod_tecio
       type(c_ptr), value , intent(in) :: fileHandle
       integer(c_int32_t), intent(out) :: numSets
     end function tecCustomLabelsGetNumSets
-    
+
     integer(c_int32_t) function tecCustomLabelsGetSet( &
       fileHandle, &
       whichSet, &
@@ -1025,7 +1025,7 @@ module mod_tecio
       integer(c_int32_t), value , intent(in) :: whichSet
       type(c_ptr), intent(out)               :: labelSet
     end function tecCustomLabelsGetSet
-    
+
     integer(c_int32_t) function tecDataSetAuxDataGetItem( &
       fileHandle, &
       whichItem, &
@@ -1039,7 +1039,7 @@ module mod_tecio
       type(c_ptr), intent(out)              :: name
       type(c_ptr), intent(out)              :: value
     end function tecDataSetAuxDataGetItem
-    
+
     integer(c_int32_t) function tecDataSetAuxDataGetNumItems( &
       fileHandle, &
       numItems) &
@@ -1049,7 +1049,7 @@ module mod_tecio
       type(c_ptr), value, intent(in)  :: fileHandle
       integer(c_int32_t), intent(out) :: numItems
     end function tecDataSetAuxDataGetNumItems
-    
+
     integer(c_int32_t) function tecDataSetGetNumVars( &
       fileHandle, &
       numVars) &
@@ -1059,7 +1059,7 @@ module mod_tecio
       type(c_ptr), value, intent(in)  :: fileHandle
       integer(c_int32_t), intent(out) :: numVars
     end function tecDataSetGetNumVars
-    
+
     integer(c_int32_t) function tecDataSetGetNumZones( &
       fileHandle, &
       numZones) &
@@ -1069,7 +1069,7 @@ module mod_tecio
       type(c_ptr), value, intent(in)  :: fileHandle
       integer(c_int32_t), intent(out) :: numZones
     end function tecDataSetGetNumZones
-    
+
     integer(c_int32_t) function tecDataSetGetTitle( &
       fileHandle, &
       title) &
@@ -1079,7 +1079,7 @@ module mod_tecio
       type(c_ptr), value, intent(in) :: fileHandle
       type(c_ptr), intent(out)       :: title
     end function tecDataSetGetTitle
-    
+
     integer(c_int32_t) function tecFileGetType( &
       fileHandle, &
       fileType) &
@@ -1089,7 +1089,7 @@ module mod_tecio
       type(c_ptr), value, intent(in)  :: fileHandle
       integer(c_int32_t), intent(out) :: fileType
     end function tecFileGetType
-    
+
     integer(c_int32_t) function tecFileReaderClose( &
       fileHandle) &
       bind (c, name="tecFileReaderClose")
@@ -1097,7 +1097,7 @@ module mod_tecio
       implicit none
       type(c_ptr), intent(inout) :: fileHandle
     end function tecFileReaderClose
-    
+
     integer(c_int32_t) function tecFileReaderOpen( &
       fileName, &
       fileHandle) &
@@ -1107,7 +1107,7 @@ module mod_tecio
       character(c_char), intent(in) :: fileName(*)
       type(c_ptr), intent(out)      :: fileHandle
     end function tecFileReaderOpen
-    
+
     integer(c_int32_t) function tecGeomArrowheadGetAngle( &
       fileHandle, &
       geom, &
@@ -1119,7 +1119,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       real(c_double), intent(out)           :: angle
     end function tecGeomArrowheadGetAngle
-    
+
     integer(c_int32_t) function tecGeomArrowheadGetAttach( &
       fileHandle, &
       geom, &
@@ -1131,7 +1131,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out)       :: attachment
     end function tecGeomArrowheadGetAttach
-    
+
     integer(c_int32_t) function tecGeomArrowheadGetSize( &
       fileHandle, &
       geom, &
@@ -1143,7 +1143,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       real(c_double), intent(out)           :: arrowheadSize
     end function tecGeomArrowheadGetSize
-    
+
     integer(c_int32_t) function tecGeomArrowheadGetStyle( &
       fileHandle, &
       geom, &
@@ -1155,7 +1155,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out)       :: arrowheadStyle
     end function tecGeomArrowheadGetStyle
-    
+
     integer(c_int32_t) function tecGeomCircleGetRadius( &
       fileHandle, &
       geom, &
@@ -1167,7 +1167,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       real(c_double), intent(out)           :: radius
     end function tecGeomCircleGetRadius
-    
+
     integer(c_int32_t) function tecGeomEllipseGetNumPoints( &
       fileHandle, &
       geom, &
@@ -1179,7 +1179,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out)       :: numEllipsePoints
     end function tecGeomEllipseGetNumPoints
-    
+
     integer(c_int32_t) function tecGeomEllipseGetSize( &
       fileHandle, &
       geom, &
@@ -1193,7 +1193,7 @@ module mod_tecio
       real(c_double), intent(out)           :: horizontalAxis
       real(c_double), intent(out)           :: verticalAxis
     end function tecGeomEllipseGetSize
-    
+
     integer(c_int32_t) function tecGeomGetAnchorPos( &
       fileHandle, &
       geom, &
@@ -1209,7 +1209,7 @@ module mod_tecio
       real(c_double), intent(out)           :: y
       real(c_double), intent(out)           :: z
     end function tecGeomGetAnchorPos
-    
+
     integer(c_int32_t) function tecGeomGetClipping( &
       fileHandle, &
       geom, &
@@ -1221,7 +1221,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out)       :: clipping
     end function tecGeomGetClipping
-    
+
     integer(c_int32_t) function tecGeomGetColor( &
       fileHandle, &
       geom, &
@@ -1233,7 +1233,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out) :: color
     end function tecGeomGetColor
-    
+
     integer(c_int32_t) function tecGeomGetCoordMode( &
       fileHandle, &
       geom, &
@@ -1245,7 +1245,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out) :: coordMode
     end function tecGeomGetCoordMode
-    
+
     integer(c_int32_t) function tecGeomGetFillColor( &
       fileHandle, &
       geom, &
@@ -1257,7 +1257,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out)       :: fillColor
     end function tecGeomGetFillColor
-    
+
     integer(c_int32_t) function tecGeomGetLinePattern( &
       fileHandle, &
       geom, &
@@ -1269,7 +1269,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out)       :: linePattern
     end function tecGeomGetLinePattern
-    
+
     integer(c_int32_t) function tecGeomGetLineThickness( &
       fileHandle, &
       geom, &
@@ -1281,7 +1281,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       real(c_double), intent(out)           :: lineThickness
     end function tecGeomGetLineThickness
-    
+
     integer(c_int32_t) function tecGeomGetMacroFunctionCmd( &
       fileHandle, &
       geom, &
@@ -1293,7 +1293,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       type(c_ptr), intent(out)              :: macroFunctionCmd
     end function tecGeomGetMacroFunctionCmd
-    
+
     integer(c_int32_t) function tecGeomGetNumGeoms( &
       fileHandle, &
       numGeoms) &
@@ -1303,7 +1303,7 @@ module mod_tecio
       type(c_ptr), value, intent(in)  :: fileHandle
       integer(c_int32_t), intent(out) :: numGeoms
     end function tecGeomGetNumGeoms
-    
+
     integer(c_int32_t) function tecGeomGetPatternLength( &
       fileHandle, &
       geom, &
@@ -1315,7 +1315,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       real(c_double), intent(out)           :: patternLength
     end function tecGeomGetPatternLength
-    
+
     integer(c_int32_t) function tecGeomGetScope( &
       fileHandle, &
       geom, &
@@ -1327,7 +1327,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out)       :: scope
     end function tecGeomGetScope
-    
+
     integer(c_int32_t) function tecGeomGetType( &
       fileHandle, &
       geom, &
@@ -1339,7 +1339,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out)       :: type
     end function tecGeomGetType
-    
+
     integer(c_int32_t) function tecGeomGetZone( &
       fileHandle, &
       geom, &
@@ -1351,7 +1351,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out)       :: zone
     end function tecGeomGetZone
-    
+
     integer(c_int32_t) function tecGeomIsAttached( &
       fileHandle, &
       geom, &
@@ -1363,7 +1363,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out) :: isAttached
     end function tecGeomIsAttached
-    
+
     integer(c_int32_t) function tecGeomIsFilled( &
       fileHandle, &
       geom, &
@@ -1375,7 +1375,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out)       :: isFilled
     end function tecGeomIsFilled
-    
+
     integer(c_int32_t) function tecGeomLineGetPoint( &
       fileHandle, &
       geom, &
@@ -1395,7 +1395,7 @@ module mod_tecio
       real(c_double), intent(out)           :: y
       real(c_double), intent(out)           :: z
     end function tecGeomLineGetPoint
-    
+
     integer(c_int32_t) function tecGeomLineGetSegmentCount( &
       fileHandle, &
       geom, &
@@ -1407,7 +1407,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       integer(c_int32_t), intent(out)       :: segmentCount
     end function tecGeomLineGetSegmentCount
-    
+
     integer(c_int32_t) function tecGeomLineSegmentGetPointCount( &
       fileHandle, &
       geom, &
@@ -1421,7 +1421,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: segment
       integer(c_int32_t), intent(out)       :: pointCount
     end function tecGeomLineSegmentGetPointCount
-    
+
     integer(c_int32_t) function tecGeomRectangleGetSize( &
       fileHandle, &
       geom, &
@@ -1435,7 +1435,7 @@ module mod_tecio
       real(c_double), intent(out)           :: width
       real(c_double), intent(out)           :: height
     end function tecGeomRectangleGetSize
-    
+
     integer(c_int32_t) function tecGeomSquareGetSize( &
       fileHandle, &
       geom, &
@@ -1447,7 +1447,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: geom
       real(c_double), intent(out)           :: size
     end function tecGeomSquareGetSize
-    
+
     subroutine tecStringFree( &
       string) &
       bind (c, name="tecStringFree")
@@ -1455,7 +1455,7 @@ module mod_tecio
       implicit none
       type(c_ptr), intent(inout) :: string
     end subroutine tecStringFree
-    
+
     integer(c_int32_t) function tecStringLength( &
       string) &
       bind(c, name = "tecStringLength")
@@ -1463,7 +1463,7 @@ module mod_tecio
       implicit none
       type(c_ptr), value, intent(in) :: string
       end function tecStringLength
-    
+
     integer(c_int32_t) function tecTextBoxGetColor( &
       fileHandle, &
       text, &
@@ -1475,7 +1475,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       integer(c_int32_t), intent(out)       :: boxColor
     end function tecTextBoxGetColor
-    
+
     integer(c_int32_t) function tecTextBoxGetFillColor( &
       fileHandle, &
       text, &
@@ -1487,7 +1487,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       integer(c_int32_t), intent(out)       :: boxFillColor
     end function tecTextBoxGetFillColor
-    
+
     integer(c_int32_t) function tecTextBoxGetLineThickness( &
       fileHandle, &
       text, &
@@ -1499,7 +1499,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       real(c_double), intent(out)           :: boxLineThickness
     end function tecTextBoxGetLineThickness
-    
+
     integer(c_int32_t) function tecTextBoxGetMargin( &
       fileHandle, &
       text, &
@@ -1511,7 +1511,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       real(c_double), intent(out)           :: boxMargin
     end function tecTextBoxGetMargin
-    
+
     integer(c_int32_t) function tecTextBoxGetType( &
       fileHandle, &
       text, &
@@ -1523,7 +1523,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       integer(c_int32_t), intent(out)       :: boxType
     end function tecTextBoxGetType
-    
+
     integer(c_int32_t) function tecTextGetAnchor( &
       fileHandle, &
       text, &
@@ -1535,7 +1535,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       integer(c_int32_t), intent(out)       :: anchor
     end function tecTextGetAnchor
-    
+
     integer(c_int32_t) function tecTextGetAnchorPos( &
       fileHandle, &
       text, &
@@ -1551,7 +1551,7 @@ module mod_tecio
       real(c_double), intent(out)           :: y
       real(c_double), intent(out)           :: z
     end function tecTextGetAnchorPos
-    
+
     integer(c_int32_t) function tecTextGetAngle( &
       fileHandle, &
       text, &
@@ -1563,7 +1563,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       real(c_double), intent(out)           :: angle
     end function tecTextGetAngle
-    
+
     integer(c_int32_t) function tecTextGetClipping( &
       fileHandle, &
       text, &
@@ -1575,7 +1575,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       integer(c_int32_t), intent(out)       :: clipping
     end function tecTextGetClipping
-    
+
     integer(c_int32_t) function tecTextGetColor( &
       fileHandle, &
       text, &
@@ -1587,7 +1587,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       integer(c_int32_t), intent(out)       :: color
     end function tecTextGetColor
-    
+
     integer(c_int32_t) function tecTextGetCoordMode( &
       fileHandle, &
       text, &
@@ -1599,7 +1599,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       integer(c_int32_t), intent(out)       :: coordMode
     end function tecTextGetCoordMode
-    
+
     integer(c_int32_t) function tecTextGetHeight( &
       fileHandle, &
       text, &
@@ -1611,7 +1611,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       real(c_double), intent(out)           :: height
     end function tecTextGetHeight
-    
+
     integer(c_int32_t) function tecTextGetLineSpacing( &
       fileHandle, &
       text, &
@@ -1623,7 +1623,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       real(c_double), intent(out)           :: lineSpacing
     end function tecTextGetLineSpacing
-    
+
     integer(c_int32_t) function tecTextGetMacroFunctionCmd( &
       fileHandle, &
       text, &
@@ -1635,7 +1635,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       type(c_ptr), intent(out)              :: macroFunctionCmd
     end function tecTextGetMacroFunctionCmd
-    
+
     integer(c_int32_t) function tecTextGetNumTexts( &
       fileHandle, &
       numTexts) &
@@ -1645,7 +1645,7 @@ module mod_tecio
       type(c_ptr), value, intent(in)  :: fileHandle
       integer(c_int32_t), intent(out) :: numTexts
     end function tecTextGetNumTexts
-    
+
     integer(c_int32_t) function tecTextGetScope( &
       fileHandle, &
       text, &
@@ -1657,7 +1657,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       integer(c_int32_t), intent(out)       :: scope
     end function tecTextGetScope
-    
+
     integer(c_int32_t) function tecTextGetSizeUnits( &
       fileHandle, &
       text, &
@@ -1669,7 +1669,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       integer(c_int32_t), intent(out)       :: sizeUnits
     end function tecTextGetSizeUnits
-    
+
     integer(c_int32_t) function tecTextGetString( &
       fileHandle, &
       text, &
@@ -1681,7 +1681,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       type(c_ptr), intent(out)              :: string
     end function tecTextGetString
-    
+
     integer(c_int32_t) function tecTextGetTypeface( &
       fileHandle, &
       text, &
@@ -1693,7 +1693,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       type(c_ptr), intent(out)              :: typeface
     end function tecTextGetTypeface
-    
+
     integer(c_int32_t) function tecTextGetZone( &
       fileHandle, &
       text, &
@@ -1705,7 +1705,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       integer(c_int32_t), intent(out)       :: zone
     end function tecTextGetZone
-    
+
     integer(c_int32_t) function tecTextIsAttached( &
       fileHandle, &
       text, &
@@ -1717,7 +1717,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       integer(c_int32_t), intent(out)       :: isAttached
     end function tecTextIsAttached
-    
+
     integer(c_int32_t) function tecTextIsBold( &
       fileHandle, &
       text, &
@@ -1729,7 +1729,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       integer(c_int32_t), intent(out)       :: isBold
     end function tecTextIsBold
-    
+
     integer(c_int32_t) function tecTextIsItalic( &
       fileHandle, &
       text, &
@@ -1741,7 +1741,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: text
       integer(c_int32_t), intent(out)       :: isItalic
     end function tecTextIsItalic
-    
+
     integer(c_int32_t) function tecVarAuxDataGetItem( &
       fileHandle, &
       var, &
@@ -1757,7 +1757,7 @@ module mod_tecio
       type(c_ptr), intent(out)              :: name
       type(c_ptr), intent(out)              :: value
     end function tecVarAuxDataGetItem
-    
+
     integer(c_int32_t) function tecVarAuxDataGetNumItems( &
       fileHandle, &
       var, &
@@ -1769,7 +1769,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: var
       integer(c_int32_t), intent(out)       :: numItems
     end function tecVarAuxDataGetNumItems
-    
+
     integer(c_int32_t) function tecVarGetName( &
       fileHandle, &
       var, &
@@ -1781,7 +1781,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: var
       type(c_ptr), intent(out)              :: name
     end function tecVarGetName
-    
+
     integer(c_int32_t) function tecVarIsEnabled( &
       fileHandle, &
       var, &
@@ -1793,7 +1793,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: var
       integer(c_int32_t), intent(out)       :: isEnabled
     end function tecVarIsEnabled
-    
+
     integer(c_int32_t) function tecZoneAuxDataGetItem( &
       fileHandle, &
       zone, &
@@ -1809,7 +1809,7 @@ module mod_tecio
       type(c_ptr), intent(out)              :: name
       type(c_ptr), intent(out)              :: value
     end function tecZoneAuxDataGetItem
-    
+
     integer(c_int32_t) function tecZoneAuxDataGetNumItems( &
       fileHandle, &
       zone, &
@@ -1821,7 +1821,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int32_t), intent(out)       :: numItems
     end function tecZoneAuxDataGetNumItems
-    
+
     integer(c_int32_t) function tecZoneConnectivityGetSharedZone( &
       fileHandle, &
       zone, &
@@ -1833,7 +1833,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int32_t), intent(out) :: sharedZone
     end function tecZoneConnectivityGetSharedZone
-    
+
     integer(c_int32_t) function tecZoneFaceNbrGetConnections( &
       fileHandle, &
       zone, &
@@ -1845,7 +1845,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int32_t), intent(out)       :: connections(*)
     end function tecZoneFaceNbrGetConnections
-    
+
     integer(c_int32_t) function tecZoneFaceNbrGetConnections64( &
       fileHandle, &
       zone, &
@@ -1857,7 +1857,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int64_t), intent(out)       :: connections(*)
     end function tecZoneFaceNbrGetConnections64
-    
+
     integer(c_int32_t) function tecZoneFaceNbrGetNumConnections( &
       fileHandle, &
       zone, &
@@ -1869,7 +1869,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int64_t), intent(out)       :: numConnections
     end function tecZoneFaceNbrGetNumConnections
-    
+
     integer(c_int32_t) function tecZoneFaceNbrGetMode( &
       fileHandle, &
       zone, &
@@ -1881,7 +1881,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int32_t), intent(out)       :: mode
     end function tecZoneFaceNbrGetMode
-    
+
     integer(c_int32_t) function tecZoneFaceNbrGetNumValues( &
       fileHandle, &
       zone, &
@@ -1893,7 +1893,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int64_t), intent(out)       :: numValues
     end function tecZoneFaceNbrGetNumValues
-    
+
     integer(c_int32_t) function tecZoneFaceNbrsAre64Bit( &
       fileHandle, &
       zone, &
@@ -1905,7 +1905,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int32_t), intent(out)       :: are64Bit
     end function tecZoneFaceNbrsAre64Bit
-    
+
     integer(c_int32_t) function tecZoneGetIJK( &
       fileHandle, &
       zone, &
@@ -1921,7 +1921,7 @@ module mod_tecio
       integer(c_int64_t), intent(out)       :: jMax
       integer(c_int64_t), intent(out)       :: kMax
     end function tecZoneGetIJK
-    
+
     integer(c_int32_t) function tecZoneGetParentZone( &
       fileHandle, &
       zone, &
@@ -1933,7 +1933,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int32_t), intent(out)       :: parentZone
     end function tecZoneGetParentZone
-    
+
     integer(c_int32_t) function tecZoneGetSolutionTime( &
       fileHandle, &
       zone, &
@@ -1945,7 +1945,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       real(c_double), intent(out)           :: solutionTime
     end function tecZoneGetSolutionTime
-    
+
     integer(c_int32_t) function tecZoneGetStrandID( &
       fileHandle, &
       zone, &
@@ -1957,7 +1957,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int32_t), intent(out)       :: strandID
     end function tecZoneGetStrandID
-    
+
     integer(c_int32_t) function tecZoneGetTitle( &
       fileHandle, &
       zone, &
@@ -1969,7 +1969,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       type(c_ptr), intent(out)              :: title
     end function tecZoneGetTitle
-    
+
     integer(c_int32_t) function tecZoneGetType( &
       fileHandle, &
       zone, &
@@ -1981,7 +1981,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int32_t), intent(out)       :: type
     end function tecZoneGetType
-    
+
     integer(c_int32_t) function tecZoneIsEnabled( &
       fileHandle, &
       zone, &
@@ -1993,7 +1993,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int32_t), intent(out)       :: isEnabled
     end function tecZoneIsEnabled
-    
+
     integer(c_int32_t) function tecZoneNodeMapGet( &
       fileHandle, &
       zone, &
@@ -2009,7 +2009,7 @@ module mod_tecio
       integer(c_int64_t), value, intent(in) :: numCells
       integer(c_int32_t), intent(out)       :: nodeMap(*)
     end function tecZoneNodeMapGet
-    
+
     integer(c_int32_t) function tecZoneNodeMapGet64( &
       fileHandle, &
       zone, &
@@ -2025,7 +2025,7 @@ module mod_tecio
       integer(c_int64_t), value, intent(in) :: numCells
       integer(c_int64_t), intent(out)       :: nodeMap(*)
     end function tecZoneNodeMapGet64
-    
+
     integer(c_int32_t) function tecZoneNodeMapGetNumValues( &
       fileHandle, &
       zone, &
@@ -2039,7 +2039,7 @@ module mod_tecio
       integer(c_int64_t), value, intent(in) :: numCells
       integer(c_int64_t), intent(out)       :: numValues
     end function tecZoneNodeMapGetNumValues
-    
+
     integer(c_int32_t) function tecZoneNodeMapIs64Bit( &
       fileHandle, &
       zone, &
@@ -2051,7 +2051,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int32_t), intent(out)       :: is64Bit
     end function tecZoneNodeMapIs64Bit
-    
+
     integer(c_int32_t) function tecZonePolyGetBoundaryConnectionCounts( &
       fileHandle, &
       zone, &
@@ -2067,7 +2067,7 @@ module mod_tecio
       integer(c_int64_t), value, intent(in) :: numConnections
       integer(c_int32_t), intent(out)       :: connectionCounts(*)
     end function tecZonePolyGetBoundaryConnectionCounts
-    
+
     integer(c_int32_t) function tecZonePolyGetBoundaryConnections( &
       fileHandle, &
       zone, &
@@ -2085,7 +2085,7 @@ module mod_tecio
       integer(c_int32_t), intent(out)       :: connectedElements(*)
       integer(c_int32_t), intent(out)       :: connectedZones(*)
     end function tecZonePolyGetBoundaryConnections
-    
+
     integer(c_int32_t) function tecZonePolyGetFaceElems( &
       fileHandle, &
       zone, &
@@ -2103,7 +2103,7 @@ module mod_tecio
       integer(c_int32_t), intent(out)       :: leftElems(*)
       integer(c_int32_t), intent(out)       :: rightElems(*)
     end function tecZonePolyGetFaceElems
-    
+
     integer(c_int32_t) function tecZonePolyGetFaceNodeCounts( &
       fileHandle, &
       zone, &
@@ -2119,7 +2119,7 @@ module mod_tecio
       integer(c_int64_t), value, intent(in) :: numFaces
       integer(c_int32_t), intent(out)       :: nodeCounts(*)
     end function tecZonePolyGetFaceNodeCounts
-    
+
     integer(c_int32_t) function tecZonePolyGetFaceNodes( &
       fileHandle, &
       zone, &
@@ -2135,7 +2135,7 @@ module mod_tecio
       integer(c_int64_t), value, intent(in) :: numFaces
       integer(c_int32_t), intent(out)       :: faceNodes(*)
     end function tecZonePolyGetFaceNodes
-    
+
     integer(c_int32_t) function tecZonePolyGetNumConnectedBoundaryFaces( &
       fileHandle, &
       zone, &
@@ -2147,7 +2147,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int64_t), intent(out)       :: numFaces(*)
     end function tecZonePolyGetNumConnectedBoundaryFaces
-    
+
     integer(c_int32_t) function tecZonePolyGetTotalNumFaceNodes( &
       fileHandle, &
       zone, &
@@ -2159,7 +2159,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int64_t), intent(out)       :: numNodes
     end function tecZonePolyGetTotalNumFaceNodes
-    
+
     integer(c_int32_t) function tecZonePolyGetTotalNumBoundaryConnections( &
       fileHandle, &
       zone, &
@@ -2171,7 +2171,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: zone
       integer(c_int64_t), intent(out)       :: numConnections
     end function tecZonePolyGetTotalNumBoundaryConnections
-    
+
     integer(c_int32_t) function tecZoneVarGetDoubleValues( &
       fileHandle, &
       zone, &
@@ -2189,7 +2189,7 @@ module mod_tecio
       integer(c_int64_t), value, intent(in) :: numValues
       real(c_double), intent(out)           :: values(*)
     end function tecZoneVarGetDoubleValues
-    
+
     integer(c_int32_t) function tecZoneVarGetFloatValues( &
       fileHandle, &
       zone, &
@@ -2207,7 +2207,7 @@ module mod_tecio
       integer(c_int64_t), value, intent(in) :: numValues
       real(c_float), intent(out)            :: values(*)
     end function tecZoneVarGetFloatValues
-    
+
     integer(c_int32_t) function tecZoneVarGetInt16Values( &
       fileHandle, &
       zone, &
@@ -2225,7 +2225,7 @@ module mod_tecio
       integer(c_int64_t), value, intent(in) :: numValues
       integer(c_int16_t), intent(out)       :: values(*)
     end function tecZoneVarGetInt16Values
-    
+
     integer(c_int32_t) function tecZoneVarGetInt32Values( &
       fileHandle, &
       zone, &
@@ -2243,7 +2243,7 @@ module mod_tecio
       integer(c_int64_t), value, intent(in) :: numValues
       integer(c_int32_t), intent(out)       :: values(*)
     end function tecZoneVarGetInt32Values
-    
+
     integer(c_int32_t) function tecZoneVarGetNumValues( &
       fileHandle, &
       zone, &
@@ -2257,7 +2257,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: var
       integer(c_int64_t), intent(out)       :: numValues
     end function tecZoneVarGetNumValues
-    
+
     integer(c_int32_t) function tecZoneVarGetSharedZone( &
       fileHandle, &
       zone, &
@@ -2271,7 +2271,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: var
       integer(c_int32_t), intent(out)       :: sharedZone
     end function tecZoneVarGetSharedZone
-    
+
     integer(c_int32_t) function tecZoneVarGetType( &
       fileHandle, &
       zone, &
@@ -2285,7 +2285,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: var
       integer(c_int32_t), intent(out) :: type
     end function tecZoneVarGetType
-    
+
     integer(c_int32_t) function tecZoneVarGetUInt8Values( &
       fileHandle, &
       zone, &
@@ -2303,7 +2303,7 @@ module mod_tecio
       integer(c_int64_t), value, intent(in) :: numValues
       integer(c_int8_t), intent(out)        :: values(*)
     end function tecZoneVarGetUInt8Values
-    
+
     integer(c_int32_t) function tecZoneVarGetValueLocation( &
       fileHandle, &
       zone, &
@@ -2317,7 +2317,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: var
       integer(c_int32_t), intent(out)       :: location
     end function tecZoneVarGetValueLocation
-    
+
     integer(c_int32_t) function tecZoneVarIsPassive( &
       fileHandle, &
       zone, &
@@ -2331,7 +2331,7 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: var
       integer(c_int32_t), intent(out)       :: isPassive
     end function tecZoneVarIsPassive
-    
+
     ! Older output routine interfaces
     integer(c_int32_t) function tecini142( &
       Title, &
@@ -2354,7 +2354,7 @@ module mod_tecio
       integer(c_int32_t), intent(in) :: Debug
       integer(c_int32_t), intent(in) :: VIsDouble
     end function tecini142
-    
+
     integer(c_int32_t) function teczne142( &
       ZoneTitle, &
       ZoneType, &
@@ -2402,7 +2402,7 @@ module mod_tecio
       integer(c_int32_t), intent(in) :: ShareVarFromZone(*)
       integer(c_int32_t), intent(in) :: ShareConnectivityFromZone
     end function teczne142
-    
+
     integer(c_int32_t) function tecdat142( &
       N, &
       FieldData, &
@@ -2413,7 +2413,7 @@ module mod_tecio
       integer(c_int32_t), intent(in) :: N, IsDouble
       real(c_float), intent(in)   :: FieldData(*)
     end function tecdat142
-    
+
     integer(c_int32_t) function tecdatf142( &
       N, &
       FieldData) &
@@ -2423,7 +2423,7 @@ module mod_tecio
       integer(c_int32_t), intent(in) :: N
       real(c_float), intent(in)   :: FieldData(*)
     end function tecdatf142
-    
+
     integer(c_int32_t) function tecdatd142( &
       N, &
       FieldData) &
@@ -2433,7 +2433,7 @@ module mod_tecio
       integer(c_int32_t), intent(in) :: N
       real(c_double), intent(in)  :: FieldData(*)
     end function tecdatd142
-    
+
     integer(c_int32_t) function tecnod142( &
       NData) &
       bind (c, name="tecnod142")
@@ -2441,7 +2441,7 @@ module mod_tecio
       implicit none
       integer(c_int32_t), intent(in) :: NData(*)
     end function tecnod142
-    
+
     integer(c_int32_t) function tecnode142( &
       N, &
       NData) &
@@ -2451,7 +2451,7 @@ module mod_tecio
       integer(c_int32_t), intent(in) :: N
       integer(c_int32_t), intent(in) :: NData(*)
     end function tecnode142
-    
+
     integer(c_int32_t) function tecgeo142( &
       XPos, &
       YPos, &
@@ -2509,7 +2509,7 @@ module mod_tecio
       real(c_float), intent(in)      :: ZGeomData(*)
       character(c_char), intent(in)  :: mfc(*)
     end function tecgeo142
-    
+
     integer(c_int32_t) function tectxt142( &
       XOrThetaPos, &
       YOrRPos, &
@@ -2559,7 +2559,7 @@ module mod_tecio
       character(c_char), intent(in)  ::  Text(*)
       character(c_char), intent(in)  ::  mfc(*)
     end function tectxt142
-    
+
     integer(c_int32_t) function teclab142( &
       S) &
       bind (c, name="teclab142")
@@ -2567,7 +2567,7 @@ module mod_tecio
       implicit none
       character(c_char), intent(in) :: S
     end function teclab142
-    
+
     integer(c_int32_t) function tecfil142( &
       F) &
       bind (c, name="tecfil142")
@@ -2575,7 +2575,7 @@ module mod_tecio
       implicit none
       integer(c_int32_t), intent(in) :: F
     end function tecfil142
-    
+
     subroutine tecforeign142( &
       OutputForeignByteOrder) &
       bind (c, name="tecforeign142")
@@ -2583,7 +2583,7 @@ module mod_tecio
       implicit none
       integer(c_int32_t), intent(in) :: OutputForeignByteOrder
     end subroutine tecforeign142
-        
+
     integer(c_int32_t) function tecflush142( &
       numZonesToRetain, &
       zonesToRetain) &
@@ -2593,13 +2593,13 @@ module mod_tecio
       integer(c_int32_t), value, intent(in) :: numZonesToRetain
       integer(c_int32_t), intent(in)        :: zonesToRetain(*)
     end function tecflush142
-    
+
     integer(c_int32_t) function tecend142() &
       bind (c, name="tecend142")
       use iso_c_binding
       implicit none
     end function tecend142
-    
+
     integer(c_int32_t) function tecusr142( &
       S) &
       bind (c, name="tecusr142")
@@ -2607,7 +2607,7 @@ module mod_tecio
       implicit none
       character(c_char), intent(in) :: S(*)
     end function tecusr142
-    
+
     integer(c_int32_t) function tecauxstr142( &
       Name, &
       Value) &
@@ -2617,7 +2617,7 @@ module mod_tecio
       character(c_char), intent(in) :: Name(*)
       character(c_char), intent(in) :: Value(*)
     end function tecauxstr142
-    
+
     integer(c_int32_t) function teczauxstr142( &
       Name, &
       Value) &
@@ -2627,7 +2627,7 @@ module mod_tecio
       character(c_char), intent(in) :: Name(*)
       character(c_char), intent(in) :: Value(*)
     end function teczauxstr142
-    
+
     integer(c_int32_t) function tecvauxstr142( &
       Var, &
       Name, &
@@ -2639,7 +2639,7 @@ module mod_tecio
       character(c_char), intent(in)  :: Name(*)
       character(c_char), intent(in)  :: Value(*)
     end function tecvauxstr142
-    
+
     integer(c_int32_t) function tecface142( &
       FaceConnections) &
       bind (c, name="tecface142")
@@ -2647,7 +2647,7 @@ module mod_tecio
       implicit none
       integer(c_int32_t), intent(in) :: FaceConnections(*)
     end function tecface142
-    
+
     integer(c_int32_t) function tecpoly142( &
       FaceNodeCounts, &
       FaceNodes, &
@@ -2667,7 +2667,7 @@ module mod_tecio
       integer(c_int32_t), intent(in) :: FaceBndryConnectionElems(*)
       integer(c_int32_t), intent(in) :: FaceBndryConnectionZones(*)
     end function tecpoly142
-    
+
     integer(c_int32_t) function tecpolyface142( &
       NumFaces, &
       FaceNodeCounts, &
@@ -2683,7 +2683,7 @@ module mod_tecio
       integer(c_int32_t), intent(in) :: FaceLeftElems(*)
       integer(c_int32_t), intent(in) :: FaceRightElems(*)
     end function tecpolyface142
-    
+
     integer(c_int32_t) function tecpolybconn142( &
       NumBndryFaces, &
       FaceBndryConnectionCounts, &
@@ -2694,10 +2694,10 @@ module mod_tecio
       implicit none
       integer(c_int32_t), intent(in) :: NumBndryFaces
       integer(c_int32_t), intent(in) :: FaceBndryConnectionCounts(*)
-      integer(c_int32_t), intent(in) :: FaceBndryConnectionElems(*) 
+      integer(c_int32_t), intent(in) :: FaceBndryConnectionElems(*)
       integer(c_int32_t), intent(in) :: FaceBndryConnectionZones(*)
     end function tecpolybconn142
-    
+
     integer(c_int32_t) function tecfeptn142( &
       partition, &
       numnodes, &
@@ -2721,7 +2721,7 @@ module mod_tecio
       integer(c_int32_t), intent(in) :: ngcells
       integer(c_int32_t), intent(in) :: gcells(*)
     end function tecfeptn142
-    
+
     integer(c_int32_t) function tecijkptn142( &
       partition, &
       imin, &
@@ -2741,7 +2741,7 @@ module mod_tecio
       integer(c_int32_t), intent(in) :: jmax
       integer(c_int32_t), intent(in) :: kmax
     end function tecijkptn142
-    
+
     integer(c_int32_t) function tecmpiinit142( &
       communicator, &
       mainrank) &
@@ -2751,7 +2751,7 @@ module mod_tecio
       integer(c_int32_t), intent(in) :: communicator
       integer(c_int32_t), intent(in) :: mainrank
     end function tecmpiinit142
-    
+
     integer(c_int32_t) function tecznemap142( &
       npartitions, &
       ptnranks) &
