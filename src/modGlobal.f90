@@ -6,24 +6,24 @@
        INTEGER               :: istart, id1, st_flag
        INTEGER ( KIND = 8)   :: itamax, pcItaMax,amgxita,      &
                                 ita, nIterPcor, nc, ita1, ital,ita2,    &
-                                sumIterPc,itaSola, totIterPc, inor,blk_start, coarse_flcnt_check 
+                                sumIterPc,itaSola, totIterPc, inor,blk_start, coarse_flcnt_check
        REAL (KIND =8)        :: lx, ly, dt_order,  &
-                                omega,omega1,omega2,omega3,omega4,  & 
+                                omega,omega1,omega2,omega3,omega4,  &
                                 deltx2, delty2,  deltz2, dxmin, &
                                 freq, &
-                                u0, v0, w0, p0,Uavg,  &  
+                                u0, v0, w0, p0,Uavg,  &
                                 eps1, epsi, epsDiv, re, rev, divmax,   &
                                 fx, fy,  alpha, pct, pct1, dstart1,dfinish1, &
                                 xfact,deltat, coupTime,totime, totalTime, dfinish, dstart, solverTime, pi , msTime, mindx, al, uc
-       
-       REAL (KIND = 8)       :: p_new1, p_new2, p_final, u_new, v_new, w_new 
-       REAL (KIND = 8)       :: alpha_m, theta_m, alpha_m1, theta_m1, mu_f, rho_f, l_c, u_tip, lwing, disp 
+
+       REAL (KIND = 8)       :: p_new1, p_new2, p_final, u_new, v_new, w_new
+       REAL (KIND = 8)       :: alpha_m, theta_m, alpha_m1, theta_m1, mu_f, rho_f, l_c, u_tip, lwing, disp
        !!!variables for Orlanski multiple outlet
        REAL (KIND = 8)       :: y11, y12, z11, z12, y21, y22, z21, z22, uc11, uc22
 
-                         
+
        !REAL (KIND =8)        :: u_init, u_final, v_init, v_final, w_init, w_final, xmove, ymove, &
-       !                         zmove, Total_Force_X, Total_Force_Y, Total_Force_Z                               
+       !                         zmove, Total_Force_X, Total_Force_Y, Total_Force_Z
 
 
         INTEGER (KIND=8) ::nblocks, intflines
@@ -38,7 +38,7 @@
         INTEGER (KIND=8) ::  k_startSearch, k_endSearch, &
                                      j_startSearch, j_endSearch, &
                                      i_startSearch, i_endSearch
-       INTEGER (KIND = 8), ALLOCATABLE, DIMENSION (:,:,:)        :: cell, cell2, cell_n, cell_pr,nodeIdTag         
+       INTEGER (KIND = 8), ALLOCATABLE, DIMENSION (:,:,:)        :: cell, cell2, cell_n, cell_pr,nodeIdTag
        INTEGER (KIND = 8), ALLOCATABLE, DIMENSION (:,:,:)    :: minElemcell
 
         REAL (KIND = 8), ALLOCATABLE, DIMENSION (:)       :: deltax, deltay, deltaz, x1, y1, z1,             &
@@ -49,9 +49,9 @@
                                                             ck1_vv, ck2_vv, ck3_vv, ck4_vv, ck5_vv, ck6_vv, &
 							    ca1_ww, ca2_ww, ca3_ww, ca4_ww, ca5_ww, ca6_ww, &
                                                             ck1_ww, ck2_ww, ck3_ww, ck4_ww, ck5_ww, ck6_ww, &
-                                                            ca1_uv, ca2_uv, ca3_uv, ca4_uv, ca5_uv, ca6_uv, & 
+                                                            ca1_uv, ca2_uv, ca3_uv, ca4_uv, ca5_uv, ca6_uv, &
                                                             ck1_uv, ck2_uv, ck3_uv, ck4_uv, ck5_uv, ck6_uv, &
-                                                            ca1_uw, ca2_uw, ca3_uw, ca4_uw, ca5_uw, ca6_uw, & 
+                                                            ca1_uw, ca2_uw, ca3_uw, ca4_uw, ca5_uw, ca6_uw, &
                                                             ck1_uw, ck2_uw, ck3_uw, ck4_uw, ck5_uw, ck6_uw, &
                                                             ca1_vu, ca2_vu, ca3_vu, ca4_vu, ca5_vu, ca6_vu, &
                                                             ck1_vu, ck2_vu, ck3_vu, ck4_vu, ck5_vu, ck6_vu, &
@@ -61,21 +61,21 @@
                                                             ck1_wu, ck2_wu, ck3_wu, ck4_wu, ck5_wu, ck6_wu, &
                                                             ca1_wv, ca2_wv, ca3_wv, ca4_wv, ca5_wv, ca6_wv, &
                                                             ck1_wv, ck2_wv, ck3_wv, ck4_wv, ck5_wv, ck6_wv
- 
+
 
        REAL (KIND = 8), ALLOCATABLE, DIMENSION (:, :)    :: A, An,Ac, Acx, Acy, Acz
        REAL (KIND = 8), ALLOCATABLE, DIMENSION (:, :, :) :: b, u, u_dum, ut, u_sum, u_avg,   &
                                                             v, vt, v_dum, v_sum, v_avg,      &
                                                             w, wt, w_dum, w_sum, w_avg,      &
                                                             p, p_sum,p_dum, p_avg, pc, pco, &
-                                                            uv_sum,vw_sum,uw_sum, & 
-                                                            uv_avg,vw_avg,uw_avg, & 
-                                                            uflu_avg,vflu_avg,wflu_avg,pflu_avg, & 
-                                                            uflu_rms,vflu_rms,wflu_rms,pflu_rms, & 
-                                                            uvflu_avg,vwflu_avg,uwflu_avg, & 
-                                                            u2_sum,v2_sum,w2_sum,p2_sum,  & 
-                                                            u2_avg,v2_avg,w2_avg,p2_avg,  & 
-                                                            ufl,vfl,wfl,  & 
+                                                            uv_sum,vw_sum,uw_sum, &
+                                                            uv_avg,vw_avg,uw_avg, &
+                                                            uflu_avg,vflu_avg,wflu_avg,pflu_avg, &
+                                                            uflu_rms,vflu_rms,wflu_rms,pflu_rms, &
+                                                            uvflu_avg,vwflu_avg,uwflu_avg, &
+                                                            u2_sum,v2_sum,w2_sum,p2_sum,  &
+                                                            u2_avg,v2_avg,w2_avg,p2_avg,  &
+                                                            ufl,vfl,wfl,  &
                                                             resi_u, resi_v, resi_w
 
          REAL*4 , ALLOCATABLE, DIMENSION (:, :, :) :: xp1, yp1, zp1
@@ -93,7 +93,7 @@
         !REAL (KIND = 8), ALLOCATABLE,TARGET, DIMENSION (:) ::rhs,sol
         INTEGER (KIND=4) :: crs_data(4)
          integer(KIND=4) :: diag(7)
-       
+
        INTEGER (KIND = 8), ALLOCATABLE, DIMENSION (:, :) :: TSIndexPtr, interceptedIndexPtr, solidIndexPtr,     &
                                                             fluidInterceptedIndexPtr
 
@@ -106,13 +106,13 @@
                                                       w2t_ghost, u1_ghost, u1t_ghost, v1_ghost, v1t_ghost, w1_ghost, w1t_ghost
         INTEGER (KIND=8):: ibElemCnt, ibElemCntSt
        INTEGER (KIND = 8), ALLOCATABLE, DIMENSION (:,:)      :: Elemcell, ucell, vcell, wcell, pcell
-       REAL (KIND = 8), ALLOCATABLE, DIMENSION (:)           ::  areaElem                                             
-       REAL (KIND = 8), ALLOCATABLE, DIMENSION (:,:)           ::   stressElem                                              
-       REAL(KIND = 8):: modStressNode, modSIGNWSS  
-  
+       REAL (KIND = 8), ALLOCATABLE, DIMENSION (:)           ::  areaElem
+       REAL (KIND = 8), ALLOCATABLE, DIMENSION (:,:)           ::   stressElem
+       REAL(KIND = 8):: modStressNode, modSIGNWSS
+
        REAL (KIND =8)        :: u_init, u_final, v_init, v_final, w_init, w_final,  &
-                                Total_Force_X, Total_Force_Y, Total_Force_Z                               
- 
+                                Total_Force_X, Total_Force_Y, Total_Force_Z
+
        INTEGER (KIND=8), ALLOCATABLE, DIMENSION (:)   :: ibNodeId, ibSurfId,ibElP1, ibElP2, ibElP3, index_ts
        REAL (KIND = 8), ALLOCATABLE, DIMENSION (:) :: xnode, ynode,  znode, xnode1, ynode1, znode1, bcSurf
        INTEGER (KIND=8)   ::  ibElems, ibNodes
@@ -130,16 +130,16 @@
        INTEGER (KIND=8) :: cpy_x_start, cpy_x_end, cpy_y_start, cpy_y_end
        INTEGER (KIND=8) :: cpy_z_start, cpy_z_end
        REAL (KIND = 8)    :: theta, thetaDot, thetaDDot, piv_x,piv_y, piv_z, theta_i, thetaDot_i, &
-        theta2, theta2Dot, theta2DDot, piv2_x, piv2_y, piv2_z,theta2_i, theta2Dot_i, alphaDot, alphaDDot,ac_x_al, ac_y_al, at_x_al, at_y_al, & 
+        theta2, theta2Dot, theta2DDot, piv2_x, piv2_y, piv2_z,theta2_i, theta2Dot_i, alphaDot, alphaDDot,ac_x_al, ac_y_al, at_x_al, at_y_al, &
         aoa, thetaDot1, thetaDDot1, thetaDot2, thetaDDot2
        REAL (KIND=8), ALLOCATABLE, DIMENSION (:)       :: xp_dum, yp_dum, zp_dum
 
- 
+
         end type Blocks
-       REAL (KIND = 8), ALLOCATABLE, DIMENSION (:)           :: INSTWSS,SUMWSS,  SQSUMWSS                                             
-       REAL (KIND = 8), ALLOCATABLE, DIMENSION (:,:)           ::  SIGNWSS                                              
-       REAL(KIND = 8), ALLOCATABLE,DIMENSION(:):: TAWSS, OSI, RRT,WSSRMS       
-       REAL(KIND = 8),ALLOCATABLE, DIMENSION(:,:):: Afnode, stressNode, Anode             
+       REAL (KIND = 8), ALLOCATABLE, DIMENSION (:)           :: INSTWSS,SUMWSS,  SQSUMWSS
+       REAL (KIND = 8), ALLOCATABLE, DIMENSION (:,:)           ::  SIGNWSS
+       REAL(KIND = 8), ALLOCATABLE,DIMENSION(:):: TAWSS, OSI, RRT,WSSRMS
+       REAL(KIND = 8),ALLOCATABLE, DIMENSION(:,:):: Afnode, stressNode, Anode
        REAL (KIND = 8)    :: ac_x_al, ac_y_al, at_x_al, at_y_al, ac_x, ac_y, ac_z, at_x, at_y ,at_z
 
         type Interfaces
@@ -157,14 +157,14 @@
         INTEGER (KIND=8)   :: counterxu,counteryu,counterxp,counteryp,counterxv,counteryv
         INTEGER (KIND=8)   :: counterxw,counteryw
         INTEGER (KIND=8)   :: counterzu,counterzp,counterzv, counterzw
-        INTEGER (KIND=8)   :: cpx_start, cpy_start,cpx_end, cpy_end 
-        INTEGER (KIND=8)   :: cux_start, cuy_start,cux_end, cuy_end 
-        INTEGER (KIND=8)   :: cvx_start, cvy_start,cvx_end, cvy_end 
-        INTEGER (KIND=8)   :: ccellx_start, ccelly_start,ccellx_end, ccelly_end 
-        INTEGER (KIND=8)   :: fvx_start, fvy_start 
-        INTEGER (KIND=8)   :: fpx_start, fpy_start 
-        INTEGER (KIND=8)   :: fux_start, fuy_start 
-        INTEGER (KIND=8)   :: fcellx_start, fcelly_start 
+        INTEGER (KIND=8)   :: cpx_start, cpy_start,cpx_end, cpy_end
+        INTEGER (KIND=8)   :: cux_start, cuy_start,cux_end, cuy_end
+        INTEGER (KIND=8)   :: cvx_start, cvy_start,cvx_end, cvy_end
+        INTEGER (KIND=8)   :: ccellx_start, ccelly_start,ccellx_end, ccelly_end
+        INTEGER (KIND=8)   :: fvx_start, fvy_start
+        INTEGER (KIND=8)   :: fpx_start, fpy_start
+        INTEGER (KIND=8)   :: fux_start, fuy_start
+        INTEGER (KIND=8)   :: fcellx_start, fcelly_start
         end type Interfaces
 
         type(Blocks),allocatable ::block(:)
@@ -172,10 +172,10 @@
 
 
        !REAL (KIND=8)  :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4, bl_interp_ans
-   
+
       REAL (KIND=8) ::d_fine_x1,d_fine_y1,d_coarse_x1,d_coarse_y1,d_val_x1,d_val_y1,d_fine_frac,d_coarse_frac
       REAL (KIND=8) :: l_intp_valx, l_intp_x1,l_intp_x2,l_intp_y1, l_intp_y2, l_intp_valy
-    
+
 
         INTEGER(KIND=8)  :: nfl_blk
        INTEGER (KIND=8),ALLOCATABLE,DIMENSION(:) :: fl_blk
@@ -184,11 +184,11 @@
        INTEGER  :: bcType
        REAL (KIND = 8)    :: aoa, piv_pt, var_surf, aoa1
        REAL (KIND = 8)    :: phase_angle, aoa2, a0y, ang_theta, alpha_t, theta_t
-       !INTEGER (KIND=8)   :: surGeoPoints, ibElems, ibNodes 
-       INTEGER (KIND=8)   :: surGeoPoints 
+       !INTEGER (KIND=8)   :: surGeoPoints, ibElems, ibNodes
+       INTEGER (KIND=8)   :: surGeoPoints
       !INTEGER (KIND=8), ALLOCATABLE, DIMENSION (:)   :: ibElP1, ibElP2, ibElP3
       !REAL (KIND = 8), ALLOCATABLE, DIMENSION (:) :: xnode, ynode,  znode, xnode1, ynode1, znode1, bcSurf
-                                                      
+
         !amgx
         INTEGER (KIND=4) :: nnz_max,nu_max
 !       REAL (KIND = 8), ALLOCATABLE,TARGET, DIMENSION (:)::var_data,var_rhs,var_sol,var_row,var_col
@@ -231,10 +231,10 @@
       !!$acc ca1_wu, ca2_wu, ca3_wu, ca4_wu, ca5_wu, ca6_wu, &
       !!$acc ck1_wu, ck2_wu, ck3_wu, ck4_wu, ck5_wu, ck6_wu, &
       !!$acc ca1_wv, ca2_wv, ca3_wv, ca4_wv, ca5_wv, ca6_wv, &
-      !!$acc ck1_wv, ck2_wv, ck3_wv, ck4_wv, ck5_wv, ck6_wv)         
-      !!$acc declare create (Elemcell, ucell, vcell, wcell, pcell, areaElem, stressElem)      
+      !!$acc ck1_wv, ck2_wv, ck3_wv, ck4_wv, ck5_wv, ck6_wv)
+      !!$acc declare create (Elemcell, ucell, vcell, wcell, pcell, areaElem, stressElem)
        END MODULE global
-                
-                
-                
-                
+
+
+
+

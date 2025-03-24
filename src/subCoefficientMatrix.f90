@@ -1,71 +1,71 @@
-      SUBROUTINE coefficientMatrix      
+      SUBROUTINE coefficientMatrix
         USE global
-        IMPLICIT NONE        
-        INTEGER, PARAMETER :: rk = selected_real_kind(8) 
+        IMPLICIT NONE
+        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (kind = 8) :: n, g, i, j, k, iType,f,nx_var,ny_var,nz_var,counter,ip
         REAL (KIND = 8)    ::  rx1, rx2, rxsum, ry1, ry2, rysum, rz1, rz2, rzsum, varx1
-        
+
          DO f=1,nblocks
-         nx_var=block(f)%nx 
-         ny_var=block(f)%ny 
-         nz_var=block(f)%nz 
+         nx_var=block(f)%nx
+         ny_var=block(f)%ny
+         nz_var=block(f)%nz
          DO j = 2, ny_var+1
-            ry1   = block(f)%yp(j)   - block(f)%yp(j-1)       
-            ry2   = block(f)%yp(j+1) - block(f)%yp(j)     
-            rysum = ry1 + ry2       
+            ry1   = block(f)%yp(j)   - block(f)%yp(j-1)
+            ry2   = block(f)%yp(j+1) - block(f)%yp(j)
+            rysum = ry1 + ry2
             block(f)%Acy(j-1, 1) =   2._rk/(ry1*rysum)
             block(f)%Acy(j-1, 2) =  -2._rk/(ry1*ry2)
-            block(f)%Acy(j-1, 3) =   2._rk/(ry2*rysum) 
-         END DO 
-
-         DO i = 2, nx_var+1   
-            rx1   = block(f)%xp(i)   - block(f)%xp(i-1)       
-            rx2   = block(f)%xp(i+1) - block(f)%xp(i)     
-            rxsum = rx1 + rx2                  
-            block(f)%Acx(i-1, 1) =   2._rk/(rx1*rxsum)
-            block(f)%Acx(i-1, 2) =  -2._rk/(rx1*rx2)
-            block(f)%Acx(i-1, 3) =   2._rk/(rx2*rxsum)  
-         END DO  
-
-         DO i = 2, nz_var+1   
-            rz1   = block(f)%zp(i)   - block(f)%zp(i-1)       
-            rz2   = block(f)%zp(i+1) - block(f)%zp(i)     
-            rzsum = rz1 + rz2                  
-            block(f)%Acz(i-1, 1) =   2._rk/(rz1*rzsum)
-            block(f)%Acz(i-1, 2) =  -2._rk/(rz1*rz2)
-            block(f)%Acz(i-1, 3) =   2._rk/(rz2*rzsum)    
+            block(f)%Acy(j-1, 3) =   2._rk/(ry2*rysum)
          END DO
 
-        	 
-         if (f .eq.1)then
+         DO i = 2, nx_var+1
+            rx1   = block(f)%xp(i)   - block(f)%xp(i-1)
+            rx2   = block(f)%xp(i+1) - block(f)%xp(i)
+            rxsum = rx1 + rx2
+            block(f)%Acx(i-1, 1) =   2._rk/(rx1*rxsum)
+            block(f)%Acx(i-1, 2) =  -2._rk/(rx1*rx2)
+            block(f)%Acx(i-1, 3) =   2._rk/(rx2*rxsum)
+         END DO
+
+         DO i = 2, nz_var+1
+            rz1   = block(f)%zp(i)   - block(f)%zp(i-1)
+            rz2   = block(f)%zp(i+1) - block(f)%zp(i)
+            rzsum = rz1 + rz2
+            block(f)%Acz(i-1, 1) =   2._rk/(rz1*rzsum)
+            block(f)%Acz(i-1, 2) =  -2._rk/(rz1*rz2)
+            block(f)%Acz(i-1, 3) =   2._rk/(rz2*rzsum)
+         END DO
+
+
+         if (f ==1)then
          !inlet, i = 1
          block(f)%Acx(1, 2)   =  block(f)%Acx(1, 2)  - block(f)%Acx(1, 1)
          block(f)%Acx(1, 1)   =  0._rk
          !outlet, i = nx_var
-         block(f)%Acx(nx_var, 2)  =  block(f)%Acx(nx_var, 2) - block(f)%Acx(nx_var, 3) 
+         block(f)%Acx(nx_var, 2)  =  block(f)%Acx(nx_var, 2) - block(f)%Acx(nx_var, 3)
          block(f)%Acx(nx_var, 3)  =  0._rk
 
          block(f)%Acy(1, 2)   =  block(f)%Acy(1, 2)  + block(f)%Acy(1, 1)
          block(f)%Acy(1, 1)   =  0._rk
          !top, i = ny_var
-         block(f)%Acy(ny_var, 2)  =  block(f)%Acy(ny_var, 2) +  block(f)%Acy(ny_var, 3) 
+         block(f)%Acy(ny_var, 2)  =  block(f)%Acy(ny_var, 2) +  block(f)%Acy(ny_var, 3)
          block(f)%Acy(ny_var, 3)  =  0._rk
- 
+
         	 !front, k = 1
          block(f)%Acz(1, 2)   =  block(f)%Acz(1, 2) + block(f)%Acz(1, 1)
          block(f)%Acz(1, 1)   =  0._rk
          !back, k = nz_var
-         block(f)%Acz(nz_var, 2)  =  block(f)%Acz(nz_var, 2) + block(f)%Acz(nz_var, 3) 
-         block(f)%Acz(nz_var, 3)  =  0._rk 
+         block(f)%Acz(nz_var, 2)  =  block(f)%Acz(nz_var, 2) + block(f)%Acz(nz_var, 3)
+         block(f)%Acz(nz_var, 3)  =  0._rk
        end if
         END DO
-        !!$acc update device (Acx, Acy, Acz)         
-                         
+        !!$acc update device (Acx, Acy, Acz)
+
         print*, "Coefficient Matrix generated"
 !!        DO f=1,nblocks
-!!         nx_var=block(f)%nx 
-!!         ny_var=block(f)%ny 
-!!         nz_var=block(f)%nz 
+!!         nx_var=block(f)%nx
+!!         ny_var=block(f)%ny
+!!         nz_var=block(f)%nz
 
 !!       DO k=2,nz_var+1
 !!       DO j=2,ny_var+1
@@ -124,7 +124,7 @@
 !!          ip= nx_var*ny_var*(k-2)+(j-2)*nx_var + (i-1)
 !!          block(f)%Ac(ip, 4) = block(f)%Ac(ip, 4) - block(f)%Ac(ip, 6)
 !!          block(f)%Ac(ip, 6) = 0.
-!!       ! endif 
+!!       ! endif
 !!       END DO
 !!       END DO
 
@@ -148,12 +148,12 @@
 
 
 
-!      
+!
 !           DO f=1,nblocks
-!               nx_var=block(f)%nx 
-!               ny_var=block(f)%ny 
-!               nz_var=block(f)%nz 
-!      
+!               nx_var=block(f)%nx
+!               ny_var=block(f)%ny
+!               nz_var=block(f)%nz
+!
 !           DO k=2,nz_var+1
 !           DO j=2,ny_var+1
 !           DO i=2,nx_var+1
@@ -195,12 +195,12 @@
 !       end do
 !       end do
 !       end do
-!           
+!
 !       amgx_checker=0.
 !           DO f=1,nblocks
-!               nx_var=block(f)%nx 
-!               ny_var=block(f)%ny 
-!               nz_var=block(f)%nz 
+!               nx_var=block(f)%nx
+!               ny_var=block(f)%ny
+!               nz_var=block(f)%nz
 !           DO k=2,nz_var+1
 !           DO j=2,ny_var+1
 !           i=2
@@ -213,6 +213,6 @@
 !           block(f)%A(counter,4)=block(f)%A(counter,4) + block(f)%A(counter,3)
 !           block(f)%A(counter,3)= 0.
 
-      END SUBROUTINE
+      end subroutine coefficientMatrix
 
-                                                                            
+

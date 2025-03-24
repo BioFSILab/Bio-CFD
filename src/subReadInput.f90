@@ -1,16 +1,16 @@
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
       SUBROUTINE readInput
-       USE global 
+       USE global
        IMPLICIT NONE
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER (KIND=8) :: i, j , k , g, r, nx_var, ny_var, nz_var
-        CHARACTER*160  filename1
- 
+        CHARACTER(len=160)  :: filename1
+
         !OPEN(60, FILE = 'geometries/2blk/inputdata', FORM = 'formatted')
         OPEN(60, FILE = 'inputdata', FORM = 'formatted')
        !READ(60,*) nx, ny, nz,  &
        !           re,      &
-       !           itamax, eps1, pcItaMax, &                           
+       !           itamax, eps1, pcItaMax, &
        !           u0, v0,  w0, &
        !           surGeoPoints, a0, freq, aoa, piv_pt,&
        !           xShift, yShift, zShift,           &
@@ -20,8 +20,8 @@
        !           k_startSearch, k_endSearch
         READ(60,*) nblocks, intflines,  &
                    !re,      &
-                   itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &                           
-                   re,rho_f, mu_f, l_c, &                           
+                   itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
+                   re,rho_f, mu_f, l_c, &
                    u0, v0,  w0,  &
                    !surGeoPoints,a0, a0y, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
                    surGeoPoints,a0y, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
@@ -29,7 +29,7 @@
                   !i_startSearch, i_endSearch, &
                   !j_startSearch, j_endSearch, &
                   !k_startSearch, k_endSearch
-        CLOSE(60)  
+        CLOSE(60)
         allocate(Blocks :: block(nblocks))
         allocate(Interfaces :: intfr(intflines))
 
@@ -63,13 +63,13 @@
         block(g)%zshift=block(g)%zshift*0.001
         END DO
         CLOSE(77)
-        if ( alpha_m .ne. 0 .and. theta_m .ne.0 ) then
+        if ( alpha_m /= 0 .and. theta_m /=0 ) then
                 char_f = 'bot'
         end if
-        if ( alpha_m .eq. 0 .and. theta_m .ne.0 ) then
+        if ( alpha_m == 0 .and. theta_m /=0 ) then
                 char_f = 'amp'
         end if
-        if ( alpha_m .ne. 0 .and. theta_m .eq.0 ) then
+        if ( alpha_m /= 0 .and. theta_m ==0 ) then
                 char_f = 'ang'
         end if
         pi = 4.D0*ATAN(1.D0)
@@ -97,16 +97,16 @@
         pi = 4.D0*ATAN(1.D0)
         a0y = 2*sin(pi/6)*l_c
         freq = freq*u0/l_c
-        deltat = 1./(4.*freq*dt_order)!0.00041666666666_rk! *5e-4
-        disp = block(blk_start)%a0*cos(2*pi*freq*deltat) 
-        alpha  = 1._rk 
+        deltat = 1./(4.*freq*dt_order)  !0.00041666666666_rk! *5e-4
+        disp = block(blk_start)%a0*cos(2*pi*freq*deltat)
+        alpha  = 1._rk
       !!freq=(mu_f*re*180)/(4*theta_m*pi*l_c*l_c)
       !!u_tip=4*((pi*theta_m)/180)*l_c*freq
       ! freq=(mu_f*re*180)/(4*45*pi*l_c*l_c)
        u_tip=4*((pi*45)/180)*l_c*freq
       !rev = rho_f/(mu_f)
       !!u0 = re/(rev*l_c)
-      !u0 = 1. 
+      !u0 = 1.
       !!re = rev
       !!a0y = 2*sin(pi/6)*l_c
       !!freq = freq*u0/l_c
@@ -115,10 +115,10 @@
       !!lwing = 0.001*lwing
 
       !!deltat=(dxmin)/(u_tip*dt_order)
-      !!disp = a0*cos(2*pi*freq*deltat) 
-      !!alpha  = 1._rk 
-        Print*, 'dxmin =', dxmin     
-        Print*, 'u0 =', u0     
+      !!disp = a0*cos(2*pi*freq*deltat)
+      !!alpha  = 1._rk
+        Print*, 'dxmin =', dxmin
+        Print*, 'u0 =', u0
         print*, 'dt =',  deltat
         print*, 'freq =', freq
         print*, 'disp =', disp
@@ -137,24 +137,24 @@
 
 
         OPEN(111,FILE='init_params.dat',ACCESS='Append',STATUS='unknown')
-        WRITE(111,*) 'dxmin, u0, deltat, re' 
-        WRITE(111,166) dxmin, u0, deltat, re 
+        WRITE(111,*) 'dxmin, u0, deltat, re'
+        WRITE(111,166) dxmin, u0, deltat, re
 166     FORMAT(2F10.6,E15.6,F8.2)
-        WRITE(111,*) 'freq, disp, utip' 
-        WRITE(111,266) freq, disp, u_tip 
+        WRITE(111,*) 'freq, disp, utip'
+        WRITE(111,266) freq, disp, u_tip
 266     FORMAT(3F10.6)
-        WRITE(111,*) 'alpha_m, theta_m' 
-        WRITE(111,366) alpha_m1, theta_m1 
+        WRITE(111,*) 'alpha_m, theta_m'
+        WRITE(111,366) alpha_m1, theta_m1
 366     FORMAT(2F5.2)
-        WRITE(111,*) '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' 
+        WRITE(111,*) '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
         CLOSE(111)
 
         !uc = 1.
         ita = 0
         ita1 = 0
-        totime = 0._rk 
+        totime = 0._rk
         print*, 'dt =',  deltat, 'ita = ', ita, 'totime = ', totime
-        !print*, 'total cells =', nx*ny*nz        
+        !print*, 'total cells =', nx*ny*nz
 
         !OPEN(51, FILE = 'geometries/2blk/0.01/block_details.dat', FORM = 'formatted')
         OPEN(51, FILE = 'block_details.dat', FORM = 'formatted')
@@ -202,7 +202,7 @@
       !           xv(nx+2), yv(ny+3), zv(nz+2), &
       !           xw(nx+2), yw(ny+2), zw(nz+3), &
       !           xp(nx+2), yp(ny+2), zp(nz+2))
-      
+
         do i=1, nblocks
             block(i)%fineg=block(i)%dx
             block(i)%dx=(1./block(i)%dx)*0.001
@@ -215,7 +215,7 @@
         print *,'For block blockno,xstart,xend,ystart,yend,nx,ny,dx,dy:',&
                    i,block(i)%xstart,block(i)%xend, block(i)%ystart,block(i)%yend,block(i)%zstart,block(i)%zend, &
                    block(i)%nx, block(i)%ny,block(i)%nz, block(i)%dx, block(i)%dy,block(i)%dz
-         END DO      
+         END DO
 
 !       ! DO r = 1, nblocks-1
 !       DO r = 1, nblocks
@@ -227,7 +227,7 @@
 !              block(j)%x1(i)=(i-2) *block(j)%dx + block(j)%xstart
 !           END DO
 !           block(j)%x1(block(j)%nx+2) =block(j)%x1(block(j)%nx+1) + block(j)%deltax(block(j)%nx+1)
-!  
+!
 !           block(j)%deltax(1)    = block(j)%deltax(2)
 !           block(j)%deltax(block(j)%nx+2) =block(j)%deltax(block(j)%nx+1)
 !           block(j)%x1(1)        = block(j)%x1(2) - block(j)%deltax(1)
@@ -262,7 +262,7 @@
 !              block(j)%z1(i)=(i-2) *block(j)%dz + block(j)%zstart
 !           END DO
 !           block(j)%z1(block(j)%nz+2) =block(j)%z1(block(j)%nz+1) +block(j)%deltaz(block(j)%nz+1)
-!  
+!
 !           block(j)%deltaz(1)    = block(j)%deltaz(2)
 !           block(j)%deltaz(block(j)%nz+2) =block(j)%deltaz(block(j)%nz+1)
 !           block(j)%z1(1)        = block(j)%z1(2) - block(j)%deltaz(1)
@@ -285,12 +285,12 @@
                     block(g)%x1(i)=block(g)%x1(i) + block(g)%gx_shift
                 !print*,'x1',g,block(g)%x1(i)
          END DO
-         CLOSE(61)  
- 
+         CLOSE(61)
+
          DO i = 2, block(g)%nx+1
             block(g)%deltax(i) = block(g)%x1(i+1) - block(g)%x1(i)
-         END DO  
-         
+         END DO
+
          block(g)%deltax(1)    = block(g)%deltax(2)
          block(g)%deltax(block(g)%nx+2) = block(g)%deltax(block(g)%nx+1)
          block(g)%x1(1)        = block(g)%x1(2) - block(g)%deltax(1)
@@ -307,18 +307,18 @@
                  block(g)%y1(i)=0.001*block(g)%y1(i)
                     block(g)%y1(i)=block(g)%y1(i) + block(g)%gy_shift
          END DO
-         CLOSE(62)  
-         
+         CLOSE(62)
+
          DO i = 2, block(g)%ny+1
             block(g)%deltay(i) = block(g)%y1(i+1) - block(g)%y1(i)
-         END DO  
-         
+         END DO
+
          block(g)%deltay(1)    = block(g)%deltay(2)
          block(g)%deltay(block(g)%ny+2) = block(g)%deltay(block(g)%ny+1)
          block(g)%y1(1)        = block(g)%y1(2) - block(g)%deltay(1)
          block(g)%y1(block(g)%ny+3)     = block(g)%y1(block(g)%ny+2) + block(g)%deltay(block(g)%ny+2)
-         	
-         	        
+
+
          !OPEN(63, FILE = 'zgrid_41_d20_3d_2.txt', FORM = 'formatted')
          WRITE(filename1,8484) g,block(g)%nz+1
  !8484    FORMAT('geometries/2blk/0.01/zgrid_bk',i1,'_',i3.3,'.txt')
@@ -330,57 +330,57 @@
                  block(g)%z1(i)=0.001*block(g)%z1(i)
                     block(g)%z1(i)=block(g)%z1(i) + block(g)%gz_shift
          END DO
-         CLOSE(63)  
- 
+         CLOSE(63)
+
          DO i = 2, block(g)%nz+1
             block(g)%deltaz(i) = block(g)%z1(i+1) - block(g)%z1(i)
-         END DO  
-         
+         END DO
+
          block(g)%deltaz(1)    = block(g)%deltaz(2)
          block(g)%deltaz(block(g)%nz+2) = block(g)%deltaz(block(g)%nz+1)
          block(g)%z1(1)        = block(g)%z1(2) - block(g)%deltaz(1)
          block(g)%z1(block(g)%nz+3)     = block(g)%z1(block(g)%nz+2) + block(g)%deltaz(block(g)%nz+2)
-        
+
         END DO
 
 
 
-        DO g=1,nblocks 
+        DO g=1,nblocks
         DO i = 1, block(g)%nx+3
            block(g)%xu(i) = block(g)%x1(i)
         ENDDO
         ENDDO
-		
-        DO g=1,nblocks 
+
+        DO g=1,nblocks
         DO i = 1, block(g)%ny+3
            block(g)%yv(i) = block(g)%y1(i)
         ENDDO
         ENDDO
-		
-        DO g=1,nblocks 
+
+        DO g=1,nblocks
 	 DO i = 1, block(g)%nz+3
            block(g)%zw(i) = block(g)%z1(i)
         ENDDO
         ENDDO
-		
-        DO g=1,nblocks 
+
+        DO g=1,nblocks
         DO i = 1, block(g)%ny+2
            block(g)%yu(i) = 0.5_rk*(block(g)%y1(i)+block(g)%y1(i+1))
 	   block(g)%yw(i) = block(g)%yu(i)
            block(g)%yp(i) = block(g)%yu(i)
-        END DO  
+        END DO
         ENDDO
-		
-        DO g=1,nblocks 
+
+        DO g=1,nblocks
         DO i = 1, block(g)%nx+2
            block(g)%xv(i) = 0.5_rk*(block(g)%x1(i)+block(g)%x1(i+1))
            block(g)%xw(i) = block(g)%xv(i)
            block(g)%xp(i) = block(g)%xv(i)
             print*,'xp',g,i,block(g)%xp(i)
-        END DO	
+        END DO
         ENDDO
-		
-        DO g=1,nblocks 
+
+        DO g=1,nblocks
 	 DO i = 1, block(g)%nz+2
            block(g)%zu(i) = 0.5_rk*(block(g)%z1(i)+block(g)%z1(i+1))
 	   block(g)%zv(i) = block(g)%zu(i)
@@ -404,7 +404,7 @@
         END DO
         END DO
         END DO
-       
+
         DO g=1,nblocks
         DO k=2,block(g)%nz+1
         DO j=2,block(g)%ny+1
@@ -419,31 +419,31 @@
         END DO
         END DO
         END DO
- 
+
        !!$acc update device (deltax, deltay, deltaz
        !!$acc update device (x1, y1, z1, xu, yu, zu, xv, yv, zv, xw, yw, zw, xp, yp, zp)
       END SUBROUTINE readInput
 
 !************************************************************************************************
-      
-      SUBROUTINE readSurfaceMeshGmsh
-       USE global 
-       IMPLICIT NONE           
-       INTEGER (KIND = 8) :: n, i1, i2, i3, i4, i5, i6, i7, gPoints, g
-       CHARACTER (LEN = 72) :: cLine          
 
-       
+      SUBROUTINE readSurfaceMeshGmsh
+       USE global
+       IMPLICIT NONE
+       INTEGER (KIND = 8) :: n, i1, i2, i3, i4, i5, i6, i7, gPoints, g
+       CHARACTER (LEN = 72) :: cLine
+
+
        DO g=blk_start, nblocks
-       !OPEN(121, FILE ='geometries/sphere_0.0075r_0.00025.msh', form = 'formatted')               !READ SURFACE MESH FILE  
-       OPEN(121, FILE ='geometries/butterflyMedium.msh', form = 'formatted')               !READ SURFACE MESH FILE  
-       !OPEN(121, FILE ='geometries/sphere_0.75r_0.025.msh', form = 'formatted')               !READ SURFACE MESH FILE  
-       !OPEN(121, FILE ='geometries/sphere_0.75r_0.03.msh', form = 'formatted')               !READ SURFACE MESH FILE  
-       !OPEN(121, FILE ='geometries/sphere_0.75r_0.01.msh', form = 'formatted')               !READ SURFACE MESH FILE  
-       !OPEN(121, FILE ='geometries/sphere_0.083r_0.004.msh', form = 'formatted')               !READ SURFACE MESH FILE  
+       !OPEN(121, FILE ='geometries/sphere_0.0075r_0.00025.msh', form = 'formatted')               !READ SURFACE MESH FILE
+       OPEN(121, FILE ='geometries/butterflyMedium.msh', form = 'formatted')               !READ SURFACE MESH FILE
+       !OPEN(121, FILE ='geometries/sphere_0.75r_0.025.msh', form = 'formatted')               !READ SURFACE MESH FILE
+       !OPEN(121, FILE ='geometries/sphere_0.75r_0.03.msh', form = 'formatted')               !READ SURFACE MESH FILE
+       !OPEN(121, FILE ='geometries/sphere_0.75r_0.01.msh', form = 'formatted')               !READ SURFACE MESH FILE
+       !OPEN(121, FILE ='geometries/sphere_0.083r_0.004.msh', form = 'formatted')               !READ SURFACE MESH FILE
         DO n = 1, 4
            READ (121,*) cLine
         END DO
-        READ (121,*) block(g)%ibNodes  !nsurf=total no. of points in file  
+        READ (121,*) block(g)%ibNodes  !nsurf=total no. of points in file
         ALLOCATE ( block(g)%ibNodeId(block(g)%ibNodes), block(g)%xnode(block(g)%ibNodes), block(g)%ynode(block(g)%ibNodes), block(g)%znode(block(g)%ibNodes) )
         block(g)%ibNodeId = 50
         DO n = 1, block(g)%ibNodes
@@ -455,8 +455,8 @@
         END DO
         DO n = 1, 2
           READ (121,*) line
-        END DO        
-        READ (121,*) block(g)%ibElems   !no. of elements 
+        END DO
+        READ (121,*) block(g)%ibElems   !no. of elements
         DO n = 1, surGeoPoints
           READ (121,*) cLine
         END DO
@@ -490,28 +490,28 @@
        !end do
        ! ibElems= num
        DO n = 1, block(g)%ibElems
-       IF (block(g)%ibSurfId(n).EQ.51) THEN
+       IF (block(g)%ibSurfId(n)==51) THEN
            block(g)%ibNodeId(block(g)%ibELP1(n)) = 51
            block(g)%ibNodeId(block(g)%ibELP2(n)) = 51
            block(g)%ibNodeId(block(g)%ibELP3(n)) = 51
-           ELSEIF (block(g)%ibSurfId(n).EQ.52) THEN
+           ELSEIF (block(g)%ibSurfId(n)==52) THEN
            block(g)%ibNodeId(block(g)%ibELP1(n)) = 52
            block(g)%ibNodeId(block(g)%ibELP2(n)) = 52
            block(g)%ibNodeId(block(g)%ibELP3(n)) = 52
-          ENDIF 
-        ENDDO 
+          ENDIF
+        ENDDO
         DO n = 1, block(g)%ibElems
-        IF (block(g)%ibSurfId(n).EQ.50) THEN
+        IF (block(g)%ibSurfId(n)==50) THEN
             block(g)%ibNodeId(block(g)%ibELP1(n)) = 50
             block(g)%ibNodeId(block(g)%ibELP2(n)) = 50
             block(g)%ibNodeId(block(g)%ibELP3(n)) = 50
           ENDIF
-        ENDDO 
-       
+        ENDDO
+
        !DO n = 1, ibNodes
-       !   WRITE(*,*) ibNodeId(n) 
+       !   WRITE(*,*) ibNodeId(n)
        !ENDDO
-       CLOSE(121)     
+       CLOSE(121)
        PRINT *, 'SURFACE MESH READING COMPLETE'
        PRINT *, 'ibNodes =', block(g)%ibNodes, 'ibElems =', block(g)%ibElems
        END DO
@@ -544,18 +544,18 @@
         CLOSE(51)
 
         !print*,a_blk(1),a_msh(1),a_intf(1),b_blk(1),b_msh(1),b_intf(1),xintf_start(1),xintf_end(1),yintf_start(1),yintf_end(1)
-         END SUBROUTINE
+         end subroutine readBlockInterface
 
 
 
-!***********************************************************************      
+!***********************************************************************
 !     SUBROUTINE readSurfaceMeshGambit
-!      USE global 
-!      IMPLICIT NONE           
+!      USE global
+!      IMPLICIT NONE
 !      INTEGER (KIND = 8) :: n, i1, i2, i3, i4
-!      CHARACTER (LEN = 72) :: cLine          
-!            
-!      OPEN(121, FILE = 'geometries/bend_ellipse_ha.neu', form = 'formatted')               !READ SURFACE MESH FILE  
+!      CHARACTER (LEN = 72) :: cLine
+!
+!      OPEN(121, FILE = 'geometries/bend_ellipse_ha.neu', form = 'formatted')               !READ SURFACE MESH FILE
 !       DO n = 1, 6
 !          READ (121,*) cLine
 !       END DO
@@ -569,7 +569,7 @@
 !       END DO
 !       DO n = 1, 2
 !         READ (121,*) cLine
-!       END DO        
+!       END DO
 !       ALLOCATE ( ibElP1(ibElems), ibElP2(ibElems), ibElP3(ibElems) )
 !       ibElP1 = 0
 !       ibElP2 = 0
@@ -577,10 +577,10 @@
 !       DO n = 1, ibElems
 !         READ (121,*) i1, i2, i3, ibElP1(n), ibElP2(n), ibElP3(n)
 !       END DO
-!      CLOSE(121)     
+!      CLOSE(121)
 !      PRINT *, 'SURFACE MESH READING COMPLETE'
 !      PRINT *, 'ibNodes =', ibNodes, 'ibElems =', ibElems
 
-!      !!$acc update device (xnode, ynode, znode, ibElP1, ibElP2, ibElP3)       
+!      !!$acc update device (xnode, ynode, znode, ibElP1, ibElP2, ibElP3)
 !     END SUBROUTINE readSurfaceMeshGambit
 !*******************************************************************
