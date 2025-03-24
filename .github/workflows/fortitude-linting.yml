@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   test:
+    name: Fortitude-Lint
     runs-on: [ubuntu-latest]
     strategy:
       fail-fast: false
