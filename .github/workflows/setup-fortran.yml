@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   test:
+    name: ${{ matrix.os }}-${{ matrix.toolchain }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
