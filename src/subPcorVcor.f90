@@ -1,6 +1,15 @@
+module biocfd_pcor_vcor
+  use global
+  use biocfd_fine_interp_bound
+  use biocfd_coarse_update
+  use biocfd_boundary_conditions, only : velocityBC
+  implicit none
+
+  contains
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
       SUBROUTINE poissonSolver
         USE global
+        use biocfd_fine_interp_bound
         IMPLICIT NONE
         INTEGER(KIND=8) :: i, j,k, n, g, gg1, f, co
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
@@ -820,10 +829,4 @@
       END SUBROUTINE updateVelocity_newv
 
 !********************************************************************
-
-
-
-
-
-
-
+end module biocfd_pcor_vcor

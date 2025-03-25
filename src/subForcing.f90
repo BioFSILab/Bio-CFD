@@ -1,4 +1,8 @@
+module biocfd_forcing
+  use global
+  implicit none
 
+  contains
 SUBROUTINE pressureForcing1
       USE global
       IMPLICIT NONE
@@ -2269,3 +2273,4 @@ SUBROUTINE velocityForcingField
       ENDDO
 
 END SUBROUTINE velocityForcingField
+end module biocfd_forcing

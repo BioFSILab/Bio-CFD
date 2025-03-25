@@ -1,4 +1,9 @@
-        SUBROUTINE interfaceDetail
+module biocfd_interface_detail
+  use global
+  implicit none
+
+  contains
+SUBROUTINE interfaceDetail
         USE global
         IMPLICIT NONE
         INTEGER (KIND=8) :: i, j, k, g, f, factor, a_maxx, a_maxy,a_maxz, a_mm,&
@@ -720,3 +725,4 @@
 
         end subroutine interfaceDetail
 
+end module biocfd_interface_detail

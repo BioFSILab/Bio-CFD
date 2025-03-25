@@ -1,4 +1,8 @@
+module biocfd_last_conditions
+  use global
+  implicit none
 
+  contains
       SUBROUTINE lastConditions
        USE global
        implicit none
@@ -68,7 +72,4 @@
        !ita2=ita
 
       END SUBROUTINE lastConditions
-
-
-
-
+end module biocfd_last_conditions

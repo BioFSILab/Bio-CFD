@@ -1,4 +1,10 @@
-        SUBROUTINE fineUpdate
+module biocfd_fine_interp
+  use global
+  implicit none
+
+  contains
+
+SUBROUTINE fineUpdate
         USE global
         IMPLICIT NONE
         REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_valz, bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
@@ -2414,3 +2420,4 @@
 
 
         end subroutine fineUpdate_mv
+end module biocfd_fine_interp

@@ -1,4 +1,8 @@
+module biocfd_initial_conditions
+  use global
+  implicit none
 
+  contains
       SUBROUTINE initialConditions
        USE global
        implicit none
@@ -80,6 +84,4 @@
 
       END SUBROUTINE initialConditions
 
-
-
-
+end module biocfd_initial_conditions

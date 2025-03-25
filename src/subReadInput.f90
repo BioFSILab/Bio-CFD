@@ -1,3 +1,8 @@
+module biocfd_read_input
+  use global
+  implicit none
+
+  contains
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
       SUBROUTINE readInput
        USE global
@@ -584,3 +589,4 @@
 !      !!$acc update device (xnode, ynode, znode, ibElP1, ibElP2, ibElP3)
 !     END SUBROUTINE readSurfaceMeshGambit
 !*******************************************************************
+end module biocfd_read_input

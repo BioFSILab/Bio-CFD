@@ -1,4 +1,9 @@
-      SUBROUTINE coefficientMatrix
+module biocfd_coefficient_matrix
+  use global
+  implicit NONE
+
+  contains
+SUBROUTINE coefficientMatrix
         USE global
         IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
@@ -214,5 +219,4 @@
 !           block(f)%A(counter,3)= 0.
 
       end subroutine coefficientMatrix
-
-
+end module biocfd_coefficient_matrix

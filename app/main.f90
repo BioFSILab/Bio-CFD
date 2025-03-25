@@ -1,6 +1,18 @@
 
       PROGRAM main
         USE global
+        use biocfd_search
+        use biocfd_pcor_vcor, only : poissonSolver, updateVelocity_newv
+        use biocfd_boundary_conditions
+        use biocfd_read_input
+        use biocfd_allocate_arrays, only: allocateArrays
+        use biocfd_interface_detail, only: interfaceDetail
+        use biocfd_initial_conditions, only: initialConditions
+        use biocfd_last_conditions, only: lastConditions
+        use biocfd_coefficient_matrix, only: coefficientMatrix
+        use biocfd_navier_stokes
+        use biocfd_write_output_corner1
+        use biocfd_forcing
         IMPLICIT NONE
 
         REAL (KIND=8) :: ts, te

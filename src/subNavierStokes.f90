@@ -1,3 +1,10 @@
+
+module biocfd_navier_stokes
+
+  use global
+  implicit none
+
+contains
 !ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 
 	SUBROUTINE non_uni_coeff
@@ -3103,11 +3110,4 @@ ENDIF
 !***********************************************************************
 !     END SUBROUTINE nsMomentumAB
 
-
-
-
-
-
-
-
-
+end module biocfd_navier_stokes

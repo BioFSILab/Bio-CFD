@@ -1,4 +1,9 @@
-        subroutine coarseUpdate
+module biocfd_coarse_update
+  use global
+  implicit none
+
+  contains
+subroutine coarseUpdate
         use global
         IMPLICIT NONE
         REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
@@ -978,3 +983,4 @@
         ENDDO
         end subroutine coarseUpdate_pc
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
+end module biocfd_coarse_update

@@ -1,3 +1,8 @@
+module biocfd_boundary_conditions
+  use global
+  implicit none
+
+  contains
 !***********************************************************************
 SUBROUTINE velocityBC
       USE global
@@ -170,7 +175,4 @@ SUBROUTINE velocityBC
         !END DO
       END SUBROUTINE solidCellBC_move
 
-
-
-
-
+end module biocfd_boundary_conditions

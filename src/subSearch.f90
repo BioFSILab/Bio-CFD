@@ -1,3 +1,11 @@
+module biocfd_search
+
+  use global
+  use biocfd_fine_interp, only: fineUpdate_mv
+  use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
+  implicit NONE
+
+  contains
 !***********************************************************************
         SUBROUTINE findDistnode
         USE global
@@ -3629,4 +3637,4 @@ block(g)%fluidCellCount = flcnt
 !       END DO
 !    END SUBROUTINE selectiveRetagging
 !***********************************************************************
-
+end module biocfd_search

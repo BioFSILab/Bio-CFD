@@ -1,3 +1,9 @@
+module biocfd_write_output_corner1
+
+  use global
+  implicit none
+
+contains
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 !     SUBROUTINE writeOutput
 !      USE global
@@ -1289,3 +1295,4 @@
 !!         ENDIF
 !!      END SUBROUTINE writeOutput
 !!!cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+end module biocfd_write_output_corner1

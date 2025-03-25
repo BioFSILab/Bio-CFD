@@ -1,4 +1,10 @@
-      SUBROUTINE allocateArrays
+module biocfd_allocate_arrays
+
+  use global
+  implicit none
+
+  contains
+SUBROUTINE allocateArrays
         USE global
         IMPLICIT NONE
 
@@ -49,3 +55,4 @@
 
 
       END SUBROUTINE allocateArrays
+end module biocfd_allocate_arrays
