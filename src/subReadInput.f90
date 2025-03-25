@@ -7,7 +7,7 @@
         CHARACTER(len=160)  :: filename1
 
         !OPEN(60, FILE = 'geometries/2blk/inputdata', FORM = 'formatted')
-        OPEN(60, FILE = 'inputdata', FORM = 'formatted')
+        OPEN(60, file="inputdata", form="formatted", status="old", action="read")
        !READ(60,*) nx, ny, nz,  &
        !           re,      &
        !           itamax, eps1, pcItaMax, &
@@ -33,7 +33,7 @@
         allocate(Blocks :: block(nblocks))
         allocate(Interfaces :: intfr(intflines))
 
-        OPEN(77, FILE = 'body_search.dat', FORM = 'formatted')
+        OPEN(77, file="body_search.dat", form="formatted", status="old", action="read")
         !OPEN(77, FILE = 'geometries/2blk/0.01/body_search.dat', FORM = 'formatted')
         DO g=1,nblocks
                 READ(77,*) block(g)%i_startSearch, block(g)%i_endSearch, &
@@ -44,7 +44,7 @@
                            block(g)%k_startSearch, block(g)%k_endSearch
         END DO
         CLOSE(77)
-        OPEN(77, FILE = 'grid_shift.dat', FORM = 'formatted')
+        OPEN(77, file="grid_shift.dat", form="formatted", status="old", action="read")
         !OPEN(77, FILE = 'geometries/2blk/0.01/body_search.dat', FORM = 'formatted')
         DO g=1,nblocks
         READ(77,*) block(g)%gx_shift, block(g)%gy_shift, block(g)%gz_shift
@@ -53,7 +53,7 @@
         block(g)%gz_shift=block(g)%gz_shift*0.001
         END DO
         CLOSE(77)
-        OPEN(77, FILE = 'shift.dat', FORM = 'formatted')
+        OPEN(77, file="shift.dat", form="formatted", status="old", action="read")
         !OPEN(77, FILE = 'geometries/2blk/0.01/body_search.dat', FORM = 'formatted')
         DO g=1,nblocks
         READ(77,*) block(g)%xshift, block(g)%yshift, block(g)%zshift
@@ -80,7 +80,7 @@
         !xShift = 0.001*xShift
         !yShift = 0.001*yShift
         !zShift = 0.001*zShift
-        OPEN(77, FILE = 'flap_amp.dat', FORM = 'formatted')
+        OPEN(77, file="flap_amp.dat", form="formatted", status="old", action="read")
         DO g=blk_start,nblocks
                 READ(77,*) block(g)%a0
                 write(*,*)g, block(g)%a0
@@ -127,7 +127,7 @@
         print*, 'theta_m =', theta_m
         print*, 'u_tip =', u_tip
 
-        OPEN(77, FILE = 'butter_move.dat', FORM = 'formatted')
+        OPEN(77, file="butter_move.dat", form="formatted", status="old", action="read")
         DO g=blk_start,nblocks
                 READ(77,*) block(g)%yamp, block(g)%bfreq
                 block(g)%yamp=dxmin*block(g)%yamp
@@ -157,7 +157,7 @@
         !print*, 'total cells =', nx*ny*nz
 
         !OPEN(51, FILE = 'geometries/2blk/0.01/block_details.dat', FORM = 'formatted')
-        OPEN(51, FILE = 'block_details.dat', FORM = 'formatted')
+        OPEN(51, file="block_details.dat", form="formatted", status="old", action="read")
        DO i=1,nblocks
 
         read(51, *) block(i)%xstart, block(i)%xend, block(i)%ystart, block(i)%yend,block(i)%zstart,block(i)%zend, block(i)%nx, block(i)%ny, block(i)%nz, block(i)%dx, block(i)%dy, block(i)%dz
