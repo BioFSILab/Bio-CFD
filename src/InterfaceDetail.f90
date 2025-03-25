@@ -93,22 +93,21 @@
         starter=1+1
         ender=starter+factor-1
         intfr(g)%counterxp=2
-12      CONTINUE
+        DO
 
-        intfr(g)%px_interface_det(1,intfr(g)%counterxp)=xx1_p
-        intfr(g)%px_interface_det(2,intfr(g)%counterxp)=starter
-        intfr(g)%px_interface_det(3,intfr(g)%counterxp)=ender
-        !write(*,91) 'px',starter,ender,block(a_blk_no)%xp(xx1_p),block(b_blk_no)%xp(starter),block(b_blk_no)%xp(ender)
-!91      !format(A2,2I3,3F6.3)
+                intfr(g)%px_interface_det(1,intfr(g)%counterxp)=xx1_p
+                intfr(g)%px_interface_det(2,intfr(g)%counterxp)=starter
+                intfr(g)%px_interface_det(3,intfr(g)%counterxp)=ender
+                !write(*,91) 'px',starter,ender,block(a_blk_no)%xp(xx1_p),block(b_blk_no)%xp(starter),block(b_blk_no)%xp(ender)
+        !91      !format(A2,2I3,3F6.3)
 
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterxp=intfr(g)%counterxp+1
-        xx1_p=xx1_p+1
+                starter=ender+1
+                ender=ender+factor
+                intfr(g)%counterxp=intfr(g)%counterxp+1
+                xx1_p=xx1_p+1
 
-        if(xx1_p <= xx2_p)then
-                GOTO 12
-        endif
+                if(xx1_p > xx2_p) EXIT
+        END DO
 
 
         intfr(g)%px_interface_det(1,intfr(g)%counterxp)=xx2_p+1
@@ -145,19 +144,18 @@
         starter=1+1
         ender=starter+factor-1
         intfr(g)%counteryp=2
-13      CONTINUE
+        DO
 
-        intfr(g)%py_interface_det(1,intfr(g)%counteryp)=yy1_p
-        intfr(g)%py_interface_det(2,intfr(g)%counteryp)=starter
-        intfr(g)%py_interface_det(3,intfr(g)%counteryp)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counteryp=intfr(g)%counteryp+1
-        yy1_p=yy1_p+1
+                intfr(g)%py_interface_det(1,intfr(g)%counteryp)=yy1_p
+                intfr(g)%py_interface_det(2,intfr(g)%counteryp)=starter
+                intfr(g)%py_interface_det(3,intfr(g)%counteryp)=ender
+                starter=ender+1
+                ender=ender+factor
+                intfr(g)%counteryp=intfr(g)%counteryp+1
+                yy1_p=yy1_p+1
 
-        if(yy1_p <= yy2_p)then
-                GOTO 13
-        endif
+                if(yy1_p > yy2_p) EXIT
+        END DO
 
 
         intfr(g)%py_interface_det(1,intfr(g)%counteryp)=yy2_p+1
@@ -191,19 +189,18 @@
         starter=1+1
         ender=starter+factor-1
         intfr(g)%counterzp=2
-913      CONTINUE
+        DO
 
-        intfr(g)%pz_interface_det(1,intfr(g)%counterzp)=zz1_p
-        intfr(g)%pz_interface_det(2,intfr(g)%counterzp)=starter
-        intfr(g)%pz_interface_det(3,intfr(g)%counterzp)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterzp=intfr(g)%counterzp+1
-        zz1_p=zz1_p+1
+                intfr(g)%pz_interface_det(1,intfr(g)%counterzp)=zz1_p
+                intfr(g)%pz_interface_det(2,intfr(g)%counterzp)=starter
+                intfr(g)%pz_interface_det(3,intfr(g)%counterzp)=ender
+                starter=ender+1
+                ender=ender+factor
+                intfr(g)%counterzp=intfr(g)%counterzp+1
+                zz1_p=zz1_p+1
 
-        if(zz1_p <= zz2_p)then
-                GOTO 913
-        endif
+                if(zz1_p > zz2_p) EXIT
+        END DO
 
 
         intfr(g)%pz_interface_det(1,intfr(g)%counterzp)=zz2_p+1
@@ -237,19 +234,18 @@
         ender=starter+factor-1
         intfr(g)%counterxu=2
         print*,block(a_blk_no)%xu(xx1_p),block(a_blk_no)%xu(xx2_p),block(b_blk_no)%xu(2)
-121      CONTINUE
+        DO
 
-        xx1_p=xx1_p+1
-        intfr(g)%ux_interface_det(1,intfr(g)%counterxu)=xx1_p
-        intfr(g)%ux_interface_det(2,intfr(g)%counterxu)=starter
-        intfr(g)%ux_interface_det(3,intfr(g)%counterxu)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterxu=intfr(g)%counterxu+1
+                xx1_p=xx1_p+1
+                intfr(g)%ux_interface_det(1,intfr(g)%counterxu)=xx1_p
+                intfr(g)%ux_interface_det(2,intfr(g)%counterxu)=starter
+                intfr(g)%ux_interface_det(3,intfr(g)%counterxu)=ender
+                starter=ender+1
+                ender=ender+factor
+                intfr(g)%counterxu=intfr(g)%counterxu+1
 
-        if(xx1_p < xx2_p)then
-                GOTO 121
-        endif
+                if(xx1_p >= xx2_p) EXIT
+        END DO
 
 
         intfr(g)%ux_interface_det(1,intfr(g)%counterxu)=xx2_p+1
@@ -283,19 +279,18 @@
         starter=1+1
         ender=starter+factor-1
         intfr(g)%counteryu=2
-131      CONTINUE
+        DO
 
-        intfr(g)%uy_interface_det(1,intfr(g)%counteryu)=yy1_p
-        intfr(g)%uy_interface_det(2,intfr(g)%counteryu)=starter
-        intfr(g)%uy_interface_det(3,intfr(g)%counteryu)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counteryu=intfr(g)%counteryu+1
-        yy1_p=yy1_p+1
+                intfr(g)%uy_interface_det(1,intfr(g)%counteryu)=yy1_p
+                intfr(g)%uy_interface_det(2,intfr(g)%counteryu)=starter
+                intfr(g)%uy_interface_det(3,intfr(g)%counteryu)=ender
+                starter=ender+1
+                ender=ender+factor
+                intfr(g)%counteryu=intfr(g)%counteryu+1
+                yy1_p=yy1_p+1
 
-        if(yy1_p <= yy2_p)then
-                GOTO 131
-        endif
+                if(yy1_p > yy2_p) EXIT
+        END DO
 
 
         intfr(g)%uy_interface_det(1,intfr(g)%counteryu)=yy2_p+1
@@ -330,19 +325,18 @@
         starter=1+1
         ender=starter+factor-1
         intfr(g)%counterzu=2
-9131      CONTINUE
+        DO
 
-        intfr(g)%uz_interface_det(1,intfr(g)%counterzu)=zz1_p
-        intfr(g)%uz_interface_det(2,intfr(g)%counterzu)=starter
-        intfr(g)%uz_interface_det(3,intfr(g)%counterzu)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterzu=intfr(g)%counterzu+1
-        zz1_p=zz1_p+1
+                intfr(g)%uz_interface_det(1,intfr(g)%counterzu)=zz1_p
+                intfr(g)%uz_interface_det(2,intfr(g)%counterzu)=starter
+                intfr(g)%uz_interface_det(3,intfr(g)%counterzu)=ender
+                starter=ender+1
+                ender=ender+factor
+                intfr(g)%counterzu=intfr(g)%counterzu+1
+                zz1_p=zz1_p+1
 
-        if(zz1_p <= zz2_p)then
-                GOTO 9131
-        endif
+                if(zz1_p > zz2_p) EXIT
+        END DO
 
 
         intfr(g)%uz_interface_det(1,intfr(g)%counterzu)=zz2_p+1
@@ -375,19 +369,18 @@
         starter=1+1
         ender=starter+factor-1
         intfr(g)%counterxv=2
-122      CONTINUE
+        DO
 
-        intfr(g)%vx_interface_det(1,intfr(g)%counterxv)=xx1_p
-        intfr(g)%vx_interface_det(2,intfr(g)%counterxv)=starter
-        intfr(g)%vx_interface_det(3,intfr(g)%counterxv)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterxv=intfr(g)%counterxv+1
-        xx1_p=xx1_p+1
+                intfr(g)%vx_interface_det(1,intfr(g)%counterxv)=xx1_p
+                intfr(g)%vx_interface_det(2,intfr(g)%counterxv)=starter
+                intfr(g)%vx_interface_det(3,intfr(g)%counterxv)=ender
+                starter=ender+1
+                ender=ender+factor
+                intfr(g)%counterxv=intfr(g)%counterxv+1
+                xx1_p=xx1_p+1
 
-        if(xx1_p <= xx2_p)then
-                GOTO 122
-        endif
+                if(xx1_p > xx2_p) EXIT
+        END DO
 
 
         intfr(g)%vx_interface_det(1,intfr(g)%counterxv)=xx2_p+1
@@ -421,19 +414,18 @@
         starter=2+1
         ender=starter+factor-1
         intfr(g)%counteryv=2
-132      CONTINUE
-        yy1_p=yy1_p+1
+        DO
+                yy1_p=yy1_p+1
 
-        intfr(g)%vy_interface_det(1,intfr(g)%counteryv)=yy1_p
-        intfr(g)%vy_interface_det(2,intfr(g)%counteryv)=starter
-        intfr(g)%vy_interface_det(3,intfr(g)%counteryv)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counteryv=intfr(g)%counteryv+1
+                intfr(g)%vy_interface_det(1,intfr(g)%counteryv)=yy1_p
+                intfr(g)%vy_interface_det(2,intfr(g)%counteryv)=starter
+                intfr(g)%vy_interface_det(3,intfr(g)%counteryv)=ender
+                starter=ender+1
+                ender=ender+factor
+                intfr(g)%counteryv=intfr(g)%counteryv+1
 
-        if(yy1_p < yy2_p)then
-                GOTO 132
-        endif
+                if(yy1_p >= yy2_p) EXIT
+        END DO
 
 
         intfr(g)%vy_interface_det(1,intfr(g)%counteryv)=yy2_p+1
@@ -466,19 +458,18 @@
         starter=1+1
         ender=starter+factor-1
         intfr(g)%counterzv=2
-9122      CONTINUE
+        DO
 
-        intfr(g)%vz_interface_det(1,intfr(g)%counterzv)=zz1_p
-        intfr(g)%vz_interface_det(2,intfr(g)%counterzv)=starter
-        intfr(g)%vz_interface_det(3,intfr(g)%counterzv)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterzv=intfr(g)%counterzv+1
-        zz1_p=zz1_p+1
+                intfr(g)%vz_interface_det(1,intfr(g)%counterzv)=zz1_p
+                intfr(g)%vz_interface_det(2,intfr(g)%counterzv)=starter
+                intfr(g)%vz_interface_det(3,intfr(g)%counterzv)=ender
+                starter=ender+1
+                ender=ender+factor
+                intfr(g)%counterzv=intfr(g)%counterzv+1
+                zz1_p=zz1_p+1
 
-        if(zz1_p <= zz2_p)then
-                GOTO 9122
-        endif
+                if(zz1_p > zz2_p) EXIT
+        END DO
 
 
         intfr(g)%vz_interface_det(1,intfr(g)%counterzv)=zz2_p+1
@@ -512,19 +503,18 @@
         starter=1+1
         ender=starter+factor-1
         intfr(g)%counterxw=2
-1229      CONTINUE
+        DO
 
-        intfr(g)%wx_interface_det(1,intfr(g)%counterxw)=xx1_p
-        intfr(g)%wx_interface_det(2,intfr(g)%counterxw)=starter
-        intfr(g)%wx_interface_det(3,intfr(g)%counterxw)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterxw=intfr(g)%counterxw+1
-        xx1_p=xx1_p+1
+                intfr(g)%wx_interface_det(1,intfr(g)%counterxw)=xx1_p
+                intfr(g)%wx_interface_det(2,intfr(g)%counterxw)=starter
+                intfr(g)%wx_interface_det(3,intfr(g)%counterxw)=ender
+                starter=ender+1
+                ender=ender+factor
+                intfr(g)%counterxw=intfr(g)%counterxw+1
+                xx1_p=xx1_p+1
 
-        if(xx1_p <= xx2_p)then
-                GOTO 1229
-        endif
+                if(xx1_p > xx2_p) EXIT
+        END DO
 
 
         intfr(g)%wx_interface_det(1,intfr(g)%counterxw)=xx2_p+1
@@ -558,19 +548,18 @@
         starter=1+1
         ender=starter+factor-1
         intfr(g)%counteryw=2
-1329      CONTINUE
+        DO
 
-        intfr(g)%wy_interface_det(1,intfr(g)%counteryw)=yy1_p
-        intfr(g)%wy_interface_det(2,intfr(g)%counteryw)=starter
-        intfr(g)%wy_interface_det(3,intfr(g)%counteryw)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counteryw=intfr(g)%counteryw+1
-        yy1_p=yy1_p+1
+                intfr(g)%wy_interface_det(1,intfr(g)%counteryw)=yy1_p
+                intfr(g)%wy_interface_det(2,intfr(g)%counteryw)=starter
+                intfr(g)%wy_interface_det(3,intfr(g)%counteryw)=ender
+                starter=ender+1
+                ender=ender+factor
+                intfr(g)%counteryw=intfr(g)%counteryw+1
+                yy1_p=yy1_p+1
 
-        if(yy1_p <= yy2_p)then
-                GOTO 1329
-        endif
+                if(yy1_p > yy2_p) EXIT
+        END DO
 
 
         intfr(g)%wy_interface_det(1,intfr(g)%counteryw)=yy2_p+1
@@ -603,21 +592,20 @@
         starter=2+1
         ender=starter+factor-1
         intfr(g)%counterzw=2
-91229      CONTINUE
+        DO
 
-        zz1_p=zz1_p+1
-        intfr(g)%wz_interface_det(1,intfr(g)%counterzw)=zz1_p
-        intfr(g)%wz_interface_det(2,intfr(g)%counterzw)=starter
-        intfr(g)%wz_interface_det(3,intfr(g)%counterzw)=ender
-!        write(*,91) 'wz',starter,ender,block(a_blk_no)%zw(xx1_p),block(b_blk_no)%zwp(starter),block(b_blk_no)%zw(ender)
-!91     format(A2,2I3,3F6.3)
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterzw=intfr(g)%counterzw+1
+                zz1_p=zz1_p+1
+                intfr(g)%wz_interface_det(1,intfr(g)%counterzw)=zz1_p
+                intfr(g)%wz_interface_det(2,intfr(g)%counterzw)=starter
+                intfr(g)%wz_interface_det(3,intfr(g)%counterzw)=ender
+        !        write(*,91) 'wz',starter,ender,block(a_blk_no)%zw(xx1_p),block(b_blk_no)%zwp(starter),block(b_blk_no)%zw(ender)
+        !91     format(A2,2I3,3F6.3)
+                starter=ender+1
+                ender=ender+factor
+                intfr(g)%counterzw=intfr(g)%counterzw+1
 
-        if(zz1_p < zz2_p)then
-                GOTO 91229
-        endif
+                if(zz1_p >= zz2_p) EXIT
+        END DO
 
 
         intfr(g)%wz_interface_det(1,intfr(g)%counterzw)=zz2_p+1
