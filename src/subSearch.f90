@@ -714,9 +714,9 @@
 !$acc end parallel
 
 !$acc parallel loop collapse(3) default(present)
-           DO 20 k = block(g)%k_startSearch, block(g)%k_endSearch
-           DO 20 j = block(g)%j_startSearch, block(g)%j_endSearch
-           DO 20 i = block(g)%i_startSearch, block(g)%i_endSearch
+           DO k = block(g)%k_startSearch, block(g)%k_endSearch
+           DO j = block(g)%j_startSearch, block(g)%j_endSearch
+           DO i = block(g)%i_startSearch, block(g)%i_endSearch
                IF (block(g)%cell(i,j,k)/=2) THEN
                   sumNodeId = 0
                   sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
