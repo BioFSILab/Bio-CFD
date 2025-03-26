@@ -5,7 +5,6 @@ module biocfd_initial_conditions
   contains
       SUBROUTINE initialConditions
        USE global
-       implicit none
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER::  i, j, k, n, f
         WRITE(*,*) 'Enter initialcondtitions'

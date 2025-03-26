@@ -5,7 +5,6 @@ module biocfd_interface_detail
   contains
 SUBROUTINE interfaceDetail
         USE global
-        IMPLICIT NONE
         INTEGER (KIND=8) :: i, j, k, g, f, factor, a_maxx, a_maxy,a_maxz, a_mm,&
         b_maxx, b_maxy, b_maxz, b_mm, a_max_intf_length, b_max_intf_length,  &
         a_blk_no, b_blk_no, xx1_p, xx2_p, yy1_p, yy2_p, zz1_p, zz2_p,counter_coarse,checker,&

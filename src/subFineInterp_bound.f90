@@ -5,7 +5,6 @@ module biocfd_fine_interp_bound
   contains
 SUBROUTINE fineUpdate_bd
         USE global
-        IMPLICIT NONE
         REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
         REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
         REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
@@ -1955,7 +1954,6 @@ SUBROUTINE fineUpdate_bd
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE fineUpdate_pc_bd
         USE global
-        IMPLICIT NONE
         REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
         REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
         REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
@@ -2562,7 +2560,6 @@ SUBROUTINE fineUpdate_bd
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE fineUpdate_newv_bd
         USE global
-        IMPLICIT NONE
         REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
         REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
         REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
@@ -4577,7 +4574,6 @@ SUBROUTINE fineUpdate_bd
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE fineUpdate_bd_mv(g)
         USE global
-        IMPLICIT NONE
         REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
         REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
         REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term

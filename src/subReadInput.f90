@@ -6,7 +6,6 @@ module biocfd_read_input
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
       SUBROUTINE readInput
        USE global
-       IMPLICIT NONE
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER (KIND=8) :: i, j , k , g, r, nx_var, ny_var, nz_var
         CHARACTER(len=160)  :: filename1
@@ -433,7 +432,6 @@ module biocfd_read_input
 
       SUBROUTINE readSurfaceMeshGmsh
        USE global
-       IMPLICIT NONE
        INTEGER (KIND = 8) :: n, i1, i2, i3, i4, i5, i6, i7, gPoints, g
        CHARACTER (LEN = 72) :: cLine
 

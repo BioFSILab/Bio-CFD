@@ -10,7 +10,6 @@ module biocfd_pcor_vcor
       SUBROUTINE poissonSolver
         USE global
         use biocfd_fine_interp_bound
-        IMPLICIT NONE
         INTEGER(KIND=8) :: i, j,k, n, g, gg1, f, co
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         REAL (KIND = 8)    :: dalt, div, dab, dudt, dvdt, dwdt
@@ -247,7 +246,6 @@ module biocfd_pcor_vcor
 !***********************************************************************
       SUBROUTINE computeDiv(g)
          USE global
-         IMPLICIT NONE
          INTEGER :: n, i, j, k,gg, counter, nx_var, ny_var, ip
          INTEGER(KIND=8),INTENT(IN) ::g
          gg=g
@@ -320,7 +318,6 @@ module biocfd_pcor_vcor
 
       SUBROUTINE correctPressure(g)
          USE global
-         IMPLICIT NONE
          INTEGER(KIND=8) :: n, i, j, k,gg
          REAL :: r1p, r2p
          INTEGER(KIND=8),INTENT(IN) ::g
@@ -345,7 +342,6 @@ module biocfd_pcor_vcor
 
       SUBROUTINE correctVelocity(g)
          USE global
-         IMPLICIT NONE
          INTEGER(KIND=8) :: n, i, j, k,gg
          INTEGER(KIND=8),INTENT(IN) ::g
          gg=g
@@ -374,7 +370,6 @@ module biocfd_pcor_vcor
       !SUBROUTINE REDBLACKSOR(epsi, isum, derr, derr2)
       SUBROUTINE REDBLACKSOR_old(g)
          USE global
-         IMPLICIT NONE
          INTEGER, PARAMETER :: rk = selected_real_kind(8)
          INTEGER(KIND=8) :: n, i, j, k, gg, ip, nx_var, ny_var, nz_var
          !REAL (KIND = 8) :: derr, derr2,omega, derr3, errSum,var,derr4
@@ -497,7 +492,6 @@ module biocfd_pcor_vcor
       !SUBROUTINE REDBLACKSOR(epsi, isum, derr, derr2)
       SUBROUTINE REDBLACKSOR(g)
          USE global
-         IMPLICIT NONE
          INTEGER, PARAMETER :: rk = selected_real_kind(8)
          INTEGER(KIND=8) :: n, i, j, k, gg, ip, nx_var, ny_var,nz_var,nxy
          REAL (KIND = 8) :: derr, derr2, derr3, errSum,var,derr4
@@ -652,7 +646,6 @@ module biocfd_pcor_vcor
       !SUBROUTINE REDBLACKSOR(epsi, isum, derr, derr2)
       SUBROUTINE REDBLACKSOR_linear(g)
          USE global
-         IMPLICIT NONE
          INTEGER, PARAMETER :: rk = selected_real_kind(8)
          INTEGER(KIND=8) :: n, i, j, k, gg, ip, nx_var, ny_var,nz_var,nxy
          REAL (KIND = 8) :: derr, derr2, derr3, errSum,var,derr4
@@ -802,7 +795,6 @@ module biocfd_pcor_vcor
       SUBROUTINE updateVelocity_newv(g)
       !SUBROUTINE updateVelocity_newv
         USE global
-        IMPLICIT NONE
         INTEGER :: n, i, j, k
          INTEGER (KIND = 8), INTENT(IN) :: g
 !        OPEN(UNIT=111, File='velocity.dat',STATUS='unknown')

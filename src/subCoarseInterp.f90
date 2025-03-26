@@ -5,7 +5,6 @@ module biocfd_coarse_update
   contains
 subroutine coarseUpdate
         use global
-        IMPLICIT NONE
         REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
         REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2,bl_intp_f5,bl_intp_f6,bl_intp_f7,bl_intp_f8
         REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
@@ -566,7 +565,6 @@ subroutine coarseUpdate
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         subroutine coarseUpdate_newv
         use global
-        IMPLICIT NONE
         REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
         REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2,bl_intp_f5,bl_intp_f6,bl_intp_f7,bl_intp_f8
         REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
@@ -878,7 +876,6 @@ subroutine coarseUpdate
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         subroutine coarseUpdate_pc
         use global
-        IMPLICIT NONE
         REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
         REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2,bl_intp_f5,bl_intp_f6,bl_intp_f7,bl_intp_f8
         REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term

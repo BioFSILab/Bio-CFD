@@ -269,7 +269,6 @@ contains
 !***********************************************************************
       SUBROUTINE writeResult
         USE global
-        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k,g
        CHARACTER(len=70)  :: filename1
@@ -294,7 +293,6 @@ contains
 !***********************************************************************
      SUBROUTINE writeTagging
        USE global
-       implicit none
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=70)  :: filename1
        CHARACTER(len=70)  :: filename2
@@ -340,7 +338,6 @@ contains
 !***********************************************************************
       SUBROUTINE writeComputeSumData
         USE global
-        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
        CHARACTER(len=70)  :: filename1
@@ -364,7 +361,6 @@ contains
 
       SUBROUTINE writeComputeSumSqData
         USE global
-        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
        CHARACTER(len=70)  :: filename1
@@ -387,7 +383,6 @@ contains
 !***********************************************************************
       SUBROUTINE readComputeSumData
         USE global
-        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
        CHARACTER(len=70)  :: filename1
@@ -411,7 +406,6 @@ contains
 !***********************************************************************
       SUBROUTINE readComputeSumSqData
         USE global
-        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
        CHARACTER(len=70)  :: filename1
@@ -434,7 +428,6 @@ contains
 !***********************************************************************
       SUBROUTINE readstressData
         USE global
-        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  inode, g
         DO g=1,nblocks
@@ -594,7 +587,6 @@ contains
 !***********************************************************************
          SUBROUTINE body_plot
          USE global
-         IMPLICIT NONE
          INTEGER(KIND=8) :: inode, ielem, g
           CHARACTER(len=150) :: filename1
 

@@ -5,7 +5,6 @@ module biocfd_last_conditions
   contains
       SUBROUTINE lastConditions
        USE global
-       implicit none
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER::  i, j, k, g
         CHARACTER(len=150) :: filename3

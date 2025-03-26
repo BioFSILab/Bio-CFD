@@ -6,7 +6,6 @@ module biocfd_allocate_arrays
   contains
 SUBROUTINE allocateArrays
         USE global
-        IMPLICIT NONE
 
         integer(kind=4) :: i
         integer(kind=4) :: nx_var, ny_var, nz_var

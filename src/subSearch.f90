@@ -9,7 +9,6 @@ module biocfd_search
 !***********************************************************************
         SUBROUTINE findDistnode
         USE global
-        IMPLICIT NONE
         REAL (KIND=8)      ::  dist, dist1, dist2
         INTEGER (kind = 8) ::  i, g
 
@@ -42,7 +41,6 @@ module biocfd_search
 !***********************************************************************
      SUBROUTINE shiftSurfaceNodesInitial
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (kind = 8) ::  i, g
         REAL (KIND=8)      ::  xr, yr, zr
@@ -195,7 +193,6 @@ module biocfd_search
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       SUBROUTINE computeSurfaceVariables
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (kind = 8) ::  i, g
         REAL (KIND=8)      ::  xr, yr, zr
@@ -338,7 +335,6 @@ module biocfd_search
 !***********************************************************************
       SUBROUTINE computeSurfaceNorm
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (kind = 8) ::  n, g, nv  !c1, c2, c3, c4
         REAL (KIND=8)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL, binor
@@ -434,7 +430,6 @@ module biocfd_search
 !**************************************************************************
      SUBROUTINE tagging_th
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (kind = 8) :: g, n, m, i, j, k, n1, n2, n3, n4, nel2Cen, nel2Pnt, sumNodeId
 
@@ -637,7 +632,6 @@ module biocfd_search
 !**************************************************************************
      SUBROUTINE tagging_th_move
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (kind = 8) :: g, n, m, i, j, k, n1, n2, n3, n4, nel2Cen, nel2Pnt, sumNodeId
 
@@ -894,7 +888,6 @@ module biocfd_search
 
      SUBROUTINE findTScells
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER            :: g,i, j, k, i1, j1, k1, iPt1, m, n, i_x1, i_y1, i_z1, i_x2, i_y2, i_z2, il, jl, kl, tscnt
         REAL (KIND=8)      :: pos1_x, pos1_y, pos1_z, pos2_x, pos2_y, pos2_z, pt1
@@ -1062,7 +1055,6 @@ module biocfd_search
 
      SUBROUTINE selectiveRetagging_th
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (kind = 8) ::  n, g, m, i, j, k, n1, n2, n3, n4, i1, j1, k1,i2,j2,k2,flag_cell, nn, &
                                nel2n, sumId, nel2Pnt, nel2Cen, sumNodeID
@@ -1337,7 +1329,6 @@ block(g)%fluidCellCount = flcnt
 !***********************************************************************
      SUBROUTINE cellCount_solid
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (kind = 8) ::  n, iPt, iPt1, iPt2, i, j, k, g
 
@@ -1426,7 +1417,6 @@ block(g)%fluidCellCount = flcnt
 
       SUBROUTINE cellCount
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (kind = 8) ::  n, iPt, iPt1, iPt2, i, j
         INTEGER (kind = 8)::  g,ng, k, rccount, bccount
@@ -1519,7 +1509,6 @@ block(g)%fluidCellCount = flcnt
 !***********************************************************************************************************************
      SUBROUTINE computeNormDistance
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER            ::  nel2u1, nel2u2, nel2v1, nel2v2, nel2w1, nel2w2
         INTEGER            :: i, j, k, n, nel2p, g, ibxx, m
@@ -1663,7 +1652,6 @@ block(g)%fluidCellCount = flcnt
 
 
         USE global
-        IMPLICIT NONE
         INTEGER (KIND=8) :: i, j, k, g, f, factor, a_blk_no, b_blk_no
         integer (kind=4) :: nx_var,ny_var, nx_var_r,ny_var_r,nx_var_t,ny_var_t,nx_var_tn,ny_var_tn
         integer (kind=4) :: nz_var,nz_var_r,nz_var_t,nz_var_tn
@@ -1742,7 +1730,6 @@ block(g)%fluidCellCount = flcnt
 !**************************************************************************
         SUBROUTINE cellCount_coarse_new
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (kind = 8) ::  n, iPt, iPt1, iPt2, i, j, k
         INTEGER (kind = 8)::  g,ng
@@ -1873,7 +1860,6 @@ block(g)%fluidCellCount = flcnt
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE cellCount_solid_coarse_mv
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (kind = 8) ::  n, iPt, iPt1, iPt2, i, j, k
         !INTEGER (kind = 8),Intent(in) ::  g
@@ -1989,7 +1975,6 @@ block(g)%fluidCellCount = flcnt
 
 
         USE global
-        IMPLICIT NONE
         INTEGER (KIND=8) :: i, j, k, g, f, factor, a_blk_no, b_blk_no
         integer (kind=4) :: nx_var,ny_var, nx_var_r,ny_var_r,nx_var_t,ny_var_t,nx_var_tn,ny_var_tn
         integer (kind=4) :: st_rc_x, en_rc_x, st_rc_y, en_rc_y
@@ -2055,7 +2040,6 @@ block(g)%fluidCellCount = flcnt
 
         SUBROUTINE block_move_check
         use global
-        IMPLICIT NONE
         INTEGER(KIND=8) :: i,j,k,g, a_blk_no, b_blk_no, factor
         REAL(KIND=8) :: margin, ydisp1, xdisp1, zdisp1, mg1
         REAL(KIND=8) :: marginx, marginy, marginz, y_up_lt, y_dw_lt, yval_up, yval_dw, xval_lt, xval_rt
@@ -2332,7 +2316,6 @@ block(g)%fluidCellCount = flcnt
         SUBROUTINE change_block_coords
 
         use global
-        IMPLICIT NONE
         INTEGER(KIND=8) :: i,j,k,g, a_blk_no, b_blk_no,countx_st,countz_st,county_st
         REAL(KIND=8) :: change_y_f,change_x_f
         REAL(KIND=8) :: change_z_f
@@ -2617,7 +2600,6 @@ block(g)%fluidCellCount = flcnt
         SUBROUTINE change_block_interface
 
         use global
-        IMPLICIT NONE
         INTEGER(KIND=8) :: i,j,k,g, a_blk_no, b_blk_no, factor
         REAL(KIND=8) :: change_y_f
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
@@ -2791,7 +2773,6 @@ block(g)%fluidCellCount = flcnt
 
      SUBROUTINE tagging_block_move
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (kind = 8) ::  n, m, i, j, k, n1, n2, n3, n4, nel2n, g, ibElems_cnt
 
@@ -3033,7 +3014,6 @@ block(g)%fluidCellCount = flcnt
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE cellCount_solid_coarse
         USE global
-        IMPLICIT NONE
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (kind = 8) ::  n, iPt, iPt1, iPt2, i, j, k
         !INTEGER (kind = 8),Intent(in) ::  g
@@ -3395,7 +3375,6 @@ block(g)%fluidCellCount = flcnt
 !***********************************************************************
         SUBROUTINE readTagging
         use global
-        implicit none
         INTEGER (kind = 8) ::   i, j, k,g
         CHARACTER(len=150)  :: filename1
 
