@@ -2,7 +2,6 @@ name: Setup Fortran
 
 on:
   workflow_dispatch:
-    branches: [*]
   pull_request:
     branches: [main]
 #  push:
