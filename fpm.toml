@@ -10,3 +10,7 @@ library = false
 [dev-dependencies]
 test-drive.git = "https://github.com/fortran-lang/test-drive"
 test-drive.tag = "v0.4.0"
+
+[extra.fortitude.check]
+select = ["ALL"]
+exclude = ["src/ftn_c.f90", "src/mod_tecio.f90"]
