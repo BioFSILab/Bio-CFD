@@ -288,10 +288,12 @@
 !***********************************************************************
      SUBROUTINE writeTagging
        USE global
+       implicit none
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=70)  :: filename1
        CHARACTER(len=70)  :: filename2
-       INTEGER  :: k, i, j,g
+       INTEGER  :: k, i, j, g
+       INTEGER :: geo_num  ! Currently unused
         g=2
             WRITE(filename1,1) geo_num,ita
  1          FORMAT('out/',i6.6,'/tag/tagdata.',i2.2,".dat")
