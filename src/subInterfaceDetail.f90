@@ -1,6 +1,9 @@
 module biocfd_interface_detail
   use global
   implicit none
+  private
+
+  public :: interfaceDetail
 
   contains
 SUBROUTINE interfaceDetail

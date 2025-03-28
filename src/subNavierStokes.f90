@@ -3,6 +3,9 @@ module biocfd_navier_stokes
 
   use global
   implicit none
+  private
+
+  public :: non_uni_coeff, nsmomentum2order
 
 contains
 !ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss

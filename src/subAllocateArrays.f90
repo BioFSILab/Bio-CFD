@@ -2,6 +2,9 @@ module biocfd_allocate_arrays
 
   use global
   implicit none
+  private
+
+  public :: allocateArrays
 
   contains
 SUBROUTINE allocateArrays

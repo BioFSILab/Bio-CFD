@@ -1,6 +1,9 @@
 module biocfd_initial_conditions
   use global
   implicit none
+  private
+
+  public :: initialConditions
 
   contains
       SUBROUTINE initialConditions

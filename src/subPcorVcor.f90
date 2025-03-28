@@ -4,6 +4,9 @@ module biocfd_pcor_vcor
   use biocfd_coarse_update
   use biocfd_boundary_conditions, only : velocityBC
   implicit none
+  private
+
+  public :: poissonSolver, updateVelocity_newv
 
   contains
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss

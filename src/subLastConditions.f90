@@ -1,6 +1,9 @@
 module biocfd_last_conditions
   use global
   implicit none
+  private
+
+  public :: lastConditions
 
   contains
       SUBROUTINE lastConditions
