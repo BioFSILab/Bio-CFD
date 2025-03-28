@@ -449,78 +449,82 @@
 !!$acc enter data copyin(cell, cell2, xp, yp, zp, x1, y1, z1, xu, yu, zu, xv, yv, zv, xw, yw, zw, nodeIdTag)
 !!$acc parallel loop collapse(3) present(nodeIdTag, xcent, ycent, zcent, cosAlpha, cosBeta, cosGamma, cell, xp, yp, zp, x1, y1, z1)
  !$acc parallel loop collapse(3) default(present)
-        DO 10 k = block(g)%k_startSearch, block(g)%k_endSearch
-        DO 10 j = block(g)%j_startSearch, block(g)%j_endSearch
-        DO 10 i = block(g)%i_startSearch, block(g)%i_endSearch
-       !DO 10 k = 2, block(g)%nz
-       !DO 10 j = 2, block(g)%ny
-       !DO 10 i = 2, block(g)%nx
-           minDis  = 1e14
-           minDis1 = 1e14
+        DO k = block(g)%k_startSearch, block(g)%k_endSearch
+        DO j = block(g)%j_startSearch, block(g)%j_endSearch
+        DO i = block(g)%i_startSearch, block(g)%i_endSearch
+       !DO k = 2, block(g)%nz
+       !DO j = 2, block(g)%ny
+       !DO i = 2, block(g)%nx
+            minDis  = 1e14
+            minDis1 = 1e14
 
-           n1x = block(g)%xp(i)
-           n1y = block(g)%yp(j)
-           n1z = block(g)%zp(k)
+            n1x = block(g)%xp(i)
+            n1y = block(g)%yp(j)
+            n1z = block(g)%zp(k)
 
-           n2x = block(g)%x1(i)
-           n2y = block(g)%y1(j)
-           n2z = block(g)%z1(k)
+            n2x = block(g)%x1(i)
+            n2y = block(g)%y1(j)
+            n2z = block(g)%z1(k)
 
-           !$acc loop seq
-           DO m = 1, block(g)%ibElems
-           cent_x = block(g)%xcent(m)
-           cent_y = block(g)%ycent(m)
-           cent_z = block(g)%zcent(m)
-              dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
-              dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
-              IF (dis_cen<minDis) THEN
-                !print*,'1',i,j,k
-                 minDis    = dis_cen
-                 nel2Cen   = m
-              ENDIF
-              IF (dis_pnt<minDis1) THEN
-                !print*,'2',i,j,k
-                 minDis1   = dis_pnt
-                 nel2Pnt   = m
-              ENDIF
-           ENDDO
-            !    write(*,*)block(g)%x1(i),xcent(nel2Cen)
- ! 112          FORMAT(' ',I8,' ',I8,' ',I8,' ',I8)
-            IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen).AND.block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
-                (block(g)%y1(j)<=block(g)%ycent(nel2Cen).AND.block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
-                (block(g)%z1(k)<=block(g)%zcent(nel2Cen).AND.block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
-                !print*,i,j,k
-                block(g)%cell(i,j,k) = 2
+            !$acc loop seq
+            DO m = 1, block(g)%ibElems
+            cent_x = block(g)%xcent(m)
+            cent_y = block(g)%ycent(m)
+            cent_z = block(g)%zcent(m)
+               dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
+               dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
+               IF (dis_cen<minDis) THEN
+                  !print*,'1',i,j,k
+                  minDis    = dis_cen
+                  nel2Cen   = m
+               ENDIF
+               IF (dis_pnt<minDis1) THEN
+                  !print*,'2',i,j,k
+                  minDis1   = dis_pnt
+                  nel2Pnt   = m
+               ENDIF
+            ENDDO
+               !    write(*,*)block(g)%x1(i),xcent(nel2Cen)
+   ! 112          FORMAT(' ',I8,' ',I8,' ',I8,' ',I8)
+               IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen).AND.block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
+                  (block(g)%y1(j)<=block(g)%ycent(nel2Cen).AND.block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
+                  (block(g)%z1(k)<=block(g)%zcent(nel2Cen).AND.block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
+                  !print*,i,j,k
+                  block(g)%cell(i,j,k) = 2
 
-           ENDIF
+            ENDIF
 
-                      n2dotn  = (n2x - block(g)%xcent(nel2Pnt))*block(g)%cosAlpha(nel2Pnt) + &
-                          (n2y - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
-                          (n2z - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
+                        n2dotn  = (n2x - block(g)%xcent(nel2Pnt))*block(g)%cosAlpha(nel2Pnt) + &
+                           (n2y - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
+                           (n2z - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
 
-           IF (n2dotn>=-1e-16) THEN
-              block(g)%nodeIdTag(i,j,k) = 0
-           ELSE
-              block(g)%nodeIdTag(i,j,k) = 1
-           ENDIF
- 10     CONTINUE
+            IF (n2dotn>=-1e-16) THEN
+               block(g)%nodeIdTag(i,j,k) = 0
+            ELSE
+               block(g)%nodeIdTag(i,j,k) = 1
+            ENDIF
+         END DO
+         END DO
+         END DO
 !$acc end parallel
 
 !$acc parallel loop collapse(3) default(present)
-           DO 20 k = block(g)%k_startSearch, block(g)%k_endSearch
-           DO 20 j = block(g)%j_startSearch, block(g)%j_endSearch
-           DO 20 i = block(g)%i_startSearch, block(g)%i_endSearch
-           IF (block(g)%cell(i,j,k)/=2) THEN
-              sumNodeId = 0
-              sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
-                        + block(g)%nodeIdTag(i,j+1,k)    + block(g)%nodeIdTag(i+1,j+1,k)   &
-                        + block(g)%nodeIdTag(i,j,k+1)    + block(g)%nodeIdTag(i+1,j,k+1)     &
-                        + block(g)%nodeIdTag(i,j+1,k+1)  + block(g)%nodeIdTag(i+1,j+1,k+1)
-              IF (sumNodeId==8) THEN
-                 block(g)%cell(i,j,k) = 1
-              ENDIF
-           ENDIF
- 20     CONTINUE
+           DO k = block(g)%k_startSearch, block(g)%k_endSearch
+           DO j = block(g)%j_startSearch, block(g)%j_endSearch
+           DO i = block(g)%i_startSearch, block(g)%i_endSearch
+               IF (block(g)%cell(i,j,k)/=2) THEN
+                  sumNodeId = 0
+                  sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
+                              + block(g)%nodeIdTag(i,j+1,k)    + block(g)%nodeIdTag(i+1,j+1,k)   &
+                              + block(g)%nodeIdTag(i,j,k+1)    + block(g)%nodeIdTag(i+1,j,k+1)     &
+                              + block(g)%nodeIdTag(i,j+1,k+1)  + block(g)%nodeIdTag(i+1,j+1,k+1)
+                  IF (sumNodeId==8) THEN
+                     block(g)%cell(i,j,k) = 1
+                  ENDIF
+               ENDIF
+           END DO
+           END DO
+           END DO
 !$acc end parallel
 
 
@@ -542,18 +546,20 @@
          block(g)%solidCellCount = 0
          block(g)%fluidCellCount = 0
  !!$acc parallel loop collapse(3) present(cell) reduction(+: solidCellCount, fluidCellCount, ibCellCount)
-         DO 30 k = 2, block(g)%nz+1
-         DO 30 j = 2, block(g)%ny+1
-         DO 30 i = 2, block(g)%nx+1
-            !n       = i-1  + nx*(j-2)  + nx*ny*(k-2)
-            IF (block(g)%cell(i,j,k)==1) THEN
-                block(g)%solidCellCount = block(g)%solidCellCount + 1
-            ELSEIF (block(g)%cell(i,j,k)==0) THEN
-               block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
-            ELSEIF (block(g)%cell(i,j,k)==2) THEN
-                block(g)%ibCellCount = block(g)%ibCellCount + 1
-            ENDIF
- 30      CONTINUE
+         DO k = 2, block(g)%nz+1
+         DO j = 2, block(g)%ny+1
+         DO i = 2, block(g)%nx+1
+               !n       = i-1  + nx*(j-2)  + nx*ny*(k-2)
+               IF (block(g)%cell(i,j,k)==1) THEN
+                  block(g)%solidCellCount = block(g)%solidCellCount + 1
+               ELSEIF (block(g)%cell(i,j,k)==0) THEN
+                  block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
+               ELSEIF (block(g)%cell(i,j,k)==2) THEN
+                  block(g)%ibCellCount = block(g)%ibCellCount + 1
+               ENDIF
+         END DO
+         END DO
+         END DO
  !!$acc end parallel
  !GOTO 1000
    !!$acc update self(cell)
@@ -648,78 +654,82 @@
 !!$acc enter data copyin(cell, cell2, xp, yp, zp, x1, y1, z1, xu, yu, zu, xv, yv, zv, xw, yw, zw, nodeIdTag)
 !!$acc parallel loop collapse(3) present(nodeIdTag, xcent, ycent, zcent, cosAlpha, cosBeta, cosGamma, cell, xp, yp, zp, x1, y1, z1)
 !$acc parallel loop collapse(3) default(present)
-        DO 10 k = block(g)%k_startSearch, block(g)%k_endSearch
-        DO 10 j = block(g)%j_startSearch, block(g)%j_endSearch
-        DO 10 i = block(g)%i_startSearch, block(g)%i_endSearch
-       !DO 10 k = 2, block(g)%nz
-       !DO 10 j = 2, block(g)%ny
-       !DO 10 i = 2, block(g)%nx
-           minDis  = 1e14
-           minDis1 = 1e14
+        DO k = block(g)%k_startSearch, block(g)%k_endSearch
+        DO j = block(g)%j_startSearch, block(g)%j_endSearch
+        DO i = block(g)%i_startSearch, block(g)%i_endSearch
+       !DO k = 2, block(g)%nz
+       !DO j = 2, block(g)%ny
+       !DO i = 2, block(g)%nx
+            minDis  = 1e14
+            minDis1 = 1e14
 
-           n1x = block(g)%xp(i)
-           n1y = block(g)%yp(j)
-           n1z = block(g)%zp(k)
+            n1x = block(g)%xp(i)
+            n1y = block(g)%yp(j)
+            n1z = block(g)%zp(k)
 
-           n2x = block(g)%x1(i)
-           n2y = block(g)%y1(j)
-           n2z = block(g)%z1(k)
+            n2x = block(g)%x1(i)
+            n2y = block(g)%y1(j)
+            n2z = block(g)%z1(k)
 
-           !$acc loop seq
-           DO m = 1, block(g)%ibElems
-           cent_x = block(g)%xcent(m)
-           cent_y = block(g)%ycent(m)
-           cent_z = block(g)%zcent(m)
-              dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
-              dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
-              IF (dis_cen<minDis) THEN
-                !print*,'1',i,j,k
-                 minDis    = dis_cen
-                 nel2Cen   = m
-              ENDIF
-              IF (dis_pnt<minDis1) THEN
-                !print*,'2',i,j,k
-                 minDis1   = dis_pnt
-                 nel2Pnt   = m
-              ENDIF
-           ENDDO
-            !    write(*,*)block(g)%x1(i),xcent(nel2Cen)
- ! 112          FORMAT(' ',I8,' ',I8,' ',I8,' ',I8)
-            IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen).AND.block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
-                (block(g)%y1(j)<=block(g)%ycent(nel2Cen).AND.block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
-                (block(g)%z1(k)<=block(g)%zcent(nel2Cen).AND.block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
-                !print*,i,j,k
-                block(g)%cell(i,j,k) = 2
+            !$acc loop seq
+            DO m = 1, block(g)%ibElems
+            cent_x = block(g)%xcent(m)
+            cent_y = block(g)%ycent(m)
+            cent_z = block(g)%zcent(m)
+               dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
+               dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
+               IF (dis_cen<minDis) THEN
+                  !print*,'1',i,j,k
+                  minDis    = dis_cen
+                  nel2Cen   = m
+               ENDIF
+               IF (dis_pnt<minDis1) THEN
+                  !print*,'2',i,j,k
+                  minDis1   = dis_pnt
+                  nel2Pnt   = m
+               ENDIF
+            ENDDO
+               !    write(*,*)block(g)%x1(i),xcent(nel2Cen)
+   ! 112          FORMAT(' ',I8,' ',I8,' ',I8,' ',I8)
+               IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen).AND.block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
+                  (block(g)%y1(j)<=block(g)%ycent(nel2Cen).AND.block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
+                  (block(g)%z1(k)<=block(g)%zcent(nel2Cen).AND.block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
+                  !print*,i,j,k
+                  block(g)%cell(i,j,k) = 2
 
-           ENDIF
+            ENDIF
 
-                      n2dotn  = (n2x - block(g)%xcent(nel2Pnt))*block(g)%cosAlpha(nel2Pnt) + &
-                          (n2y - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
-                          (n2z - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
+                        n2dotn  = (n2x - block(g)%xcent(nel2Pnt))*block(g)%cosAlpha(nel2Pnt) + &
+                           (n2y - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
+                           (n2z - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
 
-           IF (n2dotn>=-1e-16) THEN
-              block(g)%nodeIdTag(i,j,k) = 0
-           ELSE
-              block(g)%nodeIdTag(i,j,k) = 1
-           ENDIF
- 10     CONTINUE
+            IF (n2dotn>=-1e-16) THEN
+               block(g)%nodeIdTag(i,j,k) = 0
+            ELSE
+               block(g)%nodeIdTag(i,j,k) = 1
+            ENDIF
+         END DO
+         END DO
+         END DO
 !$acc end parallel
 
 !$acc parallel loop collapse(3) default(present)
-           DO 20 k = block(g)%k_startSearch, block(g)%k_endSearch
-           DO 20 j = block(g)%j_startSearch, block(g)%j_endSearch
-           DO 20 i = block(g)%i_startSearch, block(g)%i_endSearch
-           IF (block(g)%cell(i,j,k)/=2) THEN
-              sumNodeId = 0
-              sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
-                        + block(g)%nodeIdTag(i,j+1,k)    + block(g)%nodeIdTag(i+1,j+1,k)   &
-                        + block(g)%nodeIdTag(i,j,k+1)    + block(g)%nodeIdTag(i+1,j,k+1)     &
-                        + block(g)%nodeIdTag(i,j+1,k+1)  + block(g)%nodeIdTag(i+1,j+1,k+1)
-              IF (sumNodeId==8) THEN
-                 block(g)%cell(i,j,k) = 1
-              ENDIF
-           ENDIF
- 20     CONTINUE
+           DO k = block(g)%k_startSearch, block(g)%k_endSearch
+           DO j = block(g)%j_startSearch, block(g)%j_endSearch
+           DO i = block(g)%i_startSearch, block(g)%i_endSearch
+               IF (block(g)%cell(i,j,k)/=2) THEN
+                  sumNodeId = 0
+                  sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
+                              + block(g)%nodeIdTag(i,j+1,k)    + block(g)%nodeIdTag(i+1,j+1,k)   &
+                              + block(g)%nodeIdTag(i,j,k+1)    + block(g)%nodeIdTag(i+1,j,k+1)     &
+                              + block(g)%nodeIdTag(i,j+1,k+1)  + block(g)%nodeIdTag(i+1,j+1,k+1)
+                  IF (sumNodeId==8) THEN
+                     block(g)%cell(i,j,k) = 1
+                  ENDIF
+               ENDIF
+           END DO
+           END DO
+           END DO
 !$acc end parallel
 
 !    !$acc parallel loop collapse(3) default(present) private(i,j,k)
@@ -781,9 +791,9 @@
          block(g)%solidCellCount = 0
          block(g)%fluidCellCount = 0
 !!$acc parallel loop collapse(3) present(cell) reduction(+: solidCellCount, fluidCellCount, ibCellCount)
-         DO 30 k = 2, block(g)%nz+1
-         DO 30 j = 2, block(g)%ny+1
-         DO 30 i = 2, block(g)%nx+1
+         DO k = 2, block(g)%nz+1
+         DO j = 2, block(g)%ny+1
+         DO i = 2, block(g)%nx+1
             !n       = i-1  + nx*(j-2)  + nx*ny*(k-2)
             IF (block(g)%cell(i,j,k)==1) THEN
                 block(g)%solidCellCount = block(g)%solidCellCount + 1
@@ -792,7 +802,9 @@
             ELSEIF (block(g)%cell(i,j,k)==2) THEN
                 block(g)%ibCellCount = block(g)%ibCellCount + 1
             ENDIF
- 30      CONTINUE
+         END DO
+         END DO
+         END DO
 !!$acc end parallel
       GOTO 1000
 !!$acc update self(cell)
@@ -885,17 +897,19 @@
         !g=2
         DO g=blk_start, nblocks
         !$acc parallel loop collapse(3) default(present)
-                 DO 5 k = 2, block(g)%nz+1
-                 DO 5 j = 2, block(g)%ny+1
-                 DO 5 i = 2, block(g)%nx+1
-        		    block(g)%cell2(i,j,k) = 0
-         5      CONTINUE
+                 DO k = 2, block(g)%nz+1
+                 DO j = 2, block(g)%ny+1
+                 DO i = 2, block(g)%nx+1
+        		         block(g)%cell2(i,j,k) = 0
+                 END DO
+                 END DO
+                 END DO
         !$acc end parallel
 
 
         !!$acc parallel loop present(interceptedIndexPtr, ibSurfId, xp, yp, zp, cosAlpha, cosBeta, cosGamma, nelp, cell, cell2, deltax, deltay, deltaz)
         !$acc parallel loop default(present)
-        DO 10 n = 1, block(g)%ibCellCount
+        DO n = 1, block(g)%ibCellCount
         i = block(g)%interceptedIndexPtr(n, 1)
         j = block(g)%interceptedIndexPtr(n, 2)
         k = block(g)%interceptedIndexPtr(n, 3)
@@ -928,21 +942,23 @@
          1  CONTINUE
          IF(block(g)%ibSurfID(block(g)%nelp(n))==51.OR.block(g)%ibSurfID(block(g)%nelp(n))==52) block(g)%cell2(i, j, k) = 2
 
-         10     CONTINUE
+         END DO
         !$acc end parallel
 
         block(g)%TSCellCount = 0
         tscnt=0
         !!$acc parallel loop collapse(3) default(present) reduction(+: TSCellCount)
         !$acc parallel loop collapse(3) default(present) reduction(+:tscnt)
-                 DO 20 k = 2, block(g)%nz+1
-                 DO 20 j = 2, block(g)%ny+1
-                 DO 20 i = 2, block(g)%nx+1
-                    IF (block(g)%cell2(i,j,k)==2) THEN
-                        !block(g)%TSCellCount = block(g)%TSCellCount + 1
-                        tscnt = tscnt + 1
-                    ENDIF
-         20      CONTINUE
+                 DO k = 2, block(g)%nz+1
+                 DO j = 2, block(g)%ny+1
+                 DO i = 2, block(g)%nx+1
+                     IF (block(g)%cell2(i,j,k)==2) THEN
+                           !block(g)%TSCellCount = block(g)%TSCellCount + 1
+                           tscnt = tscnt + 1
+                     ENDIF
+                 END DO
+                 END DO
+                 END DO
         !$acc end parallel
 
         block(g)%TSCellCount = tscnt
@@ -953,16 +969,18 @@
 
         iPt1 = 0
         !$acc loop collapse(3) seq
-                 DO 30 k = 0, block(g)%nz+3
-                 DO 30 j = 0, block(g)%ny+3
-                 DO 30 i = 0, block(g)%nx+3
+                 DO k = 0, block(g)%nz+3
+                 DO j = 0, block(g)%ny+3
+                 DO i = 0, block(g)%nx+3
                     IF (block(g)%cell2(i,j,k)==2) THEN
                        iPt1 = iPt1 + 1
                        block(g)%TSIndexPtr(iPt1, 1) = i
                            block(g)%TSIndexPtr(iPt1, 2) = j
                                block(g)%TSIndexPtr(iPt1, 3) = k
                     ENDIF
-         30      CONTINUE
+                 END DO
+                 END DO
+                 END DO
 
         !!$acc enter data copyin(TSIndexPtr)
 
@@ -1061,53 +1079,55 @@
         k1 = block(g)%interceptedIndexPtr(nn, 3)
            block(g)%cell(i1,j1,k1) = 0
            !$acc loop collapse(3) seq
-           DO 10 k = k1-1, k1+1
-           DO 10 j = j1-1, j1+1
-           DO 10 i = i1-1, i1+1
+           DO k = k1-1, k1+1
+           DO j = j1-1, j1+1
+           DO i = i1-1, i1+1
 
-           minDis  = 1e14
-           minDis1 = 1e14
+               minDis  = 1e14
+               minDis1 = 1e14
 
-           n1x = block(g)%xp(i)
-           n1y = block(g)%yp(j)
-           n1z = block(g)%zp(k)
+               n1x = block(g)%xp(i)
+               n1y = block(g)%yp(j)
+               n1z = block(g)%zp(k)
 
-           n2x = block(g)%x1(i)
-           n2y = block(g)%y1(j)
-           n2z = block(g)%z1(k)
+               n2x = block(g)%x1(i)
+               n2y = block(g)%y1(j)
+               n2z = block(g)%z1(k)
 
-           !$acc loop seq
-           DO m = 1, block(g)%ibElems
-           cent_x = block(g)%xcent(m)
-           cent_y = block(g)%ycent(m)
-           cent_z = block(g)%zcent(m)
-              dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
-              dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
-              IF (dis_cen<minDis) THEN
-                 minDis    = dis_cen
-                 nel2Cen   = m
-              ENDIF
-              IF (dis_pnt<minDis1) THEN
-                 minDis1   = dis_pnt
-                 nel2Pnt   = m
-              ENDIF
-           ENDDO
-           IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen).AND.block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
-               (block(g)%y1(j)<=block(g)%ycent(nel2Cen).AND.block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
-               (block(g)%z1(k)<=block(g)%zcent(nel2Cen).AND.block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
-                   block(g)%cell(i,j,k) = 2
-           ENDIF
+               !$acc loop seq
+               DO m = 1, block(g)%ibElems
+               cent_x = block(g)%xcent(m)
+               cent_y = block(g)%ycent(m)
+               cent_z = block(g)%zcent(m)
+                  dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
+                  dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
+                  IF (dis_cen<minDis) THEN
+                     minDis    = dis_cen
+                     nel2Cen   = m
+                  ENDIF
+                  IF (dis_pnt<minDis1) THEN
+                     minDis1   = dis_pnt
+                     nel2Pnt   = m
+                  ENDIF
+               ENDDO
+               IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen).AND.block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
+                     (block(g)%y1(j)<=block(g)%ycent(nel2Cen).AND.block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
+                     (block(g)%z1(k)<=block(g)%zcent(nel2Cen).AND.block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
+                        block(g)%cell(i,j,k) = 2
+               ENDIF
 
-                      n2dotn  = (n2x - block(g)%xcent(nel2Pnt))*block(g)%cosAlpha(nel2Pnt) + &
-                          (n2y - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
-                          (n2z - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
+                           n2dotn  = (n2x - block(g)%xcent(nel2Pnt))*block(g)%cosAlpha(nel2Pnt) + &
+                              (n2y - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
+                              (n2z - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
 
-           IF (n2dotn>=-1e-16) THEN
-              block(g)%nodeIdTag(i,j,k) = 0
-           ELSE
-              block(g)%nodeIdTag(i,j,k) = 1
-           ENDIF
- 10        CONTINUE
+               IF (n2dotn>=-1e-16) THEN
+                  block(g)%nodeIdTag(i,j,k) = 0
+               ELSE
+                  block(g)%nodeIdTag(i,j,k) = 1
+               ENDIF
+           END DO
+           END DO
+           END DO
         ENDDO
 !$acc end parallel
 
@@ -1118,22 +1138,24 @@
         j1 = block(g)%interceptedIndexPtr(nn, 2)
         k1 = block(g)%interceptedIndexPtr(nn, 3)
            !$acc loop collapse(3) seq
-           DO 15 k = k1-1, k1+1
-           DO 15 j = j1-1, j1+1
-           DO 15 i = i1-1, i1+1
-             IF (block(g)%cell(i,j,k)/=2) THEN
-                sumNodeId = 0
-                sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
-                          + block(g)%nodeIdTag(i,j+1,k)    + block(g)%nodeIdTag(i+1,j+1,k)   &
-                          + block(g)%nodeIdTag(i,j,k+1)    + block(g)%nodeIdTag(i+1,j,k+1)     &
-                          + block(g)%nodeIdTag(i,j+1,k+1)  + block(g)%nodeIdTag(i+1,j+1,k+1)
-                IF (sumNodeId==8) THEN
-                   block(g)%cell(i,j,k) = 1
-                ELSE
-                   block(g)%cell(i,j,k) = 0
-                ENDIF
-             ENDIF
- 15        CONTINUE
+           DO k = k1-1, k1+1
+           DO j = j1-1, j1+1
+           DO i = i1-1, i1+1
+               IF (block(g)%cell(i,j,k)/=2) THEN
+                  sumNodeId = 0
+                  sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
+                           + block(g)%nodeIdTag(i,j+1,k)    + block(g)%nodeIdTag(i+1,j+1,k)   &
+                           + block(g)%nodeIdTag(i,j,k+1)    + block(g)%nodeIdTag(i+1,j,k+1)     &
+                           + block(g)%nodeIdTag(i,j+1,k+1)  + block(g)%nodeIdTag(i+1,j+1,k+1)
+                  IF (sumNodeId==8) THEN
+                     block(g)%cell(i,j,k) = 1
+                  ELSE
+                     block(g)%cell(i,j,k) = 0
+                  ENDIF
+               ENDIF
+           END DO
+           END DO
+           END DO
         ENDDO
 !$acc end parallel
 !    !$acc parallel loop collapse(3) default(present) private(i,j,k)
@@ -1227,9 +1249,9 @@ flcnt=0
 ibcnt=0
 !!$acc parallel loop collapse(3) present(cell) reduction(+: solidCellCount, fluidCellCount, ibCellCount)
 !$acc parallel loop gang vector collapse(3) default(present) private(i,j,k,n) reduction(+: sdcnt, flcnt, ibcnt)
-         DO 20 k = 2, block(g)%nz+1
-         DO 20 j = 2, block(g)%ny+1
-         DO 20 i = 2, block(g)%nx+1
+         DO k = 2, block(g)%nz+1
+         DO j = 2, block(g)%ny+1
+         DO i = 2, block(g)%nx+1
             n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
             IF (block(g)%cell(i,j,k)==1) THEN
                 !block(g)%solidCellCount = block(g)%solidCellCount + 1
@@ -1241,7 +1263,9 @@ ibcnt=0
                ! block(g)%ibCellCount = block(g)%ibCellCount + 1
                 ibcnt = ibcnt + 1
             ENDIF
- 20      CONTINUE
+         END DO
+         END DO
+         END DO
 !$acc end parallel
   block(g)%ibCellCount = ibcnt
   block(g)%solidCellCount = sdcnt
@@ -1322,28 +1346,30 @@ block(g)%fluidCellCount = flcnt
 
         !!$acc update host(cell)
 
-         DO 30 k = 2, block(g)%nz+1
-         DO 30 j = 2, block(g)%ny+1
-         DO 30 i = 2, block(g)%nx+1
-            !n  = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
+         DO k = 2, block(g)%nz+1
+         DO j = 2, block(g)%ny+1
+         DO i = 2, block(g)%nx+1
+               !n  = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
 
-            IF (block(g)%cell(i,j,k)==0) THEN
-               iPt1 = iPt1 + 1
-               block(g)%fluidIndexPtr(iPt1, 1) = i
-               block(g)%fluidIndexPtr(iPt1, 2) = j
-               block(g)%fluidIndexPtr(iPt1, 3) = k
-            ELSEIF (block(g)%cell(i,j,k)==1) THEN
-               iPt2 = iPt2 + 1
-               block(g)%solidIndexPtr(iPt2, 1) = i
-               block(g)%solidIndexPtr(iPt2, 2) = j
-               block(g)%solidIndexPtr(iPt2, 3) = k
-            ELSEIF (block(g)%cell(i,j,k)==2) THEN
-               iPt = iPt + 1
-               block(g)%interceptedIndexPtr(iPt, 1) = i
-               block(g)%interceptedIndexPtr(iPt, 2) = j
-               block(g)%interceptedIndexPtr(iPt, 3) = k
-            ENDIF
- 30      CONTINUE
+               IF (block(g)%cell(i,j,k)==0) THEN
+                  iPt1 = iPt1 + 1
+                  block(g)%fluidIndexPtr(iPt1, 1) = i
+                  block(g)%fluidIndexPtr(iPt1, 2) = j
+                  block(g)%fluidIndexPtr(iPt1, 3) = k
+               ELSEIF (block(g)%cell(i,j,k)==1) THEN
+                  iPt2 = iPt2 + 1
+                  block(g)%solidIndexPtr(iPt2, 1) = i
+                  block(g)%solidIndexPtr(iPt2, 2) = j
+                  block(g)%solidIndexPtr(iPt2, 3) = k
+               ELSEIF (block(g)%cell(i,j,k)==2) THEN
+                  iPt = iPt + 1
+                  block(g)%interceptedIndexPtr(iPt, 1) = i
+                  block(g)%interceptedIndexPtr(iPt, 2) = j
+                  block(g)%interceptedIndexPtr(iPt, 3) = k
+               ENDIF
+         END DO
+         END DO
+         END DO
          block(g)%redCellCount = 0
          block(g)%blackCellCount  = 0
 
@@ -1511,7 +1537,7 @@ block(g)%fluidCellCount = flcnt
        ! print*,'1'
         !$acc parallel loop gang vector default(present) &
         !$acc private (i, j, k, n1x, n2x, n3x, n1y, n2y, n3y, n1z, n2z, n3z, nel2p)
-        DO 10 k = 1, block(g)%ibCellCount
+        DO k = 1, block(g)%ibCellCount
 
            m = 0
            minDis  = 1e14
@@ -1614,7 +1640,7 @@ block(g)%fluidCellCount = flcnt
           block(g)% w2NormDis(k) = (n1x -block(g)% xcent(nel2w2))*block(g)%cosAlpha(nel2w2) + &
                            (n1y -block(g)% ycent(nel2w2))*block(g)%cosBeta(nel2w2)  + &
                            (n3z -block(g)% zcent(nel2w2))*block(g)%cosGamma(nel2w2)
- 10      CONTINUE
+        END DO
         !$acc end parallel
 
         ! DEALLOCATE (block(g)%minElemcell)
@@ -1760,11 +1786,11 @@ block(g)%fluidCellCount = flcnt
         !DO 30 ng = 1,nfl_blk
         !       g=fl_blk(ng)
                 iPt1=0
-         DO 30 k = 2, block(g)%nz +1
-         DO 30 j = 2, block(g)%ny +1
-         DO 30 i = 2, block(g)%nx +1
-        !DO 30 j = st_rc_y, en_rc_y
-        !DO 30 i = st_rc_x, en_rc_x
+         DO k = 2, block(g)%nz +1
+         DO j = 2, block(g)%ny +1
+         DO i = 2, block(g)%nx +1
+        !DO j = st_rc_y, en_rc_y
+        !DO i = st_rc_x, en_rc_x
           !   IF (cell(i,j).eq.0) THEN
                 if( block(g)%cell(i,j,k) == 0)then
               iPt1 = iPt1 + 1
@@ -1772,7 +1798,9 @@ block(g)%fluidCellCount = flcnt
               block(g)%fluidIndexPtr(iPt1, 2) = j
               block(g)%fluidIndexPtr(iPt1, 3) = k
                 endif
-  30     CONTINUE
+         END DO
+         END DO
+         END DO
          !DO g = fl_blk(1), fl_blk(nfl_blk)
         !DO ng = 1,nfl_blk
         !       g=fl_blk(ng)
@@ -1878,28 +1906,30 @@ block(g)%fluidCellCount = flcnt
          !print*,'aft all'
          !!$acc update self(cell)
        ! !$acc loop collapse(2) seq
-         DO 30 k = 2, block(g)%nz +1
-         DO 30 j = 2, block(g)%ny +1
-         DO 30 i = 2, block(g)%nx +1
-        !DO 30 j = st_rc_y, en_rc_y
-        !DO 30 i = st_rc_x, en_rc_x
-            !n   = (j-st_rc_y)*nx_var_r + (i-st_rc_x+1)
-            n=    i-1  + (block(g)%nx)*(j-2)
-            IF (block(g)%cell(i,j,k)==0) THEN
-               iPt1 = iPt1 + 1
-               block(g)%fluidIndexPtr(iPt1, 1) = i
-               block(g)%fluidIndexPtr(iPt1, 2) = j
-               block(g)%fluidIndexPtr(iPt1, 3) = k
-       !    ELSEIF (block(g)%cell(i,j).eq.1) THEN
-       !       iPt2 = iPt2 + 1
-       !       block(g)%solidIndexPtr(iPt2, 1) = i
-       !       block(g)%solidIndexPtr(iPt2, 2) = j
-       !    ELSEIF (block(g)%cell(i,j).eq.2) THEN
-       !       iPt = iPt + 1
-       !       block(g)%interceptedIndexPtr(iPt, 1) = i
-       !       block(g)%interceptedIndexPtr(iPt, 2) = j
-            ENDIF
- 30      CONTINUE
+         DO k = 2, block(g)%nz +1
+         DO j = 2, block(g)%ny +1
+         DO i = 2, block(g)%nx +1
+        !DO j = st_rc_y, en_rc_y
+        !DO i = st_rc_x, en_rc_x
+               !n   = (j-st_rc_y)*nx_var_r + (i-st_rc_x+1)
+               n=    i-1  + (block(g)%nx)*(j-2)
+               IF (block(g)%cell(i,j,k)==0) THEN
+                  iPt1 = iPt1 + 1
+                  block(g)%fluidIndexPtr(iPt1, 1) = i
+                  block(g)%fluidIndexPtr(iPt1, 2) = j
+                  block(g)%fluidIndexPtr(iPt1, 3) = k
+         !    ELSEIF (block(g)%cell(i,j).eq.1) THEN
+         !       iPt2 = iPt2 + 1
+         !       block(g)%solidIndexPtr(iPt2, 1) = i
+         !       block(g)%solidIndexPtr(iPt2, 2) = j
+         !    ELSEIF (block(g)%cell(i,j).eq.2) THEN
+         !       iPt = iPt + 1
+         !       block(g)%interceptedIndexPtr(iPt, 1) = i
+         !       block(g)%interceptedIndexPtr(iPt, 2) = j
+               ENDIF
+         END DO
+         END DO
+         END DO
          block(g)%redCellCount = 0
          block(g)%blackCellCount  = 0
 
@@ -2792,94 +2822,95 @@ block(g)%fluidCellCount = flcnt
       !$acc private(n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis, minDis, nel2n, m, cent_x, cent_y, cent_z,         &
       !$acc         n1dotn, n2dotn, n3dotn, n4dotn, n5dotn, n6dotn, n7dotn, n8dotn, n9dotn)
 
-        DO 10 k = block(g)%k_startSearch, block(g)%k_endSearch
-        DO 10 j = block(g)%j_startSearch, block(g)%j_endSearch
-        DO 10 i = block(g)%i_startSearch, block(g)%i_endSearch
+        DO k = block(g)%k_startSearch, block(g)%k_endSearch
+        DO j = block(g)%j_startSearch, block(g)%j_endSearch
+        DO i = block(g)%i_startSearch, block(g)%i_endSearch
 
-           m = 0
-           minDis = 1e14
+            m = 0
+            minDis = 1e14
 
-           n1x = block(g)%xp(i)
-           n1y = block(g)%yp(j)
-           n1z = block(g)%zp(k)
+            n1x = block(g)%xp(i)
+            n1y = block(g)%yp(j)
+            n1z = block(g)%zp(k)
 
-           n2x = block(g)%x1(i)
-           n3x = block(g)%x1(i+1)
+            n2x = block(g)%x1(i)
+            n3x = block(g)%x1(i+1)
 
-           n2y = block(g)%y1(j)
-           n3y = block(g)%y1(j+1)
+            n2y = block(g)%y1(j)
+            n3y = block(g)%y1(j+1)
 
-           n2z = block(g)%z1(k)
-           n3z = block(g)%z1(k+1)
+            n2z = block(g)%z1(k)
+            n3z = block(g)%z1(k+1)
 
-           !ibElems_cnt=block(g)%ibElemCnt
+            !ibElems_cnt=block(g)%ibElemCnt
 
 
-           !$acc loop seq
-           !DO m = 1, ibElems_cnt
-           DO m = 1, block(g)%ibElems
-              cent_x = block(g)%xcent(m)
-              cent_y = block(g)%ycent(m)
-              cent_z = block(g)%zcent(m)
-              dis  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
-              IF (dis<minDis) THEN
-                 minDis   = dis
-                 nel2n    = m
-              ENDIF
-           ENDDO
-           block(g)%minElemcell(i,j,k) = nel2n
+            !$acc loop seq
+            !DO m = 1, ibElems_cnt
+            DO m = 1, block(g)%ibElems
+               cent_x = block(g)%xcent(m)
+               cent_y = block(g)%ycent(m)
+               cent_z = block(g)%zcent(m)
+               dis  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
+               IF (dis<minDis) THEN
+                  minDis   = dis
+                  nel2n    = m
+               ENDIF
+            ENDDO
+            block(g)%minElemcell(i,j,k) = nel2n
 
-             !n1dotn  = (n1x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-                     !(n1y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-                     !(n1z - block(g)%zcent(nel2n))*cosGamma(nel2n)
+               !n1dotn  = (n1x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
+                        !(n1y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
+                        !(n1z - block(g)%zcent(nel2n))*cosGamma(nel2n)
 
-             n2dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-                      (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-                      (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
+               n2dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
+                        (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
+                        (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
 
-             n3dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-                      (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-                      (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
+               n3dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
+                        (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
+                        (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
 
-             n4dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-                      (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-                      (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
+               n4dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
+                        (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
+                        (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
 
-             n5dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-                      (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-                      (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
+               n5dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
+                        (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
+                        (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
 
-            n6dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-                      (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-                      (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
+               n6dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
+                        (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
+                        (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
 
-             n7dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-                      (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-                      (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
+               n7dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
+                        (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
+                        (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
 
-             n8dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-                      (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-                      (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
+               n8dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
+                        (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
+                        (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
 
-             n9dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-                      (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-                      (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
+               n9dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
+                        (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
+                        (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
 
-           !n       = i-1  + nx*(j-2)  + block(g)%nx*ny*(k-2)
+            !n       = i-1  + nx*(j-2)  + block(g)%nx*ny*(k-2)
 
-           IF ( n2dotn<=-1e-16 .AND. n3dotn<=-1e-16 .AND. n4dotn<=-1e-16 .AND. n5dotn<=-1e-16  &
-               .AND. n6dotn<=-1e-16 .AND. n7dotn<=-1e-16 .AND. n8dotn<=-1e-16 .AND. n9dotn<=-1e-16) THEN
-        	    block(g)%cell(i,j,k) = 1
-           ELSEIF (n2dotn>-1e-16 .AND. n3dotn>-1e-16 .AND. n4dotn>-1e-16 .AND. n5dotn>-1e-16 &
-        	    .AND. n6dotn>-1e-16 .AND. n7dotn>-1e-16 .AND. n8dotn>-1e-16 .AND. n9dotn>-1e-16) THEN
-                  block(g)%cell(i,j,k) = 0
-           ELSE
-                  block(g)%cell(i,j,k) = 2
+            IF ( n2dotn<=-1e-16 .AND. n3dotn<=-1e-16 .AND. n4dotn<=-1e-16 .AND. n5dotn<=-1e-16  &
+                  .AND. n6dotn<=-1e-16 .AND. n7dotn<=-1e-16 .AND. n8dotn<=-1e-16 .AND. n9dotn<=-1e-16) THEN
+               block(g)%cell(i,j,k) = 1
+            ELSEIF (n2dotn>-1e-16 .AND. n3dotn>-1e-16 .AND. n4dotn>-1e-16 .AND. n5dotn>-1e-16 &
+               .AND. n6dotn>-1e-16 .AND. n7dotn>-1e-16 .AND. n8dotn>-1e-16 .AND. n9dotn>-1e-16) THEN
+                     block(g)%cell(i,j,k) = 0
+            ELSE
+                     block(g)%cell(i,j,k) = 2
 
-           ENDIF
+            ENDIF
 
- 10      CONTINUE
-
+         END DO
+         END DO
+         END DO
          !$acc end parallel
          !!$acc update host(cell)
 
@@ -2888,18 +2919,20 @@ block(g)%fluidCellCount = flcnt
          block(g)%fluidCellCount = 0
 
         !!$acc parallel loop gang vector collapse(3) default(present) reduction(+: solidCellCount, fluidCellCount, ibCellCount)
-         DO 20 k = 2, block(g)%nz+1
-         DO 20 j = 2, block(g)%ny+1
-         DO 20 i = 2, block(g)%nx+1
-            !n       = i-1  + nx*(j-2)  + block(g)%nx*block(g)%block(g)%ny*(k-2)
-            IF (block(g)%cell(i,j,k)==1) THEN
-               block(g)%solidCellCount = block(g)%solidCellCount + 1
-            ELSEIF (block(g)%cell(i,j,k)==0) THEN
-               block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
-            ELSEIF (block(g)%cell(i,j,k)==2) THEN
-               block(g)%ibCellCount = block(g)%ibCellCount + 1
-            ENDIF
- 20      CONTINUE
+         DO k = 2, block(g)%nz+1
+         DO j = 2, block(g)%ny+1
+         DO i = 2, block(g)%nx+1
+               !n       = i-1  + nx*(j-2)  + block(g)%nx*block(g)%block(g)%ny*(k-2)
+               IF (block(g)%cell(i,j,k)==1) THEN
+                  block(g)%solidCellCount = block(g)%solidCellCount + 1
+               ELSEIF (block(g)%cell(i,j,k)==0) THEN
+                  block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
+               ELSEIF (block(g)%cell(i,j,k)==2) THEN
+                  block(g)%ibCellCount = block(g)%ibCellCount + 1
+               ENDIF
+         END DO
+         END DO
+         END DO
         !!$acc end parallel
 
       GOTO 1000
@@ -3030,11 +3063,11 @@ block(g)%fluidCellCount = flcnt
          !print*,'aft all'
          !!$acc update self(cell)
        ! !$acc loop collapse(2) seq
-         DO 30 k = 2, block(g)%nz +1
-         DO 30 j = 2, block(g)%ny +1
-         DO 30 i = 2, block(g)%nx +1
-        !DO 30 j = st_rc_y, en_rc_y
-        !DO 30 i = st_rc_x, en_rc_x
+         DO k = 2, block(g)%nz +1
+         DO j = 2, block(g)%ny +1
+         DO i = 2, block(g)%nx +1
+        !DO j = st_rc_y, en_rc_y
+        !DO i = st_rc_x, en_rc_x
             !n   = (j-st_rc_y)*nx_var_r + (i-st_rc_x+1)
            ! n=    i-1  + (block(g)%nx)*(j-2)
             IF (block(g)%cell(i,j,k)==0) THEN
@@ -3051,7 +3084,9 @@ block(g)%fluidCellCount = flcnt
        !       block(g)%interceptedIndexPtr(iPt, 1) = i
        !       block(g)%interceptedIndexPtr(iPt, 2) = j
             ENDIF
- 30      CONTINUE
+         END DO
+         END DO
+         END DO
          block(g)%redCellCount = 0
          block(g)%blackCellCount  = 0
 
@@ -3142,9 +3177,9 @@ block(g)%fluidCellCount = flcnt
 !     !$acc private(n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis, minDis, nel2n, m, cent_x, cent_y, cent_z,         &
 !     !$acc         n1dotn, n2dotn, n3dotn, n4dotn, n5dotn, n6dotn, n7dotn, n8dotn, n9dotn)
 !
-!       DO 10 k = block(g)%k_startSearch, block(g)%k_endSearch
-!       DO 10 j = block(g)%j_startSearch, block(g)%j_endSearch
-!       DO 10 i = block(g)%i_startSearch, block(g)%i_endSearch
+!       DO k = block(g)%k_startSearch, block(g)%k_endSearch
+!       DO j = block(g)%j_startSearch, block(g)%j_endSearch
+!       DO i = block(g)%i_startSearch, block(g)%i_endSearch
 !
 !          m = 0
 !          minDis = 1e14
@@ -3228,7 +3263,9 @@ block(g)%fluidCellCount = flcnt
 !
 !          ENDIF
 !
-!10      CONTINUE
+!         END DO
+!         END DO
+!         END DO
 !
 !        !$acc end parallel
 !        !!$acc update host(cell)
@@ -3254,9 +3291,9 @@ block(g)%fluidCellCount = flcnt
 !        block(g)%fluidCellCount = 0
 !
 !       !!$acc parallel loop gang vector collapse(3) default(present) reduction(+: solidCellCount, fluidCellCount, ibCellCount)
-!        DO 20 k = 2, block(g)%nz+1
-!        DO 20 j = 2, block(g)%ny+1
-!        DO 20 i = 2, block(g)%nx+1
+!        DO k = 2, block(g)%nz+1
+!        DO j = 2, block(g)%ny+1
+!        DO i = 2, block(g)%nx+1
 !           !n       = i-1  + nx*(j-2)  + block(g)%nx*block(g)%block(g)%ny*(k-2)
 !           IF (block(g)%cell(i,j,k).eq.1) THEN
 !              block(g)%solidCellCount = block(g)%solidCellCount + 1
@@ -3265,7 +3302,9 @@ block(g)%fluidCellCount = flcnt
 !           ELSEIF (block(g)%cell(i,j,k).eq.2) THEN
 !              block(g)%ibCellCount = block(g)%ibCellCount + 1
 !           ENDIF
-!20      CONTINUE
+!         END DO
+!         END DO
+!         END DO
 !       !!$acc end parallel
 !
 !     GOTO 1000
@@ -3420,9 +3459,9 @@ block(g)%fluidCellCount = flcnt
 !           k1 = block(g)%interceptedIndexPtr(nn, 3)
 !
 !          !$acc loop collapse(3) seq
-!           DO 10 k = k1-2, k1+3
-!           DO 10 j = j1-2, j1+3
-!           DO 10 i = i1-2, i1+3
+!           DO k = k1-2, k1+3
+!           DO j = j1-2, j1+3
+!           DO i = i1-2, i1+3
 !              m = 0
 !           minDis = 1e14
 !   	 n1x = block(g)%xp(i)
@@ -3501,7 +3540,9 @@ block(g)%fluidCellCount = flcnt
 !           ELSE
 !   		   block(g)%cell(i,j,k) = 2
 !   	 ENDIF
-!10         CONTINUE
+!         END DO
+!         END DO
+!         END DO
 !     ENDDO
 !       !$acc end parallel
 
@@ -3515,9 +3556,9 @@ block(g)%fluidCellCount = flcnt
 !     sldcnt=0.
 !       !!$acc parallel loop collapse(3) present(cell) reduction(+: solidCellCount, fluidCellCount, ibCellCount)
 !       !$acc parallel loop collapse(3) default(present) reduction(+: sldcnt, flcnt, ibcnt)
-!        DO 20 k = 2, block(g)%nz+1
-!        DO 20 j = 2, block(g)%ny+1
-!        DO 20 i = 2, block(g)%nx+1
+!        DO k = 2, block(g)%nz+1
+!        DO j = 2, block(g)%ny+1
+!        DO i = 2, block(g)%nx+1
 !        !n       = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
 !           IF (block(g)%cell(i,j,k).eq.1) THEN
 !   	 !block(g)%solidCellCount = block(g)%solidCellCount + 1
@@ -3529,7 +3570,9 @@ block(g)%fluidCellCount = flcnt
 !             ! block(g)%ibCellCount = block(g)%ibCellCount + 1
 !   	    ibcnt = ibcnt + 1
 !           ENDIF
-!20      CONTINUE
+!         END DO
+!         END DO
+!         END DO
 !       !$acc end parallel
 !
 !     block(g)%ibCellCount = ibcnt
