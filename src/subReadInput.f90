@@ -31,7 +31,7 @@
                   !k_startSearch, k_endSearch
         CLOSE(60)
         allocate(Blocks :: block(nblocks))
-        allocate(intfr(intflines))
+        allocate(Interfaces :: intfr(intflines))
 
         OPEN(77, FILE = 'body_search.dat', FORM = 'formatted')
         !OPEN(77, FILE = 'geometries/2blk/0.01/body_search.dat', FORM = 'formatted')
