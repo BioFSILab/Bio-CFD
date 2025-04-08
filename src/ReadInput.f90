@@ -164,7 +164,11 @@ module biocfd_read_input
         OPEN(51, FILE = 'block_details.dat', FORM = 'formatted')
        DO i=1,nblocks
 
-        read(51, *) block(i)%xstart, block(i)%xend, block(i)%ystart, block(i)%yend,block(i)%zstart,block(i)%zend, block(i)%nx, block(i)%ny, block(i)%nz, block(i)%dx, block(i)%dy, block(i)%dz
+        read(51, *) block(i)%xstart, block(i)%xend, &
+                    block(i)%ystart, block(i)%yend, &
+                    block(i)%zstart, block(i)%zend, &
+                    block(i)%nx, block(i)%ny, block(i)%nz, &
+                    block(i)%dx, block(i)%dy, block(i)%dz
         block(i)%xstart= block(i)%xstart* 0.001
         block(i)%xend=  block(i)%xend*0.001
         block(i)%ystart= block(i)%ystart*0.001
@@ -181,13 +185,27 @@ module biocfd_read_input
              ny_var=block(i)%ny
              nz_var=block(i)%nz
 
-            ALLOCATE( block(i)%x1(block(i)%nx+3),block(i)%y1(block(i)%ny+3), block(i)%z1(block(i)%nz+3),&
-                      block(i)%deltax(block(i)%nx+2), block(i)%deltay(block(i)%ny+2), block(i)%deltaz(block(i)%nz+2))
-            ALLOCATE( block(i)%xu(block(i)%nx+3), block(i)%yu(block(i)%ny+2),block(i)%zu(block(i)%nz+2),&
-                      block(i)%xv(block(i)%nx+2), block(i)%yv(block(i)%ny+3),block(i)%zv(block(i)%nz+2),&
-                      block(i)%xw(block(i)%nx+2), block(i)%yw(block(i)%ny+2),block(i)%zw(block(i)%nz+3),&
-                      block(i)%xp(block(i)%nx+2), block(i)%yp(block(i)%ny+2),block(i)%zp(block(i)%nz+2),&
-                      block(i)%xp_dum(block(i)%nx+2), block(i)%yp_dum(block(i)%ny+2),block(i)%zp_dum(block(i)%nz+2))
+            ALLOCATE(block(i)%x1(block(i)%nx+3), &
+                     block(i)%y1(block(i)%ny+3), &
+                     block(i)%z1(block(i)%nz+3),&
+                     block(i)%deltax(block(i)%nx+2), &
+                     block(i)%deltay(block(i)%ny+2), &
+                     block(i)%deltaz(block(i)%nz+2))
+            ALLOCATE(block(i)%xu(block(i)%nx+3), &
+                     block(i)%yu(block(i)%ny+2), &
+                     block(i)%zu(block(i)%nz+2),&
+                     block(i)%xv(block(i)%nx+2), &
+                     block(i)%yv(block(i)%ny+3), &
+                     block(i)%zv(block(i)%nz+2),&
+                     block(i)%xw(block(i)%nx+2), &
+                     block(i)%yw(block(i)%ny+2), &
+                     block(i)%zw(block(i)%nz+3),&
+                     block(i)%xp(block(i)%nx+2), &
+                     block(i)%yp(block(i)%ny+2), &
+                     block(i)%zp(block(i)%nz+2),&
+                     block(i)%xp_dum(block(i)%nx+2), &
+                     block(i)%yp_dum(block(i)%ny+2), &
+                     block(i)%zp_dum(block(i)%nz+2))
 
           ALLOCATE ( block(i)%xp1(nx_var+2,ny_var+2,nz_var+2) )
           ALLOCATE ( block(i)%yp1(nx_var+2,ny_var+2,nz_var+2) )
@@ -217,7 +235,9 @@ module biocfd_read_input
 
          DO i=1,nblocks
         print *,'For block blockno,xstart,xend,ystart,yend,nx,ny,dx,dy:',&
-                   i,block(i)%xstart,block(i)%xend, block(i)%ystart,block(i)%yend,block(i)%zstart,block(i)%zend, &
+                   i, block(i)%xstart, block(i)%xend, &
+                   block(i)%ystart, block(i)%yend, &
+                   block(i)%zstart, block(i)%zend, &
                    block(i)%nx, block(i)%ny,block(i)%nz, block(i)%dx, block(i)%dy,block(i)%dz
          END DO
 
@@ -295,10 +315,10 @@ module biocfd_read_input
             block(g)%deltax(i) = block(g)%x1(i+1) - block(g)%x1(i)
          END DO
 
-         block(g)%deltax(1)    = block(g)%deltax(2)
+         block(g)%deltax(1) = block(g)%deltax(2)
          block(g)%deltax(block(g)%nx+2) = block(g)%deltax(block(g)%nx+1)
-         block(g)%x1(1)        = block(g)%x1(2) - block(g)%deltax(1)
-         block(g)%x1(block(g)%nx+3)     = block(g)%x1(block(g)%nx+2) + block(g)%deltax(block(g)%nx+2)
+         block(g)%x1(1) = block(g)%x1(2) - block(g)%deltax(1)
+         block(g)%x1(block(g)%nx+3) = block(g)%x1(block(g)%nx+2) + block(g)%deltax(block(g)%nx+2)
 
          !OPEN(62, FILE = 'ygrid_111_d20_3d_30.txt', FORM = 'formatted')
          WRITE(filename1,8383) g,block(g)%ny+1
@@ -317,10 +337,10 @@ module biocfd_read_input
             block(g)%deltay(i) = block(g)%y1(i+1) - block(g)%y1(i)
          END DO
 
-         block(g)%deltay(1)    = block(g)%deltay(2)
+         block(g)%deltay(1) = block(g)%deltay(2)
          block(g)%deltay(block(g)%ny+2) = block(g)%deltay(block(g)%ny+1)
-         block(g)%y1(1)        = block(g)%y1(2) - block(g)%deltay(1)
-         block(g)%y1(block(g)%ny+3)     = block(g)%y1(block(g)%ny+2) + block(g)%deltay(block(g)%ny+2)
+         block(g)%y1(1) = block(g)%y1(2) - block(g)%deltay(1)
+         block(g)%y1(block(g)%ny+3) = block(g)%y1(block(g)%ny+2) + block(g)%deltay(block(g)%ny+2)
 
 
          !OPEN(63, FILE = 'zgrid_41_d20_3d_2.txt', FORM = 'formatted')
@@ -340,10 +360,10 @@ module biocfd_read_input
             block(g)%deltaz(i) = block(g)%z1(i+1) - block(g)%z1(i)
          END DO
 
-         block(g)%deltaz(1)    = block(g)%deltaz(2)
+         block(g)%deltaz(1) = block(g)%deltaz(2)
          block(g)%deltaz(block(g)%nz+2) = block(g)%deltaz(block(g)%nz+1)
-         block(g)%z1(1)        = block(g)%z1(2) - block(g)%deltaz(1)
-         block(g)%z1(block(g)%nz+3)     = block(g)%z1(block(g)%nz+2) + block(g)%deltaz(block(g)%nz+2)
+         block(g)%z1(1) = block(g)%z1(2) - block(g)%deltaz(1)
+         block(g)%z1(block(g)%nz+3) = block(g)%z1(block(g)%nz+2) + block(g)%deltaz(block(g)%nz+2)
 
         END DO
 
@@ -447,7 +467,8 @@ module biocfd_read_input
            READ (121,*) cLine
         END DO
         READ (121,*) block(g)%ibNodes  !nsurf=total no. of points in file
-        ALLOCATE ( block(g)%ibNodeId(block(g)%ibNodes), block(g)%xnode(block(g)%ibNodes), block(g)%ynode(block(g)%ibNodes), block(g)%znode(block(g)%ibNodes) )
+        ALLOCATE(block(g)%ibNodeId(block(g)%ibNodes), block(g)%xnode(block(g)%ibNodes), &
+                 block(g)%ynode(block(g)%ibNodes), block(g)%znode(block(g)%ibNodes))
         block(g)%ibNodeId = 50
         DO n = 1, block(g)%ibNodes
            READ (121,*) i1, block(g)%xnode(n), block(g)%ynode(n), block(g)%znode(n)
@@ -464,13 +485,15 @@ module biocfd_read_input
           READ (121,*) cLine
         END DO
         block(g)%ibElems = block(g)%ibElems-surGeoPoints
-            ALLOCATE ( block(g)%ibSurfId(block(g)%ibElems), block(g)%ibElP1(block(g)%ibElems), block(g)%ibElP2(block(g)%ibElems), block(g)%ibElP3(block(g)%ibElems) )
+        ALLOCATE(block(g)%ibSurfId(block(g)%ibElems), block(g)%ibElP1(block(g)%ibElems), &
+                 block(g)%ibElP2(block(g)%ibElems), block(g)%ibElP3(block(g)%ibElems))
         block(g)%ibElP1 = 0
         block(g)%ibElP2 = 0
         block(g)%ibElP3 = 0
         block(g)%ibSurfId = 0
         DO n = 1, block(g)%ibElems
-        READ (121,*) i1, i2, i3, block(g)%ibSurfId(n), i5, block(g)%ibElP1(n), block(g)%ibElP2(n), block(g)%ibElP3(n)
+        READ (121,*) i1, i2, i3, block(g)%ibSurfId(n), i5, &
+        block(g)%ibElP1(n), block(g)%ibElP2(n), block(g)%ibElP3(n)
           !Print*, n, ibElP1(n), ibElP2(n)
         END DO
        !do n = 1, ibNodes
@@ -534,7 +557,11 @@ module biocfd_read_input
         !OPEN(51, FILE = 'geometries/2blk/0.01/interface_details.dat', FORM = 'formatted')
         OPEN(51, FILE = 'interface_details.dat', FORM = 'formatted')
         DO i=1, intflines
-        READ(51,*)intfr(i)%a_blk,intfr(i)%a_msh,intfr(i)%a_intf,intfr(i)%b_blk,intfr(i)%b_msh,intfr(i)%b_intf,intfr(i)%xintf_start,intfr(i)%xintf_end,intfr(i)%yintf_start,intfr(i)%yintf_end,intfr(i)%zintf_start,intfr(i)%zintf_end
+        READ(51,*) intfr(i)%a_blk, intfr(i)%a_msh, intfr(i)%a_intf, &
+                   intfr(i)%b_blk, intfr(i)%b_msh, intfr(i)%b_intf, &
+                   intfr(i)%xintf_start, intfr(i)%xintf_end, &
+                   intfr(i)%yintf_start, intfr(i)%yintf_end, &
+                   intfr(i)%zintf_start, intfr(i)%zintf_end
 
         intfr(i)%xintf_start=intfr(i)%xintf_start *0.001
         intfr(i)%xintf_end = intfr(i)%xintf_end   *0.001
@@ -542,7 +569,11 @@ module biocfd_read_input
         intfr(i)%yintf_end = intfr(i)%yintf_end   *0.001
         intfr(i)%zintf_start=intfr(i)%zintf_start *0.001
         intfr(i)%zintf_end  =intfr(i)%zintf_end   *0.001
-        print*,intfr(i)%a_blk,intfr(i)%a_msh,intfr(i)%a_intf,intfr(i)%b_blk,intfr(i)%b_msh,intfr(i)%b_intf,intfr(i)%xintf_start,intfr(i)%xintf_end,intfr(i)%yintf_start,intfr(i)%yintf_end,intfr(i)%zintf_start, intfr(i)%zintf_end
+        print*, intfr(i)%a_blk, intfr(i)%a_msh, intfr(i)%a_intf, &
+                intfr(i)%b_blk, intfr(i)%b_msh, intfr(i)%b_intf, &
+                intfr(i)%xintf_start, intfr(i)%xintf_end, &
+                intfr(i)%yintf_start, intfr(i)%yintf_end, &
+                intfr(i)%zintf_start, intfr(i)%zintf_end
         END DO
         CLOSE(51)
 
