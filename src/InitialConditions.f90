@@ -1,7 +1,13 @@
+module biocfd_initial_conditions
+  use global
+  implicit none
+  private
 
+  public :: initialConditions
+
+  contains
       SUBROUTINE initialConditions
        USE global
-       implicit none
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER::  i, j, k, n, f
         WRITE(*,*) 'Enter initialcondtitions'
@@ -80,6 +86,4 @@
 
       END SUBROUTINE initialConditions
 
-
-
-
+end module biocfd_initial_conditions

@@ -1,3 +1,9 @@
+module biocfd_write_output_corner1
+
+  use global
+  implicit none
+
+contains
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 !     SUBROUTINE writeOutput
 !      USE global
@@ -263,7 +269,6 @@
 !***********************************************************************
       SUBROUTINE writeResult
         USE global
-        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k,g
        CHARACTER(len=70)  :: filename1
@@ -288,7 +293,6 @@
 !***********************************************************************
      SUBROUTINE writeTagging
        USE global
-       implicit none
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=70)  :: filename1
        CHARACTER(len=70)  :: filename2
@@ -334,7 +338,6 @@
 !***********************************************************************
       SUBROUTINE writeComputeSumData
         USE global
-        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
        CHARACTER(len=70)  :: filename1
@@ -358,7 +361,6 @@
 
       SUBROUTINE writeComputeSumSqData
         USE global
-        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
        CHARACTER(len=70)  :: filename1
@@ -381,7 +383,6 @@
 !***********************************************************************
       SUBROUTINE readComputeSumData
         USE global
-        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
        CHARACTER(len=70)  :: filename1
@@ -405,7 +406,6 @@
 !***********************************************************************
       SUBROUTINE readComputeSumSqData
         USE global
-        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
        CHARACTER(len=70)  :: filename1
@@ -428,7 +428,6 @@
 !***********************************************************************
       SUBROUTINE readstressData
         USE global
-        implicit none
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  inode, g
         DO g=1,nblocks
@@ -588,7 +587,6 @@
 !***********************************************************************
          SUBROUTINE body_plot
          USE global
-         IMPLICIT NONE
          INTEGER(KIND=8) :: inode, ielem, g
           CHARACTER(len=150) :: filename1
 
@@ -1289,3 +1287,4 @@
 !!         ENDIF
 !!      END SUBROUTINE writeOutput
 !!!cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+end module biocfd_write_output_corner1

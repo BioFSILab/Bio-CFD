@@ -1,10 +1,19 @@
+
+module biocfd_navier_stokes
+
+  use global
+  implicit none
+  private
+
+  public :: non_uni_coeff, nsmomentum2order
+
+contains
 !ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 
 	SUBROUTINE non_uni_coeff
        USE global
 
 	!write(*,*)'entered non_uni_coeff'
-	IMPLICIT NONE
 	INTEGER  (KIND=8) :: i, j, k, g, nx_var, ny_var, nz_var
 	REAL (KIND = 8)   :: f_1, f_2, f_3, f_4, f_5, f_6, f_7, f_8,                             &
                          s51, s52, s53, s54, s55, s56, s57, s61, s62, s63, s64, s65, s66, s67,  &
@@ -662,7 +671,6 @@
       USE global
 !c***********************************************************************
       !write(6,*)'has entered nseqcp'
-	  IMPLICIT NONE
 	  INTEGER (KIND = 8) :: i, j, k, g, n ,nx_var,ny_var,nz_var, n1, nn, i11, j11, k11, index_ip1, index_im1, index_jp1, index_jm1, index_kp1, index_km1
 	  REAL (KIND = 8) :: dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14, &
 	          u15,u16,v1a,v22,v3,v4,v5,v6,v7,v8,v9,v10,v11,v12,v13,v14,v15,v16, &
@@ -1591,7 +1599,6 @@ ENDIF
          USE global
 !***********************************************************************
       !write(*,*)'has entered nseqcp'
-	  IMPLICIT NONE
 	 ! INTEGER          :: i, j, k, n, g, nx_var, ny_var, nz_var
 	  INTEGER :: i, j, k, n ,g,nx_var,ny_var,nz_var, n1, nn, i11, j11, k11, index_ip1, index_im1, index_jp1, index_jm1, index_kp1, index_km1
 	  REAL (KIND = 8)  :: dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14,            &
@@ -3103,11 +3110,4 @@ ENDIF
 !***********************************************************************
 !     END SUBROUTINE nsMomentumAB
 
-
-
-
-
-
-
-
-
+end module biocfd_navier_stokes

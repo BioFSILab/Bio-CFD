@@ -1,7 +1,10 @@
+module biocfd_forcing
+  use global
+  implicit none
 
+  contains
 SUBROUTINE pressureForcing1
       USE global
-      IMPLICIT NONE
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1, g
       REAL (KIND = 8) :: diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, &
@@ -154,7 +157,6 @@ END SUBROUTINE pressureForcing1
 !***********************************************************************
 SUBROUTINE velocityForcing1
       USE global
-      IMPLICIT NONE
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1, g
       REAL (KIND = 8) :: diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,  &
@@ -794,7 +796,6 @@ END SUBROUTINE velocityForcing1
 !***********************************************************************
 SUBROUTINE pressureForcingGhost
       USE global
-      IMPLICIT NONE
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (KIND = 8) :: diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, &
@@ -954,7 +955,6 @@ END SUBROUTINE pressureForcingGhost
 !***********************************************************************
 SUBROUTINE velocityForcingGhost
       USE global
-      IMPLICIT NONE
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (KIND = 8) :: diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,  &
@@ -1555,7 +1555,6 @@ END SUBROUTINE velocityForcingGhost
 
 SUBROUTINE pressureForcingField
       USE global
-      IMPLICIT NONE
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (KIND = 8) :: diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, &
@@ -1704,7 +1703,6 @@ END SUBROUTINE pressureForcingField
 !*****************************************************************************
 SUBROUTINE velocityForcingField
       USE global
-      IMPLICIT NONE
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (KIND = 8) :: diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,  &
@@ -2269,3 +2267,4 @@ SUBROUTINE velocityForcingField
       ENDDO
 
 END SUBROUTINE velocityForcingField
+end module biocfd_forcing

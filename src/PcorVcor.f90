@@ -1,7 +1,18 @@
+module biocfd_pcor_vcor
+  use global
+  use biocfd_fine_interp_bound
+  use biocfd_coarse_update
+  use biocfd_boundary_conditions, only : velocityBC
+  implicit none
+  private
+
+  public :: poissonSolver, updateVelocity_newv
+
+  contains
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
       SUBROUTINE poissonSolver
         USE global
-        IMPLICIT NONE
+        use biocfd_fine_interp_bound
         INTEGER(KIND=8) :: i, j,k, n, g, gg1, f, co
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         REAL (KIND = 8)    :: dalt, div, dab, dudt, dvdt, dwdt
@@ -238,7 +249,6 @@
 !***********************************************************************
       SUBROUTINE computeDiv(g)
          USE global
-         IMPLICIT NONE
          INTEGER :: n, i, j, k,gg, counter, nx_var, ny_var, ip
          INTEGER(KIND=8),INTENT(IN) ::g
          gg=g
@@ -311,7 +321,6 @@
 
       SUBROUTINE correctPressure(g)
          USE global
-         IMPLICIT NONE
          INTEGER(KIND=8) :: n, i, j, k,gg
          REAL :: r1p, r2p
          INTEGER(KIND=8),INTENT(IN) ::g
@@ -336,7 +345,6 @@
 
       SUBROUTINE correctVelocity(g)
          USE global
-         IMPLICIT NONE
          INTEGER(KIND=8) :: n, i, j, k,gg
          INTEGER(KIND=8),INTENT(IN) ::g
          gg=g
@@ -365,7 +373,6 @@
       !SUBROUTINE REDBLACKSOR(epsi, isum, derr, derr2)
       SUBROUTINE REDBLACKSOR_old(g)
          USE global
-         IMPLICIT NONE
          INTEGER, PARAMETER :: rk = selected_real_kind(8)
          INTEGER(KIND=8) :: n, i, j, k, gg, ip, nx_var, ny_var, nz_var
          !REAL (KIND = 8) :: derr, derr2,omega, derr3, errSum,var,derr4
@@ -488,7 +495,6 @@
       !SUBROUTINE REDBLACKSOR(epsi, isum, derr, derr2)
       SUBROUTINE REDBLACKSOR(g)
          USE global
-         IMPLICIT NONE
          INTEGER, PARAMETER :: rk = selected_real_kind(8)
          INTEGER(KIND=8) :: n, i, j, k, gg, ip, nx_var, ny_var,nz_var,nxy
          REAL (KIND = 8) :: derr, derr2, derr3, errSum,var,derr4
@@ -643,7 +649,6 @@
       !SUBROUTINE REDBLACKSOR(epsi, isum, derr, derr2)
       SUBROUTINE REDBLACKSOR_linear(g)
          USE global
-         IMPLICIT NONE
          INTEGER, PARAMETER :: rk = selected_real_kind(8)
          INTEGER(KIND=8) :: n, i, j, k, gg, ip, nx_var, ny_var,nz_var,nxy
          REAL (KIND = 8) :: derr, derr2, derr3, errSum,var,derr4
@@ -793,7 +798,6 @@
       SUBROUTINE updateVelocity_newv(g)
       !SUBROUTINE updateVelocity_newv
         USE global
-        IMPLICIT NONE
         INTEGER :: n, i, j, k
          INTEGER (KIND = 8), INTENT(IN) :: g
 !        OPEN(UNIT=111, File='velocity.dat',STATUS='unknown')
@@ -820,10 +824,4 @@
       END SUBROUTINE updateVelocity_newv
 
 !********************************************************************
-
-
-
-
-
-
-
+end module biocfd_pcor_vcor

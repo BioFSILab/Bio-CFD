@@ -5,7 +5,7 @@ program tester
   implicit none
   integer :: stat
 
-  stat = 0  
+  stat = 0
   call run_testsuite(collect_demo, error_unit, stat)
 
   if (stat > 0) then

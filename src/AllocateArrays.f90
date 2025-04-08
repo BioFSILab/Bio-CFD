@@ -1,6 +1,14 @@
-      SUBROUTINE allocateArrays
+module biocfd_allocate_arrays
+
+  use global
+  implicit none
+  private
+
+  public :: allocateArrays
+
+  contains
+SUBROUTINE allocateArrays
         USE global
-        IMPLICIT NONE
 
         integer(kind=4) :: i
         integer(kind=4) :: nx_var, ny_var, nz_var
@@ -49,3 +57,4 @@
 
 
       END SUBROUTINE allocateArrays
+end module biocfd_allocate_arrays

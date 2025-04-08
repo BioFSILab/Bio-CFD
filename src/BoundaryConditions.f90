@@ -1,7 +1,11 @@
+module biocfd_boundary_conditions
+  use global
+  implicit none
+
+  contains
 !***********************************************************************
 SUBROUTINE velocityBC
       USE global
-      IMPLICIT NONE
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER (KIND = 8):: i, j, k, g
       REAL (KIND = 8) :: a1, b1, c1, a2, b2, c2, a3, b3, c3, a4, b4, c4, &
@@ -109,7 +113,6 @@ SUBROUTINE velocityBC
 !***********************************************************************
       SUBROUTINE solidCellBC
          USE global
-         IMPLICIT NONE
          INTEGER, PARAMETER :: rk = selected_real_kind(8)
          INTEGER (KIND = 8):: i, j, k, n, g
         !!$acc parallel loop gang vector &
@@ -139,7 +142,6 @@ SUBROUTINE velocityBC
       !SUBROUTINE solidCellBC_move(b_blk_no)
       SUBROUTINE solidCellBC_move(g)
          USE global
-         IMPLICIT NONE
          INTEGER, PARAMETER :: rk = selected_real_kind(8)
          INTEGER (KIND = 8):: i, j, k,n, vbcOption
          !INTEGER :: g
@@ -170,7 +172,4 @@ SUBROUTINE velocityBC
         !END DO
       END SUBROUTINE solidCellBC_move
 
-
-
-
-
+end module biocfd_boundary_conditions
