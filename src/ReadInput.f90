@@ -1,7 +1,7 @@
 module biocfd_read_input
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global
-  implicit none (external)
+  implicit none
 
   private
 
