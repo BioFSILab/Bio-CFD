@@ -1,12 +1,16 @@
 module biocfd_read_input
+  use, intrinsic :: iso_fortran_env, only: dp => real64
   use global
   implicit none
+
+  private
+
+  public :: readInput, readBlockInterface, readSurfaceMeshGmsh
 
   contains
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
       SUBROUTINE readInput
        USE global
-       INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER (KIND=8) :: i, j , k , g, r, nx_var, ny_var, nz_var
         CHARACTER(len=160)  :: filename1
 
@@ -52,9 +56,9 @@ module biocfd_read_input
         !OPEN(77, FILE = 'geometries/2blk/0.01/body_search.dat', FORM = 'formatted')
         DO g=1,nblocks
         READ(77,*) block(g)%gx_shift, block(g)%gy_shift, block(g)%gz_shift
-        block(g)%gx_shift=block(g)%gx_shift*0.001
-        block(g)%gy_shift=block(g)%gy_shift*0.001
-        block(g)%gz_shift=block(g)%gz_shift*0.001
+        block(g)%gx_shift=block(g)%gx_shift*0.001_dp
+        block(g)%gy_shift=block(g)%gy_shift*0.001_dp
+        block(g)%gz_shift=block(g)%gz_shift*0.001_dp
         END DO
         CLOSE(77)
         OPEN(77, FILE = 'shift.dat', FORM = 'formatted')
@@ -62,9 +66,9 @@ module biocfd_read_input
         DO g=1,nblocks
         READ(77,*) block(g)%xshift, block(g)%yshift, block(g)%zshift
         write(*,*) block(g)%xshift, block(g)%yshift, block(g)%zshift
-        block(g)%xshift=block(g)%xshift*0.001
-        block(g)%yshift=block(g)%yshift*0.001
-        block(g)%zshift=block(g)%zshift*0.001
+        block(g)%xshift=block(g)%xshift*0.001_dp
+        block(g)%yshift=block(g)%yshift*0.001_dp
+        block(g)%zshift=block(g)%zshift*0.001_dp
         END DO
         CLOSE(77)
         if ( alpha_m /= 0 .and. theta_m /=0 ) then
@@ -80,7 +84,7 @@ module biocfd_read_input
         blk_start=2
         alpha_m1=abs(alpha_m)
         theta_m1=abs(theta_m)
-        dxmin = 0.001*dxmin
+        dxmin = 0.001_dp*dxmin
         !xShift = 0.001*xShift
         !yShift = 0.001*yShift
         !zShift = 0.001*zShift
@@ -90,9 +94,9 @@ module biocfd_read_input
                 write(*,*)g, block(g)%a0
         END DO
         CLOSE(77)
-        mu_f = mu_f*1e-5
+        mu_f = mu_f*1e-5_dp
         rho_f = rho_f
-        l_c = 0.001*l_c
+        l_c = 0.001_dp*l_c
         rev = rho_f/(mu_f)
         u0 = re/(rev*l_c)
         u0 = u0*1
@@ -101,9 +105,9 @@ module biocfd_read_input
         pi = 4.D0*ATAN(1.D0)
         a0y = 2*sin(pi/6)*l_c
         freq = freq*u0/l_c
-        deltat = 1./(4.*freq*dt_order)  !0.00041666666666_rk! *5e-4
+        deltat = 1._dp/(4._dp*freq*dt_order)  !0.00041666666666_dp! *5e-4
         disp = block(blk_start)%a0*cos(2*pi*freq*deltat)
-        alpha  = 1._rk
+        alpha  = 1._dp
       !!freq=(mu_f*re*180)/(4*theta_m*pi*l_c*l_c)
       !!u_tip=4*((pi*theta_m)/180)*l_c*freq
       ! freq=(mu_f*re*180)/(4*45*pi*l_c*l_c)
@@ -114,13 +118,13 @@ module biocfd_read_input
       !!re = rev
       !!a0y = 2*sin(pi/6)*l_c
       !!freq = freq*u0/l_c
-      !!deltat = 1./(4.*freq*dt_order)!0.00041666666666_rk! *5e-4
+      !!deltat = 1./(4.*freq*dt_order)!0.00041666666666_dp! *5e-4
       !!lwing=74.
       !!lwing = 0.001*lwing
 
       !!deltat=(dxmin)/(u_tip*dt_order)
       !!disp = a0*cos(2*pi*freq*deltat)
-      !!alpha  = 1._rk
+      !!alpha  = 1._dp
         Print*, 'dxmin =', dxmin
         Print*, 'u0 =', u0
         print*, 'dt =',  deltat
@@ -156,7 +160,7 @@ module biocfd_read_input
         !uc = 1.
         ita = 0
         ita1 = 0
-        totime = 0._rk
+        totime = 0._dp
         print*, 'dt =',  deltat, 'ita = ', ita, 'totime = ', totime
         !print*, 'total cells =', nx*ny*nz
 
@@ -169,12 +173,12 @@ module biocfd_read_input
                     block(i)%zstart, block(i)%zend, &
                     block(i)%nx, block(i)%ny, block(i)%nz, &
                     block(i)%dx, block(i)%dy, block(i)%dz
-        block(i)%xstart= block(i)%xstart* 0.001
-        block(i)%xend=  block(i)%xend*0.001
-        block(i)%ystart= block(i)%ystart*0.001
-        block(i)%yend=block(i)%yend*0.001
-        block(i)%zstart=block(i)%zstart*0.001
-        block(i)%zend=block(i)%zend*0.001
+        block(i)%xstart= block(i)%xstart* 0.001_dp
+        block(i)%xend=  block(i)%xend*0.001_dp
+        block(i)%ystart= block(i)%ystart*0.001_dp
+        block(i)%yend=block(i)%yend*0.001_dp
+        block(i)%zstart=block(i)%zstart*0.001_dp
+        block(i)%zend=block(i)%zend*0.001_dp
        END DO
        CLOSE(51)
         print*,'after allocation'
@@ -227,9 +231,9 @@ module biocfd_read_input
 
         do i=1, nblocks
             block(i)%fineg=block(i)%dx
-            block(i)%dx=(1./block(i)%dx)*0.001
-            block(i)%dy=(1./block(i)%dy)*0.001
-            block(i)%dz=(1./block(i)%dz)*0.001
+            block(i)%dx=(1._dp/block(i)%dx)*0.001_dp
+            block(i)%dy=(1._dp/block(i)%dy)*0.001_dp
+            block(i)%dz=(1._dp/block(i)%dz)*0.001_dp
 
         end do
 
@@ -305,7 +309,7 @@ module biocfd_read_input
          OPEN(61, FILE = filename1, FORM = 'formatted')
          DO i = 2, block(g)%nx+2
             READ(61, *) block(g)%x1(i)
-                block(g)%x1(i)=0.001*block(g)%x1(i)
+                block(g)%x1(i)=0.001_dp*block(g)%x1(i)
                     block(g)%x1(i)=block(g)%x1(i) + block(g)%gx_shift
                 !print*,'x1',g,block(g)%x1(i)
          END DO
@@ -328,7 +332,7 @@ module biocfd_read_input
          DO i = 2, block(g)%ny+2
             READ(62, *) block(g)%y1(i)
                ! print*,'y1',g,block(g)%y1(i)
-                 block(g)%y1(i)=0.001*block(g)%y1(i)
+                 block(g)%y1(i)=0.001_dp*block(g)%y1(i)
                     block(g)%y1(i)=block(g)%y1(i) + block(g)%gy_shift
          END DO
          CLOSE(62)
@@ -351,7 +355,7 @@ module biocfd_read_input
          DO i = 2, block(g)%nz+2
             READ(63, *) block(g)%z1(i)
                ! print*,'z1',g,block(g)%z1(i)
-                 block(g)%z1(i)=0.001*block(g)%z1(i)
+                 block(g)%z1(i)=0.001_dp*block(g)%z1(i)
                     block(g)%z1(i)=block(g)%z1(i) + block(g)%gz_shift
          END DO
          CLOSE(63)
@@ -389,7 +393,7 @@ module biocfd_read_input
 
         DO g=1,nblocks
         DO i = 1, block(g)%ny+2
-           block(g)%yu(i) = 0.5_rk*(block(g)%y1(i)+block(g)%y1(i+1))
+           block(g)%yu(i) = 0.5_dp*(block(g)%y1(i)+block(g)%y1(i+1))
 	   block(g)%yw(i) = block(g)%yu(i)
            block(g)%yp(i) = block(g)%yu(i)
         END DO
@@ -397,7 +401,7 @@ module biocfd_read_input
 
         DO g=1,nblocks
         DO i = 1, block(g)%nx+2
-           block(g)%xv(i) = 0.5_rk*(block(g)%x1(i)+block(g)%x1(i+1))
+           block(g)%xv(i) = 0.5_dp*(block(g)%x1(i)+block(g)%x1(i+1))
            block(g)%xw(i) = block(g)%xv(i)
            block(g)%xp(i) = block(g)%xv(i)
             print*,'xp',g,i,block(g)%xp(i)
@@ -406,7 +410,7 @@ module biocfd_read_input
 
         DO g=1,nblocks
 	 DO i = 1, block(g)%nz+2
-           block(g)%zu(i) = 0.5_rk*(block(g)%z1(i)+block(g)%z1(i+1))
+           block(g)%zu(i) = 0.5_dp*(block(g)%z1(i)+block(g)%z1(i+1))
 	   block(g)%zv(i) = block(g)%zu(i)
            block(g)%zp(i) = block(g)%zu(i)
         END DO
@@ -473,9 +477,9 @@ module biocfd_read_input
         DO n = 1, block(g)%ibNodes
            READ (121,*) i1, block(g)%xnode(n), block(g)%ynode(n), block(g)%znode(n)
            !READ (121,*) i1, ynode(n), znode(n), xnode(n)
-           block(g)%xnode(n)=block(g)%xnode(n)*0.001
-           block(g)%ynode(n)=block(g)%ynode(n)*0.001
-           block(g)%znode(n)=block(g)%znode(n)*0.001
+           block(g)%xnode(n)=block(g)%xnode(n)*0.001_dp
+           block(g)%ynode(n)=block(g)%ynode(n)*0.001_dp
+           block(g)%znode(n)=block(g)%znode(n)*0.001_dp
         END DO
         DO n = 1, 2
           READ (121,*) line
@@ -563,12 +567,12 @@ module biocfd_read_input
                    intfr(i)%yintf_start, intfr(i)%yintf_end, &
                    intfr(i)%zintf_start, intfr(i)%zintf_end
 
-        intfr(i)%xintf_start=intfr(i)%xintf_start *0.001
-        intfr(i)%xintf_end = intfr(i)%xintf_end   *0.001
-        intfr(i)%yintf_start=intfr(i)%yintf_start *0.001
-        intfr(i)%yintf_end = intfr(i)%yintf_end   *0.001
-        intfr(i)%zintf_start=intfr(i)%zintf_start *0.001
-        intfr(i)%zintf_end  =intfr(i)%zintf_end   *0.001
+        intfr(i)%xintf_start=intfr(i)%xintf_start *0.001_dp
+        intfr(i)%xintf_end = intfr(i)%xintf_end   *0.001_dp
+        intfr(i)%yintf_start=intfr(i)%yintf_start *0.001_dp
+        intfr(i)%yintf_end = intfr(i)%yintf_end   *0.001_dp
+        intfr(i)%zintf_start=intfr(i)%zintf_start *0.001_dp
+        intfr(i)%zintf_end  =intfr(i)%zintf_end   *0.001_dp
         print*, intfr(i)%a_blk, intfr(i)%a_msh, intfr(i)%a_intf, &
                 intfr(i)%b_blk, intfr(i)%b_msh, intfr(i)%b_intf, &
                 intfr(i)%xintf_start, intfr(i)%xintf_end, &
