@@ -13,9 +13,8 @@ module biocfd_pcor_vcor
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
       SUBROUTINE poissonSolver
 
-        INTEGER(int64) :: i, j,k, n, g, gg1, f, co
+        INTEGER(int64) :: i, j,k, n, g
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        REAL (dp)    :: dalt, div, dab, dudt, dvdt, dwdt
         REAL (dp)    :: max_derr1, max_derr2, max_div, max_derrStdSt
         REAL (dp)    :: er_dudt, er_dvdt, er_dwdt, err_ds
         INTEGER(int64) :: max_nIterPcor, max_nit
@@ -249,7 +248,7 @@ module biocfd_pcor_vcor
 !***********************************************************************
       SUBROUTINE computeDiv(g)
 
-         INTEGER :: n, i, j, k,gg, counter, nx_var, ny_var, ip
+         INTEGER :: n, i, j, k,gg, counter, nx_var, ny_var
          INTEGER(int64),INTENT(IN) ::g
          gg=g
          nx_var=block(g)%nx
@@ -323,7 +322,6 @@ module biocfd_pcor_vcor
       SUBROUTINE correctPressure(g)
 
          INTEGER(int64) :: n, i, j, k,gg
-         REAL(dp) :: r1p, r2p
          INTEGER(int64),INTENT(IN) ::g
         gg=g
         !!$acc parallel loop gang vector private (i, j, k)   &
@@ -379,8 +377,8 @@ module biocfd_pcor_vcor
       SUBROUTINE REDBLACKSOR_linear(g)
 
          INTEGER, PARAMETER :: rk = selected_real_kind(8)
-         INTEGER(int64) :: n, i, j, k, gg, ip, nx_var, ny_var,nz_var,nxy
-         REAL (dp) :: derr, derr2, derr3, errSum,var,derr4
+         INTEGER(int64) :: n, i, j, k, gg, nx_var, ny_var,nz_var,nxy
+         REAL (dp) :: errSum,var,derr4
          !REAL (dp) :: derr, derr2,omega, derr3, errSum,var,derr4
          !REAL (dp), INTENT(IN)     :: epsi
          !REAL (dp), INTENT(OUT)    :: derr, derr2
@@ -535,7 +533,7 @@ module biocfd_pcor_vcor
       SUBROUTINE updateVelocity_newv(g)
       !SUBROUTINE updateVelocity_newv
 
-        INTEGER :: n, i, j, k
+        INTEGER ::  i, j, k
          INTEGER (int64), INTENT(IN) :: g
 !        OPEN(UNIT=111, File='velocity.dat',STATUS='unknown')
         !!$acc parallel loop present (u, ut, v, vt)
