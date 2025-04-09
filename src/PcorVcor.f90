@@ -1,7 +1,8 @@
 module biocfd_pcor_vcor
+  use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global
-  use biocfd_fine_interp_bound
-  use biocfd_coarse_update
+  use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_bd, fineUpdate_pc_bd
+  use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
   use biocfd_boundary_conditions, only : velocityBC
   implicit none
   private
@@ -11,14 +12,13 @@ module biocfd_pcor_vcor
   contains
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
       SUBROUTINE poissonSolver
-        USE global
-        use biocfd_fine_interp_bound
-        INTEGER(KIND=8) :: i, j,k, n, g, gg1, f, co
+
+        INTEGER(int64) :: i, j,k, n, g, gg1, f, co
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        REAL (KIND = 8)    :: dalt, div, dab, dudt, dvdt, dwdt
-        REAL (KIND = 8)    :: max_derr1, max_derr2, max_div, max_derrStdSt
-        REAL (KIND = 8)    :: er_dudt, er_dvdt, er_dwdt, err_ds
-        INTEGER(KIND=8) :: max_nIterPcor, max_nit
+        REAL (dp)    :: dalt, div, dab, dudt, dvdt, dwdt
+        REAL (dp)    :: max_derr1, max_derr2, max_div, max_derrStdSt
+        REAL (dp)    :: er_dudt, er_dvdt, er_dwdt, err_ds
+        INTEGER(int64) :: max_nIterPcor, max_nit
         CHARACTER(len=160) :: filename1
 
 
@@ -248,9 +248,9 @@ module biocfd_pcor_vcor
       END SUBROUTINE poissonSolver
 !***********************************************************************
       SUBROUTINE computeDiv(g)
-         USE global
+
          INTEGER :: n, i, j, k,gg, counter, nx_var, ny_var, ip
-         INTEGER(KIND=8),INTENT(IN) ::g
+         INTEGER(int64),INTENT(IN) ::g
          gg=g
          nx_var=block(g)%nx
          ny_var=block(g)%ny
@@ -265,9 +265,10 @@ module biocfd_pcor_vcor
            j = block(gg)%fluidIndexPtr(n, 2)
            k = block(gg)%fluidIndexPtr(n, 3)
            counter =i-1  + nx_var*(j-2)  + nx_var*ny_var*(k-2)
-           block(gg)%b(i,j,k) =  (block(gg)%ut(i,j,k) - block(gg)%ut(i-1,j,k))/block(gg)%deltax(i) +  &
-                       (block(gg)%vt(i,j,k) - block(gg)%vt(i,j-1,k))/block(gg)%deltay(j) +  &
-                       (block(gg)%wt(i,j,k) - block(gg)%wt(i,j,k-1))/block(gg)%deltaz(k)
+           block(gg)%b(i,j,k) = &
+             (block(gg)%ut(i,j,k) - block(gg)%ut(i-1,j,k))/block(gg)%deltax(i) +  &
+             (block(gg)%vt(i,j,k) - block(gg)%vt(i,j-1,k))/block(gg)%deltay(j) +  &
+             (block(gg)%wt(i,j,k) - block(gg)%wt(i,j,k-1))/block(gg)%deltaz(k)
 
           !block(gg)%rhs(counter)=block(gg)%b(i,j,k)/deltat
 
@@ -320,10 +321,10 @@ module biocfd_pcor_vcor
 !***********************************************************************
 
       SUBROUTINE correctPressure(g)
-         USE global
-         INTEGER(KIND=8) :: n, i, j, k,gg
-         REAL :: r1p, r2p
-         INTEGER(KIND=8),INTENT(IN) ::g
+
+         INTEGER(int64) :: n, i, j, k,gg
+         REAL(dp) :: r1p, r2p
+         INTEGER(int64),INTENT(IN) ::g
         gg=g
         !!$acc parallel loop gang vector private (i, j, k)   &
         !!$acc present (block(g)%fluidIndexPtr, p, pc)
@@ -344,9 +345,9 @@ module biocfd_pcor_vcor
 !***********************************************************************
 
       SUBROUTINE correctVelocity(g)
-         USE global
-         INTEGER(KIND=8) :: n, i, j, k,gg
-         INTEGER(KIND=8),INTENT(IN) ::g
+
+         INTEGER(int64) :: n, i, j, k,gg
+         INTEGER(int64),INTENT(IN) ::g
          gg=g
         !!$acc parallel loop gang vector private (i, j, k) firstprivate (deltat) &
         !!$acc present (block(g)%fluidIndexPtr, ut, vt, wt, block(g)%deltax, block(g)%deltay, block(g)%deltaz, pc)
@@ -358,9 +359,15 @@ module biocfd_pcor_vcor
             j = block(gg)%fluidIndexPtr(n, 2)
             k = block(gg)%fluidIndexPtr(n, 3)
 
-            block(gg)%ut(i,j,k) = block(gg)%ut(i,j,k) - deltat/(0.5d0*(block(gg)%deltax(i+1)+block(gg)%deltax(i)))*(block(gg)%pc(i+1,j,k)-block(gg)%pc(i,j,k))
-            block(gg)%vt(i,j,k) = block(gg)%vt(i,j,k) - deltat/(0.5d0*(block(gg)%deltay(j+1)+block(gg)%deltay(j)))*(block(gg)%pc(i,j+1,k)-block(gg)%pc(i,j,k))
-            block(gg)%wt(i,j,k) = block(gg)%wt(i,j,k) - deltat/(0.5d0*(block(gg)%deltaz(k+1)+block(gg)%deltaz(k)))*(block(gg)%pc(i,j,k+1)-block(gg)%pc(i,j,k))
+            block(gg)%ut(i,j,k) = block(gg)%ut(i,j,k) - &
+               deltat/(0.5d0*(block(gg)%deltax(i+1)+block(gg)%deltax(i))) * &
+               (block(gg)%pc(i+1,j,k)-block(gg)%pc(i,j,k))
+            block(gg)%vt(i,j,k) = block(gg)%vt(i,j,k) - &
+               deltat/(0.5d0*(block(gg)%deltay(j+1)+block(gg)%deltay(j))) * &
+               (block(gg)%pc(i,j+1,k)-block(gg)%pc(i,j,k))
+            block(gg)%wt(i,j,k) = block(gg)%wt(i,j,k) - &
+               deltat/(0.5d0*(block(gg)%deltaz(k+1)+block(gg)%deltaz(k))) * &
+               (block(gg)%pc(i,j,k+1)-block(gg)%pc(i,j,k))
  30      CONTINUE
          !$acc end parallel
         !$omp end parallel do
@@ -370,15 +377,15 @@ module biocfd_pcor_vcor
 
       !SUBROUTINE REDBLACKSOR(epsi, isum, derr, derr2)
       SUBROUTINE REDBLACKSOR_linear(g)
-         USE global
+
          INTEGER, PARAMETER :: rk = selected_real_kind(8)
-         INTEGER(KIND=8) :: n, i, j, k, gg, ip, nx_var, ny_var,nz_var,nxy
-         REAL (KIND = 8) :: derr, derr2, derr3, errSum,var,derr4
-         !REAL (KIND = 8) :: derr, derr2,omega, derr3, errSum,var,derr4
-         !REAL (KIND = 8), INTENT(IN)     :: epsi
-         !REAL (KIND = 8), INTENT(OUT)    :: derr, derr2
-         !INTEGER (KIND = 8), INTENT(OUT) :: isum
-         INTEGER(KIND=8),INTENT(IN) ::g
+         INTEGER(int64) :: n, i, j, k, gg, ip, nx_var, ny_var,nz_var,nxy
+         REAL (dp) :: derr, derr2, derr3, errSum,var,derr4
+         !REAL (dp) :: derr, derr2,omega, derr3, errSum,var,derr4
+         !REAL (dp), INTENT(IN)     :: epsi
+         !REAL (dp), INTENT(OUT)    :: derr, derr2
+         !INTEGER (int64), INTENT(OUT) :: isum
+         INTEGER(int64),INTENT(IN) ::g
 
          gg=g
                 ! omega = 1.955
@@ -431,9 +438,13 @@ module biocfd_pcor_vcor
 !            omega*block(gg)%pc(i,j,k)
 
             block(gg)%pc(i,j,k) = (block(gg)%b(i,j,k)/deltat &
-     &        -block(gg)%Acx(i-1,1)*block(gg)%pco(i-1,j,k)-block(gg)%Acx(i-1,3)*block(gg)%pco(i+1,j,k) &
-     &        -block(gg)%Acy(j-1,1)*block(gg)%pco(i,j-1,k)-block(gg)%Acy(j-1,3)*block(gg)%pco(i,j+1,k) &
-     &        -block(gg)%Acz(k-1,1)*block(gg)%pco(i,j,k-1)-block(gg)%Acz(k-1,3)*block(gg)%pco(i,j,k+1))/(block(gg)%Acx(i-1,2)+block(gg)%Acy(j-1,2)+block(gg)%Acz(k-1,2))
+              -block(gg)%Acx(i-1,1)*block(gg)%pco(i-1,j,k) &
+              -block(gg)%Acx(i-1,3)*block(gg)%pco(i+1,j,k) &
+              -block(gg)%Acy(j-1,1)*block(gg)%pco(i,j-1,k) &
+              -block(gg)%Acy(j-1,3)*block(gg)%pco(i,j+1,k) &
+              -block(gg)%Acz(k-1,1)*block(gg)%pco(i,j,k-1) &
+              -block(gg)%Acz(k-1,3)*block(gg)%pco(i,j,k+1)) / &
+              (block(gg)%Acx(i-1,2)+block(gg)%Acy(j-1,2)+block(gg)%Acz(k-1,2))
             block(gg)%pc(i,j,k) = (1._rk-omega)*block(gg)%pco(i,j,k) +omega*block(gg)%pc(i,j,k)
 
  10      CONTINUE
@@ -464,9 +475,13 @@ module biocfd_pcor_vcor
 
 
             block(gg)%pc(i,j,k) = (block(gg)%b(i,j,k)/deltat &
-     &        -block(gg)%Acx(i-1,1)*block(gg)%pc(i-1,j,k)-block(gg)%Acx(i-1,3)*block(gg)%pc(i+1,j,k) &
-     &        -block(gg)%Acy(j-1,1)*block(gg)%pc(i,j-1,k)-block(gg)%Acy(j-1,3)*block(gg)%pc(i,j+1,k) &
-     &        -block(gg)%Acz(k-1,1)*block(gg)%pc(i,j,k-1)-block(gg)%Acz(k-1,3)*block(gg)%pc(i,j,k+1))/(block(gg)%Acx(i-1,2)+block(gg)%Acy(j-1,2)+block(gg)%Acz(k-1,2))
+              -block(gg)%Acx(i-1,1)*block(gg)%pc(i-1,j,k) &
+              -block(gg)%Acx(i-1,3)*block(gg)%pc(i+1,j,k) &
+              -block(gg)%Acy(j-1,1)*block(gg)%pc(i,j-1,k) &
+              -block(gg)%Acy(j-1,3)*block(gg)%pc(i,j+1,k) &
+              -block(gg)%Acz(k-1,1)*block(gg)%pc(i,j,k-1) &
+              -block(gg)%Acz(k-1,3)*block(gg)%pc(i,j,k+1)) / &
+              (block(gg)%Acx(i-1,2)+block(gg)%Acy(j-1,2)+block(gg)%Acz(k-1,2))
             block(gg)%pc(i,j,k) = (1._rk-omega)*block(gg)%pco(i,j,k) +omega*block(gg)%pc(i,j,k)
 
  20      CONTINUE
@@ -519,9 +534,9 @@ module biocfd_pcor_vcor
 !*******************************************************************
       SUBROUTINE updateVelocity_newv(g)
       !SUBROUTINE updateVelocity_newv
-        USE global
+
         INTEGER :: n, i, j, k
-         INTEGER (KIND = 8), INTENT(IN) :: g
+         INTEGER (int64), INTENT(IN) :: g
 !        OPEN(UNIT=111, File='velocity.dat',STATUS='unknown')
         !!$acc parallel loop present (u, ut, v, vt)
         !DO g = blk_start, nblocks
