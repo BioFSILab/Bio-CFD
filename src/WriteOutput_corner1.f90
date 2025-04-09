@@ -1,12 +1,15 @@
 module biocfd_write_output_corner1
-
+  use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global
   implicit none
+
+  private
+
+  public :: writeOutput1, body_plot, writeresult
 
 contains
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 !     SUBROUTINE writeOutput
-!      USE global
 !      INTEGER, PARAMETER :: rk = selected_real_kind(8)
 !      CHARACTER*120  filename1
 !      CHARACTER*70  filename2
@@ -117,13 +120,11 @@ contains
 !     END SUBROUTINE writeOutput
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
       SUBROUTINE writeOutput1
-       USE global
-!!       USE mod_tecio
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=150)  :: filename1
        CHARACTER(len=150)  :: filename2
        INTEGER  :: k, i, j, g
-       REAL (KIND = 8) :: u1, v1, w1
+       REAL (dp) :: u1, v1, w1
 
 !!         CHARACTER*1 NULLCHR
 !!       INTEGER*4 iStat, FileFormat, FileType, Debug, VIsDouble
@@ -252,10 +253,12 @@ contains
             DO 30 k = 2, block(g)%nz+1
             DO 30 j = 2, block(g)%ny+1
             DO 30 i = 2, block(g)%nx+1
-               u1 = 0.5*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))
-               v1 = 0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
-               w1 = 0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
-               WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u1, v1, w1, block(g)%p(i,j,k), totime, block(g)%cell(i,j,k) , block(g)%cell_n(i,j,k) , block(g)%cell_pr(i,j,k)
+               u1 = 0.5_dp*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))
+               v1 = 0.5_dp*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
+               w1 = 0.5_dp*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
+               WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u1, v1, w1, &
+                            block(g)%p(i,j,k), totime, block(g)%cell(i,j,k) , &
+                            block(g)%cell_n(i,j,k) , block(g)%cell_pr(i,j,k)
  30         CONTINUE
             CLOSE(786)
         end do
@@ -268,7 +271,6 @@ contains
 
 !***********************************************************************
       SUBROUTINE writeResult
-        USE global
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k,g
        CHARACTER(len=70)  :: filename1
@@ -292,7 +294,6 @@ contains
 
 !***********************************************************************
      SUBROUTINE writeTagging
-       USE global
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=70)  :: filename1
        CHARACTER(len=70)  :: filename2
@@ -316,7 +317,6 @@ contains
 
 !***********************************************************************
       SUBROUTINE computeSumData
-       USE global
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER         :: i, j, k,g
              DO g=1,nblocks
@@ -337,7 +337,6 @@ contains
 
 !***********************************************************************
       SUBROUTINE writeComputeSumData
-        USE global
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
        CHARACTER(len=70)  :: filename1
@@ -351,7 +350,8 @@ contains
  	 DO 30 k = 1, block(g)%nz+2
         DO 30 j = 1, block(g)%ny+2
         DO 30 i = 1, block(g)%nx+2
-          WRITE(1,*) block(g)%u_sum(i,j,k), block(g)%v_sum(i,j,k), block(g)%w_sum(i,j,k),block(g)%p_sum(i,j,k), ita, ita1
+          WRITE(1,*) block(g)%u_sum(i,j,k), block(g)%v_sum(i,j,k), &
+                     block(g)%w_sum(i,j,k),block(g)%p_sum(i,j,k), ita, ita1
  30     CONTINUE
  	 CLOSE(1)
         END DO
@@ -360,7 +360,6 @@ contains
 !***********************************************************************
 
       SUBROUTINE writeComputeSumSqData
-        USE global
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
        CHARACTER(len=70)  :: filename1
@@ -374,7 +373,9 @@ contains
  	 DO 30 k = 1, block(g)%nz+2
         DO 30 j = 1, block(g)%ny+2
         DO 30 i = 1, block(g)%nx+2
-          WRITE(1,*) block(g)%u2_sum(i,j,k), block(g)%v2_sum(i,j,k), block(g)%w2_sum(i,j,k), block(g)%p2_sum(i,j,k), block(g)%uv_sum(i,j,k), block(g)%vw_sum(i,j,k), block(g)%uw_sum(i,j,k)
+          WRITE(1,*) block(g)%u2_sum(i,j,k), block(g)%v2_sum(i,j,k), block(g)%w2_sum(i,j,k), &
+                     block(g)%p2_sum(i,j,k), block(g)%uv_sum(i,j,k), block(g)%vw_sum(i,j,k), &
+                     block(g)%uw_sum(i,j,k)
  30     CONTINUE
  	 CLOSE(1)
         END DO
@@ -382,7 +383,6 @@ contains
       END SUBROUTINE  writeComputeSumSqData
 !***********************************************************************
       SUBROUTINE readComputeSumData
-        USE global
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
        CHARACTER(len=70)  :: filename1
@@ -396,7 +396,8 @@ contains
         DO 30 k = 1, block(g)%nz+2
         DO 30 j = 1, block(g)%ny+2
         DO 30 i = 1, block(g)%nx+2
-          READ(1,*) block(g)%u_sum(i,j,k), block(g)%v_sum(i,j,k), block(g)%w_sum(i,j,k), block(g)%p_sum(i,j,k), ita, ita1
+          READ(1,*) block(g)%u_sum(i,j,k), block(g)%v_sum(i,j,k), block(g)%w_sum(i,j,k), &
+                    block(g)%p_sum(i,j,k), ita, ita1
  30     CONTINUE
         CLOSE(1)
         END DO
@@ -405,7 +406,6 @@ contains
 
 !***********************************************************************
       SUBROUTINE readComputeSumSqData
-        USE global
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k, g
        CHARACTER(len=70)  :: filename1
@@ -419,7 +419,9 @@ contains
         DO 30 k = 1, block(g)%nz+2
         DO 30 j = 1, block(g)%ny+2
         DO 30 i = 1, block(g)%nx+2
-        READ(1,*) block(g)%u2_sum(i,j,k), block(g)%v2_sum(i,j,k), block(g)%w2_sum(i,j,k), block(g)%p2_sum(i,j,k), block(g)%uv_sum(i,j,k), block(g)%vw_sum(i,j,k), block(g)%uw_sum(i,j,k)
+        READ(1,*) block(g)%u2_sum(i,j,k), block(g)%v2_sum(i,j,k), block(g)%w2_sum(i,j,k), &
+                  block(g)%p2_sum(i,j,k), block(g)%uv_sum(i,j,k), block(g)%vw_sum(i,j,k), &
+                  block(g)%uw_sum(i,j,k)
  30     CONTINUE
         CLOSE(1)
         END DO
@@ -427,7 +429,6 @@ contains
 !***********************************************************************
 !***********************************************************************
       SUBROUTINE readstressData
-        USE global
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  inode, g
         DO g=1,nblocks
@@ -444,7 +445,6 @@ contains
 
 !***********************************************************************
       SUBROUTINE computeAvgData
-       USE global
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER  :: n, k, i, j, g
              DO 30 g=1,nblocks
@@ -461,13 +461,11 @@ contains
 
 !***********************************************************************
       SUBROUTINE writeAvgoutput
-       USE global
-!!tec       USE mod_tecio
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=70)  :: filename1
        CHARACTER(len=70)  :: filename2
        INTEGER  :: k, i, j, g
-       REAL (KIND = 8) :: u_avg1, v_avg1, w_avg1
+       REAL (dp) :: u_avg1, v_avg1, w_avg1
 !!tec         CHARACTER*1 NULLCHR
 !!tec       INTEGER*4 iStat, FileFormat, FileType, Debug, VIsDouble
 !!tec       integer*4 ZoneType, IMax, JMax, KMax, ICellMax, JCellMax,KCellMax
@@ -576,19 +574,19 @@ contains
            DO 30 k = 2, block(g)%nz+1
            DO 30 j = 2, block(g)%ny+1
            DO 30 i = 2, block(g)%nx+1
-              u_avg1 = 0.5*(block(g)%u_avg(i,j,k)+block(g)%u_avg(i-1,j,k))
-              v_avg1 = 0.5*(block(g)%v_avg(i,j,k)+block(g)%v_avg(i,j-1,k))
-              w_avg1 = 0.5*(block(g)%w_avg(i,j,k)+block(g)%w_avg(i,j,k-1))
-              WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u_avg1, v_avg1, w_avg1, block(g)%p_avg(i,j,k), totime, block(g)%cell(i,j,k)
+              u_avg1 = 0.5_dp*(block(g)%u_avg(i,j,k)+block(g)%u_avg(i-1,j,k))
+              v_avg1 = 0.5_dp*(block(g)%v_avg(i,j,k)+block(g)%v_avg(i,j-1,k))
+              w_avg1 = 0.5_dp*(block(g)%w_avg(i,j,k)+block(g)%w_avg(i,j,k-1))
+              WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u_avg1, v_avg1, w_avg1, &
+                           block(g)%p_avg(i,j,k), totime, block(g)%cell(i,j,k)
 30         CONTINUE
            CLOSE(786)
            END DO
       END SUBROUTINE writeAvgoutput
 !***********************************************************************
          SUBROUTINE body_plot
-         USE global
-         INTEGER(KIND=8) :: inode, ielem, g
-          CHARACTER(len=150) :: filename1
+         INTEGER(int64) :: inode, ielem, g
+         CHARACTER(len=150) :: filename1
 
           DO g=1,nblocks
           if (ita == 1 )then
@@ -613,46 +611,44 @@ contains
 !****************************************************************************
 
 
-      SUBROUTINE computeSumSqData
-       USE global
-       INTEGER, PARAMETER :: rk = selected_real_kind(8)
-       INTEGER  :: n, k, i, j, g
-	    DO  g=1,nblocks
+  SUBROUTINE computeSumSqData
+    INTEGER, PARAMETER :: rk = selected_real_kind(8)
+    INTEGER  :: n, k, i, j, g
+      DO  g=1,nblocks
 
-           !!$acc parallel loop gang vector collapse (3) default(present)
-            DO 30 k = 2, block(g)%nz+2
-            DO 30 j = 2, block(g)%ny+2
-            DO 30 i = 2, block(g)%nx+2
-             !block(g)% u_sum(i,j,k,ph) =block(g)% u_sum(i,j,k,ph) + 0.5*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))
-             !block(g)% v_sum(i,j,k,ph) =block(g)% v_sum(i,j,k,ph) + 0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
-             !block(g)% w_sum(i,j,k,ph) =block(g)% w_sum(i,j,k,ph) + 0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
-             !block(g)% p_sum(i,j,k,ph) =block(g)% p_sum(i,j,k,ph) + block(g)%p(i,j,k)
-             !block(g)%uv_sum(i,j,k,ph) = block(g)%uv_sum(i,j,k,ph) + 0.5*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))*0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
-             !block(g)%vw_sum(i,j,k,ph) = block(g)%vw_sum(i,j,k,ph) + 0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))*0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
-             !block(g)%uw_sum(i,j,k,ph) =block(g)% uw_sum(i,j,k,ph) + 0.5*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))*0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
+      !!$acc parallel loop gang vector collapse (3) default(present)
+      DO 30 k = 2, block(g)%nz+2
+      DO 30 j = 2, block(g)%ny+2
+      DO 30 i = 2, block(g)%nx+2
+        !block(g)% u_sum(i,j,k,ph) =block(g)% u_sum(i,j,k,ph) + 0.5*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))
+        !block(g)% v_sum(i,j,k,ph) =block(g)% v_sum(i,j,k,ph) + 0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
+        !block(g)% w_sum(i,j,k,ph) =block(g)% w_sum(i,j,k,ph) + 0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
+        !block(g)% p_sum(i,j,k,ph) =block(g)% p_sum(i,j,k,ph) + block(g)%p(i,j,k)
+        !block(g)%uv_sum(i,j,k,ph) = block(g)%uv_sum(i,j,k,ph) + 0.5*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))*0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
+        !block(g)%vw_sum(i,j,k,ph) = block(g)%vw_sum(i,j,k,ph) + 0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))*0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
+        !block(g)%uw_sum(i,j,k,ph) =block(g)% uw_sum(i,j,k,ph) + 0.5*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))*0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
 
-             !block(g)%u2_sum(i,j,k,ph) = block(g)%u2_sum(i,j,k,ph) + (0.5*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k)))**2
-             !block(g)%v2_sum(i,j,k,ph) = block(g)%v2_sum(i,j,k,ph) + (0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k)))**2
-             !block(g)%w2_sum(i,j,k,ph) =block(g)% w2_sum(i,j,k,ph) + (0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1)))**2
-             !block(g)%p2_sum(i,j,k,ph) = block(g)%p2_sum(i,j,k,ph) + block(g)%p(i,j,k)*block(g)%p(i,j,k)
+        !block(g)%u2_sum(i,j,k,ph) = block(g)%u2_sum(i,j,k,ph) + (0.5*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k)))**2
+        !block(g)%v2_sum(i,j,k,ph) = block(g)%v2_sum(i,j,k,ph) + (0.5*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k)))**2
+        !block(g)%w2_sum(i,j,k,ph) =block(g)% w2_sum(i,j,k,ph) + (0.5*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1)))**2
+        !block(g)%p2_sum(i,j,k,ph) = block(g)%p2_sum(i,j,k,ph) + block(g)%p(i,j,k)*block(g)%p(i,j,k)
 
 
-               block(g)%uv_sum(i,j,k) = block(g)%uv_sum(i,j,k) + (block(g)%u(i,j,k) *block(g)%v(i,j,k))
-               block(g)%vw_sum(i,j,k) = block(g)%vw_sum(i,j,k) + (block(g)%v(i,j,k) *block(g)%w(i,j,k))
-               block(g)%uw_sum(i,j,k) =block(g)% uw_sum(i,j,k) + (block(g)%u(i,j,k) *block(g)%w(i,j,k))
+        block(g)%uv_sum(i,j,k) = block(g)%uv_sum(i,j,k) + (block(g)%u(i,j,k) *block(g)%v(i,j,k))
+        block(g)%vw_sum(i,j,k) = block(g)%vw_sum(i,j,k) + (block(g)%v(i,j,k) *block(g)%w(i,j,k))
+        block(g)%uw_sum(i,j,k) = block(g)% uw_sum(i,j,k) + (block(g)%u(i,j,k) *block(g)%w(i,j,k))
 
-              block(g)%u2_sum(i,j,k) = block(g)%u2_sum(i,j,k) + ((block(g)%u(i,j,k))**2)
-              block(g)%v2_sum(i,j,k) = block(g)%v2_sum(i,j,k) + ((block(g)%v(i,j,k))**2)
-              block(g)%w2_sum(i,j,k) = block(g)%w2_sum(i,j,k) + ((block(g)%w(i,j,k))**2)
-              block(g)%p2_sum(i,j,k) = block(g)%p2_sum(i,j,k) + (block(g)%p(i,j,k)*block(g)%p(i,j,k))
- 30         CONTINUE
+        block(g)%u2_sum(i,j,k) = block(g)%u2_sum(i,j,k) + ((block(g)%u(i,j,k))**2)
+        block(g)%v2_sum(i,j,k) = block(g)%v2_sum(i,j,k) + ((block(g)%v(i,j,k))**2)
+        block(g)%w2_sum(i,j,k) = block(g)%w2_sum(i,j,k) + ((block(g)%w(i,j,k))**2)
+        block(g)%p2_sum(i,j,k) = block(g)%p2_sum(i,j,k) + (block(g)%p(i,j,k)*block(g)%p(i,j,k))
+30    CONTINUE
             !!$acc end parallel
 
-           END DO
-      END SUBROUTINE computeSumSqData
+      END DO
+  END SUBROUTINE computeSumSqData
 !***********************************************************************
       SUBROUTINE computePhaseAvgData
-       USE global
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER  :: n, k, i, j,g
 
@@ -730,7 +726,6 @@ contains
       END SUBROUTINE computePhaseAvgData
 !!***********************************************************************
     ! SUBROUTINE writeComputeSqSumData
-    !   USE global
     !   implicit none
     !   INTEGER, PARAMETER :: rk = selected_real_kind(8)
     !   INTEGER::  i, j, k
@@ -796,13 +791,12 @@ contains
 
 
       SUBROUTINE writeAvgoutput_fl
-       USE global
-!!tec       USE mod_tecio
+
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=70)  :: filename1
        CHARACTER(len=70)  :: filename2
        INTEGER  :: k, i, j, g
-       REAL (KIND = 8) :: u_avg1, v_avg1, w_avg1
+       REAL (dp) :: u_avg1, v_avg1, w_avg1
 !!tec         CHARACTER*1 NULLCHR
 !!tec       INTEGER*4 iStat, FileFormat, FileType, Debug, VIsDouble
 !!tec       integer*4 ZoneType, IMax, JMax, KMax, ICellMax, JCellMax,KCellMax
@@ -911,10 +905,11 @@ contains
            DO 30 k = 2, block(g)%nz+1
            DO 30 j = 2, block(g)%ny+1
            DO 30 i = 2, block(g)%nx+1
-              u_avg1 = 0.5*(block(g)%u_avg(i,j,k)+block(g)%u_avg(i-1,j,k))
-              v_avg1 = 0.5*(block(g)%v_avg(i,j,k)+block(g)%v_avg(i,j-1,k))
-              w_avg1 = 0.5*(block(g)%w_avg(i,j,k)+block(g)%w_avg(i,j,k-1))
-              WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u_avg1, v_avg1, w_avg1, block(g)%p_avg(i,j,k), totime, block(g)%cell(i,j,k)
+              u_avg1 = 0.5_dp*(block(g)%u_avg(i,j,k)+block(g)%u_avg(i-1,j,k))
+              v_avg1 = 0.5_dp*(block(g)%v_avg(i,j,k)+block(g)%v_avg(i,j-1,k))
+              w_avg1 = 0.5_dp*(block(g)%w_avg(i,j,k)+block(g)%w_avg(i,j,k-1))
+              WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u_avg1, v_avg1, w_avg1, &
+                           block(g)%p_avg(i,j,k), totime, block(g)%cell(i,j,k)
 30         CONTINUE
            CLOSE(786)
            END DO
@@ -922,13 +917,11 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE write_fl_points
 
-       USE global
-
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=150)  :: filename1
        CHARACTER(len=150)  :: filename2
        INTEGER  :: n,k, i, j, g
-       REAL (KIND = 8) :: uu, vv, ww, uv, vw, wu
+       REAL (dp) :: uu, vv, ww, uv, vw, wu
 
         g=1
 
@@ -1077,8 +1070,6 @@ contains
         end subroutine write_fl_points
 !!!cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 !!      SUBROUTINE writeOutput
-!!       USE global
-!!       USE mod_tecio
 !!       INTEGER, PARAMETER :: rk = selected_real_kind(8)
 !!       CHARACTER*120  filename1
 !!       CHARACTER*70  filename2
