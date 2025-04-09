@@ -122,7 +122,6 @@ contains
       SUBROUTINE writeOutput1
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=150)  :: filename1
-       CHARACTER(len=150)  :: filename2
        INTEGER  :: k, i, j, g
        REAL (dp) :: u1, v1, w1
 
@@ -296,7 +295,6 @@ contains
      SUBROUTINE writeTagging
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=70)  :: filename1
-       CHARACTER(len=70)  :: filename2
        INTEGER  :: k, i, j, g
        INTEGER :: geo_num  ! Currently unused
         g=2
@@ -446,7 +444,7 @@ contains
 !***********************************************************************
       SUBROUTINE computeAvgData
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
-       INTEGER  :: n, k, i, j, g
+       INTEGER  :: k, i, j, g
              DO 30 g=1,nblocks
 	     DO 30 k = 1, block(g)%nz+2
              DO 30 j = 1, block(g)%ny+2
@@ -463,7 +461,6 @@ contains
       SUBROUTINE writeAvgoutput
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=70)  :: filename1
-       CHARACTER(len=70)  :: filename2
        INTEGER  :: k, i, j, g
        REAL (dp) :: u_avg1, v_avg1, w_avg1
 !!tec         CHARACTER*1 NULLCHR
@@ -613,7 +610,7 @@ contains
 
   SUBROUTINE computeSumSqData
     INTEGER, PARAMETER :: rk = selected_real_kind(8)
-    INTEGER  :: n, k, i, j, g
+    INTEGER  :: k, i, j, g
       DO  g=1,nblocks
 
       !!$acc parallel loop gang vector collapse (3) default(present)
@@ -650,7 +647,7 @@ contains
 !***********************************************************************
       SUBROUTINE computePhaseAvgData
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
-       INTEGER  :: n, k, i, j,g
+       INTEGER  :: k, i, j,g
 
        !print*, nCycle, ph, phdif(ph)
 
@@ -794,7 +791,6 @@ contains
 
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=70)  :: filename1
-       CHARACTER(len=70)  :: filename2
        INTEGER  :: k, i, j, g
        REAL (dp) :: u_avg1, v_avg1, w_avg1
 !!tec         CHARACTER*1 NULLCHR
@@ -919,7 +915,6 @@ contains
 
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=150)  :: filename1
-       CHARACTER(len=150)  :: filename2
        INTEGER  :: n,k, i, j, g
        REAL (dp) :: uu, vv, ww, uv, vw, wu
 

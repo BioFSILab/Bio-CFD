@@ -10,10 +10,6 @@ module biocfd_boundary_conditions
 !***********************************************************************
 SUBROUTINE velocityBC
       INTEGER (int64):: i, j, k, g
-      REAL (dp) :: a1, b1, c1, a2, b2, c2, a3, b3, c3, a4, b4, c4, &
-                         a5, b5, c5, a6, b6, c6, a7, b7, c7, a8, b8, c8, &
-                         x3, uinlet, varx1
-      REAL (dp) :: a00, qinlet, inletArea, outletArea
 
     !uc=1._rk
 
@@ -151,7 +147,7 @@ SUBROUTINE velocityBC
 !**************************************************************
       !SUBROUTINE solidCellBC_move(b_blk_no)
       SUBROUTINE solidCellBC_move(g)
-         INTEGER (int64):: i, j, k,n, vbcOption
+         INTEGER (int64):: i, j, k,n
          !INTEGER :: g
          INTEGER (int64),INTENT(IN):: g
          ! INTEGER (KIND = 8), INTENT(IN) :: b_blk_no

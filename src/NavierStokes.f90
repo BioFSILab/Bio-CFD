@@ -676,12 +676,12 @@ contains
 	          u15,u16,v1a,v22,v3,v4,v5,v6,v7,v8,v9,v10,v11,v12,v13,v14,v15,v16, &
 			  w1a,w22,w3,w4,w5,w6,w7,w8,w9,w10,w11,w12,w13,w14,w15,w16,dx2xr, &
 			  dx2xl,dy2ye,dy2yw, dxr, dx, dxl, dye, dy, dyw, dzt, dz, dzb, &
-			  dz2zt,dz2zb,ddx,ddxr,ddy,ddye,ddz,ddzr,r1x,r1y,r1z,r1xn,r1xd,r1yn, &
-			  r1yd,r1zn,r1zd,wu_n,wu_s,w_in_um,vu_e,vu_w,v_in_um,duutdx,dvutdy, &
-			  dwutdz,duuwdx,dvuwdy,dwuwdz,duudx,dvudy,dwudz,d2udx2,d2udy2,d2udz2, &
-			  uv_e,uv_w,u_in_vm,wv_n,wv_s,w_in_vm,duvtdx,dvvtdy,dwvtdz,duvwdx, &
-			  dvvwdy,dwvwdz,duvdx,dvvdy,dwvdz,d2vdx2,d2vdy2,d2vdz2,uw_e,uw_w, &
-			  u_in_wm,vw_n,vw_s,v_in_wm,duwtdx,dvwtdy,dwwtdz,duwwdx,dvwwdy,dwwwdz, &
+			  dz2zt,dz2zb,ddx,ddxr,ddy,ddye,ddz,ddzr,dwudz, &
+			  wu_n,wu_s,w_in_um,vu_e,vu_w,v_in_um,duutdx,dvutdy, &
+			  dwutdz,duudx,dvudy,d2udx2,d2udy2,d2udz2, &
+			  uv_e,uv_w,u_in_vm,wv_n,wv_s,w_in_vm,duvtdx,dvvtdy,dwvtdz, &
+			  duvdx,dvvdy,dwvdz,d2vdx2,d2vdy2,d2vdz2,uw_e,uw_w, &
+			  u_in_wm,vw_n,vw_s,v_in_wm,duwtdx,dvwtdy,dwwtdz, &
 			  duwdx,dvwdy,dwwdz,d2wdx2,d2wdy2,d2wdz2,xtt2,residu,ytt2,residv,ztt2,residw, &
 			  temp_u1dotn, temp_u2dotn, temp_v1dotn, temp_v2dotn, temp_w1dotn, temp_w2dotn, temp_pdotn
      al = 1.
@@ -1158,7 +1158,7 @@ contains
 
              ENDDO
       ENDIF
- 11  CONTINUE
+! 11  CONTINUE
 	   dxr=block(g)%deltax(i+1)
 	   dx=block(g)%deltax(i)
 	   dxl=block(g)%deltax(i-1)
