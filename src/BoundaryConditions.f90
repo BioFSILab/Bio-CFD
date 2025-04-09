@@ -63,7 +63,7 @@ SUBROUTINE velocityBC
                                         block(g)%v(block(g)%nx+1,j,k)- &
                                         (2._dp*deltat/block(g)%deltax(block(g)%nx+2))*&
                                     uc*(block(g)%v(block(g)%nx+2,j,k)-block(g)%v(block(g)%nx+1,j,k))
-      block(g)%wt(block(g)%nx+2,j,k) = -block(g)%wt(block(g)%nx+1,j,k)+
+      block(g)%wt(block(g)%nx+2,j,k) = -block(g)%wt(block(g)%nx+1,j,k)+ &
                                        block(g)%w(block(g)%nx+2,j,k)+ &
                                        block(g)%w(block(g)%nx+1,j,k)- &
                                        (2._dp*deltat/block(g)%deltax(block(g)%nx+2))*&
