@@ -6,8 +6,8 @@ module biocfd_coefficient_matrix
 SUBROUTINE coefficientMatrix
         USE global
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) :: n, g, i, j, k, iType,f,nx_var,ny_var,nz_var,counter,ip
-        REAL (KIND = 8)    ::  rx1, rx2, rxsum, ry1, ry2, rysum, rz1, rz2, rzsum, varx1
+        INTEGER (kind = 8) :: i, j, f,nx_var,ny_var,nz_var
+        REAL (KIND = 8)    ::  rx1, rx2, rxsum, ry1, ry2, rysum, rz1, rz2, rzsum
 
          DO f=1,nblocks
          nx_var=block(f)%nx
