@@ -1,5 +1,5 @@
 module biocfd_search
-
+  use, intrinsic :: iso_fortran_env, only: dp => real64, int64, int32
   use global
   use biocfd_fine_interp, only: fineUpdate_mv
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
@@ -8,9 +8,8 @@ module biocfd_search
   contains
 !***********************************************************************
         SUBROUTINE findDistnode
-        USE global
-        REAL (KIND=8)      ::  dist, dist1, dist2
-        INTEGER (kind = 8) ::  i, g
+        REAL(dp)      ::  dist, dist1, dist2
+        INTEGER(int64) ::  i, g
 
 
         DO g=blk_start,nblocks
@@ -40,11 +39,10 @@ module biocfd_search
 
 !***********************************************************************
      SUBROUTINE shiftSurfaceNodesInitial
-        USE global
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) ::  i, g
-        REAL (KIND=8)      ::  xr1, yr1, zr1, angt
-        REAL (KIND=8)      :: bdy,bdfr
+        INTEGER(int64) ::  i, g
+        REAL(dp)      ::  xr1, yr1, zr1, angt
+        REAL(dp)      :: bdy,bdfr
 
         phase_angle = phase_angle*pi/180_rk
         aoa1 = aoa*pi/180_rk
@@ -191,12 +189,12 @@ module biocfd_search
       END SUBROUTINE shiftSurfaceNodesInitial
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       SUBROUTINE computeSurfaceVariables
-        USE global
+
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) ::  i, g
-        REAL (KIND=8)      ::  xr1, yr1, zr1
-        REAL (KIND=8)      :: angg, angt
-        REAL (KIND=8)      :: bdy,bdfr
+        INTEGER(int64) ::  i, g
+        REAL(dp)      ::  xr1, yr1, zr1
+        REAL(dp)      :: angg, angt
+        REAL(dp)      :: bdy,bdfr
         CHARACTER(len=150) :: filename1
 
         DO g=blk_start,nblocks
@@ -332,11 +330,11 @@ module biocfd_search
 
 !***********************************************************************
       SUBROUTINE computeSurfaceNorm
-        USE global
+
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) ::  n, g  !c1, c2, c3, c4
-        REAL (KIND=8)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL, binor
-        REAL (KIND=8)      :: var_xcent, var_ycent, var_zcent
+        INTEGER(int64) ::  n, g  !c1, c2, c3, c4
+        REAL(dp)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL, binor
+        REAL(dp)      :: var_xcent, var_ycent, var_zcent
 
 
 
@@ -427,11 +425,11 @@ module biocfd_search
      END SUBROUTINE computeSurfaceNorm
 !**************************************************************************
      SUBROUTINE tagging_th
-        USE global
+
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) :: g, n, m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
-        REAL (KIND=8)      :: n1x, n1y, n1z, n2x, n2y, n2z, minDis1, minDis, &
-                              n2dotn, cent_x, cent_y, cent_z, dis_cen, dis_pnt
+        INTEGER(int64) :: g, n, m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
+        REAL(dp)      :: n1x, n1y, n1z, n2x, n2y, n2z, minDis1, minDis, &
+                         n2dotn, cent_x, cent_y, cent_z, dis_cen, dis_pnt
 
         CHARACTER(LEN=120) :: filename1
         !g=2
@@ -626,12 +624,12 @@ module biocfd_search
 !***********************************************************************
 !**************************************************************************
      SUBROUTINE tagging_th_move
-        USE global
+
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) :: g, n, m, i, j, k, nel2Cen, nel2Pnt, sumNodeId
+        INTEGER(int64) :: g, n, m, i, j, k, nel2Cen, nel2Pnt, sumNodeId
 
         INTEGER            :: a_blk_no, b_blk_no
-        REAL (KIND=8)      :: n1x, n1y, n1z, n2x,n2y,n2z, minDis1, minDis, &
+        REAL(dp)      :: n1x, n1y, n1z, n2x,n2y,n2z, minDis1, minDis, &
                               n2dotn, cent_x, cent_y, cent_z, dis_cen, dis_pnt
 
         CHARACTER(LEN=120) :: filename1
@@ -881,7 +879,7 @@ module biocfd_search
 !**************************************************************************
 
      SUBROUTINE findTScells
-        USE global
+
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER            :: g,i, j, k, i1, j1, k1, iPt1, m, n, tscnt
         CHARACTER(len=70) :: filename1
@@ -1047,12 +1045,12 @@ module biocfd_search
 !***********************************************************************
 
      SUBROUTINE selectiveRetagging_th
-        USE global
+
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) ::  n, g, m, i, j, k, i1, j1, k1, nn, &
+        INTEGER(int64) ::  n, g, m, i, j, k, i1, j1, k1, nn, &
                                nel2Pnt, nel2Cen, sumNodeID
         INTEGER            :: flcnt, sdcnt, ibcnt
-        REAL (KIND=8)      :: n1x, n1y, n1z, n2x, n2y, n2z, minDis, minDis1, dis_cen, dis_pnt, &
+        REAL(dp)      :: n1x, n1y, n1z, n2x, n2y, n2z, minDis, minDis1, dis_cen, dis_pnt, &
                               n2dotn, cent_x, cent_y, cent_z
 
         !g=2
@@ -1316,9 +1314,9 @@ block(g)%fluidCellCount = flcnt
      END SUBROUTINE selectiveRetagging_th
 !***********************************************************************
      SUBROUTINE cellCount_solid
-        USE global
+
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) ::  n, iPt, iPt1, iPt2, i, j, k, g
+        INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k, g
 
         print*, "cellCount started"
 
@@ -1404,10 +1402,10 @@ block(g)%fluidCellCount = flcnt
 !**************************************************************************
 
       SUBROUTINE cellCount
-        USE global
+
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) ::  n, iPt, iPt1, iPt2, i, j
-        INTEGER (kind = 8)::  g, k, rccount, bccount
+        INTEGER(int64) ::  n, iPt, iPt1, iPt2, i, j
+        INTEGER(int64)::  g, k, rccount, bccount
 
 
          g=1
@@ -1496,11 +1494,11 @@ block(g)%fluidCellCount = flcnt
 
 !***********************************************************************************************************************
      SUBROUTINE computeNormDistance
-        USE global
+
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER            ::  nel2u1, nel2u2, nel2v1, nel2v2, nel2w1, nel2w2
         INTEGER            :: k, nel2p, g, ibxx, m
-        REAL (KIND=8)      :: n1x, n2x, n3x, n1y, n2y, n3y, n1z, n2z, n3z, dis, dis1, dis2, dis3, dis4, dis5, dis6, minDis, minDis1, minDis2, minDis3, minDis4, minDis5, minDis6, cent_x, cent_y,cent_z
+        REAL(dp)      :: n1x, n2x, n3x, n1y, n2y, n3y, n1z, n2z, n3z, dis, dis1, dis2, dis3, dis4, dis5, dis6, minDis, minDis1, minDis2, minDis3, minDis4, minDis5, minDis6, cent_x, cent_y,cent_z
         
         print*, 'computeNormDistance started'
         DO g=blk_start,nblocks
@@ -1639,7 +1637,7 @@ block(g)%fluidCellCount = flcnt
 
 
         USE global
-        INTEGER (KIND=8) :: i, j, k, g, factor, a_blk_no, b_blk_no
+        INTEGER(int64) :: i, j, k, g, factor, a_blk_no, b_blk_no
 
 
         block(1)%cell_n=0
@@ -1712,10 +1710,10 @@ block(g)%fluidCellCount = flcnt
 !**************************************************************************
 !**************************************************************************
         SUBROUTINE cellCount_coarse_new
-        USE global
+
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) ::  n, iPt, iPt1, iPt2, i, j, k
-        INTEGER (kind = 8)::  g
+        INTEGER(int64) ::  n, iPt, iPt1, iPt2, i, j, k
+        INTEGER(int64)::  g
 
 
         g=1
@@ -1838,11 +1836,10 @@ block(g)%fluidCellCount = flcnt
 !**************************************************************************
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE cellCount_solid_coarse_mv
-        USE global
+
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) ::  n, iPt, iPt1, iPt2, i, j, k
-        !INTEGER (kind = 8),Intent(in) ::  g
-        INTEGER (kind = 8) ::  g
+        INTEGER(int64) ::  n, iPt, iPt1, iPt2, i, j, k
+        INTEGER(int64) ::  g
         g=1
 
         if ( coarse_flcnt_check == 1)then
@@ -1952,7 +1949,7 @@ block(g)%fluidCellCount = flcnt
 
 
         USE global
-        INTEGER (KIND=8) :: i, j, k, g,  factor, a_blk_no, b_blk_no
+        INTEGER(int64) :: i, j, k, g,  factor, a_blk_no, b_blk_no
 
         !block(1)%cell_n=0
         block(1)%cell=0
@@ -2014,9 +2011,9 @@ block(g)%fluidCellCount = flcnt
 
         SUBROUTINE block_move_check
         use global
-        INTEGER(KIND=8) :: i,j,k,g, a_blk_no, b_blk_no, factor
-        REAL(KIND=8) :: ydisp1, xdisp1, zdisp1, mg1
-        REAL(KIND=8) :: marginx, marginy, marginz, yval_up, yval_dw, xval_lt, xval_rt
+        INTEGER(int64) :: i,j,k,g, a_blk_no, b_blk_no, factor
+        REAL(dp) :: ydisp1, xdisp1, zdisp1, mg1
+        REAL(dp) :: marginx, marginy, marginz, yval_up, yval_dw, xval_lt, xval_rt
 
         DO g=1,intflines
         a_blk_no=intfr(g)%a_blk
@@ -2289,10 +2286,10 @@ block(g)%fluidCellCount = flcnt
 
         SUBROUTINE change_block_coords
 
-        use global
-        INTEGER(KIND=8) :: i,j,k,g, a_blk_no, b_blk_no,countx_st,countz_st,county_st
-        REAL(KIND=8) :: change_y_f,change_x_f
-        REAL(KIND=8) :: change_z_f
+
+        INTEGER(int64) :: i,j,k,g, a_blk_no, b_blk_no,countx_st,countz_st,county_st
+        REAL(dp) :: change_y_f,change_x_f
+        REAL(dp) :: change_z_f
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         DO g=blk_start,nblocks
 
@@ -2574,7 +2571,7 @@ block(g)%fluidCellCount = flcnt
         SUBROUTINE change_block_interface
 
         use global
-        INTEGER(KIND=8) :: i,j,g, a_blk_no, b_blk_no, factor
+        INTEGER(int64) :: i,j,g, a_blk_no, b_blk_no, factor
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
 
 
@@ -2745,12 +2742,12 @@ block(g)%fluidCellCount = flcnt
 !******************************************************************
 
      SUBROUTINE tagging_block_move
-        USE global
+
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) ::  m, i, j, k, nel2n, g
+        INTEGER(int64) ::  m, i, j, k, nel2n, g
 
         INTEGER            :: a_blk_no, b_blk_no
-        REAL (KIND=8)      :: n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis, minDis, &
+        REAL(dp)      :: n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis, minDis, &
                               n1dotn, n2dotn, n3dotn, n4dotn, n5dotn, n6dotn, n7dotn, n8dotn, n9dotn,  &
                               cent_x, cent_y, cent_z
         CHARACTER(LEN=100) :: cLine
@@ -2985,11 +2982,11 @@ block(g)%fluidCellCount = flcnt
 !***********************************************************************
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE cellCount_solid_coarse
-        USE global
+
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) ::  n, iPt, iPt1, iPt2, i, j, k
+        INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k
         !INTEGER (kind = 8),Intent(in) ::  g
-        INTEGER (kind = 8) ::  g
+        INTEGER (int64) ::  g
         g=1
 
 !        if ( coarse_flcnt_check .eq. 1)then
@@ -3095,13 +3092,13 @@ block(g)%fluidCellCount = flcnt
 !******************************************************************
 
 !    SUBROUTINE tagging
-!       USE global
+!
 !       IMPLICIT NONE
 !       INTEGER, PARAMETER :: rk = selected_real_kind(8)
-!       INTEGER (kind = 8) ::  n, m, i, j, k, n1, n2, n3, n4, nel2n, g, ibElems_cnt
+!       INTEGER (int64) ::  n, m, i, j, k, n1, n2, n3, n4, nel2n, g, ibElems_cnt
 !
 !       INTEGER            :: iPt, iPt1
-!       REAL (KIND=8)      :: n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis, minDis, &
+!       REAL (dp)      :: n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis, minDis, &
 !                             n1dotn, n2dotn, n3dotn, n4dotn, n5dotn, n6dotn, n7dotn, n8dotn, n9dotn,  &
 !                             cent_x, cent_y, cent_z
 !       CHARACTER(LEN=100) :: cLine
@@ -3344,8 +3341,8 @@ block(g)%fluidCellCount = flcnt
 !
 !***********************************************************************
         SUBROUTINE readTagging
-        use global
-        INTEGER (kind = 8) ::   i, j, k,g
+
+        INTEGER (int64) ::   i, j, k,g
         CHARACTER(len=150)  :: filename1
 
         DO g=blk_start,nblocks
@@ -3374,13 +3371,13 @@ block(g)%fluidCellCount = flcnt
 !***********************************************************************
 
 !    SUBROUTINE selectiveRetagging
-!       USE global
+!
 !       IMPLICIT NONE
 !       INTEGER, PARAMETER :: rk = selected_real_kind(8)
-!       INTEGER (kind = 8) ::  n, m, i, j, k, n1, n2, n3, n4, i1, j1, k1, nn, &
+!       INTEGER (int64) ::  n, m, i, j, k, n1, n2, n3, n4, i1, j1, k1, nn, &
 !                              nel2n, sumId,g, tag_flag, ibElems_cnt
 !       INTEGER            :: iPt, iPt1, ibcnt, flcnt, sldcnt
-!       REAL (KIND=8)      :: n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis , minDis, &
+!       REAL (dp)      :: n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis , minDis, &
 !                             n1dotn, n2dotn, n3dotn, n4dotn, n5dotn, n6dotn, n7dotn, n8dotn, n9dotn,  &
 !                             cent_x, cent_y, cent_z
 !
