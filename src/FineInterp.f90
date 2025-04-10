@@ -1,18 +1,22 @@
 module biocfd_fine_interp
+  use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global
   implicit none
+  private
 
+  public :: fineUpdate, fineUpdate_mv
   contains
-
 SUBROUTINE fineUpdate
-        USE global
-        REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_valz, bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
-        REAL (KIND=8) :: bl_intp_z1,bl_intp_z2
-        REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
-        REAL (KIND=8) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
+        REAL (dp) :: bl_intp_valx,bl_intp_valy,bl_intp_valz, bl_intp_x1,bl_intp_x2,&
+             bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
+        REAL (dp) :: bl_intp_z1,bl_intp_z2
+        REAL (dp) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty,&
+             bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
+        REAL (dp) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
 
-        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y,g, a_blk_no, b_blk_no
-        INTEGER(KIND=8) :: varz1,varz2, tar_z, loc_z
+        INTEGER(int64) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x,&
+             loc_y,g, a_blk_no, b_blk_no
+        INTEGER(int64) :: varz1,varz2, tar_z, loc_z
 
 
 
@@ -37,7 +41,8 @@ SUBROUTINE fineUpdate
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-      ! if ( i .eq. 1 .or. i .eq. intfr(g)%counterxp .or. k .eq. 1 .or. k .eq. intfr(g)%counteryp)then
+        ! if ( i .eq. 1 .or. i .eq. intfr(g)%counterxp .or. ^
+        !k .eq. 1 .or. k .eq. intfr(g)%counteryp)then
 
       ! DO l=vary1,vary2
       ! DO j=varx1,varx2
@@ -93,22 +98,27 @@ SUBROUTINE fineUpdate
                 bl_intp_f3=block(a_blk_no)%p(loc_x+1,loc_y+1,loc_z+1)
                 bl_intp_f4=block(a_blk_no)%p(loc_x-1,loc_y+1,loc_z+1)
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
 
               ! else
 
               ! if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .eq. 0 )then
-              ! aa1=(block(a_blk_no)%xp(loc_x-1)-block(b_blk_no)%xp(tar_x))**2+ (block(a_blk_no)%yp(loc_y-1)-block(b_blk_no)%yp(tar_y))**2
+                  ! aa1=(block(a_blk_no)%xp(loc_x-1)-block(b_blk_no)%xp(tar_x))**2+ &
+                  !(block(a_blk_no)%yp(loc_y-1)-block(b_blk_no)%yp(tar_y))**2
               ! aamin=aa1
               ! elseif( block(a_blk_no)%cell(loc_x-1,loc_y+1) .eq. 0)then
-              ! aa2=(block(a_blk_no)%xp(loc_x-1)-block(b_blk_no)%xp(tar_x))**2+ (block(a_blk_no)%yp(loc_y+1)-block(b_blk_no)%yp(tar_y))**2
+                  ! aa2=(block(a_blk_no)%xp(loc_x-1)-block(b_blk_no)%xp(tar_x))**2+ &
+                  !(block(a_blk_no)%yp(loc_y+1)-block(b_blk_no)%yp(tar_y))**2
               ! aamin=dmin1(aamin,aa2)
               ! elseif( block(a_blk_no)%cell(loc_x+1,loc_y+1) .eq. 0 )then
-              ! aa3=(block(a_blk_no)%xp(loc_x+1)-block(b_blk_no)%xp(tar_x))**2+ (block(a_blk_no)%yp(loc_y+1)-block(b_blk_no)%yp(tar_y))**2
+                  ! aa3=(block(a_blk_no)%xp(loc_x+1)-block(b_blk_no)%xp(tar_x))**2+ &
+                  !(block(a_blk_no)%yp(loc_y+1)-block(b_blk_no)%yp(tar_y))**2
               ! aamin=dmin1(aamin,aa3)
               ! elseif( block(a_blk_no)%cell(loc_x+1,loc_y-1) .eq. 0)then
-              ! aa4=(block(a_blk_no)%xp(loc_x+1)-block(b_blk_no)%xp(tar_x))**2+ (block(a_blk_no)%yp(loc_y-1)-block(b_blk_no)%yp(tar_y))**2
+                  ! aa4=(block(a_blk_no)%xp(loc_x+1)-block(b_blk_no)%xp(tar_x))**2+ &
+                  !(block(a_blk_no)%yp(loc_y-1)-block(b_blk_no)%yp(tar_y))**2
               ! aamin=dmin1(aamin,aa4)
               ! endif
 
@@ -335,24 +345,30 @@ SUBROUTINE fineUpdate
                 bl_intp_f4=block(a_blk_no)%u(loc_x-2,loc_y+1,loc_z+1)
                 !block(b_blk_no)%u(tar_x,tar_y)=bl_interp_ans
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
-!                write(*,1221)'locs',i,k,l,j,block(a_blk_no)%xu(loc_x),block(a_blk_no)%yu(loc_y),block(b_blk_no)%xu(j),block(b_blk_no)%yu(l)
+                ! write(*,1221)'locs',i,k,l,j,block(a_blk_no)%xu(loc_x),block(a_blk_no)%yu(loc_y),&
+                !block(b_blk_no)%xu(j),block(b_blk_no)%yu(l)
 !1221            FORMAT(A4,4I4,4F10.5)
 !                write(*,1222) bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4,bl_interp_ans
 !1222            FORMAT(' ',5F10.5)
       !        else
       !         if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .eq. 0 )then
-      !         aa1=(block(a_blk_no)%xu(loc_x-1)-block(b_blk_no)%xu(tar_x))**2+ (block(a_blk_no)%yu(loc_y-1)-block(b_blk_no)%yu(tar_y))**2
+                  !         aa1=(block(a_blk_no)%xu(loc_x-1)-block(b_blk_no)%xu(tar_x))**2+ &
+                  !(block(a_blk_no)%yu(loc_y-1)-block(b_blk_no)%yu(tar_y))**2
       !         aamin=aa1
       !         elseif( block(a_blk_no)%cell(loc_x-1,loc_y+1) .eq. 0)then
-      !         aa2=(block(a_blk_no)%xu(loc_x-1)-block(b_blk_no)%xu(tar_x))**2+ (block(a_blk_no)%yu(loc_y+1)-block(b_blk_no)%yu(tar_y))**2
+                  !         aa2=(block(a_blk_no)%xu(loc_x-1)-block(b_blk_no)%xu(tar_x))**2+ &
+                  !(block(a_blk_no)%yu(loc_y+1)-block(b_blk_no)%yu(tar_y))**2
       !         aamin=dmin1(aamin,aa2)
       !         elseif( block(a_blk_no)%cell(loc_x+1,loc_y+1) .eq. 0 )then
-      !         aa3=(block(a_blk_no)%xu(loc_x+1)-block(b_blk_no)%xu(tar_x))**2+ (block(a_blk_no)%yu(loc_y+1)-block(b_blk_no)%yu(tar_y))**2
+                  !         aa3=(block(a_blk_no)%xu(loc_x+1)-block(b_blk_no)%xu(tar_x))**2+ &
+                  !(block(a_blk_no)%yu(loc_y+1)-block(b_blk_no)%yu(tar_y))**2
       !         aamin=dmin1(aamin,aa3)
       !         elseif( block(a_blk_no)%cell(loc_x+1,loc_y-1) .eq. 0)then
-      !         aa4=(block(a_blk_no)%xu(loc_x+1)-block(b_blk_no)%xu(tar_x))**2+ (block(a_blk_no)%yu(loc_y-1)-block(b_blk_no)%yu(tar_y))**2
+                  !         aa4=(block(a_blk_no)%xu(loc_x+1)-block(b_blk_no)%xu(tar_x))**2+ &
+                  !(block(a_blk_no)%yu(loc_y-1)-block(b_blk_no)%yu(tar_y))**2
       !         aamin=dmin1(aamin,aa4)
       !         endif
 
@@ -550,21 +566,26 @@ SUBROUTINE fineUpdate
                 bl_intp_f4=block(a_blk_no)%v(loc_x-1,loc_y,loc_z+1)
                 !block(b_blk_no)%v(tar_x,tar_y)=bl_interp_ans
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
 
       !         else
       !         if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .eq. 0 )then
-      !         aa1=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa1=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=aa1
       !         elseif( block(a_blk_no)%cell(loc_x-1,loc_y+1) .eq. 0)then
-      !         aa2=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa2=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=dmin1(aamin,aa2)
       !         elseif( block(a_blk_no)%cell(loc_x+1,loc_y+1) .eq. 0 )then
-      !         aa3=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa3=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=dmin1(aamin,aa3)
       !         elseif( block(a_blk_no)%cell(loc_x+1,loc_y-1) .eq. 0)then
-      !         aa4=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa4=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=dmin1(aamin,aa4)
       !         endif
 
@@ -668,21 +689,26 @@ SUBROUTINE fineUpdate
                 bl_intp_f4=block(a_blk_no)%w(loc_x-1,loc_y+1,loc_z)
                 !block(b_blk_no)%v(tar_x,tar_y)=bl_interp_ans
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
 
       !         else
       !         if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .eq. 0 )then
-      !         aa1=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa1=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=aa1
       !         elseif( block(a_blk_no)%cell(loc_x-1,loc_y+1) .eq. 0)then
-      !         aa2=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa2=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=dmin1(aamin,aa2)
       !         elseif( block(a_blk_no)%cell(loc_x+1,loc_y+1) .eq. 0 )then
-      !         aa3=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa3=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=dmin1(aamin,aa3)
       !         elseif( block(a_blk_no)%cell(loc_x+1,loc_y-1) .eq. 0)then
-      !         aa4=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa4=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=dmin1(aamin,aa4)
       !         endif
 
@@ -1201,15 +1227,17 @@ SUBROUTINE fineUpdate
         end subroutine fineUpdate
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE fineUpdate_mv(g)
-        USE global
-        REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_valz,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
-        REAL (KIND=8) :: bl_intp_z1,bl_intp_z2
-        REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
-        REAL (KIND=8) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
+        REAL (dp) :: bl_intp_valx,bl_intp_valy,bl_intp_valz,bl_intp_x1,bl_intp_x2,&
+             bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
+        REAL (dp) :: bl_intp_z1,bl_intp_z2
+        REAL (dp) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty,&
+             bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
+        REAL (dp) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
 
-        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y,a_blk_no, b_blk_no
-        INTEGER(KIND=8) :: varz1,varz2, tar_z, loc_z
-        INTEGER(KIND=8), INTENT(IN) :: g
+        INTEGER(dp) :: i,j,k,q,s,varx1,varx2,vary1,vary2,l,tar_x,tar_y,loc_x,loc_y,&
+             a_blk_no,b_blk_no
+        INTEGER(int64) :: varz1,varz2, tar_z, loc_z
+        INTEGER(int64), INTENT(IN) :: g
 
 
 
@@ -1233,7 +1261,8 @@ SUBROUTINE fineUpdate
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-      ! if ( i .eq. 1 .or. i .eq. intfr(g)%counterxp .or. k .eq. 1 .or. k .eq. intfr(g)%counteryp)then
+        ! if ( i .eq. 1 .or. i .eq. intfr(g)%counterxp .or. &
+        !k .eq. 1 .or. k .eq. intfr(g)%counteryp)then
 
       ! DO l=vary1,vary2
       ! DO j=varx1,varx2
@@ -1293,22 +1322,27 @@ SUBROUTINE fineUpdate
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
 
               ! else
 
               ! if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .eq. 0 )then
-              ! aa1=(block(a_blk_no)%xp(loc_x-1)-block(b_blk_no)%xp(tar_x))**2+ (block(a_blk_no)%yp(loc_y-1)-block(b_blk_no)%yp(tar_y))**2
+                  ! aa1=(block(a_blk_no)%xp(loc_x-1)-block(b_blk_no)%xp(tar_x))**2+ &
+                  !(block(a_blk_no)%yp(loc_y-1)-block(b_blk_no)%yp(tar_y))**2
               ! aamin=aa1
               ! elseif( block(a_blk_no)%cell(loc_x-1,loc_y+1) .eq. 0)then
-              ! aa2=(block(a_blk_no)%xp(loc_x-1)-block(b_blk_no)%xp(tar_x))**2+ (block(a_blk_no)%yp(loc_y+1)-block(b_blk_no)%yp(tar_y))**2
+                  ! aa2=(block(a_blk_no)%xp(loc_x-1)-block(b_blk_no)%xp(tar_x))**2+ &
+                  !(block(a_blk_no)%yp(loc_y+1)-block(b_blk_no)%yp(tar_y))**2
               ! aamin=dmin1(aamin,aa2)
               ! elseif( block(a_blk_no)%cell(loc_x+1,loc_y+1) .eq. 0 )then
-              ! aa3=(block(a_blk_no)%xp(loc_x+1)-block(b_blk_no)%xp(tar_x))**2+ (block(a_blk_no)%yp(loc_y+1)-block(b_blk_no)%yp(tar_y))**2
+                  ! aa3=(block(a_blk_no)%xp(loc_x+1)-block(b_blk_no)%xp(tar_x))**2+ &
+                  !(block(a_blk_no)%yp(loc_y+1)-block(b_blk_no)%yp(tar_y))**2
               ! aamin=dmin1(aamin,aa3)
               ! elseif( block(a_blk_no)%cell(loc_x+1,loc_y-1) .eq. 0)then
-              ! aa4=(block(a_blk_no)%xp(loc_x+1)-block(b_blk_no)%xp(tar_x))**2+ (block(a_blk_no)%yp(loc_y-1)-block(b_blk_no)%yp(tar_y))**2
+                  ! aa4=(block(a_blk_no)%xp(loc_x+1)-block(b_blk_no)%xp(tar_x))**2+ &
+                  !(block(a_blk_no)%yp(loc_y-1)-block(b_blk_no)%yp(tar_y))**2
               ! aamin=dmin1(aamin,aa4)
               ! endif
 
@@ -1506,7 +1540,8 @@ SUBROUTINE fineUpdate
 !1        format('test.dat')
 !        OPEN(919,FILE=filename1,access='append',status='unknown')
 
-!                 write(919,1222)ita,i,loc_x,loc_y,loc_z,tar_x,tar_y,tar_z,block(a_blk_no)%xu(loc_x-1),block(a_blk_no)%xu(loc_x+1),block(b_blk_no)%xu(tar_x)
+!  write(919,1222)ita,i,loc_x,loc_y,loc_z,tar_x,tar_y,tar_z,block(a_blk_no)%xu(loc_x-1),&
+!block(a_blk_no)%xu(loc_x+1),block(b_blk_no)%xu(tar_x)
 ! 1222            FORMAT(8I6,3F10.5)
 !                print*,'!!!',i,loc_x,tar_x
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
@@ -1546,24 +1581,30 @@ SUBROUTINE fineUpdate
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 !block(b_blk_no)%u(tar_x,tar_y)=bl_interp_ans
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
-!                write(*,1221)'locs',i,k,l,j,block(a_blk_no)%xu(loc_x),block(a_blk_no)%yu(loc_y),block(b_blk_no)%xu(j),block(b_blk_no)%yu(l)
+                  !write(*,1221)'locs',i,k,l,j,block(a_blk_no)%xu(loc_x),block(a_blk_no)%yu(loc_y),&
+                  !block(b_blk_no)%xu(j),block(b_blk_no)%yu(l)
 !1221            FORMAT(A4,4I4,4F10.5)
 !                write(*,1222) bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4,bl_interp_ans
 !1222            FORMAT(' ',5F10.5)
       !        else
       !         if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .eq. 0 )then
-      !         aa1=(block(a_blk_no)%xu(loc_x-1)-block(b_blk_no)%xu(tar_x))**2+ (block(a_blk_no)%yu(loc_y-1)-block(b_blk_no)%yu(tar_y))**2
+                  !         aa1=(block(a_blk_no)%xu(loc_x-1)-block(b_blk_no)%xu(tar_x))**2+ &
+                  !(block(a_blk_no)%yu(loc_y-1)-block(b_blk_no)%yu(tar_y))**2
       !         aamin=aa1
       !         elseif( block(a_blk_no)%cell(loc_x-1,loc_y+1) .eq. 0)then
-      !         aa2=(block(a_blk_no)%xu(loc_x-1)-block(b_blk_no)%xu(tar_x))**2+ (block(a_blk_no)%yu(loc_y+1)-block(b_blk_no)%yu(tar_y))**2
+                  !         aa2=(block(a_blk_no)%xu(loc_x-1)-block(b_blk_no)%xu(tar_x))**2+ &
+                  !(block(a_blk_no)%yu(loc_y+1)-block(b_blk_no)%yu(tar_y))**2
       !         aamin=dmin1(aamin,aa2)
       !         elseif( block(a_blk_no)%cell(loc_x+1,loc_y+1) .eq. 0 )then
-      !         aa3=(block(a_blk_no)%xu(loc_x+1)-block(b_blk_no)%xu(tar_x))**2+ (block(a_blk_no)%yu(loc_y+1)-block(b_blk_no)%yu(tar_y))**2
+                  !         aa3=(block(a_blk_no)%xu(loc_x+1)-block(b_blk_no)%xu(tar_x))**2+ &
+                  !(block(a_blk_no)%yu(loc_y+1)-block(b_blk_no)%yu(tar_y))**2
       !         aamin=dmin1(aamin,aa3)
       !         elseif( block(a_blk_no)%cell(loc_x+1,loc_y-1) .eq. 0)then
-      !         aa4=(block(a_blk_no)%xu(loc_x+1)-block(b_blk_no)%xu(tar_x))**2+ (block(a_blk_no)%yu(loc_y-1)-block(b_blk_no)%yu(tar_y))**2
+                  !         aa4=(block(a_blk_no)%xu(loc_x+1)-block(b_blk_no)%xu(tar_x))**2+ &
+                  !(block(a_blk_no)%yu(loc_y-1)-block(b_blk_no)%yu(tar_y))**2
       !         aamin=dmin1(aamin,aa4)
       !         endif
 
@@ -1764,21 +1805,26 @@ SUBROUTINE fineUpdate
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 !block(b_blk_no)%v(tar_x,tar_y)=bl_interp_ans
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
 
       !         else
       !         if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .eq. 0 )then
-      !         aa1=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa1=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=aa1
       !         elseif( block(a_blk_no)%cell(loc_x-1,loc_y+1) .eq. 0)then
-      !         aa2=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa2=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=dmin1(aamin,aa2)
       !         elseif( block(a_blk_no)%cell(loc_x+1,loc_y+1) .eq. 0 )then
-      !         aa3=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa3=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=dmin1(aamin,aa3)
       !         elseif( block(a_blk_no)%cell(loc_x+1,loc_y-1) .eq. 0)then
-      !         aa4=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa4=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=dmin1(aamin,aa4)
       !         endif
 
@@ -1885,21 +1931,26 @@ SUBROUTINE fineUpdate
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 !block(b_blk_no)%v(tar_x,tar_y)=bl_interp_ans
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
 
       !         else
       !         if ( block(a_blk_no)%cell(loc_x-1,loc_y-1) .eq. 0 )then
-      !         aa1=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa1=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=aa1
       !         elseif( block(a_blk_no)%cell(loc_x-1,loc_y+1) .eq. 0)then
-      !         aa2=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa2=(block(a_blk_no)%xv(loc_x-1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=dmin1(aamin,aa2)
       !         elseif( block(a_blk_no)%cell(loc_x+1,loc_y+1) .eq. 0 )then
-      !         aa3=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa3=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y+1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=dmin1(aamin,aa3)
       !         elseif( block(a_blk_no)%cell(loc_x+1,loc_y-1) .eq. 0)then
-      !         aa4=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ (block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
+                  !         aa4=(block(a_blk_no)%xv(loc_x+1)-block(b_blk_no)%xv(tar_x))**2+ &
+                  !(block(a_blk_no)%yv(loc_y-1)-block(b_blk_no)%yv(tar_y))**2
       !         aamin=dmin1(aamin,aa4)
       !         endif
 
