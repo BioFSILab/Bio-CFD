@@ -1,6 +1,5 @@
-
 module biocfd_navier_stokes
-
+  use, intrinsic :: iso_fortran_env, only: dp => real64
   use global
   implicit none
   private
@@ -11,11 +10,9 @@ contains
 !ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
 
 	SUBROUTINE non_uni_coeff
-       USE global
-
 	!write(*,*)'entered non_uni_coeff'
-	INTEGER  (KIND=8) :: i, j, k, g, nx_var, ny_var, nz_var
-	REAL (KIND = 8)   :: f_1, f_2, f_3, f_4, f_5, f_6, f_7, f_8,                             &
+	INTEGER  (dp) :: i, j, k, g, nx_var, ny_var, nz_var
+	REAL (dp)   :: f_1, f_2, f_3, f_4, f_5, f_6, f_7, f_8,                             &
                          s51, s52, s53, s54, s55, s56, s57, s61, s62, s63, s64, s65, s66, s67,  &
                          s71, s72, s73, s74, s75, s76, s81, s82, s83, s84, s85, s86, s91, s92,  &
                          s93, s94, s95, s96, s97, s101, s102, s103, s104, s105, s106, s107,     &
@@ -29,24 +26,42 @@ contains
         ny_var=block(g)%ny
         nz_var=block(g)%nz
 
-       ALLOCATE(block(g)%ca1_uu(nx_var+2), block(g)%ca2_uu(nx_var+2), block(g)%ca3_uu(nx_var+2), block(g)%ca4_uu(nx_var+2), block(g)%ca5_uu(nx_var+2), block(g)%ca6_uu(nx_var+2), &
-	block(g)%ck1_uu(nx_var+2), block(g)%ck2_uu(nx_var+2), block(g)%ck3_uu(nx_var+2), block(g)%ck4_uu(nx_var+2), block(g)%ck5_uu(nx_var+2), block(g)%ck6_uu(nx_var+2), &
-	block(g)%ca1_vv(ny_var+2), block(g)%ca2_vv(ny_var+2), block(g)%ca3_vv(ny_var+2), block(g)%ca4_vv(ny_var+2), block(g)%ca5_vv(ny_var+2), block(g)%ca6_vv(ny_var+2), &
-	block(g)%ck1_vv(ny_var+2), block(g)%ck2_vv(ny_var+2), block(g)%ck3_vv(ny_var+2), block(g)%ck4_vv(ny_var+2), block(g)%ck5_vv(ny_var+2), block(g)%ck6_vv(ny_var+2), &
-	block(g)%ca1_ww(nz_var+2), block(g)%ca2_ww(nz_var+2), block(g)%ca3_ww(nz_var+2), block(g)%ca4_ww(nz_var+2), block(g)%ca5_ww(nz_var+2), block(g)%ca6_ww(nz_var+2), &
-	block(g)%ck1_ww(nz_var+2), block(g)%ck2_ww(nz_var+2), block(g)%ck3_ww(nz_var+2), block(g)%ck4_ww(nz_var+2), block(g)%ck5_ww(nz_var+2), block(g)%ck6_ww(nz_var+2), &
-	block(g)%ca1_uv(nx_var+2), block(g)%ca2_uv(nx_var+2), block(g)%ca3_uv(nx_var+2), block(g)%ca4_uv(nx_var+2), block(g)%ca5_uv(nx_var+2), block(g)%ca6_uv(nx_var+2), &
-	block(g)%ck1_uv(nx_var+2), block(g)%ck2_uv(nx_var+2), block(g)%ck3_uv(nx_var+2), block(g)%ck4_uv(nx_var+2), block(g)%ck5_uv(nx_var+2), block(g)%ck6_uv(nx_var+2), &
-	block(g)%ca1_uw(nx_var+2), block(g)%ca2_uw(nx_var+2), block(g)%ca3_uw(nx_var+2), block(g)%ca4_uw(nx_var+2), block(g)%ca5_uw(nx_var+2), block(g)%ca6_uw(nx_var+2), &
-	block(g)%ck1_uw(nx_var+2), block(g)%ck2_uw(nx_var+2), block(g)%ck3_uw(nx_var+2), block(g)%ck4_uw(nx_var+2), block(g)%ck5_uw(nx_var+2), block(g)%ck6_uw(nx_var+2), &
-	block(g)%ca1_vu(ny_var+2), block(g)%ca2_vu(ny_var+2), block(g)%ca3_vu(ny_var+2), block(g)%ca4_vu(ny_var+2), block(g)%ca5_vu(ny_var+2), block(g)%ca6_vu(ny_var+2), &
-	block(g)%ck1_vu(ny_var+2), block(g)%ck2_vu(ny_var+2), block(g)%ck3_vu(ny_var+2), block(g)%ck4_vu(ny_var+2), block(g)%ck5_vu(ny_var+2), block(g)%ck6_vu(ny_var+2), &
-	block(g)%ca1_vw(ny_var+2), block(g)%ca2_vw(ny_var+2), block(g)%ca3_vw(ny_var+2), block(g)%ca4_vw(ny_var+2), block(g)%ca5_vw(ny_var+2), block(g)%ca6_vw(ny_var+2), &
-	block(g)%ck1_vw(ny_var+2), block(g)%ck2_vw(ny_var+2), block(g)%ck3_vw(ny_var+2), block(g)%ck4_vw(ny_var+2), block(g)%ck5_vw(ny_var+2), block(g)%ck6_vw(ny_var+2), &
-	block(g)%ca1_wu(nz_var+2), block(g)%ca2_wu(nz_var+2), block(g)%ca3_wu(nz_var+2), block(g)%ca4_wu(nz_var+2), block(g)%ca5_wu(nz_var+2), block(g)%ca6_wu(nz_var+2), &
-	block(g)%ck1_wu(nz_var+2), block(g)%ck2_wu(nz_var+2), block(g)%ck3_wu(nz_var+2), block(g)%ck4_wu(nz_var+2), block(g)%ck5_wu(nz_var+2), block(g)%ck6_wu(nz_var+2), &
-	block(g)%ca1_wv(nz_var+2), block(g)%ca2_wv(nz_var+2), block(g)%ca3_wv(nz_var+2), block(g)%ca4_wv(nz_var+2), block(g)%ca5_wv(nz_var+2), block(g)%ca6_wv(nz_var+2), &
-	block(g)%ck1_wv(nz_var+2), block(g)%ck2_wv(nz_var+2), block(g)%ck3_wv(nz_var+2), block(g)%ck4_wv(nz_var+2), block(g)%ck5_wv(nz_var+2), block(g)%ck6_wv(nz_var+2))
+        ALLOCATE(block(g)%ca1_uu(nx_var+2), block(g)%ca2_uu(nx_var+2), block(g)%ca3_uu(nx_var+2), &
+             block(g)%ca4_uu(nx_var+2), block(g)%ca5_uu(nx_var+2), block(g)%ca6_uu(nx_var+2), &
+             block(g)%ck1_uu(nx_var+2), block(g)%ck2_uu(nx_var+2), block(g)%ck3_uu(nx_var+2), &
+             block(g)%ck4_uu(nx_var+2), block(g)%ck5_uu(nx_var+2), block(g)%ck6_uu(nx_var+2), &
+             block(g)%ca1_vv(ny_var+2), block(g)%ca2_vv(ny_var+2), block(g)%ca3_vv(ny_var+2), &
+             block(g)%ca4_vv(ny_var+2), block(g)%ca5_vv(ny_var+2), block(g)%ca6_vv(ny_var+2), &
+             block(g)%ck1_vv(ny_var+2), block(g)%ck2_vv(ny_var+2), block(g)%ck3_vv(ny_var+2), &
+             block(g)%ck4_vv(ny_var+2), block(g)%ck5_vv(ny_var+2), block(g)%ck6_vv(ny_var+2), &
+             block(g)%ca1_ww(nz_var+2), block(g)%ca2_ww(nz_var+2), block(g)%ca3_ww(nz_var+2), &
+             block(g)%ca4_ww(nz_var+2), block(g)%ca5_ww(nz_var+2), block(g)%ca6_ww(nz_var+2), &
+             block(g)%ck1_ww(nz_var+2), block(g)%ck2_ww(nz_var+2), block(g)%ck3_ww(nz_var+2), &
+             block(g)%ck4_ww(nz_var+2), block(g)%ck5_ww(nz_var+2), block(g)%ck6_ww(nz_var+2), &
+             block(g)%ca1_uv(nx_var+2), block(g)%ca2_uv(nx_var+2), block(g)%ca3_uv(nx_var+2), &
+             block(g)%ca4_uv(nx_var+2), block(g)%ca5_uv(nx_var+2), block(g)%ca6_uv(nx_var+2), &
+             block(g)%ck1_uv(nx_var+2), block(g)%ck2_uv(nx_var+2), block(g)%ck3_uv(nx_var+2), &
+             block(g)%ck4_uv(nx_var+2), block(g)%ck5_uv(nx_var+2), block(g)%ck6_uv(nx_var+2), &
+             block(g)%ca1_uw(nx_var+2), block(g)%ca2_uw(nx_var+2), block(g)%ca3_uw(nx_var+2), &
+             block(g)%ca4_uw(nx_var+2), block(g)%ca5_uw(nx_var+2), block(g)%ca6_uw(nx_var+2))
+        ALLOCATE(block(g)%ck1_uw(nx_var+2), block(g)%ck2_uw(nx_var+2), block(g)%ck3_uw(nx_var+2), &
+             block(g)%ck4_uw(nx_var+2), block(g)%ck5_uw(nx_var+2), block(g)%ck6_uw(nx_var+2), &
+             block(g)%ca1_vu(ny_var+2), block(g)%ca2_vu(ny_var+2), block(g)%ca3_vu(ny_var+2), &
+             block(g)%ca4_vu(ny_var+2), block(g)%ca5_vu(ny_var+2), block(g)%ca6_vu(ny_var+2), &
+             block(g)%ck1_vu(ny_var+2), block(g)%ck2_vu(ny_var+2), block(g)%ck3_vu(ny_var+2), &
+             block(g)%ck4_vu(ny_var+2), block(g)%ck5_vu(ny_var+2), block(g)%ck6_vu(ny_var+2), &
+             block(g)%ca1_vw(ny_var+2), block(g)%ca2_vw(ny_var+2), block(g)%ca3_vw(ny_var+2), &
+             block(g)%ca4_vw(ny_var+2), block(g)%ca5_vw(ny_var+2), block(g)%ca6_vw(ny_var+2), &
+             block(g)%ck1_vw(ny_var+2), block(g)%ck2_vw(ny_var+2), block(g)%ck3_vw(ny_var+2), &
+             block(g)%ck4_vw(ny_var+2), block(g)%ck5_vw(ny_var+2), block(g)%ck6_vw(ny_var+2), &
+             block(g)%ca1_wu(nz_var+2), block(g)%ca2_wu(nz_var+2), block(g)%ca3_wu(nz_var+2), &
+             block(g)%ca4_wu(nz_var+2), block(g)%ca5_wu(nz_var+2), block(g)%ca6_wu(nz_var+2), &
+             block(g)%ck1_wu(nz_var+2), block(g)%ck2_wu(nz_var+2), block(g)%ck3_wu(nz_var+2), &
+             block(g)%ck4_wu(nz_var+2), block(g)%ck5_wu(nz_var+2), block(g)%ck6_wu(nz_var+2), &
+             block(g)%ca1_wv(nz_var+2), block(g)%ca2_wv(nz_var+2), block(g)%ca3_wv(nz_var+2), &
+             block(g)%ca4_wv(nz_var+2), block(g)%ca5_wv(nz_var+2), block(g)%ca6_wv(nz_var+2), &
+             block(g)%ck1_wv(nz_var+2), block(g)%ck2_wv(nz_var+2), block(g)%ck3_wv(nz_var+2), &
+             block(g)%ck4_wv(nz_var+2), block(g)%ck5_wv(nz_var+2), block(g)%ck6_wv(nz_var+2))
 	END DO
 
         DO g=1,nblocks
@@ -58,24 +73,25 @@ contains
 	theta_2=block(g)%deltax(i+1)/block(g)%deltax(i)
 	theta_3=block(g)%deltax(i+2)/block(g)%deltax(i+1)
 
-	f_1=theta_3
-	f_2=2.0*theta_3+theta_3**2.0
-	f_3=3.0*theta_3+3.0*theta_3**2.0+theta_3**3.0
-	f_4=4.0*theta_3+6.0*theta_3**2.0+4.0*theta_3**3.0+theta_3**4.0
-	f_5=1.0/(theta_1*theta_2)
-	f_6=(2.0*theta_1+1.0)/((theta_1**2.0)*(theta_2**2.0))
-	f_7=(3.0*theta_1**2.0+3.0*theta_1+1.0)/((theta_1**3.0)*(theta_2**3.0))
-       f_8=(4.0*theta_1**3.0+6.0*theta_1**2.0+4.0*theta_1+1.0)/((theta_1**4.0)*(theta_2**4.0))
+        f_1=theta_3
+        f_2=2.0dp*theta_3+theta_3**2.0dp
+	f_3=3.0dp*theta_3+3.0dp*theta_3**2.0dp+theta_3**3.0dp
+	f_4=4.0dp*theta_3+6.0dp*theta_3**2.0dp+4.0dp*theta_3**3.0dp+theta_3**4.0dp
+	f_5=1.0dp/(theta_1*theta_2)
+	f_6=(2.0dp*theta_1+1.0dp)/((theta_1**2.0dp)*(theta_2**2.0dp))
+	f_7=(3.0dp*theta_1**2.0dp+3.0dp*theta_1+1.0dp)/((theta_1**3.0dp)*(theta_2**3.0dp))
+        f_8=(4.0dp*theta_1**3.0dp+6.0dp*theta_1**2.0dp+4.0dp*theta_1+1.0dp)/&
+            ((theta_1**4.0dp)*(theta_2**4.0dp))
 
-	s51=-1.0/(theta_2**4.0)
+	s51=-1.0dp/(theta_2**4.0dp)
 	s52=f_4
 	s53=f_4
 	s54=s51
-	s55=-(f_1/(theta_2**4.0)+f_4/theta_2)
-	s56=(f_4/(theta_2**2.0)-f_2/(theta_2**4.0))
-	s57=-(f_3/(theta_2**4.0)+f_4/(theta_2**3.0))
+	s55=-(f_1/(theta_2**4.0dp)+f_4/theta_2)
+	s56=(f_4/(theta_2**2.0dp)-f_2/(theta_2**4.0dp))
+	s57=-(f_3/(theta_2**4.0dp)+f_4/(theta_2**3.0dp))
 
-	s61=-1.0
+	s61=-1.0dp
 	s62=f_8
 	s63=f_8
 	s64=-1.0
@@ -83,19 +99,19 @@ contains
 	s66=(f_8-f_6)
 	s67=(f_7+f_8)
 
-	s71=-1.0
-	s72=(1.0+f_4)
+	s71=-1.0dp
+	s72=(1.0dp+f_4)
 	s73=f_4
 	s74=(f_4-f_1)
 	s75=(f_4-f_2)
 	s76=(f_4-f_3)
 
-	s81=-1.0/(theta_2**4.0)
-	s82=(f_8+(1.0/theta_2**4.0))
+	s81=-1.0dp/(theta_2**4.0dp)
+	s82=(f_8+(1.0dp/theta_2**4.0dp))
 	s83=f_8
-	s84=(f_5/(theta_2**4.0)-f_8/theta_2)
-	s85=(f_8/(theta_2**2.0)-f_6/(theta_2**4.0))
-	s86=(f_7/(theta_2**4.0)-f_8/(theta_2**3.0))
+	s84=(f_5/(theta_2**4.0dp)-f_8/theta_2)
+	s85=(f_8/(theta_2**2.0dp)-f_6/(theta_2**4.0dp))
+	s86=(f_7/(theta_2**4.0dp)-f_8/(theta_2**3.0dp))
 
 	s91=-s66*s51
 	s92=s56*s61
@@ -120,13 +136,13 @@ contains
 	block(g)%ca5_uu(i)=(s97*s103-s107*s92)
 	block(g)%ca6_uu(i)=(s97*s106-s107*s96)
 
-	ak_1=(1.0+2.0*theta_1)*(theta_3+theta_3**2.0)*theta_2
-	ak_2=(1.0+theta_1)*(2.0*theta_3+theta_3**2.0)
-	ak_3=(1.0+theta_1)
-	ak_4=(1.0+theta_1)*((1.0+theta_3)**2.0)
-	ak_5=((1.0+theta_1)**2.0)*(theta_3+theta_3**2.0)*theta_2
-	ak_6=(theta_1**2.0)*theta_2*(theta_3+theta_3**2.0)
-	ak_7=(1.0+theta_1)*(theta_3+theta_3**2.0)*theta_2
+	ak_1=(1.0dp+2.0dp*theta_1)*(theta_3+theta_3**2.0dp)*theta_2
+	ak_2=(1.0dp+theta_1)*(2.0dp*theta_3+theta_3**2.0dp)
+	ak_3=(1.0dp+theta_1)
+	ak_4=(1.0dp+theta_1)*((1.0dp+theta_3)**2.0dp)
+	ak_5=((1.0dp+theta_1)**2.0dp)*(theta_3+theta_3**2.0dp)*theta_2
+	ak_6=(theta_1**2.0dp)*theta_2*(theta_3+theta_3**2.0dp)
+	ak_7=(1.0dp+theta_1)*(theta_3+theta_3**2.0dp)*theta_2
 
 	block(g)%ck1_uu(i)=ak_3
 	block(g)%ck2_uu(i)=-ak_4
@@ -146,43 +162,44 @@ contains
 	theta_3=block(g)%deltay(j+2)/block(g)%deltay(j+1)
 
 	f_1=theta_3
-	f_2=2.0*theta_3+theta_3**2.0
-	f_3=3.0*theta_3+3.0*theta_3**2.0+theta_3**3.0
-	f_4=4.0*theta_3+6.0*theta_3**2.0+4.0*theta_3**3.0+theta_3**4.0
-	f_5=1.0/(theta_1*theta_2)
-	f_6=(2.0*theta_1+1.0)/((theta_1**2.0)*(theta_2**2.0))
-	f_7=(3.0*theta_1**2.0+3.0*theta_1+1.0)/((theta_1**3.0)*(theta_2**3.0))
-       f_8=(4.0*theta_1**3.0+6.0*theta_1**2.0+4.0*theta_1+1.0)/((theta_1**4.0)*(theta_2**4.0))
+	f_2=2.0dp*theta_3+theta_3**2.0dp
+	f_3=3.0dp*theta_3+3.0dp*theta_3**2.0dp+theta_3**3.0dp
+	f_4=4.0dp*theta_3+6.0dp*theta_3**2.0dp+4.0dp*theta_3**3.0dp+theta_3**4.0dp
+	f_5=1.0dp/(theta_1*theta_2)
+	f_6=(2.0dp*theta_1+1.0dp)/((theta_1**2.0dp)*(theta_2**2.0dp))
+	f_7=(3.0dp*theta_1**2.0dp+3.0dp*theta_1+1.0dp)/((theta_1**3.0dp)*(theta_2**3.0dp))
+        f_8=(4.0dp*theta_1**3.0dp+6.0dp*theta_1**2.0dp+4.0dp*theta_1+1.0dp)/&
+            ((theta_1**4.0dp)*(theta_2**4.0dp))
 
-	s51=-1.0/(theta_2**4.0)
+	s51=-1.0dp/(theta_2**4.0dp)
 	s52=f_4
 	s53=f_4
 	s54=s51
-	s55=-(f_1/(theta_2**4.0)+f_4/theta_2)
-	s56=(f_4/(theta_2**2.0)-f_2/(theta_2**4.0))
-	s57=-(f_3/(theta_2**4.0)+f_4/(theta_2**3.0))
+	s55=-(f_1/(theta_2**4.0dp)+f_4/theta_2)
+	s56=(f_4/(theta_2**2.0dp)-f_2/(theta_2**4.0dp))
+	s57=-(f_3/(theta_2**4.0dp)+f_4/(theta_2**3.0dp))
 
-	s61=-1.0
+	s61=-1.0dp
 	s62=f_8
 	s63=f_8
-	s64=-1.0
+	s64=-1.0dp
 	s65=(f_5+f_8)
 	s66=(f_8-f_6)
 	s67=(f_7+f_8)
 
-	s71=-1.0
-	s72=(1.0+f_4)
+	s71=-1.0dp
+	s72=(1.0dp+f_4)
 	s73=f_4
 	s74=(f_4-f_1)
 	s75=(f_4-f_2)
 	s76=(f_4-f_3)
 
-	s81=-1.0/(theta_2**4.0)
-	s82=(f_8+(1.0/theta_2**4.0))
+	s81=-1.0dp/(theta_2**4.0dp)
+	s82=(f_8+(1.0dp/theta_2**4.0dp))
 	s83=f_8
-	s84=(f_5/(theta_2**4.0)-f_8/theta_2)
-	s85=(f_8/(theta_2**2.0)-f_6/(theta_2**4.0))
-	s86=(f_7/(theta_2**4.0)-f_8/(theta_2**3.0))
+	s84=(f_5/(theta_2**4.0dp)-f_8/theta_2)
+	s85=(f_8/(theta_2**2.0dp)-f_6/(theta_2**4.0dp))
+	s86=(f_7/(theta_2**4.0dp)-f_8/(theta_2**3.0dp))
 
 	s91=-s66*s51
 	s92=s56*s61
@@ -207,13 +224,13 @@ contains
 	block(g)%ca5_vv(j)=(s97*s103-s107*s92)
 	block(g)%ca6_vv(j)=(s97*s106-s107*s96)
 
-	ak_1=(1.0+2.0*theta_1)*(theta_3+theta_3**2.0)*theta_2
-	ak_2=(1.0+theta_1)*(2.0*theta_3+theta_3**2.0)
-	ak_3=(1.0+theta_1)
-	ak_4=(1.0+theta_1)*((1.0+theta_3)**2.0)
-	ak_5=((1.0+theta_1)**2.0)*(theta_3+theta_3**2.0)*theta_2
-	ak_6=(theta_1**2.0)*theta_2*(theta_3+theta_3**2.0)
-	ak_7=(1.0+theta_1)*(theta_3+theta_3**2.0)*theta_2
+	ak_1=(1.0dp+2.0dp*theta_1)*(theta_3+theta_3**2.0dp)*theta_2
+	ak_2=(1.0dp+theta_1)*(2.0dp*theta_3+theta_3**2.0dp)
+	ak_3=(1.0dp+theta_1)
+	ak_4=(1.0dp+theta_1)*((1.0dp+theta_3)**2.0dp)
+	ak_5=((1.0dp+theta_1)**2.0dp)*(theta_3+theta_3**2.0dp)*theta_2
+	ak_6=(theta_1**2.0dp)*theta_2*(theta_3+theta_3**2.0dp)
+	ak_7=(1.0dp+theta_1)*(theta_3+theta_3**2.0dp)*theta_2
 
 	block(g)%ck1_vv(j)=ak_3
 	block(g)%ck2_vv(j)=-ak_4
@@ -234,43 +251,44 @@ contains
 	theta_3=block(g)%deltaz(k+2)/block(g)%deltaz(k+1)
 
 	f_1=theta_3
-	f_2=2.0*theta_3+theta_3**2.0
-	f_3=3.0*theta_3+3.0*theta_3**2.0+theta_3**3.0
-	f_4=4.0*theta_3+6.0*theta_3**2.0+4.0*theta_3**3.0+theta_3**4.0
-	f_5=1.0/(theta_1*theta_2)
-	f_6=(2.0*theta_1+1.0)/((theta_1**2.0)*(theta_2**2.0))
-	f_7=(3.0*theta_1**2.0+3.0*theta_1+1.0)/((theta_1**3.0)*(theta_2**3.0))
-       f_8=(4.0*theta_1**3.0+6.0*theta_1**2.0+4.0*theta_1+1.0)/((theta_1**4.0)*(theta_2**4.0))
+	f_2=2.0dp*theta_3+theta_3**2.0dp
+	f_3=3.0dp*theta_3+3.0dp*theta_3**2.0dp+theta_3**3.0dp
+	f_4=4.0dp*theta_3+6.0dp*theta_3**2.0dp+4.0*theta_3**3.0dp+theta_3**4.0dp
+	f_5=1.0dp/(theta_1*theta_2)
+	f_6=(2.0dp*theta_1+1.0dp)/((theta_1**2.0dp)*(theta_2**2.0dp))
+	f_7=(3.0dp*theta_1**2.0dp+3.0dp*theta_1+1.0dp)/((theta_1**3.0dp)*(theta_2**3.0dp))
+        f_8=(4.0dp*theta_1**3.0dp+6.0dp*theta_1**2.0dp+4.0*theta_1+1.0dp)/&
+            ((theta_1**4.0dp)*(theta_2**4.0dp))
 
-	s51=-1.0/(theta_2**4.0)
+	s51=-1.0dp/(theta_2**4.0dp)
 	s52=f_4
 	s53=f_4
 	s54=s51
-	s55=-(f_1/(theta_2**4.0)+f_4/theta_2)
-	s56=(f_4/(theta_2**2.0)-f_2/(theta_2**4.0))
-	s57=-(f_3/(theta_2**4.0)+f_4/(theta_2**3.0))
+	s55=-(f_1/(theta_2**4.0dp)+f_4/theta_2)
+	s56=(f_4/(theta_2**2.0dp)-f_2/(theta_2**4.0dp))
+	s57=-(f_3/(theta_2**4.0dp)+f_4/(theta_2**3.0dp))
 
-	s61=-1.0
+	s61=-1.0dp
 	s62=f_8
 	s63=f_8
-	s64=-1.0
+	s64=-1.0dp
 	s65=(f_5+f_8)
 	s66=(f_8-f_6)
 	s67=(f_7+f_8)
 
-	s71=-1.0
-	s72=(1.0+f_4)
+	s71=-1.0dp
+	s72=(1.0dp+f_4)
 	s73=f_4
 	s74=(f_4-f_1)
 	s75=(f_4-f_2)
 	s76=(f_4-f_3)
 
-	s81=-1.0/(theta_2**4.0)
-	s82=(f_8+(1.0/theta_2**4.0))
+	s81=-1.0dp/(theta_2**4.0dp)
+	s82=(f_8+(1.0dp/theta_2**4.0dp))
 	s83=f_8
-	s84=(f_5/(theta_2**4.0)-f_8/theta_2)
-	s85=(f_8/(theta_2**2.0)-f_6/(theta_2**4.0))
-	s86=(f_7/(theta_2**4.0)-f_8/(theta_2**3.0))
+	s84=(f_5/(theta_2**4.0dp)-f_8/theta_2)
+	s85=(f_8/(theta_2**2.0dp)-f_6/(theta_2**4.0dp))
+	s86=(f_7/(theta_2**4.0dp)-f_8/(theta_2**3.0dp))
 
 	s91=-s66*s51
 	s92=s56*s61
@@ -295,13 +313,13 @@ contains
 	block(g)%ca5_ww(k)=(s97*s103-s107*s92)
 	block(g)%ca6_ww(k)=(s97*s106-s107*s96)
 
-	ak_1=(1.0+2.0*theta_1)*(theta_3+theta_3**2.0)*theta_2
-	ak_2=(1.0+theta_1)*(2.0*theta_3+theta_3**2.0)
-	ak_3=(1.0+theta_1)
-	ak_4=(1.0+theta_1)*((1.0+theta_3)**2.0)
-	ak_5=((1.0+theta_1)**2.0)*(theta_3+theta_3**2.0)*theta_2
-	ak_6=(theta_1**2.0)*theta_2*(theta_3+theta_3**2.0)
-	ak_7=(1.0+theta_1)*(theta_3+theta_3**2.0)*theta_2
+	ak_1=(1.0dp+2.0dp*theta_1)*(theta_3+theta_3**2.0dp)*theta_2
+	ak_2=(1.0dp+theta_1)*(2.0dp*theta_3+theta_3**2.0dp)
+	ak_3=(1.0dp+theta_1)
+	ak_4=(1.0dp+theta_1)*((1.0dp+theta_3)**2.0dp)
+	ak_5=((1.0dp+theta_1)**2.0dp)*(theta_3+theta_3**2.0dp)*theta_2
+	ak_6=(theta_1**2.0dp)*theta_2*(theta_3+theta_3**2.0dp)
+	ak_7=(1.0dp+theta_1)*(theta_3+theta_3**2.0dp)*theta_2
 
 	block(g)%ck1_ww(k)=ak_3
 	block(g)%ck2_ww(k)=-ak_4
@@ -320,54 +338,55 @@ contains
 	if(i==2)then
 	tmp_dx1=block(g)%deltax(i-1)
 	else
-	tmp_dx1=0.5*(block(g)%deltax(i-1)+block(g)%deltax(i-2))
+	tmp_dx1=0.5dp*(block(g)%deltax(i-1)+block(g)%deltax(i-2))
 	endif
-	tmp_dx2=0.5*(block(g)%deltax(i)+block(g)%deltax(i-1))
-	tmp_dx3=0.5*(block(g)%deltax(i)+block(g)%deltax(i+1))
-	tmp_dx4=0.5*(block(g)%deltax(i+1)+block(g)%deltax(i+2))
+	tmp_dx2=0.5dp*(block(g)%deltax(i)+block(g)%deltax(i-1))
+	tmp_dx3=0.5dp*(block(g)%deltax(i)+block(g)%deltax(i+1))
+	tmp_dx4=0.5dp*(block(g)%deltax(i+1)+block(g)%deltax(i+2))
 
 	theta_1=tmp_dx2/tmp_dx1
 	theta_2=tmp_dx3/tmp_dx2
 	theta_3=tmp_dx4/tmp_dx3
 
 	f_1=theta_3
-	f_2=2.0*theta_3+theta_3**2.0
-	f_3=3.0*theta_3+3.0*theta_3**2.0+theta_3**3.0
-	f_4=4.0*theta_3+6.0*theta_3**2.0+4.0*theta_3**3.0+theta_3**4.0
-	f_5=1.0/(theta_1*theta_2)
-	f_6=(2.0*theta_1+1.0)/((theta_1**2.0)*(theta_2**2.0))
-	f_7=(3.0*theta_1**2.0+3.0*theta_1+1.0)/((theta_1**3.0)*(theta_2**3.0))
-       f_8=(4.0*theta_1**3.0+6.0*theta_1**2.0+4.0*theta_1+1.0)/((theta_1**4.0)*(theta_2**4.0))
+	f_2=2.0dp*theta_3+theta_3**2.0dp
+	f_3=3.0dp*theta_3+3.0dp*theta_3**2.0dp+theta_3**3.0dp
+	f_4=4.0dp*theta_3+6.0dp*theta_3**2.0dp+4.0dp*theta_3**3.0dp+theta_3**4.0dp
+	f_5=1.0dp/(theta_1*theta_2)
+	f_6=(2.0dp*theta_1+1.0dp)/((theta_1**2.0dp)*(theta_2**2.0dp))
+	f_7=(3.0dp*theta_1**2.0dp+3.0dp*theta_1+1.0dp)/((theta_1**3.0dp)*(theta_2**3.0dp))
+        f_8=(4.0dp*theta_1**3.0dp+6.0dp*theta_1**2.0dp+4.0dp*theta_1+1.0dp)/&
+            ((theta_1**4.0dp)*(theta_2**4.0dp))
 
-	s51=-1.0/(theta_2**4.0)
+	s51=-1.0dp/(theta_2**4.0dp)
 	s52=f_4
 	s53=f_4
 	s54=s51
-	s55=-(f_1/(theta_2**4.0)+f_4/theta_2)
-	s56=(f_4/(theta_2**2.0)-f_2/(theta_2**4.0))
-	s57=-(f_3/(theta_2**4.0)+f_4/(theta_2**3.0))
+	s55=-(f_1/(theta_2**4.0dp)+f_4/theta_2)
+	s56=(f_4/(theta_2**2.0dp)-f_2/(theta_2**4.0dp))
+	s57=-(f_3/(theta_2**4.0dp)+f_4/(theta_2**3.0dp))
 
-	s61=-1.0
+	s61=-1.0dp
 	s62=f_8
 	s63=f_8
-	s64=-1.0
+	s64=-1.0dp
 	s65=(f_5+f_8)
 	s66=(f_8-f_6)
 	s67=(f_7+f_8)
 
-	s71=-1.0
-	s72=(1.0+f_4)
+	s71=-1.0dp
+	s72=(1.0dp+f_4)
 	s73=f_4
 	s74=(f_4-f_1)
 	s75=(f_4-f_2)
 	s76=(f_4-f_3)
 
-	s81=-1.0/(theta_2**4.0)
-	s82=(f_8+(1.0/theta_2**4.0))
+	s81=-1.0dp/(theta_2**4.0dp)
+	s82=(f_8+(1.0dp/theta_2**4.0dp))
 	s83=f_8
-	s84=(f_5/(theta_2**4.0)-f_8/theta_2)
-	s85=(f_8/(theta_2**2.0)-f_6/(theta_2**4.0))
-	s86=(f_7/(theta_2**4.0)-f_8/(theta_2**3.0))
+	s84=(f_5/(theta_2**4.0dp)-f_8/theta_2)
+	s85=(f_8/(theta_2**2.0dp)-f_6/(theta_2**4.0dp))
+	s86=(f_7/(theta_2**4.0dp)-f_8/(theta_2**3.0dp))
 
 	s91=-s66*s51
 	s92=s56*s61
@@ -398,13 +417,13 @@ contains
 	block(g)%ca6_uv(i)=(s97*s106-s107*s96)
 	block(g)%ca6_uw(i)=block(g)%ca6_uv(i)
 
-	ak_1=(1.0+2.0*theta_1)*(theta_3+theta_3**2.0)*theta_2
-	ak_2=(1.0+theta_1)*(2.0*theta_3+theta_3**2.0)
-	ak_3=(1.0+theta_1)
-	ak_4=(1.0+theta_1)*((1.0+theta_3)**2.0)
-	ak_5=((1.0+theta_1)**2.0)*(theta_3+theta_3**2.0)*theta_2
-	ak_6=(theta_1**2.0)*theta_2*(theta_3+theta_3**2.0)
-	ak_7=(1.0+theta_1)*(theta_3+theta_3**2.0)*theta_2
+	ak_1=(1.0dp+2.0dp*theta_1)*(theta_3+theta_3**2.0dp)*theta_2
+	ak_2=(1.0dp+theta_1)*(2.0dp*theta_3+theta_3**2.0dp)
+	ak_3=(1.0dp+theta_1)
+	ak_4=(1.0dp+theta_1)*((1.0dp+theta_3)**2.0dp)
+	ak_5=((1.0dp+theta_1)**2.0dp)*(theta_3+theta_3**2.0dp)*theta_2
+	ak_6=(theta_1**2.0dp)*theta_2*(theta_3+theta_3**2.0dp)
+	ak_7=(1.0dp+theta_1)*(theta_3+theta_3**2.0dp)*theta_2
 
 	block(g)%ck1_uv(i)=ak_3
 	block(g)%ck1_uw(i)=block(g)%ck1_uv(i)
@@ -429,54 +448,55 @@ contains
 	if(j==2)then
 	tmp_dy1=block(g)%deltay(j-1)
 	else
-	tmp_dy1=0.5*(block(g)%deltay(j-1)+block(g)%deltay(j-2))
+	tmp_dy1=0.5dp*(block(g)%deltay(j-1)+block(g)%deltay(j-2))
 	endif
-	tmp_dy2=0.5*(block(g)%deltay(j)+block(g)%deltay(j-1))
-	tmp_dy3=0.5*(block(g)%deltay(j)+block(g)%deltay(j+1))
-	tmp_dy4=0.5*(block(g)%deltay(j+1)+block(g)%deltay(j+2))
+	tmp_dy2=0.5dp*(block(g)%deltay(j)+block(g)%deltay(j-1))
+	tmp_dy3=0.5dp*(block(g)%deltay(j)+block(g)%deltay(j+1))
+	tmp_dy4=0.5dp*(block(g)%deltay(j+1)+block(g)%deltay(j+2))
 
 	theta_1=tmp_dy2/tmp_dy1
 	theta_2=tmp_dy3/tmp_dy2
 	theta_3=tmp_dy4/tmp_dy3
 
 	f_1=theta_3
-	f_2=2.0*theta_3+theta_3**2.0
-	f_3=3.0*theta_3+3.0*theta_3**2.0+theta_3**3.0
-	f_4=4.0*theta_3+6.0*theta_3**2.0+4.0*theta_3**3.0+theta_3**4.0
-	f_5=1.0/(theta_1*theta_2)
-	f_6=(2.0*theta_1+1.0)/((theta_1**2.0)*(theta_2**2.0))
-	f_7=(3.0*theta_1**2.0+3.0*theta_1+1.0)/((theta_1**3.0)*(theta_2**3.0))
-       f_8=(4.0*theta_1**3.0+6.0*theta_1**2.0+4.0*theta_1+1.0)/((theta_1**4.0)*(theta_2**4.0))
+	f_2=2.0dp*theta_3+theta_3**2.0dp
+	f_3=3.0dp*theta_3+3.0dp*theta_3**2.0dp+theta_3**3.0dp
+	f_4=4.0dp*theta_3+6.0dp*theta_3**2.0dp+4.0dp*theta_3**3.0dp+theta_3**4.0dp
+	f_5=1.0dp/(theta_1*theta_2)
+	f_6=(2.0dp*theta_1+1.0dp)/((theta_1**2.0dp)*(theta_2**2.0dp))
+	f_7=(3.0dp*theta_1**2.0dp+3.0dp*theta_1+1.0dp)/((theta_1**3.0dp)*(theta_2**3.0dp))
+        f_8=(4.0dp*theta_1**3.0dp+6.0dp*theta_1**2.0dp+4.0dp*theta_1+1.0dp)/&
+            ((theta_1**4.0dp)*(theta_2**4.0dp))
 
-	s51=-1.0/(theta_2**4.0)
+	s51=-1.0dp/(theta_2**4.0dp)
 	s52=f_4
 	s53=f_4
 	s54=s51
-	s55=-(f_1/(theta_2**4.0)+f_4/theta_2)
-	s56=(f_4/(theta_2**2.0)-f_2/(theta_2**4.0))
-	s57=-(f_3/(theta_2**4.0)+f_4/(theta_2**3.0))
+	s55=-(f_1/(theta_2**4.0dp)+f_4/theta_2)
+	s56=(f_4/(theta_2**2.0dp)-f_2/(theta_2**4.0dp))
+	s57=-(f_3/(theta_2**4.0dp)+f_4/(theta_2**3.0dp))
 
-	s61=-1.0
+	s61=-1.0dp
 	s62=f_8
 	s63=f_8
-	s64=-1.0
+	s64=-1.0dp
 	s65=(f_5+f_8)
 	s66=(f_8-f_6)
 	s67=(f_7+f_8)
 
-	s71=-1.0
-	s72=(1.0+f_4)
+	s71=-1.0dp
+	s72=(1.0dp+f_4)
 	s73=f_4
 	s74=(f_4-f_1)
 	s75=(f_4-f_2)
 	s76=(f_4-f_3)
 
-	s81=-1.0/(theta_2**4.0)
-	s82=(f_8+(1.0/theta_2**4.0))
+	s81=-1.0dp/(theta_2**4.0dp)
+	s82=(f_8+(1.0dp/theta_2**4.0dp))
 	s83=f_8
-	s84=(f_5/(theta_2**4.0)-f_8/theta_2)
-	s85=(f_8/(theta_2**2.0)-f_6/(theta_2**4.0))
-	s86=(f_7/(theta_2**4.0)-f_8/(theta_2**3.0))
+	s84=(f_5/(theta_2**4.0dp)-f_8/theta_2)
+	s85=(f_8/(theta_2**2.0dp)-f_6/(theta_2**4.0dp))
+	s86=(f_7/(theta_2**4.0dp)-f_8/(theta_2**3.0dp))
 
 	s91=-s66*s51
 	s92=s56*s61
@@ -507,13 +527,13 @@ contains
 	block(g)%ca6_vu(j)=(s97*s106-s107*s96)
 	block(g)%ca6_vw(j)=block(g)%ca6_vu(j)
 
-	ak_1=(1.0+2.0*theta_1)*(theta_3+theta_3**2.0)*theta_2
-	ak_2=(1.0+theta_1)*(2.0*theta_3+theta_3**2.0)
-	ak_3=(1.0+theta_1)
-	ak_4=(1.0+theta_1)*((1.0+theta_3)**2.0)
-	ak_5=((1.0+theta_1)**2.0)*(theta_3+theta_3**2.0)*theta_2
-	ak_6=(theta_1**2.0)*theta_2*(theta_3+theta_3**2.0)
-	ak_7=(1.0+theta_1)*(theta_3+theta_3**2.0)*theta_2
+	ak_1=(1.0dp+2.0dp*theta_1)*(theta_3+theta_3**2.0dp)*theta_2
+	ak_2=(1.0dp+theta_1)*(2.0dp*theta_3+theta_3**2.0dp)
+	ak_3=(1.0dp+theta_1)
+	ak_4=(1.0dp+theta_1)*((1.0dp+theta_3)**2.0dp)
+	ak_5=((1.0dp+theta_1)**2.0dp)*(theta_3+theta_3**2.0dp)*theta_2
+	ak_6=(theta_1**2.0dp)*theta_2*(theta_3+theta_3**2.0dp)
+	ak_7=(1.0dp+theta_1)*(theta_3+theta_3**2.0dp)*theta_2
 
 	block(g)%ck1_vu(j)=ak_3
 	block(g)%ck1_vw(j)=block(g)%ck1_vu(j)
@@ -538,54 +558,55 @@ contains
 	if(k==2)then
 	tmp_dz1=block(g)%deltaz(k-1)
 	else
-	tmp_dz1=0.5*(block(g)%deltaz(k-1)+block(g)%deltaz(k-2))
+	tmp_dz1=0.5dp*(block(g)%deltaz(k-1)+block(g)%deltaz(k-2))
 	endif
-	tmp_dz2=0.5*(block(g)%deltaz(k)+block(g)%deltaz(k-1))
-	tmp_dz3=0.5*(block(g)%deltaz(k)+block(g)%deltaz(k+1))
-	tmp_dz4=0.5*(block(g)%deltaz(k+1)+block(g)%deltaz(k+2))
+	tmp_dz2=0.5dp*(block(g)%deltaz(k)+block(g)%deltaz(k-1))
+	tmp_dz3=0.5dp*(block(g)%deltaz(k)+block(g)%deltaz(k+1))
+	tmp_dz4=0.5dp*(block(g)%deltaz(k+1)+block(g)%deltaz(k+2))
 
 	theta_1=tmp_dz2/tmp_dz1
 	theta_2=tmp_dz3/tmp_dz2
 	theta_3=tmp_dz4/tmp_dz3
 
 	f_1=theta_3
-	f_2=2.0*theta_3+theta_3**2.0
-	f_3=3.0*theta_3+3.0*theta_3**2.0+theta_3**3.0
-	f_4=4.0*theta_3+6.0*theta_3**2.0+4.0*theta_3**3.0+theta_3**4.0
-	f_5=1.0/(theta_1*theta_2)
-	f_6=(2.0*theta_1+1.0)/((theta_1**2.0)*(theta_2**2.0))
-	f_7=(3.0*theta_1**2.0+3.0*theta_1+1.0)/((theta_1**3.0)*(theta_2**3.0))
-	f_8=(4.0*theta_1**3.0+6.0*theta_1**2.0+4.0*theta_1+1.0)/((theta_1**4.0)*(theta_2**4.0))
+	f_2=2.0dp*theta_3+theta_3**2.0dp
+	f_3=3.0dp*theta_3+3.0dp*theta_3**2.0dp+theta_3**3.0dp
+	f_4=4.0dp*theta_3+6.0dp*theta_3**2.0dp+4.0dp*theta_3**3.0dp+theta_3**4.0dp
+	f_5=1.0dp/(theta_1*theta_2)
+	f_6=(2.0dp*theta_1+1.0dp)/((theta_1**2.0dp)*(theta_2**2.0dp))
+	f_7=(3.0dp*theta_1**2.0dp+3.0dp*theta_1+1.0dp)/((theta_1**3.0dp)*(theta_2**3.0dp))
+        f_8=(4.0dp*theta_1**3.0dp+6.0dp*theta_1**2.0dp+4.0dp*theta_1+1.0dp)/&
+            ((theta_1**4.0dp)*(theta_2**4.0dp))
 
-	s51=-1.0/(theta_2**4.0)
+	s51=-1.0dp/(theta_2**4.0dp)
 	s52=f_4
 	s53=f_4
 	s54=s51
-	s55=-(f_1/(theta_2**4.0)+f_4/theta_2)
-	s56=(f_4/(theta_2**2.0)-f_2/(theta_2**4.0))
-	s57=-(f_3/(theta_2**4.0)+f_4/(theta_2**3.0))
+	s55=-(f_1/(theta_2**4.0dp)+f_4/theta_2)
+	s56=(f_4/(theta_2**2.0dp)-f_2/(theta_2**4.0dp))
+	s57=-(f_3/(theta_2**4.0dp)+f_4/(theta_2**3.0dp))
 
-	s61=-1.0
+	s61=-1.0dp
 	s62=f_8
 	s63=f_8
-	s64=-1.0
+	s64=-1.0dp
 	s65=(f_5+f_8)
 	s66=(f_8-f_6)
 	s67=(f_7+f_8)
 
-	s71=-1.0
-	s72=(1.0+f_4)
+	s71=-1.0dp
+	s72=(1.0dp+f_4)
 	s73=f_4
 	s74=(f_4-f_1)
 	s75=(f_4-f_2)
 	s76=(f_4-f_3)
 
-	s81=-1.0/(theta_2**4.0)
-	s82=(f_8+(1.0/theta_2**4.0))
+	s81=-1.0dp/(theta_2**4.0dp)
+	s82=(f_8+(1.0dp/theta_2**4.0dp))
 	s83=f_8
-	s84=(f_5/(theta_2**4.0)-f_8/theta_2)
-	s85=(f_8/(theta_2**2.0)-f_6/(theta_2**4.0))
-	s86=(f_7/(theta_2**4.0)-f_8/(theta_2**3.0))
+	s84=(f_5/(theta_2**4.0dp)-f_8/theta_2)
+	s85=(f_8/(theta_2**2.0dp)-f_6/(theta_2**4.0dp))
+	s86=(f_7/(theta_2**4.0dp)-f_8/(theta_2**3.0dp))
 
 	s91=-s66*s51
 	s92=s56*s61
@@ -616,13 +637,13 @@ contains
 	block(g)%ca6_wu(k)=(s97*s106-s107*s96)
 	block(g)%ca6_wv(k)=block(g)%ca6_wu(k)
 
-	ak_1=(1.0+2.0*theta_1)*(theta_3+theta_3**2.0)*theta_2
-	ak_2=(1.0+theta_1)*(2.0*theta_3+theta_3**2.0)
-	ak_3=(1.0+theta_1)
-	ak_4=(1.0+theta_1)*((1.0+theta_3)**2.0)
-	ak_5=((1.0+theta_1)**2.0)*(theta_3+theta_3**2.0)*theta_2
-	ak_6=(theta_1**2.0)*theta_2*(theta_3+theta_3**2.0)
-	ak_7=(1.0+theta_1)*(theta_3+theta_3**2.0)*theta_2
+	ak_1=(1.0dp+2.0dp*theta_1)*(theta_3+theta_3**2.0dp)*theta_2
+	ak_2=(1.0dp+theta_1)*(2.0dp*theta_3+theta_3**2.0dp)
+	ak_3=(1.0dp+theta_1)
+	ak_4=(1.0dp+theta_1)*((1.0dp+theta_3)**2.0dp)
+	ak_5=((1.0dp+theta_1)**2.0dp)*(theta_3+theta_3**2.0dp)*theta_2
+	ak_6=(theta_1**2.0dp)*theta_2*(theta_3+theta_3**2.0dp)
+	ak_7=(1.0dp+theta_1)*(theta_3+theta_3**2.0dp)*theta_2
 
 	block(g)%ck1_wu(k)=ak_3
 	block(g)%ck1_wv(k)=block(g)%ck1_wu(k)
@@ -671,8 +692,9 @@ contains
       USE global
 !c***********************************************************************
       !write(6,*)'has entered nseqcp'
-	  INTEGER (KIND = 8) :: i, j, k, g, n ,nx_var,ny_var,nz_var, n1, nn, i11, j11, k11, index_ip1, index_im1, index_jp1, index_jm1, index_kp1, index_km1
-	  REAL (KIND = 8) :: dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14, &
+      INTEGER (dp) :: i, j, k, g, n ,nx_var,ny_var,nz_var, n1, nn, i11, j11, k11, &
+           index_ip1, index_im1, index_jp1, index_jm1, index_kp1, index_km1
+	  REAL (dp) :: dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14, &
 	          u15,u16,v1a,v22,v3,v4,v5,v6,v7,v8,v9,v10,v11,v12,v13,v14,v15,v16, &
 			  w1a,w22,w3,w4,w5,w6,w7,w8,w9,w10,w11,w12,w13,w14,w15,w16,dx2xr, &
 			  dx2xl,dy2ye,dy2yw, dxr, dx, dxl, dye, dy, dyw, dzt, dz, dzb, &
@@ -682,37 +704,56 @@ contains
 			  uv_e,uv_w,u_in_vm,wv_n,wv_s,w_in_vm,duvtdx,dvvtdy,dwvtdz, &
 			  duvdx,dvvdy,dwvdz,d2vdx2,d2vdy2,d2vdz2,uw_e,uw_w, &
 			  u_in_wm,vw_n,vw_s,v_in_wm,duwtdx,dvwtdy,dwwtdz, &
-			  duwdx,dvwdy,dwwdz,d2wdx2,d2wdy2,d2wdz2,xtt2,residu,ytt2,residv,ztt2,residw, &
-			  temp_u1dotn, temp_u2dotn, temp_v1dotn, temp_v2dotn, temp_w1dotn, temp_w2dotn, temp_pdotn
+			  duwdx,dvwdy,dwwdz,d2wdx2,d2wdy2,d2wdz2,xtt2,residu,ytt2,residv,&
+                          ztt2,residw, temp_u1dotn, temp_u2dotn, temp_v1dotn, temp_v2dotn, &
+                          temp_w1dotn, temp_w2dotn, temp_pdotn
      al = 1.
 
 
 
-       !!$omp parallel do &
-       !!$omp private (i, j, k, n1, dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14,   &
-       !!$omp	        u15,u16,v1a,v22,v3,v4,v5,v6,v7,v8,v9,v10,v11,v12,v13,v14,v15,v16,           &
-       !!$omp		 w1a,w22,w3,w4,w5,w6,w7,w8,w9,w10,w11,w12,w13,w14,w15,w16,dx2xr,             &
-       !!$omp	        dx2xl,dy2ye,dy2yw,dxr,dx,dxl,dye,dy,dyw,dzt,dz,dzb,                         &
-       !!$omp	         dz2zt,dz2zb,ddx,ddxr,ddy,ddye,ddz,ddzr,r1x,r1y,r1z,r1xn,r1xd,r1yn,          &
-       !!$omp		 r1yd,r1zn,r1zd,wu_n,wu_s,w_in_um,vu_e,vu_w,v_in_um,duutdx,dvutdy,           &
-       !!$omp	        dwutdz,duuwdx,dvuwdy,dwuwdz,duudx,dvudy,dwudz,d2udx2,d2udy2,d2udz2,         &
-       !!$omp	        uv_e,uv_w,u_in_vm,wv_n,wv_s,w_in_vm,duvtdx,dvvtdy,dwvtdz,duvwdx,            &
-       !!$omp	        dvvwdy,dwvwdz,duvdx,dvvdy,dwvdz,d2vdx2,d2vdy2,d2vdz2,uw_e,uw_w,             &
-       !!$omp	        u_in_wm,vw_n,vw_s,v_in_wm,duwtdx,dvwtdy,dwwtdz,duwwdx,dvwwdy,dwwwdz,        &
-       !!$omp		 duwdx,dvwdy,dwwdz,d2wdx2,d2wdy2,d2wdz2,xtt2,residu,ytt2,residv,ztt2,residw, &
-       !!$omp           index_ip1,index_im1,index_jp1,index_jm1,index_kp1,index_km1) &
-       !!$omp           i11,j11,k11,temp_u2dotn,temp_u1dotn) &
-       !!$omp           temp_v2dotn,temp_v1dotn) &
-       !!$omp           temp_w2dotn,temp_w1dotn, temp_pdotn,g) &
-       !!$omp firstprivate(nx_var, ny_var, nz_var, rev, deltat, al) num_threads(3)
+!!$omp parallel do &
+!!$omp private (i, j, k, n1, dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14,   &
+!!$omp	        u15,u16,v1a,v22,v3,v4,v5,v6,v7,v8,v9,v10,v11,v12,v13,v14,v15,v16,           &
+!!$omp		 w1a,w22,w3,w4,w5,w6,w7,w8,w9,w10,w11,w12,w13,w14,w15,w16,dx2xr,             &
+!!$omp	        dx2xl,dy2ye,dy2yw,dxr,dx,dxl,dye,dy,dyw,dzt,dz,dzb,                         &
+!!$omp	         dz2zt,dz2zb,ddx,ddxr,ddy,ddye,ddz,ddzr,r1x,r1y,r1z,r1xn,r1xd,r1yn,          &
+!!$omp		 r1yd,r1zn,r1zd,wu_n,wu_s,w_in_um,vu_e,vu_w,v_in_um,duutdx,dvutdy,           &
+!!$omp	        dwutdz,duuwdx,dvuwdy,dwuwdz,duudx,dvudy,dwudz,d2udx2,d2udy2,d2udz2,         &
+!!$omp	        uv_e,uv_w,u_in_vm,wv_n,wv_s,w_in_vm,duvtdx,dvvtdy,dwvtdz,duvwdx,            &
+!!$omp	        dvvwdy,dwvwdz,duvdx,dvvdy,dwvdz,d2vdx2,d2vdy2,d2vdz2,uw_e,uw_w,             &
+!!$omp	        u_in_wm,vw_n,vw_s,v_in_wm,duwtdx,dvwtdy,dwwtdz,duwwdx,dvwwdy,dwwwdz,        &
+!!$omp		 duwdx,dvwdy,dwwdz,d2wdx2,d2wdy2,d2wdz2,xtt2,residu,ytt2,residv,ztt2,residw, &
+!!$omp           index_ip1,index_im1,index_jp1,index_jm1,index_kp1,index_km1) &
+!!$omp           i11,j11,k11,temp_u2dotn,temp_u1dotn) &
+!!$omp           temp_v2dotn,temp_v1dotn) &
+!!$omp           temp_w2dotn,temp_w1dotn, temp_pdotn,g) &
+!!$omp firstprivate(nx_var, ny_var, nz_var, rev, deltat, al) num_threads(3)
         DO g=1,nblocks
         nx_var=block(g)%nx
         ny_var=block(g)%ny
         nz_var=block(g)%nz
-!!$acc parallel loop present(cell, cell2,  block(g)%TSIndexPtr, block(g)%index_ts, block(g)%fluidIndexPtr, block(g)%xcent, block(g)%ycent, block(g)%zcent, zp, z1, y1, xp, x1, yp) &
-! !$acc present(block(g)%cosAlpha, block(g)%cosBeta, block(g)%cosGamma, block(g)%nelu2, block(g)%nelu1, block(g)%nelv2, block(g)%nelv1, block(g)%nelw2, block(g)%nelw1, block(g)%nelp) &
-! !$acc present(block(g)%p_ghost, block(g)%pt_ghost, block(g)%u2_ghost, block(g)%u2t_ghost, block(g)%v2_ghost, block(g)%v2t_ghost, block(g)%w2_ghost, block(g)%w2t_ghost, block(g)%u1_ghost, block(g)%u1t_ghost, block(g)%v1_ghost, block(g)%v1t_ghost, block(g)%w1_ghost, block(g)%w1t_ghost, ut, vt, wt, u, v, w, p, deltax, deltay, deltaz, resi_u, resi_v, resi_w) &
-! !$acc present(ca1_uu, ca2_uu, ca3_uu, ca4_uu, ca5_uu, ca6_uu, ck1_uu, ck2_uu, ck3_uu, ck4_uu, ck5_uu, ck6_uu, ca1_vv, ca2_vv, ca3_vv, ca4_vv, ca5_vv, ca6_vv, ck1_vv, ck2_vv, ck3_vv, ck4_vv, ck5_vv, ck6_vv, ca1_ww, ca2_ww, ca3_ww, ca4_ww, ca5_ww, ca6_ww, ck1_ww, ck2_ww, ck3_ww, ck4_ww, ck5_ww, ck6_ww, ca1_uv, ca2_uv, ca3_uv, ca4_uv, ca5_uv, ca6_uv, ck1_uv, ck2_uv, ck3_uv, ck4_uv, ck5_uv, ck6_uv, ca1_uw, ca2_uw, ca3_uw, ca4_uw, ca5_uw, ca6_uw, ck1_uw, ck2_uw, ck3_uw, ck4_uw, ck5_uw, ck6_uw, ca1_vu, ca2_vu, ca3_vu, ca4_vu, ca5_vu, ca6_vu, ck1_vu, ck2_vu, ck3_vu, ck4_vu, ck5_vu, ck6_vu, ca1_vw, ca2_vw, ca3_vw, ca4_vw, ca5_vw, ca6_vw, ck1_vw, ck2_vw, ck3_vw, ck4_vw, ck5_vw, ck6_vw, ca1_wu, ca2_wu, ca3_wu, ca4_wu, ca5_wu, ca6_wu, ck1_wu, ck2_wu, ck3_wu, ck4_wu, ck5_wu, ck6_wu, ca1_wv, ca2_wv, ca3_wv, ca4_wv, ca5_wv, ca6_wv, ck1_wv, ck2_wv, ck3_wv, ck4_wv, ck5_wv, ck6_wv)
+!!$acc parallel loop present(cell, cell2,  block(g)%TSIndexPtr, block(g)%index_ts, &
+!!$acc        block(g)%fluidIndexPtr, block(g)%xcent, block(g)%ycent, block(g)%zcent, &
+!!$acc        zp, z1, y1, xp, x1, yp) &
+!!$acc present(block(g)%cosAlpha, block(g)%cosBeta, block(g)%cosGamma, block(g)%nelu2,&
+!!$acc block(g)%nelu1, block(g)%nelv2, block(g)%nelv1, block(g)%nelw2, block(g)%nelw1,
+!!$accc block(g)%nelp) &
+!!$acc present(block(g)%p_ghost, block(g)%pt_ghost, block(g)%u2_ghost, &
+!!$acc block(g)%u2t_ghost, block(g)%v2_ghost, block(g)%v2t_ghost, block(g)%w2_ghost, &
+!!$acc block(g)%w2t_ghost, block(g)%u1_ghost, block(g)%u1t_ghost, block(g)%v1_ghost, &
+!!$acc block(g)%v1t_ghost, block(g)%w1_ghost, block(g)%w1t_ghost, ut, vt, wt, u, v, w, p, &
+!!$acc deltax, deltay, deltaz, resi_u, resi_v, resi_w) &
+!!$acc present(ca1_uu, ca2_uu, ca3_uu, ca4_uu, ca5_uu, ca6_uu, ck1_uu, ck2_uu, &
+!!$acc ck3_uu, ck4_uu, ck5_uu, ck6_uu, ca1_vv, ca2_vv, ca3_vv, ca4_vv, ca5_vv, ca6_vv, &
+!!$acc ck1_vv, ck2_vv, ck3_vv, ck4_vv, ck5_vv, ck6_vv, ca1_ww, ca2_ww, ca3_ww, ca4_ww, &
+!!$acc ca5_ww, ca6_ww, ck1_ww, ck2_ww, ck3_ww, ck4_ww, ck5_ww, ck6_ww, ca1_uv, ca2_uv, ca3_uv, &
+!!$acc ca4_uv, ca5_uv, ca6_uv, ck1_uv, ck2_uv, ck3_uv, ck4_uv, ck5_uv, ck6_uv, ca1_uw, ca2_uw, &
+!!$acc ca3_uw, ca4_uw, ca5_uw, ca6_uw, ck1_uw, ck2_uw, ck3_uw, ck4_uw, ck5_uw, ck6_uw, ca1_vu, &
+!!$acc ca2_vu, ca3_vu, ca4_vu, ca5_vu, ca6_vu, ck1_vu, ck2_vu, ck3_vu, ck4_vu, ck5_vu, ck6_vu, &
+!!$acc ca1_vw, ca2_vw, ca3_vw, ca4_vw, ca5_vw, ca6_vw, ck1_vw, ck2_vw, ck3_vw, ck4_vw, ck5_vw, &
+!!$acc ck6_vw, ca1_wu, ca2_wu, ca3_wu, ca4_wu, ca5_wu, ca6_wu, ck1_wu, ck2_wu, ck3_wu, ck4_wu, &
+!!$acc ck5_wu, ck6_wu, ca1_wv, ca2_wv, ca3_wv, ca4_wv, ca5_wv, ca6_wv, ck1_wv, ck2_wv, ck3_wv, &
+!!$acc ck4_wv, ck5_wv, ck6_wv)
 
 
 
@@ -747,7 +788,9 @@ contains
       index_km1 = 0
       n1 = i-1 + nx_var*(j-2) + nx_var*ny_var*(k-2)
       !GOTO 11
-      IF (block(g)%cell2(i+1, j, k)==2 .OR. block(g)%cell2(i-1, j, k)==2 .OR. block(g)%cell2(i, j+1, k)==2 .OR. block(g)%cell2(i, j-1, k)==2 .OR. block(g)%cell2(i, j, k+1)==2.OR. block(g)%cell2(i, j, k-1)==2) THEN
+      IF (block(g)%cell2(i+1, j, k)==2 .OR. block(g)%cell2(i-1, j, k)==2 .OR. &
+           block(g)%cell2(i, j+1, k)==2 .OR. block(g)%cell2(i, j-1, k)==2 .OR. &
+           block(g)%cell2(i, j, k+1)==2.OR. block(g)%cell2(i, j, k-1)==2) THEN
         !$acc loop seq
              DO nn = 1, block(g)%TSCellCount
                 i11 = block(g)%TSIndexPtr(nn, 1)
@@ -763,27 +806,55 @@ contains
                    temp_w2dotn = 0.
                    temp_w1dotn = 0.
                    temp_pdotn  = 0.
-                   temp_u2dotn = (block(g)%x1(i+1) - block(g)%xcent(block(g)%nelu2(block(g)%index_ts(index_ip1))))*block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(index_ip1))) +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu2(block(g)%index_ts(index_ip1))))*block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(index_ip1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu2(block(g)%index_ts(index_ip1))))*block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(index_ip1)))
-                   !temp_u1dotn = (block(g)%x1(i+1) - block(g)%xcent(block(g)%nelu1(block(g)%index_ts(index_ip1))))*block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(index_ip1))) +  &
-                                 !(block(g)%yp(j)   - block(g)%ycent(block(g)%nelu1(block(g)%index_ts(index_ip1))))*block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(index_ip1)))  +  &
-                                 !(block(g)%zp(k)   - block(g)%zcent(block(g)%nelu1(block(g)%index_ts(index_ip1))))*block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(index_ip1)))
-                   temp_v2dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelv2(block(g)%index_ts(index_ip1))))*block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(index_ip1))) +  &
-                                 (block(g)%y1(j+1) - block(g)%ycent(block(g)%nelv2(block(g)%index_ts(index_ip1))))*block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(index_ip1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv2(block(g)%index_ts(index_ip1))))*block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(index_ip1)))
-                   temp_v1dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelv1(block(g)%index_ts(index_ip1))))*block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(index_ip1))) +  &
-                                 (block(g)%y1(j)   - block(g)%ycent(block(g)%nelv1(block(g)%index_ts(index_ip1))))*block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(index_ip1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv1(block(g)%index_ts(index_ip1))))*block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(index_ip1)))
-                   temp_w2dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelw2(block(g)%index_ts(index_ip1))))*block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(index_ip1))) +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw2(block(g)%index_ts(index_ip1))))*block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(index_ip1)))  +  &
-                                 (block(g)%z1(k+1) - block(g)%zcent(block(g)%nelw2(block(g)%index_ts(index_ip1))))*block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(index_ip1)))
-                   temp_w1dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelw1(block(g)%index_ts(index_ip1))))*block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(index_ip1))) +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw1(block(g)%index_ts(index_ip1))))*block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(index_ip1)))  +  &
-                                 (block(g)%z1(k)   - block(g)%zcent(block(g)%nelw1(block(g)%index_ts(index_ip1))))*block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(index_ip1)))
-                   temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_ip1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_ip1)))  +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_ip1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_ip1)))   +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_ip1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_ip1)))
+                   temp_u2dotn = (block(g)%x1(i+1) - &
+                        block(g)%xcent(block(g)%nelu2(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(index_ip1))) +  &
+                     (block(g)%yp(j)-block(g)%ycent(block(g)%nelu2(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(index_ip1)))  +  &
+                     (block(g)%zp(k)-block(g)%zcent(block(g)%nelu2(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(index_ip1)))
+                   !temp_u1dotn = (block(g)%x1(i+1) - &
+                   !block(g)%xcent(block(g)%nelu1(block(g)%index_ts(index_ip1))))*&
+                   !block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(index_ip1))) +  &
+                !(block(g)%yp(j)   - block(g)%ycent(block(g)%nelu1(block(g)%index_ts(index_ip1))))*&
+                   !block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(index_ip1)))  +  &
+                 !(block(g)%zp(k)   - block(g)%zcent(block(g)%nelu1(block(g)%index_ts(index_ip1))))&
+                   !*block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(index_ip1)))
+                   temp_v2dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelv2(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(index_ip1))) +  &
+                 (block(g)%y1(j+1) - block(g)%ycent(block(g)%nelv2(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(index_ip1)))  +  &
+                    (block(g)%zp(k)- block(g)%zcent(block(g)%nelv2(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(index_ip1)))
+                   temp_v1dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelv1(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(index_ip1))) +  &
+                     (block(g)%y1(j)-block(g)%ycent(block(g)%nelv1(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(index_ip1)))  +  &
+                     (block(g)%zp(k)-block(g)%zcent(block(g)%nelv1(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(index_ip1)))
+                   temp_w2dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelw2(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(index_ip1))) +  &
+                     (block(g)%yp(j)-block(g)%ycent(block(g)%nelw2(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(index_ip1)))  +  &
+                   (block(g)%z1(k+1)-block(g)%zcent(block(g)%nelw2(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(index_ip1)))
+                   temp_w1dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelw1(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(index_ip1))) +  &
+                  (block(g)%yp(j)-block(g)%ycent(block(g)%nelw1(block(g)%index_ts(index_ip1))))*&
+                        block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(index_ip1)))  +  &
+                    (block(g)%z1(k)-block(g)%zcent(block(g)%nelw1(block(g)%index_ts(index_ip1))))*&
+                       block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(index_ip1)))
+                   temp_pdotn  = (block(g)%xp(i)- &
+                        block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_ip1))))&
+                        *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_ip1)))  +  &
+                   (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_ip1))))&
+                        *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_ip1)))   +  &
+                   (block(g)%zp(k)- block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_ip1)))) &
+                        *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_ip1)))
                    IF (temp_u2dotn<0) THEN
                       block(g)%u(i+1,j,k) = block(g)%u2_ghost(index_ip1)
                    !ELSE
@@ -830,27 +901,58 @@ contains
                    temp_w2dotn = 0.
                    temp_w1dotn = 0.
                    temp_pdotn  = 0.
-                   !temp_u2dotn = (block(g)%x1(i)   - block(g)%xcent(block(g)%nelu2(block(g)%index_ts(index_im1))))*block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(index_im1))) +  &
-                                 !(block(g)%yp(j)   - block(g)%ycent(block(g)%nelu2(block(g)%index_ts(index_im1))))*block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(index_im1)))  +  &
-				                     !(block(g)%zp(k)   - block(g)%zcent(block(g)%nelu2(block(g)%index_ts(index_im1))))*block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(index_im1)))
-                   temp_u1dotn = (block(g)%x1(i)   - block(g)%xcent(block(g)%nelu1(block(g)%index_ts(index_im1))))*block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(index_im1))) +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu1(block(g)%index_ts(index_im1))))*block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(index_im1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu1(block(g)%index_ts(index_im1))))*block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(index_im1)))
-                   temp_v2dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelv2(block(g)%index_ts(index_im1))))*block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(index_im1))) +  &
-                                 (block(g)%y1(j+1) - block(g)%ycent(block(g)%nelv2(block(g)%index_ts(index_im1))))*block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(index_im1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv2(block(g)%index_ts(index_im1))))*block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(index_im1)))
-                   temp_v1dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelv1(block(g)%index_ts(index_im1))))*block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(index_im1))) +  &
-                                 (block(g)%y1(j)   - block(g)%ycent(block(g)%nelv1(block(g)%index_ts(index_im1))))*block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(index_im1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv1(block(g)%index_ts(index_im1))))*block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(index_im1)))
-                   temp_w2dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelw2(block(g)%index_ts(index_im1))))*block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(index_im1))) +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw2(block(g)%index_ts(index_im1))))*block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(index_im1)))  +  &
-                                 (block(g)%z1(k+1) - block(g)%zcent(block(g)%nelw2(block(g)%index_ts(index_im1))))*block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(index_im1)))
-                   temp_w1dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelw1(block(g)%index_ts(index_im1))))*block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(index_im1))) +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw1(block(g)%index_ts(index_im1))))*block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(index_im1)))  +  &
-                                 (block(g)%z1(k)   - block(g)%zcent(block(g)%nelw1(block(g)%index_ts(index_im1))))*block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(index_im1)))
-                   temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_im1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_im1)))  +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_im1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_im1)))   +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_im1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_im1)))
+                   !temp_u2dotn = (block(g)%x1(i)   - &
+                   !block(g)%xcent(block(g)%nelu2(block(g)%index_ts(index_im1))))*&
+                   !block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(index_im1))) +  &
+                   !(block(g)%yp(j)   - &
+                   !block(g)%ycent(block(g)%nelu2(block(g)%index_ts(index_im1))))*&
+                   !block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(index_im1)))  +  &
+		   !(block(g)%zp(k)   - &
+                   !block(g)%zcent(block(g)%nelu2(block(g)%index_ts(index_im1))))*&
+                   !block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(index_im1)))
+                   temp_u1dotn = (block(g)%x1(i)   - &
+                        block(g)%xcent(block(g)%nelu1(block(g)%index_ts(index_im1))))*&
+                        block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(index_im1))) +  &
+                     (block(g)%yp(j)-block(g)%ycent(block(g)%nelu1(block(g)%index_ts(index_im1))))&
+                        *block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(index_im1)))  +  &
+                    (block(g)%zp(k)-block(g)%zcent(block(g)%nelu1(block(g)%index_ts(index_im1))))*&
+                        block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(index_im1)))
+                   temp_v2dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelv2(block(g)%index_ts(index_im1))))*&
+                        block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(index_im1))) +  &
+                   (block(g)%y1(j+1)-block(g)%ycent(block(g)%nelv2(block(g)%index_ts(index_im1))))*&
+                        block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(index_im1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv2(block(g)%index_ts(index_im1))))*&
+                        block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(index_im1)))
+                   temp_v1dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelv1(block(g)%index_ts(index_im1))))*&
+                        block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(index_im1))) +  &
+                 (block(g)%y1(j)   - block(g)%ycent(block(g)%nelv1(block(g)%index_ts(index_im1))))*&
+                   block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(index_im1)))  +  &
+                   (block(g)%zp(k)   - &
+                   block(g)%zcent(block(g)%nelv1(block(g)%index_ts(index_im1))))*&
+                   block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(index_im1)))
+                   temp_w2dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelw2(block(g)%index_ts(index_im1))))*&
+                        block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(index_im1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw2(block(g)%index_ts(index_im1))))*&
+                        block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(index_im1)))  +  &
+                 (block(g)%z1(k+1) - block(g)%zcent(block(g)%nelw2(block(g)%index_ts(index_im1))))*&
+                        block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(index_im1)))
+                   temp_w1dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelw1(block(g)%index_ts(index_im1))))*&
+                        block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(index_im1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw1(block(g)%index_ts(index_im1))))*&
+                        block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(index_im1)))  +  &
+                 (block(g)%z1(k)   - block(g)%zcent(block(g)%nelw1(block(g)%index_ts(index_im1))))*&
+                        block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(index_im1)))
+                   temp_pdotn  = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_im1))))*&
+                        block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_im1)))  +  &
+                  (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_im1))))*&
+                       *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_im1)))   +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_im1))))*&
+                       block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_im1)))
                    !IF (temp_u2dotn.LT.0) THEN
                       !block(g)%u(i-1,j,k) = block(g)%u2_ghost(index_im1)
                    !ELSE
@@ -897,27 +999,55 @@ contains
 		             temp_w2dotn = 0.
                    temp_w1dotn = 0.
                    temp_pdotn  = 0.
-                   temp_u2dotn = (block(g)%x1(i+1) - block(g)%xcent(block(g)%nelu2(block(g)%index_ts(index_jp1))))*block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(index_jp1))) +  &
-		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu2(block(g)%index_ts(index_jp1))))*block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(index_jp1)))  +  &
-				                     (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu2(block(g)%index_ts(index_jp1))))*block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(index_jp1)))
-                   temp_u1dotn = (block(g)%x1(i)   - block(g)%xcent(block(g)%nelu1(block(g)%index_ts(index_jp1))))*block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(index_jp1))) +  &
-		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu1(block(g)%index_ts(index_jp1))))*block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(index_jp1)))  +  &
-				                     (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu1(block(g)%index_ts(index_jp1))))*block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(index_jp1)))
-                   temp_v2dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelv2(block(g)%index_ts(index_jp1))))*block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(index_jp1))) +  &
-		                           (block(g)%y1(j+1) - block(g)%ycent(block(g)%nelv2(block(g)%index_ts(index_jp1))))*block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(index_jp1)))  +  &
-				                     (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv2(block(g)%index_ts(index_jp1))))*block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(index_jp1)))
-                   !temp_v1dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelv1(block(g)%index_ts(index_jp1))))*block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(index_jp1))) +  &
-		             !              (block(g)%y1(j+1) - block(g)%ycent(block(g)%nelv1(block(g)%index_ts(index_jp1))))*block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(index_jp1)))  +  &
-				       !              (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv1(block(g)%index_ts(index_jp1))))*block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(index_jp1)))
-                   temp_w2dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelw2(block(g)%index_ts(index_jp1))))*block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(index_jp1))) +  &
-		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw2(block(g)%index_ts(index_jp1))))*block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(index_jp1)))  +  &
-				                     (block(g)%z1(k+1) - block(g)%zcent(block(g)%nelw2(block(g)%index_ts(index_jp1))))*block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(index_jp1)))
-                   temp_w1dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelw1(block(g)%index_ts(index_jp1))))*block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(index_jp1))) +  &
-		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw1(block(g)%index_ts(index_jp1))))*block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(index_jp1)))  +  &
-				                     (block(g)%z1(k)   - block(g)%zcent(block(g)%nelw1(block(g)%index_ts(index_jp1))))*block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(index_jp1)))
-                   temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_jp1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_jp1)))  +  &
-		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_jp1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_jp1)))   +  &
-				                     (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_jp1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_jp1)))
+                   temp_u2dotn = (block(g)%x1(i+1) - &
+                        block(g)%xcent(block(g)%nelu2(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(index_jp1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu2(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(index_jp1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu2(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(index_jp1)))
+                   temp_u1dotn = (block(g)%x1(i)   - &
+                        block(g)%xcent(block(g)%nelu1(block(g)%index_ts(index_jp1))))*&
+                   block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(index_jp1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu1(block(g)%index_ts(index_jp1))))*&
+                   block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(index_jp1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu1(block(g)%index_ts(index_jp1))))*&
+                   block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(index_jp1)))
+                   temp_v2dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelv2(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(index_jp1))) +  &
+                 (block(g)%y1(j+1) - block(g)%ycent(block(g)%nelv2(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(index_jp1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv2(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(index_jp1)))
+                   !temp_v1dotn = (block(g)%xp(i)   - &
+                   !block(g)%xcent(block(g)%nelv1(block(g)%index_ts(index_jp1))))*&
+                   !block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(index_jp1))) +  &
+                !(block(g)%y1(j+1) - block(g)%ycent(block(g)%nelv1(block(g)%index_ts(index_jp1))))*&
+                   !block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(index_jp1)))  +  &
+                !(block(g)%zp(k)   - block(g)%zcent(block(g)%nelv1(block(g)%index_ts(index_jp1))))*&
+                   !block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(index_jp1)))
+                   temp_w2dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelw2(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(index_jp1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw2(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(index_jp1)))  +  &
+                 (block(g)%z1(k+1) - block(g)%zcent(block(g)%nelw2(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(index_jp1)))
+                   temp_w1dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelw1(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(index_jp1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw1(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(index_jp1)))  +  &
+                 (block(g)%z1(k)   - block(g)%zcent(block(g)%nelw1(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(index_jp1)))
+                   temp_pdotn  = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_jp1)))  +  &
+                  (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_jp1)))   +  &
+                  (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_jp1))))*&
+                        block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_jp1)))
                    IF (temp_u2dotn<0) THEN
                       block(g)%u(i,j+1,k) = block(g)%u2_ghost(index_jp1)
                    !ELSE
@@ -964,27 +1094,55 @@ contains
 		             temp_w2dotn = 0.
                    temp_w1dotn = 0.
                    temp_pdotn  = 0.
-                   temp_u2dotn = (block(g)%x1(i+1) - block(g)%xcent(block(g)%nelu2(block(g)%index_ts(index_jm1))))*block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(index_jm1))) +  &
-		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu2(block(g)%index_ts(index_jm1))))*block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(index_jm1)))  +  &
-			                        (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu2(block(g)%index_ts(index_jm1))))*block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(index_jm1)))
-                   temp_u1dotn = (block(g)%x1(i)   - block(g)%xcent(block(g)%nelu1(block(g)%index_ts(index_jm1))))*block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(index_jm1))) +  &
-		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu1(block(g)%index_ts(index_jm1))))*block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(index_jm1)))  +  &
-				                     (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu1(block(g)%index_ts(index_jm1))))*block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(index_jm1)))
-                   !temp_v2dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelv2(block(g)%index_ts(index_jm1))))*block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(index_jm1))) +  &
-		             !              (block(g)%y1(j)   - block(g)%ycent(block(g)%nelv2(block(g)%index_ts(index_jm1))))*block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(index_jm1)))  +  &
-				       !              (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv2(block(g)%index_ts(index_jm1))))*block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(index_jm1)))
-                   temp_v1dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelv1(block(g)%index_ts(index_jm1))))*block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(index_jm1))) +  &
-		                           (block(g)%y1(j)   - block(g)%ycent(block(g)%nelv1(block(g)%index_ts(index_jm1))))*block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(index_jm1)))  +  &
-				                     (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv1(block(g)%index_ts(index_jm1))))*block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(index_jm1)))
-                   temp_w2dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelw2(block(g)%index_ts(index_jm1))))*block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(index_jm1))) +  &
-		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw2(block(g)%index_ts(index_jm1))))*block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(index_jm1)))  +  &
-				                     (block(g)%z1(k+1) - block(g)%zcent(block(g)%nelw2(block(g)%index_ts(index_jm1))))*block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(index_jm1)))
-                   temp_w1dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelw1(block(g)%index_ts(index_jm1))))*block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(index_jm1))) +  &
-		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw1(block(g)%index_ts(index_jm1))))*block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(index_jm1)))  +  &
-				                     (block(g)%z1(k)   - block(g)%zcent(block(g)%nelw1(block(g)%index_ts(index_jm1))))*block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(index_jm1)))
-                   temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_jm1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_jm1)))  +  &
-		                           (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_jm1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_jm1)))   +  &
-				                     (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_jm1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_jm1)))
+                   temp_u2dotn = (block(g)%x1(i+1) - &
+                        block(g)%xcent(block(g)%nelu2(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(index_jm1))) +  &
+                 (block(g)%yp(j) - block(g)%ycent(block(g)%nelu2(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(index_jm1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu2(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(index_jm1)))
+                   temp_u1dotn = (block(g)%x1(i)   - &
+                        block(g)%xcent(block(g)%nelu1(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(index_jm1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu1(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(index_jm1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu1(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(index_jm1)))
+                   !temp_v2dotn = (block(g)%xp(i)   - &
+                   !block(g)%xcent(block(g)%nelv2(block(g)%index_ts(index_jm1))))*&
+                   !block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(index_jm1))) +  &
+               ! (block(g)%y1(j)   - block(g)%ycent(block(g)%nelv2(block(g)%index_ts(index_jm1))))*&
+                   !block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(index_jm1)))  +  &
+                !(block(g)%zp(k)   - block(g)%zcent(block(g)%nelv2(block(g)%index_ts(index_jm1))))*&
+                   !block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(index_jm1)))
+                   temp_v1dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelv1(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(index_jm1))) +  &
+                 (block(g)%y1(j)   - block(g)%ycent(block(g)%nelv1(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(index_jm1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv1(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(index_jm1)))
+                   temp_w2dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelw2(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(index_jm1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw2(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(index_jm1)))  +  &
+                 (block(g)%z1(k+1) - block(g)%zcent(block(g)%nelw2(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(index_jm1)))
+                   temp_w1dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelw1(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(index_jm1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw1(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(index_jm1)))  +  &
+                 (block(g)%z1(k)   - block(g)%zcent(block(g)%nelw1(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(index_jm1)))
+                   temp_pdotn  = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_jm1)))  +  &
+                  (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_jm1)))   +  &
+                  (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_jm1))))*&
+                        block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_jm1)))
                    IF (temp_u2dotn<0) THEN
                       block(g)%u(i,j-1,k) = block(g)%u2_ghost(index_jm1)
                    !ELSE
@@ -1031,27 +1189,55 @@ contains
 		             temp_w2dotn = 0.
                    temp_w1dotn = 0.
                    temp_pdotn  = 0.
-                   temp_u2dotn = (block(g)%x1(i+1) - block(g)%xcent(block(g)%nelu2(block(g)%index_ts(index_kp1))))*block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(index_kp1))) +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu2(block(g)%index_ts(index_kp1))))*block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(index_kp1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu2(block(g)%index_ts(index_kp1))))*block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(index_kp1)))
-                   temp_u1dotn = (block(g)%x1(i)   - block(g)%xcent(block(g)%nelu1(block(g)%index_ts(index_kp1))))*block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(index_kp1))) +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu1(block(g)%index_ts(index_kp1))))*block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(index_kp1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu1(block(g)%index_ts(index_kp1))))*block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(index_kp1)))
-                   temp_v2dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelv2(block(g)%index_ts(index_kp1))))*block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(index_kp1))) +  &
-                                 (block(g)%y1(j+1) - block(g)%ycent(block(g)%nelv2(block(g)%index_ts(index_kp1))))*block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(index_kp1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv2(block(g)%index_ts(index_kp1))))*block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(index_kp1)))
-                   temp_v1dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelv1(block(g)%index_ts(index_kp1))))*block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(index_kp1))) +  &
-                                 (block(g)%y1(j)   - block(g)%ycent(block(g)%nelv1(block(g)%index_ts(index_kp1))))*block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(index_kp1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv1(block(g)%index_ts(index_kp1))))*block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(index_kp1)))
-                   temp_w2dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelw2(block(g)%index_ts(index_kp1))))*block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(index_kp1))) +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw2(block(g)%index_ts(index_kp1))))*block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(index_kp1)))  +  &
-                                 (block(g)%z1(k+1) - block(g)%zcent(block(g)%nelw2(block(g)%index_ts(index_kp1))))*block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(index_kp1)))
-                   !temp_w1dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelw1(block(g)%index_ts(index_kp1))))*block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(index_kp1))) +  &
-                                 !(block(g)%yp(j)   - block(g)%ycent(block(g)%nelw1(block(g)%index_ts(index_kp1))))*block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(index_kp1)))  +  &
-                                 !(block(g)%z1(k+1) - block(g)%zcent(block(g)%nelw1(block(g)%index_ts(index_kp1))))*block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(index_kp1)))
-                   temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_kp1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_kp1)))  +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_kp1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_kp1)))   +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_kp1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_kp1)))
+                   temp_u2dotn = (block(g)%x1(i+1) - &
+                        block(g)%xcent(block(g)%nelu2(block(g)%index_ts(index_kp1))))*&
+                        block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(index_kp1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu2(block(g)%index_ts(index_kp1))))*&
+                        block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(index_kp1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu2(block(g)%index_ts(index_kp1))))*&
+                        block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(index_kp1)))
+                   temp_u1dotn = (block(g)%x1(i)   - &
+                        block(g)%xcent(block(g)%nelu1(block(g)%index_ts(index_kp1))))*^
+                   block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(index_kp1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu1(block(g)%index_ts(index_kp1))))*&
+                        block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(index_kp1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu1(block(g)%index_ts(index_kp1))))*&
+                        block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(index_kp1)))
+                     temp_v2dotn = (block(g)%xp(i)   - &
+                          block(g)%xcent(block(g)%nelv2(block(g)%index_ts(index_kp1))))*&
+                          block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(index_kp1))) +  &
+                 (block(g)%y1(j+1) - block(g)%ycent(block(g)%nelv2(block(g)%index_ts(index_kp1))))*&
+                          block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(index_kp1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv2(block(g)%index_ts(index_kp1))))*&
+                          block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(index_kp1)))
+                     temp_v1dotn = (block(g)%xp(i)   - &
+                          block(g)%xcent(block(g)%nelv1(block(g)%index_ts(index_kp1))))*&
+                          block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(index_kp1))) +  &
+                 (block(g)%y1(j)   - block(g)%ycent(block(g)%nelv1(block(g)%index_ts(index_kp1))))*&
+                          block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(index_kp1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv1(block(g)%index_ts(index_kp1))))*&
+                          block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(index_kp1)))
+                     temp_w2dotn = (block(g)%xp(i)   - &
+                          block(g)%xcent(block(g)%nelw2(block(g)%index_ts(index_kp1))))*&
+                          block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(index_kp1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw2(block(g)%index_ts(index_kp1))))*&
+                          block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(index_kp1)))  +  &
+                 (block(g)%z1(k+1) - block(g)%zcent(block(g)%nelw2(block(g)%index_ts(index_kp1))))*&
+                          block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(index_kp1)))
+                     !temp_w1dotn = (block(g)%xp(i)   - &
+                     !block(g)%xcent(block(g)%nelw1(block(g)%index_ts(index_kp1))))*&
+                     !block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(index_kp1))) +  &
+                !(block(g)%yp(j)   - block(g)%ycent(block(g)%nelw1(block(g)%index_ts(index_kp1))))*&
+                     !block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(index_kp1)))  +  &
+                !(block(g)%z1(k+1) - block(g)%zcent(block(g)%nelw1(block(g)%index_ts(index_kp1))))*&
+                     !block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(index_kp1)))
+                     temp_pdotn  = (block(g)%xp(i)   - &
+                          block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_kp1))))*&
+                          block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_kp1)))  +  &
+                  (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_kp1))))*&
+                          block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_kp1)))   +  &
+                  (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_kp1))))*&
+                          block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_kp1)))
                    IF (temp_u2dotn<0) THEN
                       block(g)%u(i,j,k+1) = block(g)%u2_ghost(index_kp1)
                    !ELSE
@@ -1098,27 +1284,55 @@ contains
                    temp_w2dotn = 0.
                    temp_w1dotn = 0.
                    temp_pdotn  = 0.
-                   temp_u2dotn = (block(g)%x1(i+1) - block(g)%xcent(block(g)%nelu2(block(g)%index_ts(index_km1))))*block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(index_km1))) +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu2(block(g)%index_ts(index_km1))))*block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(index_km1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu2(block(g)%index_ts(index_km1))))*block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(index_km1)))
-                   temp_u1dotn = (block(g)%x1(i)   - block(g)%xcent(block(g)%nelu1(block(g)%index_ts(index_km1))))*block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(index_km1))) +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu1(block(g)%index_ts(index_km1))))*block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(index_km1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu1(block(g)%index_ts(index_km1))))*block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(index_km1)))
-                   temp_v2dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelv2(block(g)%index_ts(index_km1))))*block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(index_km1))) +  &
-                                 (block(g)%y1(j+1) - block(g)%ycent(block(g)%nelv2(block(g)%index_ts(index_km1))))*block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(index_km1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv2(block(g)%index_ts(index_km1))))*block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(index_km1)))
-                   temp_v1dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelv1(block(g)%index_ts(index_km1))))*block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(index_km1))) +  &
-                                 (block(g)%y1(j)   - block(g)%ycent(block(g)%nelv1(block(g)%index_ts(index_km1))))*block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(index_km1)))  +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv1(block(g)%index_ts(index_km1))))*block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(index_km1)))
-                   !temp_w2dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelw2(block(g)%index_ts(index_km1))))*block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(index_km1))) +  &
-                             !    (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw2(block(g)%index_ts(index_km1))))*block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(index_km1)))  +  &
-                                ! (block(g)%z1(k)   - block(g)%zcent(block(g)%nelw2(block(g)%index_ts(index_km1))))*block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(index_km1)))
-                   temp_w1dotn = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelw1(block(g)%index_ts(index_km1))))*block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(index_km1))) +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw1(block(g)%index_ts(index_km1))))*block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(index_km1)))  +  &
-                                 (block(g)%z1(k)   - block(g)%zcent(block(g)%nelw1(block(g)%index_ts(index_km1))))*block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(index_km1)))
-                   temp_pdotn  = (block(g)%xp(i)   - block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_km1)))) *block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_km1)))  +  &
-                                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_km1)))) *block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_km1)))   +  &
-                                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_km1)))) *block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_km1)))
+                   temp_u2dotn = (block(g)%x1(i+1) - &
+                        block(g)%xcent(block(g)%nelu2(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(index_km1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu2(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(index_km1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu2(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(index_km1)))
+                   temp_u1dotn = (block(g)%x1(i)   - &
+                        block(g)%xcent(block(g)%nelu1(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(index_km1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelu1(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(index_km1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelu1(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(index_km1)))
+                   temp_v2dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelv2(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(index_km1))) +  &
+                 (block(g)%y1(j+1) - block(g)%ycent(block(g)%nelv2(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(index_km1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv2(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(index_km1)))
+                   temp_v1dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelv1(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(index_km1))) +  &
+                 (block(g)%y1(j)   - block(g)%ycent(block(g)%nelv1(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(index_km1)))  +  &
+                 (block(g)%zp(k)   - block(g)%zcent(block(g)%nelv1(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(index_km1)))
+                   !temp_w2dotn = (block(g)%xp(i)   - &
+                   !block(g)%xcent(block(g)%nelw2(block(g)%index_ts(index_km1))))*&
+                   !block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(index_km1))) +  &
+                !(block(g)%yp(j)   - block(g)%ycent(block(g)%nelw2(block(g)%index_ts(index_km1))))*&
+                   !block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(index_km1)))  +  &
+               ! (block(g)%z1(k)   - block(g)%zcent(block(g)%nelw2(block(g)%index_ts(index_km1))))*&
+                   !block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(index_km1)))
+                   temp_w1dotn = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelw1(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(index_km1))) +  &
+                 (block(g)%yp(j)   - block(g)%ycent(block(g)%nelw1(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(index_km1)))  +  &
+                 (block(g)%z1(k)   - block(g)%zcent(block(g)%nelw1(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(index_km1)))
+                   temp_pdotn  = (block(g)%xp(i)   - &
+                        block(g)%xcent(block(g)%nelp(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(index_km1)))  +  &
+                  (block(g)%yp(j)   - block(g)%ycent(block(g)%nelp(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(index_km1)))   +  &
+                  (block(g)%zp(k)   - block(g)%zcent(block(g)%nelp(block(g)%index_ts(index_km1))))*&
+                        block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(index_km1)))
                    IF (temp_u2dotn<0) THEN
                       block(g)%u(i,j,k-1) = block(g)%u2_ghost(index_km1)
                    !ELSE
@@ -1290,25 +1504,32 @@ contains
        ddz=0.5*(block(g)%deltaz(k)+block(g)%deltaz(k-1))
        ddzr=0.5*(block(g)%deltaz(k)+block(g)%deltaz(k+1))
 
-       duutdx=block(g)%u(i,j,k)*(block(g)%ca1_uu(i)*block(g)%u(i+2,j,k)+block(g)%ca2_uu(i)*block(g)%u(i+1,j,k) &
-      +block(g)%ca3_uu(i)*block(g)%u(i,j,k)+block(g)%ca4_uu(i)*block(g)%u(i-1,j,k)+block(g)%ca5_uu(i)* &
+       duutdx=block(g)%u(i,j,k)*(block(g)%ca1_uu(i)*block(g)%u(i+2,j,k)+&
+            block(g)%ca2_uu(i)*block(g)%u(i+1,j,k) &
+   +block(g)%ca3_uu(i)*block(g)%u(i,j,k)+block(g)%ca4_uu(i)*block(g)%u(i-1,j,k)+block(g)%ca5_uu(i)*&
       block(g)%u(i-2,j,k))/(block(g)%ca6_uu(i)*block(g)%deltax(i+1))+dabs(block(g)%u(i,j,k))* &
       (block(g)%ck1_uu(i)*block(g)%u(i+2,j,k)+block(g)%ck2_uu(i)*block(g)%u(i+1,j,k) &
-      +block(g)%ck3_uu(i)*block(g)%u(i,j,k)+block(g)%ck4_uu(i)*block(g)%u(i-1,j,k)+block(g)%ck5_uu(i)* &
+  +block(g)%ck3_uu(i)*block(g)%u(i,j,k)+block(g)%ck4_uu(i)*block(g)%u(i-1,j,k)+block(g)%ck5_uu(i)*&
       block(g)%u(i-2,j,k))/(2.0*block(g)%ck6_uu(i)*block(g)%deltax(i))
 
-       dvutdy=v_in_um*(block(g)%ca1_vu(j)*block(g)%u(i,j+2,k)+block(g)%ca2_vu(j)*block(g)%u(i,j+1,k) &
-      +block(g)%ca3_vu(j)*block(g)%u(i,j,k)+block(g)%ca4_vu(j)*block(g)%u(i,j-1,k)+block(g)%ca5_vu(j)* &
+       dvutdy=v_in_um*(block(g)%ca1_vu(j)*block(g)%u(i,j+2,k)+&
+            block(g)%ca2_vu(j)*block(g)%u(i,j+1,k) &
+            +block(g)%ca3_vu(j)*block(g)%u(i,j,k)+block(g)%ca4_vu(j)*&
+            block(g)%u(i,j-1,k)+block(g)%ca5_vu(j)* &
       block(g)%u(i,j-2,k))/(block(g)%ca6_vu(j)*ddye)+dabs(v_in_um)* &
       (block(g)%ck1_vu(j)*block(g)%u(i,j+2,k)+block(g)%ck2_vu(j)*block(g)%u(i,j+1,k) &
-      +block(g)%ck3_vu(j)*block(g)%u(i,j,k)+block(g)%ck4_vu(j)*block(g)%u(i,j-1,k)+block(g)%ck5_vu(j)* &
+      +block(g)%ck3_vu(j)*block(g)%u(i,j,k)+block(g)%ck4_vu(j)*&
+      block(g)%u(i,j-1,k)+block(g)%ck5_vu(j)* &
       block(g)%u(i,j-2,k))/(2.0*block(g)%ck6_vu(j)*ddy)
 
-       dwutdz=w_in_um*(block(g)%ca1_wu(k)*block(g)%u(i,j,k+2)+block(g)%ca2_wu(k)*block(g)%u(i,j,k+1) &
-      +block(g)%ca3_wu(k)*block(g)%u(i,j,k)+block(g)%ca4_wu(k)*block(g)%u(i,j,k-1)+block(g)%ca5_wu(k)* &
+       dwutdz=w_in_um*(block(g)%ca1_wu(k)*block(g)%u(i,j,k+2)+&
+            block(g)%ca2_wu(k)*block(g)%u(i,j,k+1) &
+            +block(g)%ca3_wu(k)*block(g)%u(i,j,k)+block(g)%ca4_wu(k)*&
+            block(g)%u(i,j,k-1)+block(g)%ca5_wu(k)* &
       block(g)%u(i,j,k-2))/(block(g)%ca6_wu(k)*ddzr)+dabs(w_in_um)* &
       (block(g)%ck1_wu(k)*block(g)%u(i,j,k+2)+block(g)%ck2_wu(k)*block(g)%u(i,j,k+1) &
-      +block(g)%ck3_wu(k)*block(g)%u(i,j,k)+block(g)%ck4_wu(k)*block(g)%u(i,j,k-1)+block(g)%ck5_wu(k)* &
+      +block(g)%ck3_wu(k)*block(g)%u(i,j,k)+block(g)%ck4_wu(k)*block(g)%u(i,j,k-1)+&
+      block(g)%ck5_wu(k)* &
       block(g)%u(i,j,k-2))/(2.0*block(g)%ck6_wu(k)*ddz)
 
      	duudx=duutdx
@@ -1317,11 +1538,11 @@ contains
 
 	else
 !cccccccccccccc---First Order Upwinding ----ccccccccccccccccccccccccccccc
-	duudx = -0.25*( u1a*u1a + alpha*dabs(u1a)*u22 - u3*u3 -   alpha*dabs(u3)*u4)/block(g)%deltax(i)
+	duudx = -0.25*( u1a*u1a + alpha*dabs(u1a)*u22-u3*u3-alpha*dabs(u3)*u4)/block(g)%deltax(i)
 
       dvudy = -0.25*( v1a*u5 + alpha*dabs(v1a)*u6 - v22*u7 - alpha*dabs(v22)*u8)/block(g)%deltay(j)
 
-      dwudz = -0.25*( w1a*u9  + alpha*dabs(w1a)*u10 - w22*u11 - alpha*dabs(w22)*u12) /block(g)%deltaz(k)
+      dwudz = -0.25*(w1a*u9 + alpha*dabs(w1a)*u10-w22*u11 - alpha*dabs(w22)*u12) /block(g)%deltaz(k)
 
        !duudx=-duuwdx
        !dvudy=-dvuwdy
@@ -1378,25 +1599,29 @@ contains
        ddz=0.5*(block(g)%deltaz(k)+block(g)%deltaz(k-1))
        ddzr=0.5*(block(g)%deltaz(k)+block(g)%deltaz(k+1))
 
-       duvtdx=u_in_vm*(block(g)%ca1_uw(i)*block(g)%v(i+2,j,k)+block(g)%ca2_uw(i)*block(g)%v(i+1,j,k) &
-      +block(g)%ca3_uw(i)*block(g)%v(i,j,k)+block(g)%ca4_uw(i)*block(g)%v(i-1,j,k)+block(g)%ca5_uw(i)* &
+     duvtdx=u_in_vm*(block(g)%ca1_uw(i)*block(g)%v(i+2,j,k)+block(g)%ca2_uw(i)*block(g)%v(i+1,j,k) &
+  +block(g)%ca3_uw(i)*block(g)%v(i,j,k)+block(g)%ca4_uw(i)*block(g)%v(i-1,j,k)+block(g)%ca5_uw(i)* &
       block(g)%v(i-2,j,k))/(block(g)%ca6_uw(i)*ddxr)+dabs(u_in_vm)* &
       (block(g)%ck1_uw(i)*block(g)%v(i+2,j,k)+block(g)%ck2_uw(i)*block(g)%v(i+1,j,k) &
-      +block(g)%ck3_uw(i)*block(g)%v(i,j,k)+block(g)%ck4_uw(i)*block(g)%v(i-1,j,k)+block(g)%ck5_uw(i)* &
+  +block(g)%ck3_uw(i)*block(g)%v(i,j,k)+block(g)%ck4_uw(i)*block(g)%v(i-1,j,k)+block(g)%ck5_uw(i)* &
       block(g)%v(i-2,j,k))/(2.0*block(g)%ck6_uw(i)*ddx)
 
-       dvvtdy=block(g)%v(i,j,k)*(block(g)%ca1_vv(j)*block(g)%v(i,j+2,k)+block(g)%ca2_vv(j)*block(g)%v(i,j+1,k) &
-      +block(g)%ca3_vv(j)*block(g)%v(i,j,k)+block(g)%ca4_vv(j)*block(g)%v(i,j-1,k)+block(g)%ca5_vv(j)* &
+     dvvtdy=block(g)%v(i,j,k)*(block(g)%ca1_vv(j)*block(g)%v(i,j+2,k)+&
+          block(g)%ca2_vv(j)*block(g)%v(i,j+1,k) &
+          +block(g)%ca3_vv(j)*block(g)%v(i,j,k)+block(g)%ca4_vv(j)*block(g)%v(i,j-1,k)+&
+          block(g)%ca5_vv(j)* &
       block(g)%v(i,j-2,k))/(block(g)%ca6_vv(j)*block(g)%deltay(j+1))+dabs(block(g)%v(i,j,k))* &
       (block(g)%ck1_vv(j)*block(g)%v(i,j+2,k)+block(g)%ck2_vv(j)*block(g)%v(i,j+1,k) &
-      +block(g)%ck3_vv(j)*block(g)%v(i,j,k)+block(g)%ck4_vv(j)*block(g)%v(i,j-1,k)+block(g)%ck5_vv(j)* &
+      +block(g)%ck3_vv(j)*block(g)%v(i,j,k)+block(g)%ck4_vv(j)*block(g)%v(i,j-1,k)+&
+      block(g)%ck5_vv(j)* &
       block(g)%v(i,j-2,k))/(2.0*block(g)%ck6_vv(j)*block(g)%deltay(j))
 
-       dwvtdz=w_in_vm*(block(g)%ca1_wu(k)*block(g)%v(i,j,k+2)+block(g)%ca2_wu(k)*block(g)%v(i,j,k+1) &
-      +block(g)%ca3_wu(k)*block(g)%v(i,j,k)+block(g)%ca4_wu(k)*block(g)%v(i,j,k-1)+block(g)%ca5_wu(k)* &
+     dwvtdz=w_in_vm*(block(g)%ca1_wu(k)*block(g)%v(i,j,k+2)+block(g)%ca2_wu(k)*block(g)%v(i,j,k+1) &
+  +block(g)%ca3_wu(k)*block(g)%v(i,j,k)+block(g)%ca4_wu(k)*block(g)%v(i,j,k-1)+block(g)%ca5_wu(k)* &
       block(g)%v(i,j,k-2))/(block(g)%ca6_wu(k)*ddzr)+dabs(w_in_vm)* &
       (block(g)%ck1_wu(k)*block(g)%v(i,j,k+2)+block(g)%ck2_wu(k)*block(g)%v(i,j,k+1) &
-      +block(g)%ck3_wu(k)*block(g)%v(i,j,k)+block(g)%ck4_wu(k)*block(g)%v(i,j,k-1)+block(g)%ck5_wu(k)* &
+      +block(g)%ck3_wu(k)*block(g)%v(i,j,k)+block(g)%ck4_wu(k)*block(g)%v(i,j,k-1)+&
+      block(g)%ck5_wu(k)* &
       block(g)%v(i,j,k-2))/(2.0*block(g)%ck6_wu(k)*ddz)
 
        duvdx=duvtdx
@@ -1467,25 +1692,34 @@ contains
        ddy=0.5*(block(g)%deltay(j)+block(g)%deltay(j-1))
        ddye=0.5*(block(g)%deltay(j)+block(g)%deltay(j+1))
 
-       duwtdx=u_in_wm*(block(g)%ca1_uw(i)*block(g)%w(i+2,j,k)+block(g)%ca2_uw(i)*block(g)%w(i+1,j,k) &
-      +block(g)%ca3_uw(i)*block(g)%w(i,j,k)+block(g)%ca4_uw(i)*block(g)%w(i-1,j,k)+block(g)%ca5_uw(i)* &
+       duwtdx=u_in_wm*(block(g)%ca1_uw(i)*block(g)%w(i+2,j,k)+block(g)%ca2_uw(i)*&
+            block(g)%w(i+1,j,k) &
+            +block(g)%ca3_uw(i)*block(g)%w(i,j,k)+block(g)%ca4_uw(i)*block(g)%w(i-1,j,k)+&
+            block(g)%ca5_uw(i)* &
       block(g)%w(i-2,j,k))/(block(g)%ca6_uw(i)*ddxr)+dabs(u_in_wm)* &
       (block(g)%ck1_uw(i)*block(g)%w(i+2,j,k)+block(g)%ck2_uw(i)*block(g)%w(i+1,j,k) &
-      +block(g)%ck3_uw(i)*block(g)%w(i,j,k)+block(g)%ck4_uw(i)*block(g)%w(i-1,j,k)+block(g)%ck5_uw(i)* &
+      +block(g)%ck3_uw(i)*block(g)%w(i,j,k)+block(g)%ck4_uw(i)*block(g)%w(i-1,j,k)+&
+      block(g)%ck5_uw(i)* &
       block(g)%w(i-2,j,k))/(2.0*block(g)%ck6_uw(i)*ddx)
 
-       dvwtdy=v_in_wm*(block(g)%ca1_vw(j)*block(g)%w(i,j+2,k)+block(g)%ca2_vw(j)*block(g)%w(i,j+1,k) &
-      +block(g)%ca3_vw(j)*block(g)%w(i,j,k)+block(g)%ca4_vw(j)*block(g)%w(i,j-1,k)+block(g)%ca5_vw(j)* &
+       dvwtdy=v_in_wm*(block(g)%ca1_vw(j)*block(g)%w(i,j+2,k)+block(g)%ca2_vw(j)*&
+            block(g)%w(i,j+1,k) &
+            +block(g)%ca3_vw(j)*block(g)%w(i,j,k)+block(g)%ca4_vw(j)*block(g)%w(i,j-1,k)+&
+            block(g)%ca5_vw(j)* &
       block(g)%w(i,j-2,k))/(block(g)%ca6_vw(j)*ddye)+dabs(v_in_wm)* &
       (block(g)%ck1_vw(j)*block(g)%w(i,j+2,k)+block(g)%ck2_vw(j)*block(g)%w(i,j+1,k) &
-      +block(g)%ck3_vw(j)*block(g)%w(i,j,k)+block(g)%ck4_vw(j)*block(g)%w(i,j-1,k)+block(g)%ck5_vw(j)* &
+      +block(g)%ck3_vw(j)*block(g)%w(i,j,k)+block(g)%ck4_vw(j)*block(g)%w(i,j-1,k)+&
+       block(g)%ck5_vw(j)* &
       block(g)%w(i,j-2,k))/(2.0*block(g)%ck6_vw(j)*ddy)
 
-       dwwtdz=block(g)%w(i,j,k)*(block(g)%ca1_ww(k)*block(g)%w(i,j,k+2)+block(g)%ca2_ww(k)*block(g)%w(i,j,k+1) &
-      +block(g)%ca3_ww(k)*block(g)%w(i,j,k)+block(g)%ca4_ww(k)*block(g)%w(i,j,k-1)+block(g)%ca5_ww(k)* &
+       dwwtdz=block(g)%w(i,j,k)*(block(g)%ca1_ww(k)*block(g)%w(i,j,k+2)+block(g)%ca2_ww(k)*&
+            block(g)%w(i,j,k+1) &
+            +block(g)%ca3_ww(k)*block(g)%w(i,j,k)+block(g)%ca4_ww(k)*block(g)%w(i,j,k-1)+&
+            block(g)%ca5_ww(k)* &
       block(g)%w(i,j,k-2))/(block(g)%ca6_ww(k)*block(g)%deltaz(k+1))+dabs(block(g)%w(i,j,k))* &
       (block(g)%ck1_ww(k)*block(g)%w(i,j,k+2)+block(g)%ck2_ww(k)*block(g)%w(i,j,k+1) &
-      +block(g)%ck3_ww(k)*block(g)%w(i,j,k)+block(g)%ck4_ww(k)*block(g)%w(i,j,k-1)+block(g)%ck5_ww(k)* &
+      +block(g)%ck3_ww(k)*block(g)%w(i,j,k)+block(g)%ck4_ww(k)*block(g)%w(i,j,k-1)+&
+      block(g)%ck5_ww(k)* &
       block(g)%w(i,j,k-2))/(2.0*block(g)%ck6_ww(k)*block(g)%deltaz(k))
 
      	duwdx=duwtdx
@@ -1495,11 +1729,11 @@ contains
 	else
 !cccccccccccccc---First Order Upwinding ----cccccccccccccccccccccccccccc
 
-      duwdx = -0.25*(u15*w5 + alpha*dabs(u15)*w6 -  u16*w7 - alpha*dabs(u16)*w8)/block(g)%deltax(i)
+   duwdx=-0.25dp*(u15*w5 + alpha*dabs(u15)*w6 -  u16*w7 - alpha*dabs(u16)*w8)/block(g)%deltax(i)
 
-      dvwdy = -0.25*(v15*w9 + alpha*dabs(v15)*w10 - v16*w11 -alpha*dabs(v16)*w12)/block(g)%deltay(j)
+   dvwdy=-0.25dp*(v15*w9 + alpha*dabs(v15)*w10 - v16*w11 -alpha*dabs(v16)*w12)/block(g)%deltay(j)
 
-      dwwdz = -0.25*(w13*w13 + alpha*dabs(w13)*w14 - w15*w15 - alpha*dabs(w15)*w16)/block(g)%deltaz(k)
+   dwwdz=-0.25dp*(w13*w13 + alpha*dabs(w13)*w14 - w15*w15 - alpha*dabs(w15)*w16)/block(g)%deltaz(k)
 
        !duwdx=duwwdx
        !dvwdy=dvwwdy
@@ -1601,17 +1835,17 @@ ENDIF
 !     !write(*,*)'has entered nseqcp'
 !         IMPLICIT NONE
 !         INTEGER          :: i, j, k, n
-!         REAL (KIND = 8)  :: dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14,            &
-!                             u15,u16,v1a,v22,v3,v4,v5,v6,v7,v8,v9,v10,v11,v12,v13,v14,v15,v16,           &
-!       		        w1a,w22,w3,w4,w5,w6,w7,w8,w9,w10,w11,w12,w13,w14,w15,w16,dx2xr,             &
-!       		        dx2xl,dy2ye,dy2yw,dxr,dx,dxl,dye,dy,dyw,dzt,dz,dzb,                         &
-!       		        dz2zt,dz2zb,ddx,ddxr,ddy,ddye,ddz,ddzr,r1x,r1y,r1z,r1xn,r1xd,r1yn,          &
-!       		        r1yd,r1zn,r1zd,wu_n,wu_s,w_in_um,vu_e,vu_w,v_in_um,duutdx,dvutdy,           &
-!       		        dwutdz,duuwdx,dvuwdy,dwuwdz,duudx,dvudy,dwudz,d2udx2,d2udy2,d2udz2,         &
-!       		        uv_e,uv_w,u_in_vm,wv_n,wv_s,w_in_vm,duvtdx,dvvtdy,dwvtdz,duvwdx,            &
-!       		        dvvwdy,dwvwdz,duvdx,dvvdy,dwvdz,d2vdx2,d2vdy2,d2vdz2,uw_e,uw_w,             &
-!       		        u_in_wm,vw_n,vw_s,v_in_wm,duwtdx,dvwtdy,dwwtdz,duwwdx,dvwwdy,dwwwdz,        &
-!       		        duwdx,dvwdy,dwwdz,d2wdx2,d2wdy2,d2wdz2,xtt2,residu,ytt2,residv,ztt2,residw
+!     REAL (KIND = 8)  :: dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14,         &
+!                         u15,u16,v1a,v22,v3,v4,v5,v6,v7,v8,v9,v10,v11,v12,v13,v14,v15,v16,       &
+!                w1a,w22,w3,w4,w5,w6,w7,w8,w9,w10,w11,w12,w13,w14,w15,w16,dx2xr,             &
+!       	   dx2xl,dy2ye,dy2yw,dxr,dx,dxl,dye,dy,dyw,dzt,dz,dzb,                         &
+!       	  dz2zt,dz2zb,ddx,ddxr,ddy,ddye,ddz,ddzr,r1x,r1y,r1z,r1xn,r1xd,r1yn,          &
+!       	   r1yd,r1zn,r1zd,wu_n,wu_s,w_in_um,vu_e,vu_w,v_in_um,duutdx,dvutdy,           &
+!       	  dwutdz,duuwdx,dvuwdy,dwuwdz,duudx,dvudy,dwudz,d2udx2,d2udy2,d2udz2,         &
+!       		   uv_e,uv_w,u_in_vm,wv_n,wv_s,w_in_vm,duvtdx,dvvtdy,dwvtdz,duvwdx,        &
+!                    dvvwdy,dwvwdz,duvdx,dvvdy,dwvdz,d2vdx2,d2vdy2,d2vdz2,uw_e,uw_w, &
+!       	  u_in_wm,vw_n,vw_s,v_in_wm,duwtdx,dvwtdy,dwwtdz,duwwdx,dvwwdy,dwwwdz,        &
+!      	        duwdx,dvwdy,dwwdz,d2wdx2,d2wdy2,d2wdz2,xtt2,residu,ytt2,residv,ztt2,residw
 !
 !       al = 1.
 
@@ -1627,7 +1861,7 @@ ENDIF
 !!$acc	        dvvwdy,dwvwdz,duvdx,dvvdy,dwvdz,d2vdx2,d2vdy2,d2vdz2,uw_e,uw_w,             &
 !!$acc	        u_in_wm,vw_n,vw_s,v_in_wm,duwtdx,dvwtdy,dwwtdz,duwwdx,dvwwdy,dwwwdz,        &
 !!$acc		 duwdx,dvwdy,dwwdz,d2wdx2,d2wdy2,d2wdz2,xtt2,residu,ytt2,residv,ztt2,residw) &
-!!$acc present (block(g)%fluidIndexPtr, block(g)%deltax, block(g)%deltay, block(g)%deltaz, u, v, w,             &
+!!$acc present (block(g)%fluidIndexPtr, block(g)%deltax, block(g)%deltay, block(g)%deltaz, u, v, w,&
 !!$acc          ut, vt, wt, p, cell, x1, y1, z1, xp, yp, zp,                &
 !!$acc          xu, yu, zu, xv, yv, zv, xw, yw, zw, resi_u, resi_v, resi_w, &
 !!$acc          ca1_uu, ca2_uu, ca3_uu, ca4_uu, ca5_uu, ca6_uu, &
@@ -1782,25 +2016,34 @@ ENDIF
 !      ddz=0.5*(block(g)%deltaz(k)+block(g)%deltaz(k-1))
 !      ddzr=0.5*(block(g)%deltaz(k)+block(g)%deltaz(k+1))
 
-!      duutdx=block(g)%u(i,j,k)*(block(g)%ca1_uu(i)*block(g)%u(i+2,j,k)+block(g)%ca2_uu(i)*block(g)%u(i+1,j,k) &
-!      +block(g)%ca3_uu(i)*block(g)%u(i,j,k)+block(g)%ca4_uu(i)*block(g)%u(i-1,j,k)+block(g)%ca5_uu(i)* &
+      !      duutdx=block(g)%u(i,j,k)*(block(g)%ca1_uu(i)*block(g)%u(i+2,j,k)+&
+      !block(g)%ca2_uu(i)*block(g)%u(i+1,j,k) &
+      !      +block(g)%ca3_uu(i)*block(g)%u(i,j,k)+block(g)%ca4_uu(i)*block(g)%u(i-1,j,k)+&
+      !block(g)%ca5_uu(i)* &
 !      block(g)%u(i-2,j,k))/(block(g)%ca6_uu(i)*block(g)%deltax(i+1))+dabs(block(g)%u(i,j,k))* &
 !      (block(g)%ck1_uu(i)*block(g)%u(i+2,j,k)+block(g)%ck2_uu(i)*block(g)%u(i+1,j,k) &
-!      +block(g)%ck3_uu(i)*block(g)%u(i,j,k)+block(g)%ck4_uu(i)*block(g)%u(i-1,j,k)+block(g)%ck5_uu(i)* &
+      !      +block(g)%ck3_uu(i)*block(g)%u(i,j,k)+block(g)%ck4_uu(i)*block(g)%u(i-1,j,k)+&
+      !block(g)%ck5_uu(i)* &
 !      block(g)%u(i-2,j,k))/(2.0*block(g)%ck6_uu(i)*block(g)%deltax(i))
 
-!      dvutdy=v_in_um*(block(g)%ca1_vu(j)*block(g)%u(i,j+2,k)+block(g)%ca2_vu(j)*block(g)%u(i,j+1,k) &
-!      +block(g)%ca3_vu(j)*block(g)%u(i,j,k)+block(g)%ca4_vu(j)*block(g)%u(i,j-1,k)+block(g)%ca5_vu(j)* &
+      !      dvutdy=v_in_um*(block(g)%ca1_vu(j)*block(g)%u(i,j+2,k)+block(g)%ca2_vu(j)*&
+      !block(g)%u(i,j+1,k) &
+      !      +block(g)%ca3_vu(j)*block(g)%u(i,j,k)+block(g)%ca4_vu(j)*block(g)%u(i,j-1,k)+&
+      !block(g)%ca5_vu(j)* &
 !      block(g)%u(i,j-2,k))/(block(g)%ca6_vu(j)*ddye)+dabs(v_in_um)* &
 !      (block(g)%ck1_vu(j)*block(g)%u(i,j+2,k)+block(g)%ck2_vu(j)*block(g)%u(i,j+1,k) &
-!      +block(g)%ck3_vu(j)*block(g)%u(i,j,k)+block(g)%ck4_vu(j)*block(g)%u(i,j-1,k)+block(g)%ck5_vu(j)* &
+      !      +block(g)%ck3_vu(j)*block(g)%u(i,j,k)+block(g)%ck4_vu(j)*block(g)%u(i,j-1,k)+&
+      !block(g)%ck5_vu(j)* &
 !      block(g)%u(i,j-2,k))/(2.0*block(g)%ck6_vu(j)*ddy)
 
-!      dwutdz=w_in_um*(block(g)%ca1_wu(k)*block(g)%u(i,j,k+2)+block(g)%ca2_wu(k)*block(g)%u(i,j,k+1) &
-!      +block(g)%ca3_wu(k)*block(g)%u(i,j,k)+block(g)%ca4_wu(k)*block(g)%u(i,j,k-1)+block(g)%ca5_wu(k)* &
+      !      dwutdz=w_in_um*(block(g)%ca1_wu(k)*block(g)%u(i,j,k+2)+block(g)%ca2_wu(k)*
+      !block(g)%u(i,j,k+1) &
+      !      +block(g)%ca3_wu(k)*block(g)%u(i,j,k)+block(g)%ca4_wu(k)*block(g)%u(i,j,k-1)+&
+      !block(g)%ca5_wu(k)* &
 !      block(g)%u(i,j,k-2))/(block(g)%ca6_wu(k)*ddzr)+dabs(w_in_um)* &
 !      (block(g)%ck1_wu(k)*block(g)%u(i,j,k+2)+block(g)%ck2_wu(k)*block(g)%u(i,j,k+1) &
-!      +block(g)%ck3_wu(k)*block(g)%u(i,j,k)+block(g)%ck4_wu(k)*block(g)%u(i,j,k-1)+block(g)%ck5_wu(k)* &
+      !      +block(g)%ck3_wu(k)*block(g)%u(i,j,k)+block(g)%ck4_wu(k)*block(g)%u(i,j,k-1)+&
+      !block(g)%ck5_wu(k)* &
 !      block(g)%u(i,j,k-2))/(2.0*block(g)%ck6_wu(k)*ddz)
 !
 !    	duudx=duutdx
@@ -1891,25 +2134,34 @@ ENDIF
 !      ddz=0.5*(block(g)%deltaz(k)+block(g)%deltaz(k-1))
 !      ddzr=0.5*(block(g)%deltaz(k)+block(g)%deltaz(k+1))
 
-!      duvtdx=u_in_vm*(block(g)%ca1_uw(i)*block(g)%v(i+2,j,k)+block(g)%ca2_uw(i)*block(g)%v(i+1,j,k) &
-!      +block(g)%ca3_uw(i)*block(g)%v(i,j,k)+block(g)%ca4_uw(i)*block(g)%v(i-1,j,k)+block(g)%ca5_uw(i)* &
+      !      duvtdx=u_in_vm*(block(g)%ca1_uw(i)*block(g)%v(i+2,j,k)+block(g)%ca2_uw(i)*&
+      !block(g)%v(i+1,j,k) &
+      !      +block(g)%ca3_uw(i)*block(g)%v(i,j,k)+block(g)%ca4_uw(i)*block(g)%v(i-1,j,k)+&
+      !block(g)%ca5_uw(i)* &
 !      block(g)%v(i-2,j,k))/(block(g)%ca6_uw(i)*ddxr)+dabs(u_in_vm)* &
 !      (block(g)%ck1_uw(i)*block(g)%v(i+2,j,k)+block(g)%ck2_uw(i)*block(g)%v(i+1,j,k) &
-!      +block(g)%ck3_uw(i)*block(g)%v(i,j,k)+block(g)%ck4_uw(i)*block(g)%v(i-1,j,k)+block(g)%ck5_uw(i)* &
+      !      +block(g)%ck3_uw(i)*block(g)%v(i,j,k)+block(g)%ck4_uw(i)*block(g)%v(i-1,j,k)+&
+      !block(g)%ck5_uw(i)* &
 !      block(g)%v(i-2,j,k))/(2.0*block(g)%ck6_uw(i)*ddx)
 
-!      dvvtdy=block(g)%v(i,j,k)*(block(g)%ca1_vv(j)*block(g)%v(i,j+2,k)+block(g)%ca2_vv(j)*block(g)%v(i,j+1,k) &
-!      +block(g)%ca3_vv(j)*block(g)%v(i,j,k)+block(g)%ca4_vv(j)*block(g)%v(i,j-1,k)+block(g)%ca5_vv(j)* &
+      !      dvvtdy=block(g)%v(i,j,k)*(block(g)%ca1_vv(j)*block(g)%v(i,j+2,k)+&
+      !block(g)%ca2_vv(j)*block(g)%v(i,j+1,k) &
+      !      +block(g)%ca3_vv(j)*block(g)%v(i,j,k)+block(g)%ca4_vv(j)*block(g)%v(i,j-1,k)+&
+      !block(g)%ca5_vv(j)* &
 !      block(g)%v(i,j-2,k))/(block(g)%ca6_vv(j)*block(g)%deltay(j+1))+dabs(block(g)%v(i,j,k))* &
 !      (block(g)%ck1_vvj)*block(g)%v(i,j+2,k)+block(g)%ck2_vvj)*block(g)%v(i,j+1,k) &
-!      +block(g)%ck3_vvj)*block(g)%v(i,j,k)+block(g)%ck4_vvj)*block(g)%v(i,j-1,k)+block(g)%ck5_vv(j)* &
+      !      +block(g)%ck3_vvj)*block(g)%v(i,j,k)+block(g)%ck4_vvj)*block(g)%v(i,j-1,k)+&
+      !block(g)%ck5_vv(j)* &
 !      block(g)%v(i,j-2,k))/(2.0*block(g)%ck6_vv(j)*block(g)%deltay(j))
 
-!      dwvtdz=w_in_vm*(block(g)%ca1_wu(k)*block(g)%v(i,j,k+2)+block(g)%ca2_wu(k)*block(g)%v(i,j,k+1) &
-!      +block(g)%ca3_wu(k)*block(g)%v(i,j,k)+block(g)%ca4_wu(k)*block(g)%v(i,j,k-1)+block(g)%ca5_wu(k)* &
+      !      dwvtdz=w_in_vm*(block(g)%ca1_wu(k)*block(g)%v(i,j,k+2)+block(g)%ca2_wu(k)*&
+      !block(g)%v(i,j,k+1) &
+      !      +block(g)%ca3_wu(k)*block(g)%v(i,j,k)+block(g)%ca4_wu(k)*block(g)%v(i,j,k-1)+&
+      !block(g)%ca5_wu(k)* &
 !      block(g)%v(i,j,k-2))/(block(g)%ca6_wu(k)*ddzr)+dabs(w_in_vm)* &
 !      (block(g)%ck1_wu(k)*block(g)%v(i,j,k+2)+block(g)%ck2_wu(k)*block(g)%v(i,j,k+1) &
-!      +block(g)%ck3_wu(k)*block(g)%v(i,j,k)+block(g)%ck4_wu(k)*block(g)%v(i,j,k-1)+block(g)%ck5_wu(k)* &
+      !      +block(g)%ck3_wu(k)*block(g)%v(i,j,k)+block(g)%ck4_wu(k)*block(g)%v(i,j,k-1)+&
+      !block(g)%ck5_wu(k)* &
 !      block(g)%v(i,j,k-2))/(2.0*block(g)%ck6_wu(k)*ddz)
 !
 !      duvdx=duvtdx
@@ -2000,25 +2252,34 @@ ENDIF
 !      ddy=0.5*(block(g)%deltay(j)+block(g)%deltay(j-1))
 !      ddye=0.5*(block(g)%deltay(j)+block(g)%deltay(j+1))
 
-!      duwtdx=u_in_wm*(block(g)%ca1_uw(i)*block(g)%w(i+2,j,k)+block(g)%ca2_uw(i)*block(g)%w(i+1,j,k) &
-!      +block(g)%ca3_uw(i)*block(g)%w(i,j,k)+block(g)%ca4_uw(i)*block(g)%w(i-1,j,k)+block(g)%ca5_uw(i)* &
+      !      duwtdx=u_in_wm*(block(g)%ca1_uw(i)*block(g)%w(i+2,j,k)+block(g)%ca2_uw(i)*&
+      !block(g)%w(i+1,j,k) &
+      !      +block(g)%ca3_uw(i)*block(g)%w(i,j,k)+block(g)%ca4_uw(i)*block(g)%w(i-1,j,k)+&
+      !block(g)%ca5_uw(i)* &
 !      block(g)%w(i-2,j,k))/(block(g)%ca6_uw(i)*ddxr)+dabs(u_in_wm)* &
 !      (block(g)%ck1_uw(i)*block(g)%w(i+2,j,k)+block(g)%ck2_uw(i)*block(g)%w(i+1,j,k) &
-!      +block(g)%ck3_uw(i)*block(g)%w(i,j,k)+block(g)%ck4_uw(i)*block(g)%w(i-1,j,k)+block(g)%ck5_uw(i)* &
+      !      +block(g)%ck3_uw(i)*block(g)%w(i,j,k)+block(g)%ck4_uw(i)*block(g)%w(i-1,j,k)+&
+      !block(g)%ck5_uw(i)* &
 !      block(g)%w(i-2,j,k))/(2.0*block(g)%ck6_uw(i)*ddx)
 
-!      dvwtdy=v_in_wm*(block(g)%ca1_vw(j)*block(g)%w(i,j+2,k)+block(g)%ca2_vw(j)*block(g)%w(i,j+1,k) &
-!      +block(g)%ca3_vw(j)*block(g)%w(i,j,k)+block(g)%ca4_vw(j)*block(g)%w(i,j-1,k)+block(g)%ca5_vw(j)* &
+      !      dvwtdy=v_in_wm*(block(g)%ca1_vw(j)*block(g)%w(i,j+2,k)+block(g)%ca2_vw(j)*&
+      !block(g)%w(i,j+1,k) &
+      !      +block(g)%ca3_vw(j)*block(g)%w(i,j,k)+block(g)%ca4_vw(j)*block(g)%w(i,j-1,k)+!
+      !block(g)%ca5_vw(j)* &
 !      block(g)%w(i,j-2,k))/(block(g)%ca6_vw(j)*ddye)+dabs(v_in_wm)* &
 !      (block(g)%ck1_vw(j)*block(g)%w(i,j+2,k)+block(g)%ck2_vw(j)*block(g)%w(i,j+1,k) &
-!      +block(g)%ck3_vw(j)*block(g)%w(i,j,k)+block(g)%ck4_vw(j)*block(g)%w(i,j-1,k)+block(g)%ck5_vw(j)* &
+      !      +block(g)%ck3_vw(j)*block(g)%w(i,j,k)+block(g)%ck4_vw(j)*block(g)%w(i,j-1,k)+&
+      !block(g)%ck5_vw(j)* &
 !      block(g)%w(i,j-2,k))/(2.0*block(g)%ck6_vw(j)*ddy)
 
-!      dwwtdz=block(g)%w(i,j,k)*(block(g)%ca1_ww(k)*block(g)%w(i,j,k+2)+block(g)%ca2_ww(k)*block(g)%w(i,j,k+1) &
-!      +block(g)%ca3_ww(k)*block(g)%w(i,j,k)+block(g)%ca4_ww(k)*block(g)%w(i,j,k-1)+block(g)%ca5_ww(k)* &
+      !      dwwtdz=block(g)%w(i,j,k)*(block(g)%ca1_ww(k)*block(g)%w(i,j,k+2)+block(g)%ca2_ww(k)*&
+      !block(g)%w(i,j,k+1) &
+      !      +block(g)%ca3_ww(k)*block(g)%w(i,j,k)+block(g)%ca4_ww(k)*block(g)%w(i,j,k-1)+&
+      !block(g)%ca5_ww(k)* &
 !      block(g)%w(i,j,k-2))/(block(g)%ca6_ww(k)*block(g)%deltaz(k+1))+dabs(block(g)%w(i,j,k))* &
 !      (block(g)%ck1_ww(k)*block(g)%w(i,j,k+2)+block(g)%ck2_ww(k)*block(g)%w(i,j,k+1) &
-!      +block(g)%ck3_ww(k)*block(g)%w(i,j,k)+block(g)%ck4_ww(k)*block(g)%w(i,j,k-1)+block(g)%ck5_ww(k)* &
+      !      +block(g)%ck3_ww(k)*block(g)%w(i,j,k)+block(g)%ck4_ww(k)*block(g)%w(i,j,k-1)+&
+      !block(g)%ck5_ww(k)* &
 !      block(g)%w(i,j,k-2))/(2.0*block(g)%ck6_ww(k)*block(g)%deltaz(k))
 !
 !    	duwdx=duwtdx
