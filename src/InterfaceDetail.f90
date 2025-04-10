@@ -9,12 +9,10 @@ module biocfd_interface_detail
 
   contains
 SUBROUTINE interfaceDetail
-        INTEGER (int64) :: i, j, g,  factor, a_maxx, a_maxy,a_maxz, a_mm,&
-        b_maxx, b_maxy, b_maxz, b_mm, a_max_intf_length, b_max_intf_length,  &
-        a_blk_no, b_blk_no, xx1_p, xx2_p, yy1_p, yy2_p, zz1_p, zz2_p,&
+        INTEGER (int64) :: j, g, factor, a_maxx, a_maxy,a_maxz, a_mm, &
+        b_maxx, b_maxy, b_maxz, b_mm, a_max_intf_length, b_max_intf_length, &
+        a_blk_no, b_blk_no, xx1_p, xx2_p, &
         a_mm_x, a_mm_y,a_mm_z
-        INTEGER (int64) :: starter, ender
-
 
        ! do g=1,nblocks
        !   !$ acc enter data copyin(block(g)%xp,block(g)%yp,block(g)%xu,block(g)%yu, block(g)%xv,block(g)%yv)
@@ -75,689 +73,212 @@ SUBROUTINE interfaceDetail
         factor=intfr(g)%b_msh/intfr(g)%a_msh
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
-        DO i=1,block(a_blk_no)%nx+3
 
-        if(block(a_blk_no)%xp(i) > intfr(g)%xintf_start)then
+        ! p
+        call set_interface_detail(block(a_blk_no)%xp, intfr(g)%xintf_start, intfr(g)%xintf_end, &
+                         factor, intfr(g)%px_interface_det, intfr(g)%counterxp)
 
-                xx1_p=i
-                exit
-        endif
-        enddo
+        call set_interface_detail(block(a_blk_no)%yp, intfr(g)%yintf_start, intfr(g)%yintf_end, &
+                         factor, intfr(g)%py_interface_det, intfr(g)%counteryp)
 
-        !DO i=xx1_p,block(a_blk_no)%itn_en
-        DO i=xx1_p,block(a_blk_no)%nx+2
+        call set_interface_detail(block(a_blk_no)%zp, intfr(g)%zintf_start, intfr(g)%zintf_end, &
+                         factor, intfr(g)%pz_interface_det, intfr(g)%counterzp)
 
-        !if(block(a_blk_no)%xp(i) .gt. intfr(g)%xintf_end+(1.5*block(b_blk_no)%dx))then
-        if(block(a_blk_no)%xp(i) > intfr(g)%xintf_end)then
+        ! u
+        call set_interface_detail(block(a_blk_no)%xu, intfr(g)%xintf_start, intfr(g)%xintf_end, &
+                         factor, intfr(g)%ux_interface_det, intfr(g)%counterxu, 3)
 
-                xx2_p=i-1
-                exit
-        endif
-        enddo
-        intfr(g)%px_interface_det(1,1)=xx1_p-1
-        intfr(g)%px_interface_det(2,1)=1
-        intfr(g)%px_interface_det(3,1)=1
-        starter=1+1
-        ender=starter+factor-1
-        intfr(g)%counterxp=2
-        DO
+        call set_interface_detail(block(a_blk_no)%yu, intfr(g)%yintf_start, intfr(g)%yintf_end, &
+                         factor, intfr(g)%uy_interface_det, intfr(g)%counteryu)
 
-        intfr(g)%px_interface_det(1,intfr(g)%counterxp)=xx1_p
-        intfr(g)%px_interface_det(2,intfr(g)%counterxp)=starter
-        intfr(g)%px_interface_det(3,intfr(g)%counterxp)=ender
-        !write(*,91) 'px',starter,ender,block(a_blk_no)%xp(xx1_p),block(b_blk_no)%xp(starter),block(b_blk_no)%xp(ender)
-!91      !format(A2,2I3,3F6.3)
+        call set_interface_detail(block(a_blk_no)%zu, intfr(g)%zintf_start, intfr(g)%zintf_end, &
+                         factor, intfr(g)%uz_interface_det, intfr(g)%counterzu)
 
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterxp=intfr(g)%counterxp+1
-        xx1_p=xx1_p+1
-        if(xx1_p > xx2_p) EXIT
-        END DO
+        ! v
+        call set_interface_detail(block(a_blk_no)%xv, intfr(g)%xintf_start, intfr(g)%xintf_end, &
+                         factor, intfr(g)%vx_interface_det, intfr(g)%counterxv)
 
+        call set_interface_detail(block(a_blk_no)%yv, intfr(g)%yintf_start, intfr(g)%yintf_end, &
+                         factor, intfr(g)%vy_interface_det, intfr(g)%counteryv, 3)
 
-        intfr(g)%px_interface_det(1,intfr(g)%counterxp)=xx2_p+1
-       !intfr(g)%px_interface_det(2,intfr(g)%counterxp)=starter
-       !intfr(g)%px_interface_det(3,intfr(g)%counterxp)=starter+1
-        intfr(g)%px_interface_det(2,intfr(g)%counterxp)=starter
-        intfr(g)%px_interface_det(3,intfr(g)%counterxp)=starter
+        call set_interface_detail(block(a_blk_no)%zv, intfr(g)%zintf_start, intfr(g)%zintf_end, &
+                         factor, intfr(g)%vz_interface_det, intfr(g)%counterzv)
 
-        !DO j=1,block(a_blk_no)%jtn_en
-        DO j=1,block(a_blk_no)%ny+2
+        ! w
+        call set_interface_detail(block(a_blk_no)%xw, intfr(g)%xintf_start, intfr(g)%xintf_end, &
+                         factor, intfr(g)%wx_interface_det, intfr(g)%counterxw)
 
-       !!if(block(a_blk_no)%yp(j) .gt. intfr(g)%yintf_start-(1.5*block(b_blk_no)%dy))then
-        if(block(a_blk_no)%yp(j) > intfr(g)%yintf_start)then
-         !       print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_start-(2*block(b_blk_no)%dy)
-                yy1_p=j
-                exit
-        endif
-        enddo
+        call set_interface_detail(block(a_blk_no)%yw, intfr(g)%yintf_start, intfr(g)%yintf_end, &
+                         factor, intfr(g)%wy_interface_det, intfr(g)%counteryw)
 
-        !DO j=yy1_p,block(a_blk_no)%jtn_en
-        DO j=yy1_p,block(a_blk_no)%ny+2
+        call set_interface_detail(block(a_blk_no)%zw, intfr(g)%zintf_start, intfr(g)%zintf_end, &
+                         factor, intfr(g)%wz_interface_det, intfr(g)%counterzw, 3)
 
-        !if(block(a_blk_no)%y1(j) .gt. intfr(g)%yintf_end+(1.5*block(b_blk_no)%dy))then
-        if(block(a_blk_no)%yp(j) > intfr(g)%yintf_end)then
-          !      print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_end+(2*block(b_blk_no)%dy)
-
-                yy2_p=j-1
-                exit
-        endif
-        enddo
-        intfr(g)%py_interface_det(1,1)=yy1_p-1
-        intfr(g)%py_interface_det(2,1)=1
-        intfr(g)%py_interface_det(3,1)=1
-        starter=1+1
-        ender=starter+factor-1
-        intfr(g)%counteryp=2
-        DO
-
-        intfr(g)%py_interface_det(1,intfr(g)%counteryp)=yy1_p
-        intfr(g)%py_interface_det(2,intfr(g)%counteryp)=starter
-        intfr(g)%py_interface_det(3,intfr(g)%counteryp)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counteryp=intfr(g)%counteryp+1
-        yy1_p=yy1_p+1
-        if(yy1_p > yy2_p) EXIT
-        END DO
-
-
-        intfr(g)%py_interface_det(1,intfr(g)%counteryp)=yy2_p+1
-        intfr(g)%py_interface_det(2,intfr(g)%counteryp)=starter
-        intfr(g)%py_interface_det(3,intfr(g)%counteryp)=starter
-
-        DO j=1,block(a_blk_no)%nz+2
-
-       !!if(block(a_blk_no)%yp(j) .gt. intfr(g)%yintf_start-(1.5*block(b_blk_no)%dy))then
-        if(block(a_blk_no)%zp(j) > intfr(g)%zintf_start)then
-         !       print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_start-(2*block(b_blk_no)%dy)
-                zz1_p=j
-                exit
-        endif
-        enddo
-
-        !DO j=yy1_p,block(a_blk_no)%jtn_en
-        DO j=zz1_p,block(a_blk_no)%nz+2
-
-        !if(block(a_blk_no)%y1(j) .gt. intfr(g)%yintf_end+(1.5*block(b_blk_no)%dy))then
-        if(block(a_blk_no)%zp(j) > intfr(g)%zintf_end)then
-          !      print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_end+(2*block(b_blk_no)%dy)
-
-                zz2_p=j-1
-                exit
-        endif
-        enddo
-        intfr(g)%pz_interface_det(1,1)=zz1_p-1
-        intfr(g)%pz_interface_det(2,1)=1
-        intfr(g)%pz_interface_det(3,1)=1
-        starter=1+1
-        ender=starter+factor-1
-        intfr(g)%counterzp=2
-        DO
-
-        intfr(g)%pz_interface_det(1,intfr(g)%counterzp)=zz1_p
-        intfr(g)%pz_interface_det(2,intfr(g)%counterzp)=starter
-        intfr(g)%pz_interface_det(3,intfr(g)%counterzp)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterzp=intfr(g)%counterzp+1
-        zz1_p=zz1_p+1
-        if(zz1_p > zz2_p) EXIT
-        END DO
-
-
-        intfr(g)%pz_interface_det(1,intfr(g)%counterzp)=zz2_p+1
-        intfr(g)%pz_interface_det(2,intfr(g)%counterzp)=starter
-        intfr(g)%pz_interface_det(3,intfr(g)%counterzp)=starter
-!!!!!!!!!!!!!!!!!!!uuuuuuuuuuuuu!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        !DO i=1,block(a_blk_no)%itn_en
-        DO i=1,block(a_blk_no)%nx+3
-
-        if(block(a_blk_no)%xu(i) >= intfr(g)%xintf_start)then
-
-                xx1_p=i
-                exit
-        endif
-        enddo
-
-        !DO i=xx1_p,block(a_blk_no)%itn_en
-        DO i=xx1_p,block(a_blk_no)%nx+3
-
-        !if(block(a_blk_no)%xu(i) .gt. intfr(g)%xintf_end+(2*block(b_blk_no)%dx))then
-        if(block(a_blk_no)%xu(i) > intfr(g)%xintf_end)then
-
-                xx2_p=i-1
-                exit
-        endif
-        enddo
-        intfr(g)%ux_interface_det(1,1)=xx1_p
-        intfr(g)%ux_interface_det(2,1)=2
-        intfr(g)%ux_interface_det(3,1)=2
-        starter=2+1
-        ender=starter+factor-1
-        intfr(g)%counterxu=2
+        ! TN: I expect that the print here has been left over by
+        ! mistake, but to get a one-to-one match with the reference
+        ! I'm putting this in. TODO: Remove in future if we confirm
+        ! not needed.
+        xx1_p = intfr(g)%ux_interface_det(1, 1)
+        xx2_p = intfr(g)%ux_interface_det(1, intfr(g)%counterxu - 1)
         print*,block(a_blk_no)%xu(xx1_p),block(a_blk_no)%xu(xx2_p),block(b_blk_no)%xu(2)
-        DO
-
-        xx1_p=xx1_p+1
-        intfr(g)%ux_interface_det(1,intfr(g)%counterxu)=xx1_p
-        intfr(g)%ux_interface_det(2,intfr(g)%counterxu)=starter
-        intfr(g)%ux_interface_det(3,intfr(g)%counterxu)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterxu=intfr(g)%counterxu+1
-        if(xx1_p >= xx2_p) EXIT
-        END DO
-
-
-        intfr(g)%ux_interface_det(1,intfr(g)%counterxu)=xx2_p+1
-        intfr(g)%ux_interface_det(2,intfr(g)%counterxu)=starter
-        intfr(g)%ux_interface_det(3,intfr(g)%counterxu)=starter
-
-        !DO j=1,block(a_blk_no)%jtn_en
-        DO j=1,block(a_blk_no)%ny+2
-
-        if(block(a_blk_no)%yu(j) > intfr(g)%yintf_start)then
-                !print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_start-(2*block(b_blk_no)%dy)
-                yy1_p=j
-                exit
-        endif
-        enddo
-
-        !DO j=yy1_p,block(a_blk_no)%jtn_en
-        DO j=yy1_p,block(a_blk_no)%ny+2
-
-        !if(block(a_blk_no)%yu(j) .gt. intfr(g)%yintf_end+(1.5*block(b_blk_no)%dy))then
-        if(block(a_blk_no)%yu(j) > intfr(g)%yintf_end)then
-        !        print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_end+(2*block(b_blk_no)%dy)
-
-                yy2_p=j-1
-                exit
-        endif
-        enddo
-        intfr(g)%uy_interface_det(1,1)=yy1_p-1
-        intfr(g)%uy_interface_det(2,1)=1
-        intfr(g)%uy_interface_det(3,1)=1
-        starter=1+1
-        ender=starter+factor-1
-        intfr(g)%counteryu=2
-        DO
-
-        intfr(g)%uy_interface_det(1,intfr(g)%counteryu)=yy1_p
-        intfr(g)%uy_interface_det(2,intfr(g)%counteryu)=starter
-        intfr(g)%uy_interface_det(3,intfr(g)%counteryu)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counteryu=intfr(g)%counteryu+1
-        yy1_p=yy1_p+1
-        if(yy1_p > yy2_p) EXIT
-        END DO
-
-
-        intfr(g)%uy_interface_det(1,intfr(g)%counteryu)=yy2_p+1
-        intfr(g)%uy_interface_det(2,intfr(g)%counteryu)=starter
-        intfr(g)%uy_interface_det(3,intfr(g)%counteryu)=starter
-
-
-
-        DO j=1,block(a_blk_no)%nz+2
-
-        if(block(a_blk_no)%zu(j) > intfr(g)%zintf_start)then
-                !print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_start-(2*block(b_blk_no)%dy)
-                zz1_p=j
-                exit
-        endif
-        enddo
-
-        !DO j=yy1_p,block(a_blk_no)%jtn_en
-        DO j=zz1_p,block(a_blk_no)%nz+2
-
-        !if(block(a_blk_no)%yu(j) .gt. intfr(g)%yintf_end+(1.5*block(b_blk_no)%dy))then
-        if(block(a_blk_no)%zu(j) > intfr(g)%zintf_end)then
-        !        print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_end+(2*block(b_blk_no)%dy)
-
-                zz2_p=j-1
-                exit
-        endif
-        enddo
-        intfr(g)%uz_interface_det(1,1)=zz1_p-1
-        intfr(g)%uz_interface_det(2,1)=1
-        intfr(g)%uz_interface_det(3,1)=1
-        starter=1+1
-        ender=starter+factor-1
-        intfr(g)%counterzu=2
-        DO
-
-        intfr(g)%uz_interface_det(1,intfr(g)%counterzu)=zz1_p
-        intfr(g)%uz_interface_det(2,intfr(g)%counterzu)=starter
-        intfr(g)%uz_interface_det(3,intfr(g)%counterzu)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterzu=intfr(g)%counterzu+1
-        zz1_p=zz1_p+1
-        if(zz1_p > zz2_p) EXIT
-        END DO
-
-
-        intfr(g)%uz_interface_det(1,intfr(g)%counterzu)=zz2_p+1
-        intfr(g)%uz_interface_det(2,intfr(g)%counterzu)=starter
-        intfr(g)%uz_interface_det(3,intfr(g)%counterzu)=starter
-!!!!!!!!v
-        !DO i=1,block(a_blk_no)%itn_en
-        DO i=1,block(a_blk_no)%nx+2
-
-        if(block(a_blk_no)%xv(i) > intfr(g)%xintf_start)then
-
-                xx1_p=i
-                exit
-        endif
-        enddo
-
-        !DO i=xx1_p,block(a_blk_no)%itn_en
-        DO i=xx1_p,block(a_blk_no)%nx+2
-
-        !if(block(a_blk_no)%xv(i) .gt. intfr(g)%xintf_end+(1.5*block(b_blk_no)%dx))then
-        if(block(a_blk_no)%xv(i) > intfr(g)%xintf_end)then
-
-                xx2_p=i-1
-                exit
-        endif
-        enddo
-        intfr(g)%vx_interface_det(1,1)=xx1_p-1
-        intfr(g)%vx_interface_det(2,1)=1
-        intfr(g)%vx_interface_det(3,1)=1
-        starter=1+1
-        ender=starter+factor-1
-        intfr(g)%counterxv=2
-        DO
-
-        intfr(g)%vx_interface_det(1,intfr(g)%counterxv)=xx1_p
-        intfr(g)%vx_interface_det(2,intfr(g)%counterxv)=starter
-        intfr(g)%vx_interface_det(3,intfr(g)%counterxv)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterxv=intfr(g)%counterxv+1
-        xx1_p=xx1_p+1
-        if(xx1_p > xx2_p) EXIT
-        END DO
-
-
-        intfr(g)%vx_interface_det(1,intfr(g)%counterxv)=xx2_p+1
-        intfr(g)%vx_interface_det(2,intfr(g)%counterxv)=starter
-        intfr(g)%vx_interface_det(3,intfr(g)%counterxv)=starter
-
-        !DO j=1,block(a_blk_no)%jtn_en
-        DO j=1,block(a_blk_no)%ny+3
-
-        if(block(a_blk_no)%yv(j) >= intfr(g)%yintf_start)then
-                !print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_start-(2*block(b_blk_no)%dy)
-                yy1_p=j
-                exit
-        endif
-        enddo
-
-        !DO j=yy1_p,block(a_blk_no)%jtn_en
-        DO j=yy1_p,block(a_blk_no)%ny+3
-
-        if(block(a_blk_no)%yv(j) > intfr(g)%yintf_end)then
-        !if(block(a_blk_no)%yv(j) .gt. intfr(g)%yintf_end+(2*block(b_blk_no)%dy))then
-                !print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_end+(2*block(b_blk_no)%dy)
-
-                yy2_p=j-1
-                exit
-        endif
-        enddo
-        intfr(g)%vy_interface_det(1,1)=yy1_p
-        intfr(g)%vy_interface_det(2,1)=2
-        intfr(g)%vy_interface_det(3,1)=2
-        starter=2+1
-        ender=starter+factor-1
-        intfr(g)%counteryv=2
-        DO
-        yy1_p=yy1_p+1
-
-        intfr(g)%vy_interface_det(1,intfr(g)%counteryv)=yy1_p
-        intfr(g)%vy_interface_det(2,intfr(g)%counteryv)=starter
-        intfr(g)%vy_interface_det(3,intfr(g)%counteryv)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counteryv=intfr(g)%counteryv+1
-        if(yy1_p >= yy2_p) EXIT
-        END DO
-
-
-        intfr(g)%vy_interface_det(1,intfr(g)%counteryv)=yy2_p+1
-        intfr(g)%vy_interface_det(2,intfr(g)%counteryv)=starter
-        intfr(g)%vy_interface_det(3,intfr(g)%counteryv)=starter
-
-
-        DO i=1,block(a_blk_no)%nz+2
-
-        if(block(a_blk_no)%zv(i) > intfr(g)%zintf_start)then
-
-                zz1_p=i
-                exit
-        endif
-        enddo
-
-        !DO i=xx1_p,block(a_blk_no)%itn_en
-        DO i=zz1_p,block(a_blk_no)%nz+2
-
-        !if(block(a_blk_no)%xv(i) .gt. intfr(g)%xintf_end+(1.5*block(b_blk_no)%dx))then
-        if(block(a_blk_no)%zv(i) > intfr(g)%zintf_end)then
-
-                zz2_p=i-1
-                exit
-        endif
-        enddo
-        intfr(g)%vz_interface_det(1,1)=zz1_p-1
-        intfr(g)%vz_interface_det(2,1)=1
-        intfr(g)%vz_interface_det(3,1)=1
-        starter=1+1
-        ender=starter+factor-1
-        intfr(g)%counterzv=2
-        DO
-
-        intfr(g)%vz_interface_det(1,intfr(g)%counterzv)=zz1_p
-        intfr(g)%vz_interface_det(2,intfr(g)%counterzv)=starter
-        intfr(g)%vz_interface_det(3,intfr(g)%counterzv)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterzv=intfr(g)%counterzv+1
-        zz1_p=zz1_p+1
-        if(zz1_p > zz2_p) EXIT
-        END DO
-
-
-        intfr(g)%vz_interface_det(1,intfr(g)%counterzv)=zz2_p+1
-        intfr(g)%vz_interface_det(2,intfr(g)%counterzv)=starter
-        intfr(g)%vz_interface_det(3,intfr(g)%counterzv)=starter
-
-!!!!!!!!w!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        !DO i=1,block(a_blk_no)%itn_en
-        DO i=1,block(a_blk_no)%nx+2
-
-        if(block(a_blk_no)%xw(i) > intfr(g)%xintf_start)then
-
-                xx1_p=i
-                exit
-        endif
-        enddo
-
-        !DO i=xx1_p,block(a_blk_no)%itn_en
-        DO i=xx1_p,block(a_blk_no)%nx+2
-
-        !if(block(a_blk_no)%xv(i) .gt. intfr(g)%xintf_end+(1.5*block(b_blk_no)%dx))then
-        if(block(a_blk_no)%xw(i) > intfr(g)%xintf_end)then
-
-                xx2_p=i-1
-                exit
-        endif
-        enddo
-        intfr(g)%wx_interface_det(1,1)=xx1_p-1
-        intfr(g)%wx_interface_det(2,1)=1
-        intfr(g)%wx_interface_det(3,1)=1
-        starter=1+1
-        ender=starter+factor-1
-        intfr(g)%counterxw=2
-        DO
-
-        intfr(g)%wx_interface_det(1,intfr(g)%counterxw)=xx1_p
-        intfr(g)%wx_interface_det(2,intfr(g)%counterxw)=starter
-        intfr(g)%wx_interface_det(3,intfr(g)%counterxw)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterxw=intfr(g)%counterxw+1
-        xx1_p=xx1_p+1
-        if(xx1_p > xx2_p) EXIT
-        END DO
-
-
-        intfr(g)%wx_interface_det(1,intfr(g)%counterxw)=xx2_p+1
-        intfr(g)%wx_interface_det(2,intfr(g)%counterxw)=starter
-        intfr(g)%wx_interface_det(3,intfr(g)%counterxw)=starter
-
-        !DO j=1,block(a_blk_no)%jtn_en
-        DO j=1,block(a_blk_no)%ny+2
-
-        if(block(a_blk_no)%yw(j) > intfr(g)%yintf_start)then
-                !print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_start-(2*block(b_blk_no)%dy)
-                yy1_p=j
-                exit
-        endif
-        enddo
-
-        !DO j=yy1_p,block(a_blk_no)%jtn_en
-        DO j=yy1_p,block(a_blk_no)%ny+2
-
-        if(block(a_blk_no)%yw(j) > intfr(g)%yintf_end)then
-        !if(block(a_blk_no)%yv(j) .gt. intfr(g)%yintf_end+(2*block(b_blk_no)%dy))then
-                !print*,block(a_blk_no)%y1(j),j,intfr(g)%yintf_end+(2*block(b_blk_no)%dy)
-
-                yy2_p=j-1
-                exit
-        endif
-        enddo
-        intfr(g)%wy_interface_det(1,1)=yy1_p-1
-        intfr(g)%wy_interface_det(2,1)=1
-        intfr(g)%wy_interface_det(3,1)=1
-        starter=1+1
-        ender=starter+factor-1
-        intfr(g)%counteryw=2
-        DO
-
-        intfr(g)%wy_interface_det(1,intfr(g)%counteryw)=yy1_p
-        intfr(g)%wy_interface_det(2,intfr(g)%counteryw)=starter
-        intfr(g)%wy_interface_det(3,intfr(g)%counteryw)=ender
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counteryw=intfr(g)%counteryw+1
-        yy1_p=yy1_p+1
-        if(yy1_p > yy2_p) EXIT
-        END DO
-
-
-        intfr(g)%wy_interface_det(1,intfr(g)%counteryw)=yy2_p+1
-        intfr(g)%wy_interface_det(2,intfr(g)%counteryw)=starter
-        intfr(g)%wy_interface_det(3,intfr(g)%counteryw)=starter
-
-
-        DO i=1,block(a_blk_no)%nz+3
-
-        if(block(a_blk_no)%zw(i) >= intfr(g)%zintf_start)then
-
-                zz1_p=i
-                exit
-        endif
-        enddo
-
-        !DO i=xx1_p,block(a_blk_no)%itn_en
-        DO i=zz1_p,block(a_blk_no)%nz+3
-
-        !if(block(a_blk_no)%xv(i) .gt. intfr(g)%xintf_end+(1.5*block(b_blk_no)%dx))then
-        if(block(a_blk_no)%zw(i) > intfr(g)%zintf_end)then
-
-                zz2_p=i-1
-                exit
-        endif
-        enddo
-        intfr(g)%wz_interface_det(1,1)=zz1_p
-        intfr(g)%wz_interface_det(2,1)=2
-        intfr(g)%wz_interface_det(3,1)=2
-        starter=2+1
-        ender=starter+factor-1
-        intfr(g)%counterzw=2
-        DO
-
-        zz1_p=zz1_p+1
-        intfr(g)%wz_interface_det(1,intfr(g)%counterzw)=zz1_p
-        intfr(g)%wz_interface_det(2,intfr(g)%counterzw)=starter
-        intfr(g)%wz_interface_det(3,intfr(g)%counterzw)=ender
-!        write(*,91) 'wz',starter,ender,block(a_blk_no)%zw(xx1_p),block(b_blk_no)%zwp(starter),block(b_blk_no)%zw(ender)
-!91     format(A2,2I3,3F6.3)
-        starter=ender+1
-        ender=ender+factor
-        intfr(g)%counterzw=intfr(g)%counterzw+1
-        if(zz1_p >= zz2_p) EXIT
-        END DO
-
-
-        intfr(g)%wz_interface_det(1,intfr(g)%counterzw)=zz2_p+1
-        intfr(g)%wz_interface_det(2,intfr(g)%counterzw)=starter
-        intfr(g)%wz_interface_det(3,intfr(g)%counterzw)=starter
 
         END DO
 
+        ! p
         DO j=1,intflines
-        print*,'**********************px***************************'
-        DO i=1,intfr(j)%counterxp
-        WRITE(*,33) 'px', i, &
-        intfr(j)%px_interface_det(1,i), intfr(j)%px_interface_det(2,i), &
-        intfr(j)%px_interface_det(3,i), &
-        block(a_blk_no)%xp(intfr(j)%px_interface_det(1,i)), &
-        block(b_blk_no)%xp(intfr(j)%px_interface_det(2,i)), &
-        block(b_blk_no)%xp(intfr(j)%px_interface_det(3,i))
- 33       FORMAT(A3,I5,3I5,3F10.5)
-        end do
+          call print_interface_detail("px", intfr(j)%counterxp, intfr(j)%px_interface_det, &
+                                      block(a_blk_no)%xp, block(b_blk_no)%xp)
         end do
         DO j=1,intfLines
-        print*,'**********************py***************************'
-        DO i=1,intfr(j)%counteryp
-        WRITE(*,133) 'py', i, &
-        intfr(j)%py_interface_det(1,i), intfr(j)%py_interface_det(2,i), &
-        intfr(j)%py_interface_det(3,i), &
-        block(a_blk_no)%yp(intfr(j)%py_interface_det(1,i)), &
-        block(b_blk_no)%yp(intfr(j)%py_interface_det(2,i)), &
-        block(b_blk_no)%yp(intfr(j)%py_interface_det(3,i))
- 133       FORMAT(A3,I5,3I5,3F10.5)
-        end do
+          call print_interface_detail("py", intfr(j)%counteryp, intfr(j)%py_interface_det, &
+                                      block(a_blk_no)%yp, block(b_blk_no)%yp)
         end do
         DO j=1,intflines
-        print*,'**********************pz***************************'
-        DO i=1,intfr(j)%counterzp
-        WRITE(*,933) 'pz', i, &
-        intfr(j)%pz_interface_det(1,i), intfr(j)%pz_interface_det(2,i), &
-        intfr(j)%pz_interface_det(3,i), &
-        block(a_blk_no)%zp(intfr(j)%pz_interface_det(1,i)), &
-        block(b_blk_no)%zp(intfr(j)%pz_interface_det(2,i)), &
-        block(b_blk_no)%zp(intfr(j)%pz_interface_det(3,i))
- 933       FORMAT(A3,I5,3I5,3F10.5)
-        end do
+          call print_interface_detail("pz", intfr(j)%counterzp, intfr(j)%pz_interface_det, &
+                                      block(a_blk_no)%zp, block(b_blk_no)%zp)
         end do
 
+        ! u
         DO j=1,intflines
-        print*,'**********************ux***************************'
-        DO i=1,intfr(j)%counterxu
-        WRITE(*,331) 'ux', i, &
-        intfr(j)%ux_interface_det(1,i), intfr(j)%ux_interface_det(2,i), &
-        intfr(j)%ux_interface_det(3,i), &
-        block(a_blk_no)%xu(intfr(j)%ux_interface_det(1,i)), &
-        block(b_blk_no)%xu(intfr(j)%ux_interface_det(2,i)), &
-        block(b_blk_no)%xu(intfr(j)%ux_interface_det(3,i))
- 331       FORMAT(A3,I5,3I5,3F10.5)
-        end do
+          call print_interface_detail("ux", intfr(j)%counterxu, intfr(j)%ux_interface_det, &
+                                      block(a_blk_no)%xu, block(b_blk_no)%xu)
         end do
         DO j=1,intfLines
-        print*,'**********************uy***************************'
-        DO i=1,intfr(j)%counteryu
-        WRITE(*,1331) 'uy', i, &
-        intfr(j)%uy_interface_det(1,i), intfr(j)%uy_interface_det(2,i), &
-        intfr(j)%uy_interface_det(3,i), &
-        block(a_blk_no)%yu(intfr(j)%uy_interface_det(1,i)), &
-        block(b_blk_no)%yu(intfr(j)%uy_interface_det(2,i)), &
-        block(b_blk_no)%yu(intfr(j)%uy_interface_det(3,i))
- 1331       FORMAT(A3,I5,3I5,3F10.5)
+          call print_interface_detail("uy", intfr(j)%counteryu, intfr(j)%uy_interface_det, &
+                                      block(a_blk_no)%yu, block(b_blk_no)%yu)
         end do
-        end do
-        DO j=1,intfLines
-        print*,'**********************uz***************************'
-        DO i=1,intfr(j)%counterzu
-        WRITE(*,91331) 'uz', i, &
-        intfr(j)%uz_interface_det(1,i), intfr(j)%uz_interface_det(2,i), &
-        intfr(j)%uz_interface_det(3,i), &
-        block(a_blk_no)%zu(intfr(j)%uz_interface_det(1,i)), &
-        block(b_blk_no)%zu(intfr(j)%uz_interface_det(2,i)), &
-        block(b_blk_no)%zu(intfr(j)%uz_interface_det(3,i))
-91331       FORMAT(A3,I5,3I5,3F10.5)
-        end do
-        end do
-
         DO j=1,intflines
-        print*,'**********************vx***************************'
-        DO i=1,intfr(j)%counterxv
-        WRITE(*,332) 'vx', i, &
-        intfr(j)%vx_interface_det(1,i), intfr(j)%vx_interface_det(2,i), &
-        intfr(j)%vx_interface_det(3,i), &
-        block(a_blk_no)%xv(intfr(j)%vx_interface_det(1,i)), &
-        block(b_blk_no)%xv(intfr(j)%vx_interface_det(2,i)), &
-        block(b_blk_no)%xv(intfr(j)%vx_interface_det(3,i))
- 332       FORMAT(A3,I5,3I5,3F10.5)
-        end do
-        end do
-        DO j=1,intfLines
-        print*,'**********************vy***************************'
-        DO i=1,intfr(j)%counteryv
-        WRITE(*,1332) 'vy' , i, &
-        intfr(j)%vy_interface_det(1,i), intfr(j)%vy_interface_det(2,i), &
-        intfr(j)%vy_interface_det(3,i), &
-        block(a_blk_no)%yv(intfr(j)%vy_interface_det(1,i)), &
-        block(b_blk_no)%yv(intfr(j)%vy_interface_det(2,i)), &
-        block(b_blk_no)%yv(intfr(j)%vy_interface_det(3,i))
- 1332       FORMAT(A3,I5,3I5,3F10.5)
-        end do
-        end do
-        DO j=1,intfLines
-        print*,'**********************vz***************************'
-        DO i=1,intfr(j)%counterzv
-        WRITE(*,91332) 'vz', i, &
-        intfr(j)%vz_interface_det(1,i), intfr(j)%vz_interface_det(2,i), &
-        intfr(j)%vz_interface_det(3,i), &
-        block(a_blk_no)%zv(intfr(j)%vz_interface_det(1,i)), &
-        block(b_blk_no)%zv(intfr(j)%vz_interface_det(2,i)), &
-        block(b_blk_no)%zv(intfr(j)%vz_interface_det(3,i))
-91332       FORMAT(A3,I5,3I5,3F10.5)
-        end do
+          call print_interface_detail("uz", intfr(j)%counterzu, intfr(j)%uz_interface_det, &
+                                      block(a_blk_no)%zu, block(b_blk_no)%zu)
         end do
 
-
+        ! v
         DO j=1,intflines
-        print*,'**********************wx***************************'
-        DO i=1,intfr(j)%counterxw
-        WRITE(*,3329) 'wx', i, &
-        intfr(j)%wx_interface_det(1,i), intfr(j)%wx_interface_det(2,i), &
-        intfr(j)%wx_interface_det(3,i), &
-        block(a_blk_no)%xw(intfr(j)%wx_interface_det(1,i)), &
-        block(b_blk_no)%xw(intfr(j)%wx_interface_det(2,i)), &
-        block(b_blk_no)%xw(intfr(j)%wx_interface_det(3,i))
- 3329       FORMAT(A3,I5,3I5,3F10.5)
-        end do
+          call print_interface_detail("vx", intfr(j)%counterxv, intfr(j)%vx_interface_det, &
+                                      block(a_blk_no)%xv, block(b_blk_no)%xv)
         end do
         DO j=1,intfLines
-        print*,'**********************wy***************************'
-        DO i=1,intfr(j)%counteryw
-        WRITE(*,13329) 'wy', i, &
-        intfr(j)%wy_interface_det(1,i), intfr(j)%wy_interface_det(2,i), &
-        intfr(j)%wy_interface_det(3,i), &
-        block(a_blk_no)%yw(intfr(j)%wy_interface_det(1,i)), &
-        block(b_blk_no)%yw(intfr(j)%wy_interface_det(2,i)), &
-        block(b_blk_no)%yw(intfr(j)%wy_interface_det(3,i))
-13329       FORMAT(A3,I5,3I5,3F10.5)
+          call print_interface_detail("vy", intfr(j)%counteryv, intfr(j)%vy_interface_det, &
+                                      block(a_blk_no)%yv, block(b_blk_no)%yv)
         end do
+        DO j=1,intflines
+          call print_interface_detail("vz", intfr(j)%counterzv, intfr(j)%vz_interface_det, &
+                                      block(a_blk_no)%zv, block(b_blk_no)%zv)
+        end do
+
+        ! w
+        DO j=1,intflines
+          call print_interface_detail("wx", intfr(j)%counterxw, intfr(j)%wx_interface_det, &
+                                      block(a_blk_no)%xw, block(b_blk_no)%xw)
         end do
         DO j=1,intfLines
-        print*,'**********************wz***************************'
-        DO i=1,intfr(j)%counterzw
-        WRITE(*,93329) 'wz', i, &
-        intfr(j)%wz_interface_det(1,i), intfr(j)%wz_interface_det(2,i), &
-        intfr(j)%wz_interface_det(3,i), &
-        block(a_blk_no)%zw(intfr(j)%wz_interface_det(1,i)), &
-        block(b_blk_no)%zw(intfr(j)%wz_interface_det(2,i)), &
-        block(b_blk_no)%zw(intfr(j)%wz_interface_det(3,i))
-93329       FORMAT(A3,I5,3I5,3F10.5)
+          call print_interface_detail("wy", intfr(j)%counteryw, intfr(j)%wy_interface_det, &
+                                      block(a_blk_no)%yw, block(b_blk_no)%yw)
         end do
+        DO j=1,intflines
+          call print_interface_detail("wz", intfr(j)%counterzw, intfr(j)%wz_interface_det, &
+                                      block(a_blk_no)%zw, block(b_blk_no)%zw)
         end do
 
         end subroutine interfaceDetail
+
+        !> Set each interface detail array e.g [puvw][xyz]
+        subroutine set_interface_detail(block_var, intf_start, intf_end, factor, &
+                                        interface_details, interface_counter, starter)
+          !> The block variable that is being set e.g. xp
+          real(dp), dimension(:), intent(in) :: block_var
+          !> The interface start and end values
+          real(dp), intent(in) :: intf_start, intf_end
+          !> The factor i.e. ratio of two meshes
+          integer(int64), intent(in) :: factor
+          !> The interface details that are actually being set e.g. px_interface_det
+          integer(int64), dimension(:, :), intent(inout) :: interface_details
+          !> TODO: Check whether the counter really needs to be
+          !> returned. Can probably be determined by the size of
+          !> interface details. It is weirdly one less than the size
+          !> of the interface_details array (dim=2), which seems like
+          !> a potential source of bugs.
+          integer(int64), intent(inout) :: interface_counter
+          ! TN: I don't understand why this works, need to read up on
+          ! it. It is not clear to me whether this will work for all
+          ! of our compilers, online discussion is not clear about
+          ! whether this is really part of the standard
+          integer, optional, value :: starter
+
+          integer(int64) :: ender
+          integer(int64) :: i
+          integer(int64) :: xx1_p, xx2_p
+
+          ! In most of the examples this subroutine was derived from,
+          ! starter starts at 2, however, in some cases it is 3... not
+          ! sure why
+          if (.not. present(starter)) starter = 2
+
+          ! The following two do loops can be replaced with findloc
+          ! calls
+          DO i=1, size(block_var)
+            if(block_var(i) > intf_start)then
+                    xx1_p=i
+                    exit
+            endif
+          enddo
+
+          DO i=xx1_p, size(block_var)
+            if(block_var(i) > intf_end)then
+                    xx2_p=i-1
+                    exit
+            endif
+          enddo
+
+          interface_details(1,1) = xx1_p-1
+          interface_details(2,1) = starter - 1
+          interface_details(3,1) = starter - 1
+          ! starter=1+1
+          ender=starter+factor-1
+          interface_counter = 2
+
+          DO
+            interface_details(1, interface_counter) = xx1_p
+            interface_details(2, interface_counter) = starter
+            interface_details(3, interface_counter) = ender
+
+            starter=ender+1
+            ender=ender+factor
+            interface_counter = interface_counter + 1
+            xx1_p=xx1_p+1
+            if(xx1_p > xx2_p) EXIT
+          END DO
+
+
+          interface_details(1, interface_counter) = xx2_p+1
+          interface_details(2, interface_counter) = starter
+          interface_details(3, interface_counter) = starter
+        end subroutine set_interface_detail
+
+        !> Print the details of the interface
+        subroutine print_interface_detail(label, counter, interface_details, &
+                                          block_var_a, block_var_b)
+          !> A two letter label for the details being printed e.g. px
+          character(len=2), intent(in) :: label
+          !> The counter to iterate through the interface (see TODO in set_interface_detail)
+          integer(int64), intent(in) :: counter
+          !> The actual interface details being printed
+          integer(int64), dimension(:, :), intent(in) :: interface_details
+          !> The "block" variables e.g. block(a_blk_no)%zv and block(b_blk_no)%zv
+          real(dp), dimension(:), intent(in) :: block_var_a, block_var_b
+
+          integer(int64) :: i
+          ! Initial space kept for a perfect match with old code, but
+          ! could probably be safely removed
+          print "(' **********************',A,'***************************')", label
+          DO i=1, counter
+          print "(A3,I5,3I5,3F10.5)", label, i, &
+          interface_details(1,i), interface_details(2,i), &
+          interface_details(3,i), &
+          block_var_a(interface_details(1,i)), &
+          block_var_b(interface_details(2,i)), &
+          block_var_b(interface_details(3,i))
+          end do
+        end subroutine print_interface_detail
 
 end module biocfd_interface_detail
