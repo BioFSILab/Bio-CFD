@@ -385,34 +385,34 @@ module biocfd_read_input
         ENDDO
 
         DO g=1,nblocks
-	 DO i = 1, block(g)%nz+3
+          DO i = 1, block(g)%nz+3
            block(g)%zw(i) = block(g)%z1(i)
-        ENDDO
+          ENDDO
+       ENDDO
+
+        DO g=1,nblocks
+           DO i = 1, block(g)%ny+2
+             block(g)%yu(i) = 0.5_dp*(block(g)%y1(i)+block(g)%y1(i+1))
+             block(g)%yw(i) = block(g)%yu(i)
+             block(g)%yp(i) = block(g)%yu(i)
+           END DO
         ENDDO
 
         DO g=1,nblocks
-        DO i = 1, block(g)%ny+2
-           block(g)%yu(i) = 0.5_dp*(block(g)%y1(i)+block(g)%y1(i+1))
-	   block(g)%yw(i) = block(g)%yu(i)
-           block(g)%yp(i) = block(g)%yu(i)
-        END DO
-        ENDDO
-
-        DO g=1,nblocks
-        DO i = 1, block(g)%nx+2
-           block(g)%xv(i) = 0.5_dp*(block(g)%x1(i)+block(g)%x1(i+1))
-           block(g)%xw(i) = block(g)%xv(i)
-           block(g)%xp(i) = block(g)%xv(i)
+           DO i = 1, block(g)%nx+2
+             block(g)%xv(i) = 0.5_dp*(block(g)%x1(i)+block(g)%x1(i+1))
+             block(g)%xw(i) = block(g)%xv(i)
+             block(g)%xp(i) = block(g)%xv(i)
             print*,'xp',g,i,block(g)%xp(i)
-        END DO
+         END DO
         ENDDO
 
         DO g=1,nblocks
-	 DO i = 1, block(g)%nz+2
-           block(g)%zu(i) = 0.5_dp*(block(g)%z1(i)+block(g)%z1(i+1))
-	   block(g)%zv(i) = block(g)%zu(i)
-           block(g)%zp(i) = block(g)%zu(i)
-        END DO
+           DO i = 1, block(g)%nz+2
+            block(g)%zu(i) = 0.5_dp*(block(g)%z1(i)+block(g)%z1(i+1))
+            block(g)%zv(i) = block(g)%zu(i)
+            block(g)%zp(i) = block(g)%zu(i)
+          END DO
         ENDDO
         DO g=1,nblocks
        !DO k=2,block(g)%nz+1

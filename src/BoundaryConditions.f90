@@ -132,7 +132,7 @@ SUBROUTINE velocityBC
          DO n = 1, block(g)%solidCellCount
             i = block(g)%solidIndexPtr(n,1)
             j = block(g)%solidIndexPtr(n,2)
-	     k = block(g)%solidIndexPtr(n,3)
+            k = block(g)%solidIndexPtr(n,3)
             block(g)%ut(i,j,k) = 0._dp
             block(g)%vt(i,j,k) = 0._dp
             block(g)%wt(i,j,k) = 0._dp

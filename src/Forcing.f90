@@ -1078,7 +1078,7 @@ SUBROUTINE velocityForcingGhost
          !ELSE
          !block(g)%u2_ghost(n) = u(i,j,k)
          !ENDIF
-	 block(g)%u2t_ghost(n) = block(g)%u(i,j,k)
+         block(g)%u2t_ghost(n) = block(g)%u(i,j,k)
 !***********************************************************************
 
 !******************************U(i-1,j,k)*******************************
@@ -1264,7 +1264,7 @@ SUBROUTINE velocityForcingGhost
          !ELSE
          !block(g)%v2_ghost(n) = v(i,j,k)
          !ENDIF
-		   block(g)%v2t_ghost(n) = block(g)%v(i,j,k)
+         block(g)%v2t_ghost(n) = block(g)%v(i,j,k)
 !***********************************************************************
 
 !**************************V(i,j-1,k)*************************************
@@ -1358,7 +1358,7 @@ SUBROUTINE velocityForcingGhost
          !ELSE
          !block(g)%v1_ghost(n) = v(i,j-1,k)
          !ENDIF
-	 block(g)%v1t_ghost(n) = block(g)%v(i,j-1,k)
+         block(g)%v1t_ghost(n) = block(g)%v(i,j-1,k)
 !***********************************************************************
 
 !**************************W(i,j,k)*************************************

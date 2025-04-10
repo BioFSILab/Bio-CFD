@@ -41,26 +41,26 @@
        INTEGER (KIND = 8), ALLOCATABLE, DIMENSION (:,:,:)        :: cell, cell2, cell_n, cell_pr,nodeIdTag
        INTEGER (KIND = 8), ALLOCATABLE, DIMENSION (:,:,:)    :: minElemcell
 
-        REAL (KIND = 8), ALLOCATABLE, DIMENSION (:)       :: deltax, deltay, deltaz, x1, y1, z1,             &
-	                                                     xu, yu, zu, xv, yv, zv, xw, yw, zw, xp, yp, zp, &
-                                                            ca1_uu, ca2_uu, ca3_uu, ca4_uu, ca5_uu, ca6_uu, &
-                                                            ck1_uu, ck2_uu, ck3_uu, ck4_uu, ck5_uu, ck6_uu, &
-                                                            ca1_vv, ca2_vv, ca3_vv, ca4_vv, ca5_vv, ca6_vv, &
-                                                            ck1_vv, ck2_vv, ck3_vv, ck4_vv, ck5_vv, ck6_vv, &
-							    ca1_ww, ca2_ww, ca3_ww, ca4_ww, ca5_ww, ca6_ww, &
-                                                            ck1_ww, ck2_ww, ck3_ww, ck4_ww, ck5_ww, ck6_ww, &
-                                                            ca1_uv, ca2_uv, ca3_uv, ca4_uv, ca5_uv, ca6_uv, &
-                                                            ck1_uv, ck2_uv, ck3_uv, ck4_uv, ck5_uv, ck6_uv, &
-                                                            ca1_uw, ca2_uw, ca3_uw, ca4_uw, ca5_uw, ca6_uw, &
-                                                            ck1_uw, ck2_uw, ck3_uw, ck4_uw, ck5_uw, ck6_uw, &
-                                                            ca1_vu, ca2_vu, ca3_vu, ca4_vu, ca5_vu, ca6_vu, &
-                                                            ck1_vu, ck2_vu, ck3_vu, ck4_vu, ck5_vu, ck6_vu, &
-							    ca1_vw, ca2_vw, ca3_vw, ca4_vw, ca5_vw, ca6_vw, &
-                                                            ck1_vw, ck2_vw, ck3_vw, ck4_vw, ck5_vw, ck6_vw, &
-							    ca1_wu, ca2_wu, ca3_wu, ca4_wu, ca5_wu, ca6_wu, &
-                                                            ck1_wu, ck2_wu, ck3_wu, ck4_wu, ck5_wu, ck6_wu, &
-                                                            ca1_wv, ca2_wv, ca3_wv, ca4_wv, ca5_wv, ca6_wv, &
-                                                            ck1_wv, ck2_wv, ck3_wv, ck4_wv, ck5_wv, ck6_wv
+       REAL (KIND = 8), ALLOCATABLE, DIMENSION (:)       :: deltax, deltay, deltaz, x1, y1, z1,             &
+            xu, yu, zu, xv, yv, zv, xw, yw, zw, xp, yp, zp, &
+            ca1_uu, ca2_uu, ca3_uu, ca4_uu, ca5_uu, ca6_uu, &
+            ck1_uu, ck2_uu, ck3_uu, ck4_uu, ck5_uu, ck6_uu, &
+            ca1_vv, ca2_vv, ca3_vv, ca4_vv, ca5_vv, ca6_vv, &
+            ck1_vv, ck2_vv, ck3_vv, ck4_vv, ck5_vv, ck6_vv, &
+            ca1_ww, ca2_ww, ca3_ww, ca4_ww, ca5_ww, ca6_ww, &
+            ck1_ww, ck2_ww, ck3_ww, ck4_ww, ck5_ww, ck6_ww, &
+            ca1_uv, ca2_uv, ca3_uv, ca4_uv, ca5_uv, ca6_uv, &
+            ck1_uv, ck2_uv, ck3_uv, ck4_uv, ck5_uv, ck6_uv, &
+            ca1_uw, ca2_uw, ca3_uw, ca4_uw, ca5_uw, ca6_uw, &
+            ck1_uw, ck2_uw, ck3_uw, ck4_uw, ck5_uw, ck6_uw, &
+            ca1_vu, ca2_vu, ca3_vu, ca4_vu, ca5_vu, ca6_vu, &
+            ck1_vu, ck2_vu, ck3_vu, ck4_vu, ck5_vu, ck6_vu, &
+            ca1_vw, ca2_vw, ca3_vw, ca4_vw, ca5_vw, ca6_vw, &
+            ck1_vw, ck2_vw, ck3_vw, ck4_vw, ck5_vw, ck6_vw, &
+            ca1_wu, ca2_wu, ca3_wu, ca4_wu, ca5_wu, ca6_wu, &
+            ck1_wu, ck2_wu, ck3_wu, ck4_wu, ck5_wu, ck6_wu, &
+            ca1_wv, ca2_wv, ca3_wv, ca4_wv, ca5_wv, ca6_wv, &
+            ck1_wv, ck2_wv, ck3_wv, ck4_wv, ck5_wv, ck6_wv
 
 
        REAL (KIND = 8), ALLOCATABLE, DIMENSION (:, :)    :: A, An,Ac, Acx, Acy, Acz
