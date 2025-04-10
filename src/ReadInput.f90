@@ -10,7 +10,7 @@ module biocfd_read_input
   contains
 !cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
       SUBROUTINE readInput
-       INTEGER (int64) :: i, j , k , g, r, nx_var, ny_var, nz_var
+       INTEGER (int64) :: i, j , k , g, nx_var, ny_var, nz_var
         CHARACTER(len=160)  :: filename1
 
         !OPEN(60, FILE = 'geometries/2blk/inputdata', FORM = 'formatted')
@@ -454,7 +454,7 @@ module biocfd_read_input
 !************************************************************************************************
 
       SUBROUTINE readSurfaceMeshGmsh
-       INTEGER(int64) :: n, i1, i2, i3, i4, i5, i6, i7, gPoints, g
+       INTEGER(int64) :: n, i1, i2, i3, i5, g
        CHARACTER (LEN = 72) :: cLine
 
 
@@ -549,7 +549,7 @@ module biocfd_read_input
 !***********************************************************************
 
         SUBROUTINE readBlockInterface
-        INTEGER(int64) :: i, j, k, g
+        INTEGER(int64) :: i
 
        !ALLOCATE(a_blk(intfLines),a_msh(intfLines),a_intf(intfLines),b_blk(intfLines),b_msh(intfLines),b_intf(intfLines),xintf_start(intfLines),xintf_end(intfLines),yintf_start(intfLines),yintf_end(i             ntfLines))
 

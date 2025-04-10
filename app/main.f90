@@ -20,8 +20,7 @@
              velocityforcing1, velocityforcingfield, velocityforcingghost
         IMPLICIT NONE
 
-        REAL (KIND=8) :: ts, te
-        INTEGER (KIND=8) :: g, i
+        INTEGER (KIND=8) :: g
         CALL readInput
         CALL readBlockInterface
         CALL readSurfaceMeshGmsh

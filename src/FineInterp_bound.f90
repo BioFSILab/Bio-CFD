@@ -9,11 +9,9 @@ SUBROUTINE fineUpdate_bd
         REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
         REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
         REAL (KIND=8) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
-        REAL (KIND=8) :: aa1,aa2,aa3,aa4,aamin
 
-        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y, coarse_indx,g, a_blk_no, b_blk_no
+        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y, g, a_blk_no, b_blk_no
         INTEGER(KIND=8) :: varz1,varz2, tar_z, loc_z
-        CHARACTER(len=150) :: filename1
 
 
 
@@ -1958,11 +1956,9 @@ SUBROUTINE fineUpdate_bd
         REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
         REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
         REAL (KIND=8) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
-        REAL (KIND=8) :: aa1,aa2,aa3,aa4,aamin
 
-        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y, coarse_indx,g, a_blk_no, b_blk_no
+        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y,g, a_blk_no, b_blk_no
         INTEGER(KIND=8) :: varz1,varz2, tar_z, loc_z
-        CHARACTER(len=150) :: filename1
 
 
 
@@ -2564,11 +2560,9 @@ SUBROUTINE fineUpdate_bd
         REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
         REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
         REAL (KIND=8) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
-        REAL (KIND=8) :: aa1,aa2,aa3,aa4,aamin
 
-        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y, coarse_indx,g, a_blk_no, b_blk_no
+        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y,g, a_blk_no, b_blk_no
         INTEGER(KIND=8) :: varz1,varz2, tar_z, loc_z
-        CHARACTER(len=150) :: filename1
 
 
 
@@ -4578,13 +4572,11 @@ SUBROUTINE fineUpdate_bd
         REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
         REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
         REAL (KIND=8) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
-        REAL (KIND=8) :: aa1,aa2,aa3,aa4,aamin
 
-        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y, coarse_indx, a_blk_no, b_blk_no
+        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y, a_blk_no, b_blk_no
         INTEGER(KIND=8) :: varz1,varz2, tar_z, loc_z
          INTEGER (KIND = 8), INTENT(IN) :: g
         ! INTEGER (KIND = 8) :: g
-        CHARACTER(len=150) :: filename1
 
 
 

@@ -122,7 +122,6 @@ contains
       SUBROUTINE writeOutput1
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=150)  :: filename1
-       CHARACTER(len=150)  :: filename2
        INTEGER  :: k, i, j, g
        REAL (dp) :: u1, v1, w1
 
@@ -290,7 +289,7 @@ contains
         END DO
  	 END IF
       END SUBROUTINE writeResult
-!***********************************************************************
+      
          SUBROUTINE body_plot
          INTEGER(int64) :: inode, ielem, g
          CHARACTER(len=150) :: filename1

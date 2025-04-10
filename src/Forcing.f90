@@ -7,7 +7,7 @@ SUBROUTINE pressureForcing1
       USE global
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1, g
-      REAL (KIND = 8) :: diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, &
+      REAL (KIND = 8) :: n1, pos1_x, pos1_y, pos1_z, pt1, &
                          aval, bval, cval, p_pos1, sur2nodeDis, dpdn, p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, &
                          p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1, p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e
 
@@ -159,7 +159,7 @@ SUBROUTINE velocityForcing1
       USE global
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1, g
-      REAL (KIND = 8) :: diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,  &
+      REAL (KIND = 8) :: n1, pos1_x, pos1_y, pos1_z, pt1,  &
                          aval, bval, cval, sur2nodeDis, h1, h2, &
                          usurf, u_pos1, u_x1, u_x2, u_y1, u_y2, u_z1, u_z2, &
                          vsurf, v_pos1, v_x1, v_x2, v_y1, v_y2, v_z1, v_z2, &
@@ -798,7 +798,7 @@ SUBROUTINE pressureForcingGhost
       USE global
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
-      REAL (KIND = 8) :: diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, &
+      REAL (KIND = 8) :: n1, pos1_x, pos1_y, pos1_z, pt1, &
                          aval, bval, cval, p_pos1, sur2nodeDis, dpdn, p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, &
                          p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1, p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e
 
@@ -957,7 +957,7 @@ SUBROUTINE velocityForcingGhost
       USE global
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
-      REAL (KIND = 8) :: diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,  &
+      REAL (KIND = 8) :: n1, pos1_x, pos1_y, pos1_z, pt1,  &
                          aval, bval, cval, sur2nodeDis, h1, h2, &
                          usurf, u_pos1, u_x1, u_x2, u_y1, u_y2, u_z1, u_z2, &
                          vsurf, v_pos1, v_x1, v_x2, v_y1, v_y2, v_z1, v_z2, &
@@ -1557,7 +1557,7 @@ SUBROUTINE pressureForcingField
       USE global
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
-      REAL (KIND = 8) :: diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, &
+      REAL (KIND = 8) :: n1, pos1_x, pos1_y, pos1_z, pt1, &
                          aval, bval, cval, p_pos1, sur2nodeDis, dpdn, p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, &
                          p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1, p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e
 
@@ -1705,7 +1705,7 @@ SUBROUTINE velocityForcingField
       USE global
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
-      REAL (KIND = 8) :: diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,  &
+      REAL (KIND = 8) :: n1, pos1_x, pos1_y, pos1_z, pt1,  &
                          aval, bval, cval, sur2nodeDis, h1, h2, &
                          usurf, u_pos1, u_x1, u_x2, u_y1, u_y2, u_z1, u_z2, &
                          vsurf, v_pos1, v_x1, v_x2, v_y1, v_y2, v_z1, v_z2, &

@@ -8,11 +8,10 @@ module biocfd_interface_detail
   contains
 SUBROUTINE interfaceDetail
         USE global
-        INTEGER (KIND=8) :: i, j, k, g, f, factor, a_maxx, a_maxy,a_maxz, a_mm,&
+        INTEGER (KIND=8) :: i, j, g,  factor, a_maxx, a_maxy,a_maxz, a_mm,&
         b_maxx, b_maxy, b_maxz, b_mm, a_max_intf_length, b_max_intf_length,  &
-        a_blk_no, b_blk_no, xx1_p, xx2_p, yy1_p, yy2_p, zz1_p, zz2_p,counter_coarse,checker,&
-        max_yp,max_xp, max_zp,xx1_u, xx2_u, yy1_u, yy2_u, zz1_u,zz2_u,xx1_v, xx2_v, yy1_v, yy2_v,&
-        zz1_v,zz2_v, xx1_w,xx2_w,yy1_w,yy2_w,zz1_w,zz2_w, a_mm_x, a_mm_y,a_mm_z
+        a_blk_no, b_blk_no, xx1_p, xx2_p, yy1_p, yy2_p, zz1_p, zz2_p,&
+        a_mm_x, a_mm_y,a_mm_z
         INTEGER (KIND=8) :: starter, ender
 
 
