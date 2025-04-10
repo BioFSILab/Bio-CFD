@@ -78,15 +78,15 @@ module biocfd_search
          !znode1 = znode
 
         !IF(ita.eq.0) THEN !!For ita equal to 0
-	  block(g)%u_init = 0.
-	  block(g)%u_final = 0.
-	  block(g)%v_init = 0.
-	  block(g)%v_final = 0.
-	  block(g)%w_init = 0.
-	  block(g)%w_final = 0.
-	  block(g)%xmove = 0.
-	  block(g)%ymove = 0.
-	  block(g)%zmove = 0.
+        block(g)%u_init = 0.
+        block(g)%u_final = 0.
+        block(g)%v_init = 0.
+        block(g)%v_final = 0.
+        block(g)%w_init = 0.
+        block(g)%w_final = 0.
+        block(g)%xmove = 0.
+        block(g)%ymove = 0.
+        block(g)%zmove = 0.
 	 !END IF
 
         block(g)%a0 = block(g)%a0*pi/180_rk
@@ -440,7 +440,7 @@ module biocfd_search
         block(g)%fluidCellCount = 0
         block(g)%solidCellCount = 0
         block(g)%cell = 0
-	     block(g)%cell2 = 0
+        block(g)%cell2 = 0
         block(g)%nodeIdTag = 0
         n2dotn = 0
 
@@ -643,7 +643,7 @@ module biocfd_search
         block(g)%fluidCellCount = 0
         block(g)% solidCellCount = 0
         block(g)%cell = 0
-	block(g)%cell2 = 0
+        block(g)%cell2 = 0
         block(g)%nodeIdTag = 0
         n2dotn = 0
 
@@ -808,48 +808,48 @@ module biocfd_search
  22   FORMAT(A3,'_inter_cell.dat')
       open(82,file=filename1,status='unknown')
       write(82,*)'variables = "x", "y","z", "var"'
-	do k = 2,block(g)% nz+1
+      do k = 2,block(g)% nz+1
        do j = 2, block(g)%ny+1
        do i = 2, block(g)%nx+1
-	n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
+          n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
        if(block(g)%cell(i,j,k)==2)then
        write(82,*) block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), block(g)%cell(i,j,k)
        endif
        end do
        end do
-	enddo
+      enddo
       close(82)
      ! GOTO 1000
       WRITE(filename1,23)char_f
  23   FORMAT(A3,'_fluid_cell.dat')
       open(83,file=filename1,status='unknown')
       write(83,*)'variables = "x", "y","z","var"'
-       do k = 2, block(g)%nz+1
-       do j = 2,block(g)% ny+1
-       do i = 2, block(g)%nx+1
-	n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-       if(block(g)%cell(i,j,k)==0)then
-       write(83,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 0
-       endif
-       end do
-       end do
-	enddo
+      do k = 2, block(g)%nz+1
+         do j = 2,block(g)% ny+1
+            do i = 2, block(g)%nx+1
+               n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
+               if(block(g)%cell(i,j,k)==0)then
+                  write(83,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 0
+               endif
+            end do
+         end do
+      enddo
       close(83)
 
       WRITE(filename1,24)char_f
  24   FORMAT(A3,'_solid_cell.dat')
       open(84,file=filename1,status='unknown')
       write(84,*)'variables = "x", "y","z","var"'
-       do k = 2, block(g)%nz+1
-       do j = 2, block(g)%ny+1
-       do i = 2, block(g)%nx+1
-	n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-       if(block(g)%cell(i,j,k)==1)then
-       write(84,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 1
-       endif
-       end do
-       end do
-	enddo
+      do k = 2, block(g)%nz+1
+         do j = 2, block(g)%ny+1
+            do i = 2, block(g)%nx+1
+               n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
+               if(block(g)%cell(i,j,k)==1)then
+                  write(84,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 1
+               endif
+            end do
+         end do
+      enddo
       close(84)
 
  1000 CONTINUE
@@ -894,7 +894,7 @@ module biocfd_search
                  DO k = 2, block(g)%nz+1
                  DO j = 2, block(g)%ny+1
                  DO i = 2, block(g)%nx+1
-        		         block(g)%cell2(i,j,k) = 0
+                    block(g)%cell2(i,j,k) = 0
                  END DO
                  END DO
                  END DO
@@ -1037,10 +1037,10 @@ module biocfd_search
                   endif
                end do
                end do
-        	    enddo
+            enddo
               close(82)
          1000 CONTINUE
-        	    enddo
+           enddo
          ! STOP
              END SUBROUTINE findTScells
 !***********************************************************************
@@ -1363,7 +1363,7 @@ block(g)%fluidCellCount = flcnt
          DO n = 1, block(g)%fluidCellCount
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
-	     k = block(g)%fluidIndexPtr(n, 3)
+            k = block(g)%fluidIndexPtr(n, 3)
 
             IF (mod(i+j+k,2)==1) THEN
                block(g)%redCellCount = block(g)%redCellCount + 1
@@ -1507,7 +1507,7 @@ block(g)%fluidCellCount = flcnt
 
         ibxx=block(g)%ibCellCount
         print*,ibxx
-    	ALLOCATE(block(g)%pNormDis(ibxx), block(g)%nelp(ibxx), &
+        ALLOCATE(block(g)%pNormDis(ibxx), block(g)%nelp(ibxx), &
         block(g)%nelu1(ibxx), block(g)%nelu2(ibxx), block(g)%nelv1(ibxx), &
         block(g)%nelv2(ibxx), block(g)%nelw1(ibxx), block(g)%nelw2(ibxx), &
         block(g)%u1NormDis(ibxx), block(g)%u2NormDis(ibxx) , block(g)%v1NormDis(ibxx), &
@@ -1553,7 +1553,7 @@ block(g)%fluidCellCount = flcnt
               dis4  = dsqrt( (n3y-cent_y)**2 + (n1x-cent_x)**2 + (n1z-cent_z)**2 )
               dis5  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2 + (n2z-cent_z)**2 )
               dis6  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2 + (n3z-cent_z)**2 )
-	       IF (dis<minDis) THEN
+              IF (dis<minDis) THEN
                  minDis   = dis
                  nel2p    = m
               ENDIF
@@ -2318,7 +2318,7 @@ block(g)%fluidCellCount = flcnt
                   ! print*,'y1a',block(g)%y1(i)
         ENDDO
        ! pause
-	 DO i = 1, block(g)%nz+3
+        DO i = 1, block(g)%nz+3
            block(g)%z1(i) = block(g)%z1(i)+ change_z_f
         ENDDO
 
@@ -2330,13 +2330,13 @@ block(g)%fluidCellCount = flcnt
            block(g)%yv(i) = block(g)%y1(i)
         ENDDO
 
-	 DO i = 1, block(g)%nz+3
+        DO i = 1, block(g)%nz+3
            block(g)%zw(i) = block(g)%z1(i)
         ENDDO
 
         DO i = 1, block(g)%ny+2
            block(g)%yu(i) = 0.5_rk*(block(g)%y1(i)+block(g)%y1(i+1))
-	   block(g)%yw(i) = block(g)%yu(i)
+           block(g)%yw(i) = block(g)%yu(i)
            block(g)%yp(i) = block(g)%yu(i)
         END DO
 
@@ -2346,9 +2346,9 @@ block(g)%fluidCellCount = flcnt
            block(g)%xp(i) = block(g)%xv(i)
         END DO
 
-	 DO i = 1, block(g)%nz+2
+        DO i = 1, block(g)%nz+2
            block(g)%zu(i) = 0.5_rk*(block(g)%z1(i)+block(g)%z1(i+1))
-	   block(g)%zv(i) = block(g)%zu(i)
+           block(g)%zv(i) = block(g)%zu(i)
            block(g)%zp(i) = block(g)%zu(i)
         END DO
         DO k=1,block(g)%nz+1
@@ -2756,7 +2756,7 @@ block(g)%fluidCellCount = flcnt
         CHARACTER(LEN=100) :: cLine
         DO g=blk_start,nblocks
         if ( block(g)%move_check == 1)then
-	 ALLOCATE(block(g)%minElemcell(block(g)%nx+2,block(g)%ny+2,block(g)%nz+2))
+        ALLOCATE(block(g)%minElemcell(block(g)%nx+2,block(g)%ny+2,block(g)%nz+2))
 
 
         block(g)%ibCellCount = 0

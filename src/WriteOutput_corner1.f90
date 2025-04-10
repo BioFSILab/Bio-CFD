@@ -279,15 +279,15 @@ contains
  !22          FORMAT('out/4blk/aorta_chkpt.',i3.3,'.',f6.1,".dat")
  22          FORMAT('out/Chkpt/',A3,'_butter_chkpt.',i3.3,'.',f6.1,'.',f8.6,".dat")
         OPEN (1,FILE=filename1,FORM='formatted')
- 	 DO 30 k = 1, block(g)%nz+2
+        DO 30 k = 1, block(g)%nz+2
         DO 30 j = 1, block(g)%ny+2
         DO 30 i = 1, block(g)%nx+2
           WRITE(1,*) block(g)%u(i,j,k), block(g)%v(i,j,k), block(g)%w(i,j,k), &
         block(g)%p(i,j,k), totime, ita, ita1
  30     CONTINUE
- 	 CLOSE(22)
+        CLOSE(22)
         END DO
- 	 END IF
+        END IF
       END SUBROUTINE writeResult
       
          SUBROUTINE body_plot

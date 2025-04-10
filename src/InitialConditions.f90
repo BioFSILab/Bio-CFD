@@ -67,17 +67,17 @@ module biocfd_initial_conditions
         ita1 = 0
         totime = 0.
         DO f=1,nblocks
-        DO n = 1, block(f)%fluidCellCount
-           i = block(f)%fluidIndexPtr(n, 1)
-           j = block(f)%fluidIndexPtr(n, 2)
-	    k = block(f)%fluidIndexPtr(n, 3)
-          block(f)% u(i,j,k)  = uc  !396.33054782262406 !116.236233
-           block(f)%v(i,j,k)  = 0.
-	    block(f)%w(i,j,k)  = 0._rk
-           block(f)%ut(i,j,k) = uc
-           block(f)%vt(i,j,k) = 0._rk
-	    block(f)%wt(i,j,k) = 0._rk
-        END DO
+           DO n = 1, block(f)%fluidCellCount
+              i = block(f)%fluidIndexPtr(n, 1)
+              j = block(f)%fluidIndexPtr(n, 2)
+              k = block(f)%fluidIndexPtr(n, 3)
+              block(f)% u(i,j,k)  = uc  !396.33054782262406 !116.236233
+              block(f)%v(i,j,k)  = 0.
+              block(f)%w(i,j,k)  = 0._rk
+              block(f)%ut(i,j,k) = uc
+              block(f)%vt(i,j,k) = 0._rk
+              block(f)%wt(i,j,k) = 0._rk
+          END DO
         END DO
 
        !!$acc update device(u, v, w, ut, vt, wt, p, resi_u, resi_v, resi_w)
