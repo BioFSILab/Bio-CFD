@@ -5,6 +5,14 @@ module biocfd_search
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
   implicit NONE
 
+  private
+
+  public :: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm
+  public :: tagging_th, tagging_th_move, block_move_check, cellcount_solid
+  public :: cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords
+  public :: change_block_interface, computenormdistance, computesurfacevariables, findtscells
+  public :: fine_block_cell, selectiveretagging_th
+
   contains
 !***********************************************************************
         SUBROUTINE findDistnode
@@ -1499,7 +1507,7 @@ block(g)%fluidCellCount = flcnt
         INTEGER            ::  nel2u1, nel2u2, nel2v1, nel2v2, nel2w1, nel2w2
         INTEGER            :: k, nel2p, g, ibxx, m
         REAL(dp)      :: n1x, n2x, n3x, n1y, n2y, n3y, n1z, n2z, n3z, dis, dis1, dis2, dis3, dis4, dis5, dis6, minDis, minDis1, minDis2, minDis3, minDis4, minDis5, minDis6, cent_x, cent_y,cent_z
-        
+
         print*, 'computeNormDistance started'
         DO g=blk_start,nblocks
 
@@ -1635,8 +1643,6 @@ block(g)%fluidCellCount = flcnt
 
         SUBROUTINE fine_block_cell
 
-
-        USE global
         INTEGER(int64) :: i, j, k, g, factor, a_blk_no, b_blk_no
 
 
@@ -1947,8 +1953,6 @@ block(g)%fluidCellCount = flcnt
 
         SUBROUTINE fine_block_cell_mv
 
-
-        USE global
         INTEGER(int64) :: i, j, k, g,  factor, a_blk_no, b_blk_no
 
         !block(1)%cell_n=0
@@ -2010,7 +2014,7 @@ block(g)%fluidCellCount = flcnt
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         SUBROUTINE block_move_check
-        use global
+
         INTEGER(int64) :: i,j,k,g, a_blk_no, b_blk_no, factor
         REAL(dp) :: ydisp1, xdisp1, zdisp1, mg1
         REAL(dp) :: marginx, marginy, marginz, yval_up, yval_dw, xval_lt, xval_rt
@@ -2570,7 +2574,6 @@ block(g)%fluidCellCount = flcnt
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE change_block_interface
 
-        use global
         INTEGER(int64) :: i,j,g, a_blk_no, b_blk_no, factor
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
 
