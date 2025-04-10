@@ -1,13 +1,16 @@
 module biocfd_coefficient_matrix
+  use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global
   implicit NONE
+  private
+
+  public :: coefficientMatrix
 
   contains
 SUBROUTINE coefficientMatrix
-        USE global
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER (kind = 8) :: i, j, f,nx_var,ny_var,nz_var
-        REAL (KIND = 8)    ::  rx1, rx2, rxsum, ry1, ry2, rysum, rz1, rz2, rzsum
+        INTEGER (int64) :: i, j, f,nx_var,ny_var,nz_var
+        REAL (dp)    ::  rx1, rx2, rxsum, ry1, ry2, rysum, rz1, rz2, rzsum
 
          DO f=1,nblocks
          nx_var=block(f)%nx
