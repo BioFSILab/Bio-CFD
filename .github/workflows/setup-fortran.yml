@@ -20,7 +20,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         toolchain:
-          - {compiler: gcc, version: 14}
+          - {compiler: gcc, version: 14, FFLAGS: "-Werror=unused"}
           - {compiler: intel, version: '2025.0'}
           - {compiler: intel-classic, version: '2021.10'}
           - {compiler: nvidia-hpc, version: '25.1'}
@@ -42,4 +42,5 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - run: |
           # Build with FPM
+	  export FPM_FFLAGS="${{ matrix.toolchain.FFLAGS }}"
           fpm build

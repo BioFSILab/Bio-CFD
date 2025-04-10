@@ -609,7 +609,7 @@ module biocfd_search
     enddo
       close(84)
 
- 1000 CONTINUE
+! 1000 CONTINUE
          WRITE(filename1,2) g
  2       FORMAT('butter_cellcount_f.',i3.3,".dat")
          OPEN(12,FILE=filename1,FORM='formatted')
@@ -2534,8 +2534,8 @@ block(g)%fluidCellCount = flcnt
        !print*,block(b_blk_no)%cpy_x_start_mv,block(b_blk_no)%cpy_x_end_mv
        !print*,block(b_blk_no)%cpy_y_start_mv,block(b_blk_no)%cpy_y_end_mv
         OPEN(UNIT=12,FILE='log.dat',STATUS='unknown',access='append')
- 11     FORMAT(2F13.5)
- 111     FORMAT(6I6)
+        ! 11 FORMAT(2F13.5)
+        ! 111  FORMAT(6I6)
         block(b_blk_no)%u=0
         block(b_blk_no)%v=0
         block(b_blk_no)%w=0
