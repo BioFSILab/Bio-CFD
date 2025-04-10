@@ -93,7 +93,7 @@
         CALL writeOutput1
         coarse_flcnt_check=0
         print*, 'adam'
- 1      CONTINUE
+        DO
         ita = ita + 1
         ita2 = ita2 + 1
         totime = totime + deltat
@@ -259,7 +259,8 @@
         CALL pressureForcingGhost
      !!   print*,'15'
         CALL cpu_time(dFinish1)
-        IF(ita<itamax) GOTO 1
+        IF(ita>=itamax) EXIT
+        END DO
       END PROGRAM main
 
 
