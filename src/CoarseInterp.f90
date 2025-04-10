@@ -1,15 +1,20 @@
 module biocfd_coarse_update
+  use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global
   implicit none
+  private
+
+  public ::  coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
 
   contains
 subroutine coarseUpdate
-        use global
-        REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
-        REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
-        REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
-        REAL (KIND=8) :: bl_interp_ans1, bl_interp_ans2
-        REAL (KIND=8) :: bl_interp_ans
+        REAL (dp) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,&
+                         bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
+        REAL (dp) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
+        REAL (dp) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, &
+                         bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
+        REAL (dp) :: bl_interp_ans1, bl_interp_ans2
+        REAL (dp) :: bl_interp_ans
 
         INTEGER :: i,j,k,g, tar_x, tar_y, tar_z, loc_x, loc_y, loc_z, a_blk_no,b_blk_no
         INTEGER :: st_idx, en_idx
@@ -94,7 +99,8 @@ subroutine coarseUpdate
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
 
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
 
                 block(a_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
  !!!!u
@@ -164,7 +170,8 @@ subroutine coarseUpdate
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
 
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(a_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
 
                !! endif
@@ -231,7 +238,8 @@ subroutine coarseUpdate
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
 
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(a_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
               !! endif
 
@@ -298,7 +306,8 @@ subroutine coarseUpdate
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
 
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(a_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
               !! endif
 
@@ -406,8 +415,10 @@ subroutine coarseUpdate
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !       subroutine coarseUpdate_newv
 !       use global
-!       REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
-!       REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
+        !       REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,&
+        !bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
+        !       REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty,&
+        !bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
 !       REAL (KIND=8) :: bl_interp_ans
 
 !       INTEGER :: i,j,k,g, varx1,varx2, tar_x, tar_y, loc_x, loc_y, a_blk_no,b_blk_no
@@ -564,12 +575,13 @@ subroutine coarseUpdate
 !       END SUBROUTINE
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         subroutine coarseUpdate_newv
-        use global
-        REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
-        REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
-        REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
-        REAL (KIND=8) :: bl_interp_ans1, bl_interp_ans2
-        REAL (KIND=8) :: bl_interp_ans
+        REAL (dp) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,&
+               bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
+        REAL (dp) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
+        REAL (dp) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty,&
+               bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
+        REAL (dp) :: bl_interp_ans1, bl_interp_ans2
+        REAL (dp) :: bl_interp_ans
 
         INTEGER :: i,j,k,g, tar_x, tar_y, tar_z, loc_x, loc_y, loc_z, a_blk_no,b_blk_no
         INTEGER :: st_idx, en_idx
@@ -652,7 +664,8 @@ subroutine coarseUpdate
 !               bl_intp_num= bl_intp_first_term + bl_intp_second_term
 
 !               bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-!               bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+        !               bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+        !((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
 !
 !               block(a_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
 !!!!!u
@@ -721,14 +734,19 @@ subroutine coarseUpdate
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
 
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(a_blk_no)%ut(tar_x-1,tar_y,tar_z)=bl_interp_ans
 
 !               write(filename1,1917)
 ! 1917            format('ucinterp_print.dat')
 !               OPEN(UNIT=1221,FILE=filename1,ACCESS='append',STATUS='unknown')
-!              ! write(1221,391) ita,' ',loc_x,' ',loc_y,' ',loc_z,' ',tar_x,' ',tar_y,' ',tar_z,' ',bl_intp_x1, bl_intp_x2,bl_intp_y1, bl_intp_y2,bl_intp_z1, bl_intp_z2, bl_intp_f1, bl_intp_f2, bl_intp_f3, bl_intp_f4
-!               write(1221,391) ita,' ',loc_x,' ',loc_y,' ',loc_z,' ',tar_x,' ',tar_y,' ',tar_z,' ',bl_intp_x1,bl_intp_x2,bl_intp_y1, bl_intp_y2,bl_intp_z1, bl_intp_z2, bl_intp_valx, bl_intp_valy, bl_intp_valz
+                  ! write(1221,391) ita,' ',loc_x,' ',loc_y,' ',loc_z,' ',tar_x,' ',tar_y,' ',&
+                  !tar_z,' ',bl_intp_x1, bl_intp_x2,bl_intp_y1, bl_intp_y2,bl_intp_z1, bl_intp_z2, &
+                  !bl_intp_f1, bl_intp_f2, bl_intp_f3, bl_intp_f4
+                  ! write(1221,391) ita,' ',loc_x,' ',loc_y,' ',loc_z,' ',tar_x,' ',tar_y,' ',&
+                  !tar_z,' ',bl_intp_x1,bl_intp_x2,bl_intp_y1, bl_intp_y2,bl_intp_z1, bl_intp_z2,
+                  !bl_intp_valx, bl_intp_valy, bl_intp_valz
 ! !391             format(I4,A1,I4,A1,I4,A1,I4,A1,I4,A1,I4,A1,I4,A1,10F10.7)
 ! 391             format(I4,A1,I4,A1,I4,A1,I4,A1,I4,A1,I4,A1,I4,A1,9F10.7)
                !! endif
@@ -795,7 +813,8 @@ subroutine coarseUpdate
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
 
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(a_blk_no)%vt(tar_x,tar_y-1,tar_z)=bl_interp_ans
               !! endif
 
@@ -862,7 +881,8 @@ subroutine coarseUpdate
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
 
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(a_blk_no)%wt(tar_x,tar_y,tar_z-1)=bl_interp_ans
               !! endif
 
@@ -874,12 +894,13 @@ subroutine coarseUpdate
         end subroutine coarseUpdate_newv
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
         subroutine coarseUpdate_pc
-        use global
-        REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
-        REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
-        REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
-        REAL (KIND=8) :: bl_interp_ans1, bl_interp_ans2
-        REAL (KIND=8) :: bl_interp_ans
+        REAL (dp) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,&
+               bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
+        REAL (dp) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
+        REAL (dp) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, &
+             bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
+        REAL (dp) :: bl_interp_ans1, bl_interp_ans2
+        REAL (dp) :: bl_interp_ans
 
         INTEGER :: i,j,k,g, tar_x, tar_y, tar_z, loc_x, loc_y, loc_z, a_blk_no,b_blk_no
         INTEGER :: st_idx, en_idx
@@ -964,7 +985,8 @@ subroutine coarseUpdate
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
 
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
+                     ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
              !  write(*,121)'c',i,j,k,bl_interp_ans1, bl_interp_ans2, bl_interp_ans
 !121          format(A1,3I,3F12.6)
                 block(a_blk_no)%pc(tar_x,tar_y,tar_z)=bl_interp_ans
