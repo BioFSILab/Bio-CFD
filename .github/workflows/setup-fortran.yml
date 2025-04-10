@@ -42,4 +42,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - run: |
           # Build with FPM
-          fpm build --flag ${{ matrix.toolchain.FFLAGS }}
+          fpm build
