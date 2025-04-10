@@ -1,5 +1,5 @@
 module biocfd_coarse_update
-  use, intrinsic :: iso_fortran_env, only: dp => real64, int64
+  use, intrinsic :: iso_fortran_env, only: dp => real64
   use global
   implicit none
   private
