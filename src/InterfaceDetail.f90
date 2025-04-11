@@ -184,7 +184,7 @@ SUBROUTINE interfaceDetail
 
         !> Set each interface detail array e.g [puvw][xyz]
         subroutine set_interface_detail(block_var, intf_start, intf_end, factor, &
-                                        interface_details, interface_counter, starter)
+                                        interface_details, interface_counter, in_starter)
           !> The block variable that is being set e.g. xp
           real(dp), dimension(:), intent(in) :: block_var
           !> The interface start and end values
@@ -203,16 +203,25 @@ SUBROUTINE interfaceDetail
           ! it. It is not clear to me whether this will work for all
           ! of our compilers, online discussion is not clear about
           ! whether this is really part of the standard
-          integer, optional, value :: starter
+          integer, intent(in), optional, value :: in_starter
 
-          integer(int64) :: ender
+          ! TODO: Probably no need for these to be int64 (starter is
+          ! either 2 or 3)
+          integer(int64) :: starter, ender
           integer(int64) :: i
           integer(int64) :: xx1_p, xx2_p
 
           ! In most of the examples this subroutine was derived from,
           ! starter starts at 2, however, in some cases it is 3... not
-          ! sure why
-          if (.not. present(starter)) starter = 2
+          ! sure why.
+          !
+          ! TODO: We aren't really sure why we can't directly use
+          ! starter but this satisfies the compiler and the linter
+          if (.not. present(in_starter)) then
+            starter = 2
+          else
+            starter = in_starter
+          end if
 
           ! The following two do loops can be replaced with findloc
           ! calls
