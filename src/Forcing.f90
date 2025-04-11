@@ -84,7 +84,7 @@ SUBROUTINE pressureForcing1
          sur2nodeDis = block(g)%pNormDis(n)
 
          pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xp(i) + pt1*block(g)%cosAlpha(block(g)%nelp(n))
@@ -159,15 +159,15 @@ SUBROUTINE pressureForcing1
 
          h2 = dabs(block(g)%xp(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xp(i_x1)   - pos1_x)
-         dpdx_e = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dpdx_e = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yp(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yp(i_y1)   - pos1_y)
-         dpdy_e = (h1**2*p_y2 - h2**2*p_y1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dpdy_e = (h1**2*p_y2 - h2**2*p_y1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zp(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zp(i_z1)   - pos1_z)
-         dpdz_e = (h1**2*p_z2 - h2**2*p_z1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dpdz_e = (h1**2*p_z2 - h2**2*p_z1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          dpdn_e = dpdx_e*block(g)%cosAlpha(block(g)%nelp(n)) &
                   + dpdy_e*block(g)%cosBeta(block(g)%nelp(n)) &
@@ -177,7 +177,7 @@ SUBROUTINE pressureForcing1
 
          bval = dpdn
          aval = (dpdn_e - dpdn)/(2*n1)
-         cvaL = p_pos1 - (dpdn_e + dpdn)*n1*.5
+         cvaL = p_pos1 - (dpdn_e + dpdn)*n1*0.5_dp
 
          block(g)%p(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
       ENDDO
@@ -254,12 +254,12 @@ SUBROUTINE velocityForcing1
 
          !usurf = 0._rk
          IF (block(g)%ibSurfID(block(g)%nelu2(n))==50) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu2(n))==51) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
            !!usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(n)) - block(g)%piv_y)
          ELSEIF (block(g)%ibSurfId(block(g)%nelu2(n))==52) THEN
-             usurf = 0. +block(g)%xdot
+             usurf = 0._dp +block(g)%xdot
            !!usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(n)) - block(g)%piv_y)
          ENDIF
          i = block(g)%interceptedIndexPtr(n, 1)
@@ -271,7 +271,7 @@ SUBROUTINE velocityForcing1
          sur2nodeDis = block(g)%u2NormDis(n)
 
          pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xu(i+1) + pt1*block(g)%cosAlpha(block(g)%nelu2(n))
@@ -353,15 +353,15 @@ SUBROUTINE velocityForcing1
 
          h2 = dabs(block(g)%xu(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xu(i_x1)   - pos1_x)
-         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yu(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yu(i_y1)   - pos1_y)
-         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zu(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zu(i_z1)   - pos1_z)
-         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          dudn_e = dudx_e*block(g)%cosAlpha(block(g)%nelu2(n)) &
                   + dudy_e*block(g)%cosBeta(block(g)%nelu2(n)) &
@@ -370,7 +370,7 @@ SUBROUTINE velocityForcing1
          n1 = pt1 + sur2nodeDis
 
          cval = usurf
-         bval = 2./n1*(u_pos1 - usurf) - dudn_e
+         bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%ut(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !***********************************************************************
@@ -379,18 +379,18 @@ SUBROUTINE velocityForcing1
          !usurf = u_curr
          !usurf = 0._rk
          IF (block(g)%ibSurfID(block(g)%nelu1(n))==50) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu1(n))==51) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
            !!usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(n)) - block(g)%piv_y)
          ELSEIF (block(g)%ibSurfId(block(g)%nelu1(n))==52) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
            !!usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(n)) - block(g)%piv_y)
          ENDIF
          sur2nodeDis = block(g)%u1NormDis(n)
 
          pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xu(i) + pt1*block(g)%cosAlpha(block(g)%nelu1(n))
@@ -472,15 +472,15 @@ SUBROUTINE velocityForcing1
 
          h2 = dabs(block(g)%xu(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xu(i_x1)   - pos1_x)
-         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yu(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yu(i_y1)   - pos1_y)
-         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zu(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zu(i_z1)   - pos1_z)
-         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          dudn_e = dudx_e*block(g)%cosAlpha(block(g)%nelu1(n)) &
                   + dudy_e*block(g)%cosBeta(block(g)%nelu1(n)) &
@@ -489,7 +489,7 @@ SUBROUTINE velocityForcing1
          n1 = pt1 + sur2nodeDis
 
          cval = usurf
-         bval = 2./n1*(u_pos1 - usurf) - dudn_e
+         bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%ut(i-1,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !***********************************************************************
@@ -498,7 +498,7 @@ SUBROUTINE velocityForcing1
          !vsurf = v_curr
          !vsurf = 0._rk
          IF (block(g)%ibSurfID(block(g)%nelv2(n))==50) THEN
-                 vsurf = 0. + block(g)%ydot
+                 vsurf = 0._dp + block(g)%ydot
          ELSEIF (block(g)%ibSurfID(block(g)%nelv2(n))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            vsurf = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) &
@@ -514,7 +514,7 @@ SUBROUTINE velocityForcing1
          sur2nodeDis = block(g)%v2NormDis(n)
 
          pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 &
-               + block(g)%deltaz(k)**2) + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + block(g)%deltaz(k)**2) + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xv(i) + pt1*block(g)%cosAlpha(block(g)%nelv2(n))
@@ -596,15 +596,15 @@ SUBROUTINE velocityForcing1
 
          h2 = dabs(block(g)%xv(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xv(i_x1)   - pos1_x)
-         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yv(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yv(i_y1)   - pos1_y)
-         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zv(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zv(i_z1)   - pos1_z)
-         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dvdn_e = dvdx_e*block(g)%cosAlpha(block(g)%nelv2(n)) &
@@ -614,7 +614,7 @@ SUBROUTINE velocityForcing1
          n1 = pt1 + sur2nodeDis
 
          cval = vsurf
-         bval = 2./n1*(v_pos1 - vsurf) - dvdn_e
+         bval = 2._dp/n1*(v_pos1 - vsurf) - dvdn_e
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%vt(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !***********************************************************************
@@ -623,7 +623,7 @@ SUBROUTINE velocityForcing1
          !vsurf = v_curr
          !vsurf = 0._rk
          IF (block(g)%ibSurfID(block(g)%nelv1(n))==50) THEN
-           vsurf = 0.+ block(g)%ydot
+           vsurf = 0._dp+ block(g)%ydot
          ELSEIF (block(g)%ibSurfID(block(g)%nelv1(n))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z) &
@@ -638,7 +638,7 @@ SUBROUTINE velocityForcing1
          sur2nodeDis = block(g)%v1NormDis(n)
 
          pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xv(i) + pt1*block(g)%cosAlpha(block(g)%nelv1(n))
@@ -720,15 +720,15 @@ SUBROUTINE velocityForcing1
 
          h2 = dabs(block(g)%xv(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xv(i_x1)   - pos1_x)
-         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yv(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yv(i_y1)   - pos1_y)
-         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zv(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zv(i_z1)   - pos1_z)
-         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dvdn_e = dvdx_e*block(g)%cosAlpha(block(g)%nelv1(n)) &
@@ -738,7 +738,7 @@ SUBROUTINE velocityForcing1
          n1 = pt1 + sur2nodeDis
 
          cval = vsurf
-         bval = 2./n1*(v_pos1 - vsurf) - dvdn_e
+         bval = 2._dp/n1*(v_pos1 - vsurf) - dvdn_e
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%vt(i,j-1,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !***********************************************************************
@@ -758,7 +758,7 @@ SUBROUTINE velocityForcing1
          sur2nodeDis = block(g)%w2NormDis(n)
 
          pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xw(i) + pt1*block(g)%cosAlpha(block(g)%nelw2(n))
@@ -839,15 +839,15 @@ SUBROUTINE velocityForcing1
 
          h2 = dabs(block(g)%xw(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xw(i_x1)   - pos1_x)
-         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yw(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yw(i_y1)   - pos1_y)
-         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zw(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zw(i_z1)   - pos1_z)
-         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dwdn_e = dwdx_e*block(g)%cosAlpha(block(g)%nelw2(n)) &
@@ -857,7 +857,7 @@ SUBROUTINE velocityForcing1
          n1 = pt1 + sur2nodeDis
 
          cval = wsurf
-         bval = 2./n1*(w_pos1 - wsurf) - dwdn_e
+         bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%wt(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !***********************************************************************
@@ -877,7 +877,7 @@ SUBROUTINE velocityForcing1
          sur2nodeDis = block(g)%w1NormDis(n)
 
          pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xw(i) + pt1*block(g)%cosAlpha(block(g)%nelw1(n))
@@ -958,15 +958,15 @@ SUBROUTINE velocityForcing1
 
          h2 = dabs(block(g)%xw(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xw(i_x1)   - pos1_x)
-         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yw(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yw(i_y1)   - pos1_y)
-         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zw(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zw(i_z1)   - pos1_z)
-         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dwdn_e = dwdx_e*block(g)%cosAlpha(block(g)%nelw1(n)) &
@@ -976,7 +976,7 @@ SUBROUTINE velocityForcing1
          n1 = pt1 + sur2nodeDis
 
          cval = wsurf
-         bval = 2./n1*(w_pos1 - wsurf) - dwdn_e
+         bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%wt(i,j,k-1) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !***********************************************************************
@@ -1077,7 +1077,7 @@ SUBROUTINE pressureForcingGhost
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 &
                              + block(g)%deltay(j)**2 &
                              + block(g)%deltaz(k)**2) &
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xp(i) + pt1*-block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n)))
@@ -1156,15 +1156,15 @@ SUBROUTINE pressureForcingGhost
 
          h2 = dabs(block(g)%xp(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xp(i_x1)   - pos1_x)
-         dpdx_e = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dpdx_e = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yp(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yp(i_y1)   - pos1_y)
-         dpdy_e = (h1**2*p_y2 - h2**2*p_y1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dpdy_e = (h1**2*p_y2 - h2**2*p_y1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zp(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zp(i_z1)   - pos1_z)
-         dpdz_e = (h1**2*p_z2 - h2**2*p_z1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dpdz_e = (h1**2*p_z2 - h2**2*p_z1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          dpdn_e = dpdx_e*-block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n))) &
                   + dpdy_e*-block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n))) &
@@ -1174,7 +1174,7 @@ SUBROUTINE pressureForcingGhost
 
          bval = dpdn
          aval = (dpdn_e - dpdn)/(2*n1)
-         cvaL = p_pos1 - (dpdn_e + dpdn)*n1*.5
+         cvaL = p_pos1 - (dpdn_e + dpdn)*n1*0.5_dp
 
          block(g)%p_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          !ELSE
@@ -1228,13 +1228,13 @@ SUBROUTINE velocityForcingGhost
 !***********************U(i,j,k)****************************************
          !usurf = u_curr
          IF (block(g)%ibSurfID(block(g)%nelu2(block(g)%index_ts(n)))==50) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu2(block(g)%index_ts(n)))==51) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(block(g)%index_ts(n))) -block(g)%piv_y)
          ELSEIF (block(g)%ibSurfId(block(g)%nelu2(block(g)%index_ts(n)))==52) THEN
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(block(g)%index_ts(n)))-block(g)%piv_y)
-           usurf = 0. + block(g)%xdot
+           usurf = 0._dp + block(g)%xdot
          ENDIF
 
          !usurf = block(g)%thetaDot*(block(g)%ycent(block(g)%nelu2(block(g)%index_ts(n)))-block(g)%piv_y)
@@ -1243,7 +1243,7 @@ SUBROUTINE velocityForcingGhost
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 &
                + block(g)%deltay(j)**2 &
                + block(g)%deltaz(k)**2) &
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xu(i+1) + pt1*-block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(n)))
@@ -1319,15 +1319,15 @@ SUBROUTINE velocityForcingGhost
 
          h2 = dabs(block(g)%xu(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xu(i_x1)   - pos1_x)
-         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yu(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yu(i_y1)   - pos1_y)
-         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zu(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zu(i_z1)   - pos1_z)
-         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          dudn_e = dudx_e*-block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(n))) &
                   + dudy_e*-block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(n))) &
@@ -1336,7 +1336,7 @@ SUBROUTINE velocityForcingGhost
          n1 = pt1 + sur2nodeDis
 
          cval = usurf
-         bval = 2./n1*(u_pos1 - usurf) - dudn_e
+         bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%u2_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          !ELSE
@@ -1348,13 +1348,13 @@ SUBROUTINE velocityForcingGhost
 !******************************U(i-1,j,k)*******************************
          !usurf = u_curr
          IF (block(g)%ibSurfID(block(g)%nelu1(block(g)%index_ts(n)))==50) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu1(block(g)%index_ts(n)))==51) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(block(g)%index_ts(n)))-block(g)%piv_y)
          ELSEIF (block(g)%ibSurfId(block(g)%nelu1(block(g)%index_ts(n)))==52) THEN
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(block(g)%index_ts(n)))-block(g)%piv_y)
-           usurf = 0. + block(g)%xdot
+           usurf = 0._dp + block(g)%xdot
          ENDIF
 
 
@@ -1362,7 +1362,7 @@ SUBROUTINE velocityForcingGhost
          sur2nodeDis = -block(g)%u1NormDis(block(g)%index_ts(n))
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xu(i) + pt1*-block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(n)))
@@ -1438,15 +1438,15 @@ SUBROUTINE velocityForcingGhost
 
          h2 = dabs(block(g)%xu(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xu(i_x1)   - pos1_x)
-         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yu(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yu(i_y1)   - pos1_y)
-         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zu(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zu(i_z1)   - pos1_z)
-         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          dudn_e = dudx_e*-block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(n))) &
                   + dudy_e*-block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(n))) &
@@ -1455,7 +1455,7 @@ SUBROUTINE velocityForcingGhost
          n1 = pt1 + sur2nodeDis
 
          cval = usurf
-         bval = 2./n1*(u_pos1 - usurf) - dudn_e
+         bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%u1_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          !ELSE
@@ -1467,7 +1467,7 @@ SUBROUTINE velocityForcingGhost
 !**************************V(i,j,k)*************************************
          !vsurf = v_curr
          IF (block(g)%ibSurfID(block(g)%nelv2(block(g)%index_ts(n)))==50) THEN
-           vsurf = 0.+ block(g)%ydot
+           vsurf = 0._dp+ block(g)%ydot
          ELSEIF (block(g)%ibSurfID(block(g)%nelv2(block(g)%index_ts(n)))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            vsurf = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(block(g)%index_ts(n))) &
@@ -1486,7 +1486,7 @@ SUBROUTINE velocityForcingGhost
          sur2nodeDis = -block(g)%v2NormDis(block(g)%index_ts(n))
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xv(i) + pt1*-block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(n)))
@@ -1562,15 +1562,15 @@ SUBROUTINE velocityForcingGhost
 
          h2 = dabs(block(g)%xv(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xv(i_x1)   - pos1_x)
-         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yv(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yv(i_y1)   - pos1_y)
-         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zv(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zv(i_z1)   - pos1_z)
-         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dvdn_e = dvdx_e*-block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(n))) &
@@ -1580,7 +1580,7 @@ SUBROUTINE velocityForcingGhost
          n1 = pt1 + sur2nodeDis
 
          cval = vsurf
-         bval = 2./n1*(v_pos1 - vsurf) - dvdn_e
+         bval = 2._dp/n1*(v_pos1 - vsurf) - dvdn_e
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%v2_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          !ELSE
@@ -1592,7 +1592,7 @@ SUBROUTINE velocityForcingGhost
 !**************************V(i,j-1,k)*************************************
          !vsurf = v_curr
          IF (block(g)%ibSurfID(block(g)%nelv1(block(g)%index_ts(n)))==50) THEN
-           vsurf = 0.+ block(g)%ydot
+           vsurf = 0._dp + block(g)%ydot
          ELSEIF (block(g)%ibSurfID(block(g)%nelv1(block(g)%index_ts(n)))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(block(g)%index_ts(n))) &
@@ -1612,7 +1612,7 @@ SUBROUTINE velocityForcingGhost
          sur2nodeDis = -block(g)%v1NormDis(block(g)%index_ts(n))
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 &
-               + block(g)%deltaz(k)**2) + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + block(g)%deltaz(k)**2) + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xv(i) + pt1*-block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(n)))
@@ -1688,15 +1688,15 @@ SUBROUTINE velocityForcingGhost
 
          h2 = dabs(block(g)%xv(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xv(i_x1)   - pos1_x)
-         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yv(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yv(i_y1)   - pos1_y)
-         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zv(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zv(i_z1)   - pos1_z)
-         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dvdn_e = dvdx_e*-block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(n))) &
@@ -1706,7 +1706,7 @@ SUBROUTINE velocityForcingGhost
          n1 = pt1 + sur2nodeDis
 
          cval = vsurf
-         bval = 2./n1*(v_pos1 - vsurf) - dvdn_e
+         bval = 2._dp/n1*(v_pos1 - vsurf) - dvdn_e
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%v1_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          !ELSE
@@ -1734,7 +1734,7 @@ SUBROUTINE velocityForcingGhost
          sur2nodeDis = -block(g)%w2NormDis(block(g)%index_ts(n))
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xw(i) + pt1*-block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(n)))
@@ -1808,15 +1808,15 @@ SUBROUTINE velocityForcingGhost
 
          h2 = dabs(block(g)%xw(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xw(i_x1)   - pos1_x)
-         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yw(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yw(i_y1)   - pos1_y)
-         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zw(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zw(i_z1)   - pos1_z)
-         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dwdn_e = dwdx_e*-block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(n))) &
@@ -1826,7 +1826,7 @@ SUBROUTINE velocityForcingGhost
          n1 = pt1 + sur2nodeDis
 
          cval = wsurf
-         bval = 2./n1*(w_pos1 - wsurf) - dwdn_e
+         bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%w2_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          !ELSE
@@ -1855,7 +1855,7 @@ SUBROUTINE velocityForcingGhost
          sur2nodeDis = -block(g)%w1NormDis(block(g)%index_ts(n))
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xw(i) + pt1*-block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(n)))
@@ -1929,15 +1929,15 @@ SUBROUTINE velocityForcingGhost
 
          h2 = dabs(block(g)%xw(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xw(i_x1)   - pos1_x)
-         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yw(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yw(i_y1)   - pos1_y)
-         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zw(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zw(i_z1)   - pos1_z)
-         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dwdn_e = dwdx_e*-block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(n))) &
@@ -1947,7 +1947,7 @@ SUBROUTINE velocityForcingGhost
          n1 = pt1 + sur2nodeDis
 
          cval = wsurf
-         bval = 2./n1*(w_pos1 - wsurf) - dwdn_e
+         bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%w1_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          !ELSE
@@ -2037,7 +2037,7 @@ SUBROUTINE pressureForcingField
          sur2nodeDis = block(g)%pNormDis(n)
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xp(i) + pt1*block(g)%cosAlpha(block(g)%nelp(n))
@@ -2112,15 +2112,15 @@ SUBROUTINE pressureForcingField
 
          h2 = dabs(block(g)%xp(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xp(i_x1)   - pos1_x)
-         dpdx_e = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dpdx_e = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yp(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yp(i_y1)   - pos1_y)
-         dpdy_e = (h1**2*p_y2 - h2**2*p_y1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dpdy_e = (h1**2*p_y2 - h2**2*p_y1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zp(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zp(i_z1)   - pos1_z)
-         dpdz_e = (h1**2*p_z2 - h2**2*p_z1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dpdz_e = (h1**2*p_z2 - h2**2*p_z1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          dpdn_e = dpdx_e*block(g)%cosAlpha(block(g)%nelp(n)) &
                   + dpdy_e*block(g)%cosBeta(block(g)%nelp(n)) &
@@ -2130,7 +2130,7 @@ SUBROUTINE pressureForcingField
 
          bval = dpdn
          aval = (dpdn_e - dpdn)/(2*n1)
-         cvaL = p_pos1 - (dpdn_e + dpdn)*n1*.5
+         cvaL = p_pos1 - (dpdn_e + dpdn)*n1*0.5_dp
 
          block(g)%p(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
       ENDDO
@@ -2180,12 +2180,12 @@ SUBROUTINE velocityForcingField
 !***********************U(i,j,k)****************************************
          !usurf = u_curr
          IF (block(g)%ibSurfID(block(g)%nelu2(n))==50) THEN
-             usurf = 0.+ block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu2(n))==51) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(n)) - block(g)%piv_y)
          ELSEIF (block(g)%ibSurfId(block(g)%nelu2(n))==52) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(n)) - block(g)%piv_y)
          ENDIF
 
@@ -2193,7 +2193,7 @@ SUBROUTINE velocityForcingField
          sur2nodeDis = block(g)%u2NormDis(n)
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xu(i+1) + pt1*block(g)%cosAlpha(block(g)%nelu2(n))
@@ -2268,15 +2268,15 @@ SUBROUTINE velocityForcingField
 
          h2 = dabs(block(g)%xu(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xu(i_x1)   - pos1_x)
-         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yu(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yu(i_y1)   - pos1_y)
-         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zu(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zu(i_z1)   - pos1_z)
-         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          dudn_e = dudx_e*block(g)%cosAlpha(block(g)%nelu2(n)) &
                   + dudy_e*block(g)%cosBeta(block(g)%nelu2(n)) &
@@ -2285,7 +2285,7 @@ SUBROUTINE velocityForcingField
          n1 = pt1 + sur2nodeDis
 
          cval = usurf
-         bval = 2./n1*(u_pos1 - usurf) - dudn_e
+         bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%u(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !***********************************************************************
@@ -2293,12 +2293,12 @@ SUBROUTINE velocityForcingField
 !******************************U(i-1,j,k)*******************************
          !usurf = u_curr
          IF (block(g)%ibSurfID(block(g)%nelu1(n))==50) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu1(n))==51) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(n)) - block(g)%piv_y)
          ELSEIF (block(g)%ibSurfId(block(g)%nelu1(n))==52) THEN
-             usurf = 0. + block(g)%xdot
+             usurf = 0._dp + block(g)%xdot
            !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(n)) - block(g)%piv_y)
          ENDIF
 
@@ -2307,7 +2307,7 @@ SUBROUTINE velocityForcingField
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 &
                + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xu(i) + pt1*block(g)%cosAlpha(block(g)%nelu1(n))
@@ -2382,15 +2382,15 @@ SUBROUTINE velocityForcingField
 
          h2 = dabs(block(g)%xu(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xu(i_x1)   - pos1_x)
-         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yu(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yu(i_y1)   - pos1_y)
-         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zu(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zu(i_z1)   - pos1_z)
-         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          dudn_e = dudx_e*block(g)%cosAlpha(block(g)%nelu1(n)) &
                   + dudy_e*block(g)%cosBeta(block(g)%nelu1(n)) &
@@ -2399,7 +2399,7 @@ SUBROUTINE velocityForcingField
          n1 = pt1 + sur2nodeDis
 
          cval = usurf
-         bval = 2./n1*(u_pos1 - usurf) - dudn_e
+         bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%u(i-1,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !***********************************************************************
@@ -2407,7 +2407,7 @@ SUBROUTINE velocityForcingField
 !**************************V(i,j,k)*************************************
          !vsurf = v_curr
          IF (block(g)%ibSurfID(block(g)%nelv2(n))==50) THEN
-           vsurf = 0.+ block(g)%ydot
+           vsurf = 0._dp + block(g)%ydot
          ELSEIF (block(g)%ibSurfID(block(g)%nelv2(n))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            !vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z)
@@ -2426,7 +2426,7 @@ SUBROUTINE velocityForcingField
          sur2nodeDis = block(g)%v2NormDis(n)
 
          pt1 = 1.21_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xv(i) + pt1*block(g)%cosAlpha(block(g)%nelv2(n))
@@ -2501,15 +2501,15 @@ SUBROUTINE velocityForcingField
 
          h2 = dabs(block(g)%xv(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xv(i_x1)   - pos1_x)
-         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yv(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yv(i_y1)   - pos1_y)
-         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zv(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zv(i_z1)   - pos1_z)
-         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dvdn_e = dvdx_e*block(g)%cosAlpha(block(g)%nelv2(n)) &
@@ -2519,7 +2519,7 @@ SUBROUTINE velocityForcingField
          n1 = pt1 + sur2nodeDis
 
          cval = vsurf
-         bval = 2./n1*(v_pos1 - vsurf) - dvdn_e
+         bval = 2._dp/n1*(v_pos1 - vsurf) - dvdn_e
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%v(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !***********************************************************************
@@ -2527,7 +2527,7 @@ SUBROUTINE velocityForcingField
 !**************************V(i,j-1,k)*************************************
          !vsurf = v_curr
          IF (block(g)%ibSurfID(block(g)%nelv1(n))==50) THEN
-           vsurf = 0.+ block(g)%ydot
+           vsurf = 0._dp + block(g)%ydot
          ELSEIF (block(g)%ibSurfID(block(g)%nelv1(n))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
            !vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)
@@ -2546,7 +2546,7 @@ SUBROUTINE velocityForcingField
          sur2nodeDis = block(g)%v1NormDis(n)
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
-              + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+              + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xv(i) + pt1*block(g)%cosAlpha(block(g)%nelv1(n))
@@ -2621,15 +2621,15 @@ SUBROUTINE velocityForcingField
 
          h2 = dabs(block(g)%xv(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xv(i_x1)   - pos1_x)
-         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yv(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yv(i_y1)   - pos1_y)
-         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zv(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zv(i_z1)   - pos1_z)
-         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dvdn_e = dvdx_e*block(g)%cosAlpha(block(g)%nelv1(n)) &
@@ -2639,7 +2639,7 @@ SUBROUTINE velocityForcingField
          n1 = pt1 + sur2nodeDis
 
          cval = vsurf
-         bval = 2./n1*(v_pos1 - vsurf) - dvdn_e
+         bval = 2._dp/n1*(v_pos1 - vsurf) - dvdn_e
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%v(i,j-1,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !***********************************************************************
@@ -2659,7 +2659,7 @@ SUBROUTINE velocityForcingField
          !wsurf = 0._rk
          sur2nodeDis = block(g)%w2NormDis(n)
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xw(i) + pt1*block(g)%cosAlpha(block(g)%nelw2(n))
@@ -2733,15 +2733,15 @@ SUBROUTINE velocityForcingField
 
          h2 = dabs(block(g)%xw(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xw(i_x1)   - pos1_x)
-         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yw(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yw(i_y1)   - pos1_y)
-         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zw(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zw(i_z1)   - pos1_z)
-         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dwdn_e = dwdx_e*block(g)%cosAlpha(block(g)%nelw2(n)) &
@@ -2751,7 +2751,7 @@ SUBROUTINE velocityForcingField
          n1 = pt1 + sur2nodeDis
 
          cval = wsurf
-         bval = 2./n1*(w_pos1 - wsurf) - dwdn_e
+         bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%w(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !***********************************************************************
@@ -2772,7 +2772,7 @@ SUBROUTINE velocityForcingField
          sur2nodeDis = block(g)%w1NormDis(n)
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5
+               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = block(g)%xw(i) + pt1*block(g)%cosAlpha(block(g)%nelw1(n))
@@ -2846,15 +2846,15 @@ SUBROUTINE velocityForcingField
 
          h2 = dabs(block(g)%xw(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xw(i_x1)   - pos1_x)
-         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yw(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yw(i_y1)   - pos1_y)
-         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zw(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zw(i_z1)   - pos1_z)
-         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dwdn_e = dwdx_e*block(g)%cosAlpha(block(g)%nelw1(n)) &
@@ -2864,7 +2864,7 @@ SUBROUTINE velocityForcingField
          n1 = pt1 + sur2nodeDis
 
          cval = wsurf
-         bval = 2./n1*(w_pos1 - wsurf) - dwdn_e
+         bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%w(i,j,k-1) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !***********************************************************************
