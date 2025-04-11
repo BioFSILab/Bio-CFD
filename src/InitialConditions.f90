@@ -1,4 +1,5 @@
 module biocfd_initial_conditions
+  ! allow(use-all) - TODO: Attempt to fix this in the future
   use global
   implicit none
   private
@@ -7,7 +8,6 @@ module biocfd_initial_conditions
 
   contains
       SUBROUTINE initialConditions
-       USE global
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER::  i, j, k, n, f
         WRITE(*,*) 'Enter initialcondtitions'
