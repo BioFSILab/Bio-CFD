@@ -1,17 +1,25 @@
 module biocfd_fine_interp_bound
+  use, intrinsic :: iso_fortran_env, only: dp => real64, int64
+  ! allow(use-all) - TODO: Aim to fix this in the future
   use global
   implicit none
 
+  private
+
+  public :: fineUpdate_bd, fineUpdate_pc_bd, fineUpdate_newv_bd, fineUpdate_bd_mv
+
   contains
 SUBROUTINE fineUpdate_bd
-        USE global
-        REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
-        REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
-        REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
-        REAL (KIND=8) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
+        REAL (dp) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,&
+             bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
+        REAL (dp) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
+        REAL (dp) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, &
+             bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
+        REAL (dp) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
 
-        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y, g, a_blk_no, b_blk_no
-        INTEGER(KIND=8) :: varz1,varz2, tar_z, loc_z
+        INTEGER(int64) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, &
+             loc_y, g, a_blk_no, b_blk_no
+        INTEGER(int64) :: varz1,varz2, tar_z, loc_z
 
 
 
@@ -79,7 +87,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -144,7 +153,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -210,7 +220,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -277,7 +288,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -344,7 +356,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -411,7 +424,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -479,7 +493,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -546,7 +561,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -614,7 +630,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -681,7 +698,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -748,7 +766,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -815,7 +834,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -881,7 +901,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -947,7 +968,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -1015,7 +1037,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -1081,7 +1104,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -1148,7 +1172,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -1215,7 +1240,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -1281,7 +1307,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -1347,7 +1374,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -1415,7 +1443,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -1482,7 +1511,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -1549,7 +1579,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -1616,7 +1647,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -1632,14 +1664,16 @@ SUBROUTINE fineUpdate_bd
         end subroutine fineUpdate_bd
 
         SUBROUTINE fineUpdate_pc_bd
-        USE global
-        REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
-        REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
-        REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
-        REAL (KIND=8) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
+        REAL (dp) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,&
+             bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
+        REAL (dp) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
+        REAL (dp) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, &
+             bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
+        REAL (dp) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
 
-        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y,g, a_blk_no, b_blk_no
-        INTEGER(KIND=8) :: varz1,varz2, tar_z, loc_z
+        INTEGER(int64) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, &
+             loc_y,g, a_blk_no, b_blk_no
+        INTEGER(int64) :: varz1,varz2, tar_z, loc_z
 
 
 
@@ -1707,7 +1741,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%pc(tar_x,tar_y,tar_z)=bl_interp_ans
                 block(b_blk_no)%pco(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
@@ -1773,7 +1808,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%pc(tar_x,tar_y,tar_z)=bl_interp_ans
                 block(b_blk_no)%pco(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
@@ -1840,7 +1876,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%pc(tar_x,tar_y,tar_z)=bl_interp_ans
                 block(b_blk_no)%pco(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
@@ -1908,7 +1945,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%pc(tar_x,tar_y,tar_z)=bl_interp_ans
                 block(b_blk_no)%pco(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
@@ -1976,7 +2014,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%pc(tar_x,tar_y,tar_z)=bl_interp_ans
                 block(b_blk_no)%pco(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
@@ -2044,7 +2083,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%pc(tar_x,tar_y,tar_z)=bl_interp_ans
                 block(b_blk_no)%pco(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
@@ -2062,14 +2102,16 @@ SUBROUTINE fineUpdate_bd
         end subroutine fineUpdate_pc_bd
 
         SUBROUTINE fineUpdate_newv_bd
-        USE global
-        REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
-        REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
-        REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
-        REAL (KIND=8) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
+        REAL (dp) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,&
+             bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
+        REAL (dp) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
+        REAL (dp) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, &
+             bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
+        REAL (dp) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
 
-        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y,g, a_blk_no, b_blk_no
-        INTEGER(KIND=8) :: varz1,varz2, tar_z, loc_z
+        INTEGER(int64) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, &
+             loc_y,g, a_blk_no, b_blk_no
+        INTEGER(int64) :: varz1,varz2, tar_z, loc_z
 
 
 
@@ -2137,7 +2179,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%ut(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -2203,7 +2246,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%ut(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -2271,7 +2315,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%ut(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -2338,7 +2383,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%ut(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -2406,7 +2452,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%ut(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -2473,7 +2520,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%ut(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -2536,7 +2584,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%vt(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -2601,7 +2650,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%vt(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -2669,7 +2719,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%vt(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -2735,7 +2786,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%vt(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -2801,7 +2853,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%vt(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -2867,7 +2920,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%vt(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -2940,7 +2994,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%wt(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3005,7 +3060,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%wt(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3071,7 +3127,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%wt(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3138,7 +3195,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%wt(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3204,7 +3262,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%wt(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3269,7 +3328,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%wt(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3285,15 +3345,17 @@ SUBROUTINE fineUpdate_bd
         end subroutine fineUpdate_newv_bd
 
         SUBROUTINE fineUpdate_bd_mv(g)
-        USE global
-        REAL (KIND=8) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
-        REAL (KIND=8) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
-        REAL (KIND=8) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
-        REAL (KIND=8) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
+        REAL (dp) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,&
+             bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
+        REAL (dp) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
+        REAL (dp) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, &
+             bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
+        REAL (dp) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
 
-        INTEGER(KIND=8) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, loc_y, a_blk_no, b_blk_no
-        INTEGER(KIND=8) :: varz1,varz2, tar_z, loc_z
-         INTEGER (KIND = 8), INTENT(IN) :: g
+        INTEGER(int64) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, &
+             loc_y, a_blk_no, b_blk_no
+        INTEGER(int64) :: varz1,varz2, tar_z, loc_z
+         INTEGER (dp), INTENT(IN) :: g
 
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
@@ -3355,7 +3417,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3420,7 +3483,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3487,7 +3551,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3552,7 +3617,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3618,7 +3684,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3685,7 +3752,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3749,7 +3817,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3814,7 +3883,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3880,7 +3950,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -3945,7 +4016,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4010,7 +4082,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4074,7 +4147,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4140,7 +4214,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4205,7 +4280,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4271,7 +4347,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4336,7 +4413,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4401,7 +4479,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4466,7 +4545,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4533,7 +4613,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4598,7 +4679,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4664,7 +4746,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4729,7 +4812,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4795,7 +4879,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
@@ -4860,7 +4945,8 @@ SUBROUTINE fineUpdate_bd
                 bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
                 bl_intp_num= bl_intp_first_term + bl_intp_second_term
                 bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
+                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
+                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
                 ENDDO
                 ENDDO
