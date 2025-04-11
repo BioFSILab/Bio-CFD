@@ -3355,7 +3355,7 @@ SUBROUTINE fineUpdate_bd
         INTEGER(int64) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, &
              loc_y, a_blk_no, b_blk_no
         INTEGER(int64) :: varz1,varz2, tar_z, loc_z
-         INTEGER (dp), INTENT(IN) :: g
+         INTEGER (int64), INTENT(IN) :: g
 
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
