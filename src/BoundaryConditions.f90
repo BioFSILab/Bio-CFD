@@ -1,5 +1,6 @@
 module biocfd_boundary_conditions
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
+  ! allow(use-all) - TODO: Aim to fix this in the future
   use global
   implicit none
   private

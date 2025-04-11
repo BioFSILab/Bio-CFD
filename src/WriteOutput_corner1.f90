@@ -1,5 +1,6 @@
 module biocfd_write_output_corner1
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
+  ! allow(use-all) - TODO: Aim to fix this in the future
   use global
   implicit none
 
@@ -13,8 +14,8 @@ contains
        CHARACTER(len=150)  :: filename1
        INTEGER  :: k, i, j, g
        REAL (dp) :: u1, v1, w1
-       
-         IF((mod(ita,200) ==0 .or. ita <= 2 ))then 
+
+         IF((mod(ita,200) ==0 .or. ita <= 2 ))then
 
            Do g=1,nblocks
        WRITE(filename1,1)char_f,ita,g,re,block(2)%dx,nblocks
@@ -22,7 +23,7 @@ contains
            OPEN(UNIT = 786, FILE = filename1, STATUS = 'unknown')
             WRITE(786,*)'variables="x","y","z","u","v","w","p","totime","cellid","cell_n","cell_pr"'
             WRITE(786,*) 'zone, ', 'i = ', block(g)%nx,' j = ', block(g)%ny, ' k = ', block(g)%nz
-            
+
             DO 30 k = 2, block(g)%nz+1
             DO 30 j = 2, block(g)%ny+1
             DO 30 i = 2, block(g)%nx+1
@@ -58,7 +59,7 @@ contains
         END DO
         END IF
       END SUBROUTINE writeResult
-      
+
          SUBROUTINE body_plot
          INTEGER(int64) :: inode, ielem, g
          CHARACTER(len=150) :: filename1
@@ -81,6 +82,6 @@ contains
           CLOSE(857)
          END IF
           END DO
-        end subroutine body_plot 
-        
+        end subroutine body_plot
+
 end module biocfd_write_output_corner1
