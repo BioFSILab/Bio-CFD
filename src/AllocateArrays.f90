@@ -95,14 +95,6 @@ module biocfd_allocate_arrays
 
 
         END DO
-        ! ALLOCATE ( SUMWSS(ibNodes), SIGNWSS(ibNodes,3) )
-        ! ALLOCATE ( INSTWSS(ibNodes))
-        ! ALLOCATE ( SQSUMWSS(ibNodes))
-        ! ALLOCATE ( WSSRMS(ibNodes))
-        ! ALLOCATE( TAWSS(ibNodes), OSI(ibNodes), RRT(ibNodes))
-        ! ALLOCATE( Afnode(ibNodes,3) ,stressNode(ibNodes,3),Anode(ibNodes,3))
-
-
 
       END SUBROUTINE allocateArrays
 end module biocfd_allocate_arrays
