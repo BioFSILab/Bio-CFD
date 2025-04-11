@@ -2087,7 +2087,7 @@ block(g)%fluidCellCount = flcnt
         !xdisp1= dmin1(abs(xval_lt - intfr(g)%xintf_start),abs(xval_rt - intfr(g)%xintf_end))
         xdisp1= (abs(xval_lt - intfr(g)%xintf_start))
         zdisp1= dmin1(abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start), &
-                      abs(block(b_blk_no)%piv_z &- intfr(g)%zintf_end))
+                      abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end))
         print*,'blk_check_cond', marginx, marginy
         print*,'ydsip',abs(yval_dw-intfr(g)%yintf_start),abs(yval_up - intfr(g)%yintf_end)
         print*,block(b_blk_no)%xnode1(block(b_blk_no)%mkx1),block(b_blk_no)%nxtx_cent
