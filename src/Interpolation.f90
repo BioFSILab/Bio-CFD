@@ -52,7 +52,6 @@ module biocfd_interpolation
         REAL (dp), INTENT(OUT) :: l_intp_valy
         varr=0.
         varr=(l_intp_valx-l_intp_x1)/(l_intp_x2-l_intp_x1)
-        !print*,'valx',l_intp_valx,'x1',l_intp_x1,'x2',l_intp_x2,'varr',varr,'1-varr',1-varr
         l_intp_valy=(l_intp_y1*(1._dp-varr))+(l_intp_y2*varr)
 
         end subroutine linearInterp
