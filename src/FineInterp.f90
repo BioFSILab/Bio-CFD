@@ -1,5 +1,6 @@
 module biocfd_fine_interp
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
+  ! allow(use-all) - TODO: Aim to fix this in the future
   use global
   implicit none
   private
@@ -104,14 +105,14 @@ SUBROUTINE fineUpdate
         loc_x=intfr(g)%ux_interface_det(1,i)
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
-     
+
         DO q=varz1,varz2
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
                 tar_y=l
                 tar_z=q
-              
+
                if (block(b_blk_no)%cell_n(tar_x,tar_y,tar_z) ==0)then
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -145,7 +146,7 @@ SUBROUTINE fineUpdate
                 bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
                      ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
-                
+
         endif
         ENDDO
         ENDDO
@@ -208,7 +209,7 @@ SUBROUTINE fineUpdate
                      ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
 
-      
+
         endif
         ENDDO
         ENDDO

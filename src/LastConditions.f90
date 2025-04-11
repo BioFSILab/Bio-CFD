@@ -1,4 +1,5 @@
 module biocfd_last_conditions
+  ! allow(use-all) - TODO: Aim to fix this in the future
   use global
   implicit none
   private
@@ -7,7 +8,6 @@ module biocfd_last_conditions
 
   contains
       SUBROUTINE lastConditions
-       USE global
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
        INTEGER::  i, j, k, g
         CHARACTER(len=150) :: filename3
@@ -40,7 +40,8 @@ module biocfd_last_conditions
        DO 30 k = 1, block(g)%nz+2
        DO 30 j = 1, block(g)%ny+2
        DO 30 i = 1, block(g)%nx+2
-         READ(1,*) block(g)%u(i,j,k), block(g)%v(i,j,k), block(g)%w(i,j,k), block(g)%p(i,j,k), totime, ita, ita1
+         READ(1,*) block(g)%u(i,j,k), block(g)%v(i,j,k), block(g)%w(i,j,k), block(g)%p(i,j,k), &
+                   totime, ita, ita1
  30    CONTINUE
        CLOSE(1)
         END DO
