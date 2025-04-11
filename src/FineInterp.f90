@@ -81,7 +81,6 @@ SUBROUTINE fineUpdate
                      ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
 
-             
                 endif
                 ENDDO
                 ENDDO
