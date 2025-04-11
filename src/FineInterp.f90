@@ -491,7 +491,7 @@ SUBROUTINE fineUpdate
         ENDDO
         ENDDO
         ENDDO
-        
+
         DO k=2,intfr(g)%counterzw-1
         DO j=2,intfr(g)%counteryw-1
         DO i=2,intfr(g)%counterxw-1
