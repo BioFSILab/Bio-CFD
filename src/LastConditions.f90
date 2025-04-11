@@ -59,19 +59,5 @@ module biocfd_last_conditions
         END DO
         END DO
 
-      !!$acc update device(u, v, w, ut, vt, wt, p, resi_u, resi_v, resi_w)
-
-     !  print*,'after read check point'
-     !  call readComputeSumData
-     !  call readComputeSumSqData
-     !  print*,'after read compute'
-     !  call readstressData
-     !  print*,'after read stress'
-       !ita=0
-       !ita1=0
-       !ita2=0
-       !totime=0
-       !ita2=ita
-
       END SUBROUTINE lastConditions
 end module biocfd_last_conditions
