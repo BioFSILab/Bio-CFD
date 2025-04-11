@@ -80,8 +80,6 @@ module biocfd_initial_conditions
           END DO
         END DO
 
-       !!$acc update device(u, v, w, ut, vt, wt, p, resi_u, resi_v, resi_w)
-
         print*, 'initial'
 
       END SUBROUTINE initialConditions
