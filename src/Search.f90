@@ -15,7 +15,6 @@ module biocfd_search
   public :: fine_block_cell, selectiveretagging_th
 
   contains
-!***********************************************************************
         SUBROUTINE findDistnode
         REAL(dp)      ::  dist, dist1, dist2
         INTEGER(int64) ::  i, g
@@ -46,7 +45,6 @@ module biocfd_search
         ENDDO
         end subroutine findDistnode
 
-!***********************************************************************
      SUBROUTINE shiftSurfaceNodesInitial
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER(int64) ::  i, g
@@ -58,7 +56,6 @@ module biocfd_search
         aoa2 = -aoa1
         alpha_m = alpha_m*pi/180_rk
         theta_m = theta_m*pi/180_rk
-        !freq!/(2.*a0y)
         a0y = 0.  !a0y
         ang_theta = 0.  !2._rk*pi*freq
         alpha_t=(alpha_m*0.5_dp)*(1+cos(ang_theta*(totime+deltat)+phase_angle))
@@ -81,11 +78,6 @@ module biocfd_search
         ac_x=0.
         ac_y=0.
         ac_z=0.
-	  !xnode1 = xnode
-         !ynode1 = ynode
-         !znode1 = znode
-
-        !IF(ita.eq.0) THEN !!For ita equal to 0
         block(g)%u_init = 0.
         block(g)%u_final = 0.
         block(g)%v_init = 0.
@@ -95,7 +87,6 @@ module biocfd_search
         block(g)%xmove = 0.
         block(g)%ymove = 0.
         block(g)%zmove = 0.
-	 !END IF
 
         block(g)%a0 = block(g)%a0*pi/180_rk
          angt  =  2._rk*pi*block(g)%bfreq
@@ -103,21 +94,9 @@ module biocfd_search
         block(g)%xpth2=block(g)%xshift-(ita*dxmin*xfact)
         block(g)%ypth1=(block(g)%yamp)*sin(angt*block(g)%xshift)
         block(g)%ypth2=(block(g)%yamp)*sin(angt*block(g)%xshift)
-        !block(g)%piv_x = block(g)%xshift + piv_pt
         block(g)%piv_x = block(g)%xshift
         block(g)%piv_y = block(g)%yshift
         block(g)%piv_z = block(g)%zshift
-        !piv_y = block(g)%yshift
-       !block(g)%z_p=0.;block(g)%y_p=0.; block(g)%v_y_p=0.; block(g)%a_y_p=0.
-       !thetaDot  =  0._rk
-       !thetaDDot =  0._rk
-       !xt =  0._rk
-       !xdot = 0._rk
-       !xddot = 0._rk
-
-       !yt =  0._rk
-       !ydot = 0._rk
-       !yddot = 0._rk
 
         block(g)%thetaDot  =  0.
         block(g)% thetaDDot =  0._rk
@@ -151,55 +130,31 @@ module biocfd_search
         block(g)%nxtz_cent=block(g)%zshift
         block(g)%ypos=block(g)%yshift
         block(g)%xpos=block(g)%xshift
-       !!$acc parallel loop gang vector present (xnode1, ynode1, znode1, xnode, ynode, znode) &
-       !!$acc private (xr, yr, zr) firstprivate (xshift, block(g)%yshift, block(g)%zshift)
         DO i = 1, block(g)%ibnodes
         IF (block(g)%ibNodeId(i)==51) THEN
             xr1 =  block(g)%xnode(i)
-          !!zr1 =  zShift +(block(g)%ynode(i)-yShift)*sin(aoa1) + (block(g)%znode(i)-zShift)*cos(aoa1)
-          !!yr1 =  yShift +(block(g)%ynode(i)-yShift)*cos(aoa1) - (block(g)%znode(i)-zShift)*sin(aoa1)
             zr1 =  block(g)%znode(i)*cos(aoa1) + block(g)%ynode(i)*sin(aoa1) + piv_pt &
                    - piv_pt*cos(aoa1)
             yr1 = -block(g)%znode(i)*sin(aoa1) + block(g)%ynode(i)*cos(aoa1) + piv_pt*sin(aoa1)
-            !!xr1 =  block(g)%xnode(i)
-            !!zr1 = block(g)% znode(i)*cos(theta_t) +block(g)% ynode(i)*sin(theta_t) + piv_pt - piv_pt*cos(theta_t)
-            !!yr1 = -block(g)%znode(i)*sin(theta_t) +block(g)% ynode(i)*cos(theta_t) + piv_pt*sin(theta_t)
          ELSEIF (block(g)%ibNodeId(i)==52) THEN
-             !xr1 = block(g)% xnode(i)
-             !zr1 = block(g)% znode(i)*cos(-theta_t) +block(g)% ynode(i)*sin(-theta_t) + piv_pt - piv_pt*cos(-theta_t)
-             !yr1 = -block(g)%znode(i)*sin(-theta_t) +block(g)% ynode(i)*cos(-theta_t) + piv_pt*sin(-theta_t)
             xr1 =  block(g)%xnode(i)
-           !zr1 =  zShift +(block(g)%ynode(i)-yShift)*sin(aoa2) + (block(g)%znode(i)-zShift)*cos(aoa2)
-           !yr1 =  yShift +(block(g)%ynode(i)-yShift)*cos(aoa2) - (block(g)%znode(i)-zShift)*sin(aoa2)
             zr1 =  block(g)%znode(i)*cos(aoa2) + block(g)%ynode(i)*sin(aoa2)  + piv_pt &
                    - piv_pt*cos(aoa2)
             yr1 = -block(g)%znode(i)*sin(aoa2) + block(g)%ynode(i)*cos(aoa2)  + piv_pt*sin(aoa2)
-             !xr =  xnode(i)*cos(aoa1) + ynode(i)*sin(aoa1)
-             !yr = -xnode(i)*sin(aoa1) + ynode(i)*cos(aoa1)
-             !xnode1(i) = xr + piv_pt - piv_pt*cos(aoa1) + xshift
-             !ynode1(i) = yr + piv_pt*sin(aoa1) + yt + block(g)%yshift
-             !znode1(i) = znode(i) + block(g)%zshift
            ELSE
                xr1 = block(g)% xnode(i)
                zr1 = block(g)% znode(i)  !*cos(aoa1) + ynode(i)*sin(aoa1)
                yr1 = block(g)% ynode(i)  !*sin(aoa1) + ynode(i)*cos(aoa1)
-             !xr =  xnode(i)*cos(aoa1) + ynode(i)*sin(aoa1)
-             !yr = -xnode(i)*sin(aoa1) + ynode(i)*cos(aoa1)
-             !xnode1(i) = xr + piv_pt - piv_pt*cos(aoa1) + xshift
-             !ynode1(i) = yr + piv_pt*sin(aoa1) + yt + block(g)%yshift
-             !znode1(i) = znode(i) + block(g)%zshift
            ENDIF
            block(g)%xnode1(i) = xr1+ block(g)%xShift
                block(g)%ynode1(i) = yr1+ block(g)%yShift
            block(g)%znode1(i) = zr1+ block(g)%zshift
         ENDDO
-       !!$acc end parallel
 
         END DO
 
-       !!$acc update host (xnode1, ynode1, znode1)
       END SUBROUTINE shiftSurfaceNodesInitial
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
       SUBROUTINE computeSurfaceVariables
 
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
@@ -211,46 +166,24 @@ module biocfd_search
 
         DO g=blk_start,nblocks
         angg=90
-        !aoa1       =  (45*pi/180_rk)*sin(2._rk*pi*freq*(totime+deltat) + phase_angle)
         aoa1       =  (block(g)%a0)*sin(2._rk*pi*freq*(totime+deltat) + phase_angle)
         aoa2       = -aoa1
         ang_theta  =  2._rk*pi*freq
         bdfr=block(g)%bfreq
         bdy=block(g)%yamp
-        !bdy=a0
         angt  =  2._rk*pi*bdfr
-        !angt  =  2._rk*pi*freq
-
-        !alpha_t=(alpha_m*0.5)*(1+cos((ang_theta*(totime+deltat))+phase_angle))
-        !aoa1       =  a0*sin(2._rk*pi*freq*(totime+deltat) + phase_angle)
-        !theta_t       =  theta_m*cos(ang_theta*(totime+deltat))
-        !aoa2       = -aoa1
-        !PRINT*, "angles =", aoa1*180./pi, aoa2*180./pi
-        !PRINT*,"alpha =", alpha_t*180./pi,"theta=",theta_t*180./pi
-
 
         block(g)%xpth2=block(g)%xshift-(ita*dxmin*xfact)
         block(g)%ypth2=(block(g)%yamp)*sin(angt*block(g)%xpth2)
-!        block(g)%ychg=block(g)%ypth2-block(g)%ypth1
         block(g)%xchg=block(g)%xpth2-block(g)%xpth1
         block(g)%ypth1=block(g)%ypth2
         block(g)%xpth1=block(g)%xpth2
-        !PRINT*, a0, sin(2._rk*pi*freq*(totime+deltat) + phase_angle) ,aoa1
-        !PRINT*, freq, totime+deltat, phase_angle, pi
         PRINT*, "angles =", aoa1*180._dp/pi, aoa2*180._dp/pi
-        !PAUSE
         block(g)%thetaDot1 = ang_theta*block(g)%a0*cos(2._rk*pi*freq*(totime+deltat) + phase_angle)
         block(g)%thetaDDot1 = -ang_theta*ang_theta*block(g)%a0*sin(2._rk*pi*freq*(totime+deltat) &
                               + phase_angle)
         block(g)%thetaDot2  = -block(g)%thetaDot1
         block(g)%thetaDDot2 = -block(g)%thetaDDot1
-
-                !block(g)% thetaDot1  =  -theta_m*ang_theta*sin(ang_theta*(totime+deltat))
-        !block(g)% thetaDDot1 = -ang_theta*ang_theta*theta_m*cos(ang_theta*freq*(totime+deltat))
-        !    block(g)% thetaDot2  = -block(g)%thetaDot1
-        !        block(g)% thetaDDot2 = -block(g)%thetaDDot1
-        !block(g)%alphaDot  = (alpha_m*0.5)*(-ang_theta*sin((ang_theta*(totime+deltat))+phase_angle))
-       !block(g)% alphaDDot  = (alpha_m*0.5)*(-ang_theta*ang_theta*cos((ang_theta*(totime+deltat))+phase_angle))
 
        block(g)%yt         =  bdy*sin(angt*(totime) )
        block(g)%ydot       =  angt*bdy*cos(angt*(totime))
@@ -272,79 +205,40 @@ module biocfd_search
         block(g)%piv_z = block(g)%piv_z + block(g)%zmove
         block(g)%nxty_cent= block(g)%nxty_cent + block(g)%ychg
         block(g)%nxtx_cent= block(g)%nxtx_cent + block(g)%xmove
-     !   print*, block(g)%ymove, block(g)%v_prev, block(g)%v_curr, block(g)%accnp_Y, block(g)%Total_FY
         WRITE(filename1,1) block(g)%fineg,re, g
       1  FORMAT('d',I4.4,'_index.',F8.2,'.',i3.1,".dat")
         OPEN(UNIT = 17, FILE = filename1,Access='Append', STATUS = 'unknown')
-        !open(17,file='index.dat',access='append',status='unknown')
-        !write(17,14) totime, block(g)%nxtx_cent, block(g)%xmove , block(g)%xchg, block(g)%xdot, block(g)%xpth2
         write(17,14) totime, block(g)%nxty_cent, block(g)%inity_cent, block(g)%ymove, &
                      block(g)%nxtx_cent, block(g)%xmove
-!!        write(17,14) totime, block(g)%xpos, block(g)%u_curr,block(g)%Total_VP_FX,block(g)%Total_FX,block(g)%accnp_X
      close(17)
      14      FORMAT(7F15.8)
         print*,'centn',block(g)%nxty_cent,'centi',block(g)%inity_cent,'mv',block(g)%ychg
-       !!$acc parallel loop gang vector default(present) private(xr1,yr1,zr1) firstprivate(aoa1,aoa,piv_pt,g, xshift, block(g)%yshift, block(g)%zshift)
       DO i = 1, block(g)%ibnodes
       IF (block(g)%ibNodeId(i)==51) THEN
              xr1 =  block(g)%xnode(i)
              zr1 =  block(g)%znode(i)*cos(aoa1) + block(g)%ynode(i)*sin(aoa1) + piv_pt &
                     - piv_pt*cos(aoa1)
              yr1 = -block(g)%znode(i)*sin(aoa1) + block(g)%ynode(i)*cos(aoa1) + piv_pt*sin(aoa1)
-            !!xr1 = block(g)% xnode(i)*cos(alpha_t) -block(g)% ynode(i)*sin(alpha_t)*cos(theta_t) +block(g)% znode(i)*sin(alpha_t)*sin(theta_t)
-            !!yr1 = block(g)% xnode(i)*sin(alpha_t) +block(g)% ynode(i)*cos(alpha_t)*cos(theta_t) -block(g)% znode(i)*sin(theta_t)*cos(alpha_t)
-            !!zr1 = block(g)% znode(i)*cos(theta_t) +block(g)% ynode(i)*sin(theta_t)
-             !xr =  xnode(i)*cos(aoa1) + ynode(i)*sin(aoa1)
-             !yr = -xnode(i)*sin(aoa1) + ynode(i)*cos(aoa1)
-             !xnode1(i) = xr + piv_pt - piv_pt*cos(aoa1) + xshift
-             !ynode1(i) = yr + piv_pt*sin(aoa1) + yt + block(g)%yshift
-             !znode1(i) = znode(i) + block(g)%zshift
          ELSEIF (block(g)%ibNodeId(i)==52) THEN
              xr1 =  block(g)%xnode(i)
              zr1 =  block(g)%znode(i)*cos(aoa2) + block(g)%ynode(i)*sin(aoa2)  + piv_pt &
                     - piv_pt*cos(aoa2)
              yr1 = -block(g)%znode(i)*sin(aoa2) + block(g)%ynode(i)*cos(aoa2)  + piv_pt*sin(aoa2)
-            !!xr1 = block(g)% xnode(i)*cos(alpha_t) -block(g)% ynode(i)*sin(alpha_t)*cos(-theta_t) +block(g)% znode(i)*sin(alpha_t)*sin(-theta_t)
-            !!yr1 = block(g)% xnode(i)*sin(alpha_t) +block(g)% ynode(i)*cos(alpha_t)*cos(-theta_t) -block(g)% znode(i)*sin(-theta_t)*cos(alpha_t)
-            !!zr1 = block(g)% znode(i)*cos(-theta_t) +block(g)% ynode(i)*sin(-theta_t)
-             !xr1 =  xnode(i)
-             !zr1 =  znode(i)*cos(aoa2) + ynode(i)*sin(aoa2)  + piv_pt - piv_pt*cos(aoa2)
-             !yr1 = -znode(i)*sin(aoa2) + ynode(i)*cos(aoa2)  + piv_pt*sin(aoa2)
-
-             !xr =  xnode(i)*cos(aoa1) + ynode(i)*sin(aoa1)
-             !yr = -xnode(i)*sin(aoa1) + ynode(i)*cos(aoa1)
-             !xnode1(i) = xr + piv_pt - piv_pt*cos(aoa1) + xshift
-             !ynode1(i) = yr + piv_pt*sin(aoa1) + yt + block(g)%yshift
-             !znode1(i) = znode(i) + block(g)%zshift
            ELSE
                xr1 = block(g)% xnode(i)
                zr1 = block(g)% znode(i)
                yr1 = block(g)% ynode(i)
-             !xr =  xnode(i)*cos(aoa1) + ynode(i)*sin(aoa1)
-             !yr = -xnode(i)*sin(aoa1) + ynode(i)*cos(aoa1)
-             !xnode1(i) = xr + piv_pt - piv_pt*cos(aoa1) + xshift
-             !ynode1(i) = yr + piv_pt*sin(aoa1) + yt + block(g)%yshift
-             !znode1(i) = znode(i) + block(g)%zshift
            ENDIF
 
-           !block(g)% xnode1(i) = xr1 +xshift +block(g)%xmove
            block(g)% xnode1(i) = xr1 +block(g)%xpth2
            block(g)% ynode1(i) = yr1 +block(g)%yshift +block(g)%ymove
            block(g)% znode1(i) = zr1 +block(g)%zshift +block(g)%zmove
-
-         !IF (block(g)%ibNodeId(i).ne.52 .and. block(g)%ibNodeId(i).ne.51 ) THEN
-         !  print*,yr1,block(g)%yshift,block(g)%ymove
-         !endif
         ENDDO
-        !!$acc end parallel
            write(*,*) block(g)%xnode1(1),block(g)% ynode1(1), block(g)% znode1(1)
         ENDDO
 
-       !!$acc update host (xnode1, ynode1, znode1)
       END SUBROUTINE computeSurfaceVariables
-!***********************************************************************
 
-!***********************************************************************
       SUBROUTINE computeSurfaceNorm
 
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
@@ -352,12 +246,8 @@ module biocfd_search
         REAL(dp)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL, binor
         REAL(dp)      :: var_xcent, var_ycent, var_zcent
 
-
-
-
         DO g=blk_start, nblocks
 
-        !block(g)%ibElemCnt=0.
         ALLOCATE (block(g)%xcent(block(g)%ibElems), block(g)%ycent(block(g)%ibElems), &
                   block(g)%zcent(block(g)%ibElems), &
                   block(g)%cosAlpha(block(g)%ibElems), block(g)%cosBeta(block(g)%ibElems), &
@@ -365,12 +255,7 @@ module biocfd_search
                   block(g)%alpha3(block(g)%ibElems), block(g)%beta3(block(g)%ibElems), &
                   block(g)%gamma3(block(g)%ibElems))
 
-       ! END DO
-        !inor = -1._rk
         !compute centroid and direction cosines
-       !!$acc parallel loop gang vector       &
-       !!$acc present (xnode1, ynode1, znode1, xcent, ycent, zcent, cosAlpha, cosBeta, cosGamma, alpha3, beta3, gamma3, ibElP1, ibElP2, ibElP3)   &
-       !!$acc private (p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL)  firstprivate (inor)
        !$acc parallel loop gang vector default(present) private (var_xcent, var_ycent, var_zcent,p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL)  firstprivate (inor)
         DO n = 1, block(g)%ibElems
            p1x = block(g)%xnode1(block(g)%ibElP1(n))                       !x coordinate element node 1
@@ -390,29 +275,6 @@ module biocfd_search
            var_ycent =  (p2y+p1y+p3y)/3._rk                  !centroid y coordinate element
            var_zcent =  (p2z+p1z+p3z)/3._rk                  !centroid z coordinate element
 
-
-      !   if ( var_ycent.le. ylim1 .and. var_xcent .ge. xlim1 )then
-      !                 g=4
-      !  elseif( var_ycent .ge. ylim1 .and. var_xcent .ge. xlim2) then
-      !                 g=3
-
-      !  elseif(var_xcent .le. xlim2 .and. var_ycent .ge. ylim2)then
-
-      !                 g=2
-      ! elseif(var_xcent .le. xlim1 .and. var_ycent .le. ylim2)then
-      !
-      !                 g=1
-      !
-      ! end if
-      !   if ( var_ycent.le. ylim1 )then
-      !                 g=2
-      !   else
-      !                 g=1
-      !   endif
-      !    block(g)%ibElemCnt= block(g)%ibElemCnt+1
-           !block(g)%ibElemNum( block(g)%ibElemCnt)=n
-
-      !     nv=block(g)%ibElemCnt
            block(g)%xcent(n) =  var_xcent                  !centroid x coordinate element
            block(g)%ycent(n) =  var_ycent                  !centroid y coordinate element
            block(g)%zcent(n) =  var_zcent                  !centroid z coordinate element
@@ -435,14 +297,13 @@ module biocfd_search
         ENDDO
        !$acc end parallel
 
-       !!$acc update host (xcent, ycent, zcent, cosAlpha, cosBeta, cosGamma, alpha3, beta3, gamma3)
         print*, 'SurfaceNorm done, inor =', inor
 
         END DO
 
 
      END SUBROUTINE computeSurfaceNorm
-!**************************************************************************
+
      SUBROUTINE tagging_th
 
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
@@ -451,7 +312,6 @@ module biocfd_search
                          n2dotn, cent_x, cent_y, cent_z, dis_cen, dis_pnt
 
         CHARACTER(LEN=120) :: filename1
-        !g=2
         DO g=blk_start, nblocks
         block(g)%ibCellCount = 0
         block(g)%fluidCellCount = 0
@@ -461,15 +321,10 @@ module biocfd_search
         block(g)%nodeIdTag = 0
         n2dotn = 0
 
-!!$acc enter data copyin(cell, cell2, xp, yp, zp, x1, y1, z1, xu, yu, zu, xv, yv, zv, xw, yw, zw, nodeIdTag)
-!!$acc parallel loop collapse(3) present(nodeIdTag, xcent, ycent, zcent, cosAlpha, cosBeta, cosGamma, cell, xp, yp, zp, x1, y1, z1)
  !$acc parallel loop collapse(3) default(present)
         DO k = block(g)%k_startSearch, block(g)%k_endSearch
         DO j = block(g)%j_startSearch, block(g)%j_endSearch
         DO i = block(g)%i_startSearch, block(g)%i_endSearch
-       !DO k = 2, block(g)%nz
-       !DO j = 2, block(g)%ny
-       !DO i = 2, block(g)%nx
             minDis  = 1e14_dp
             minDis1 = 1e14_dp
 
@@ -499,15 +354,12 @@ module biocfd_search
                   nel2Pnt   = m
                ENDIF
             ENDDO
-               !    write(*,*)block(g)%x1(i),xcent(nel2Cen)
-   ! 112          FORMAT(' ',I8,' ',I8,' ',I8,' ',I8)
             IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen) .AND. &
                 block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
                (block(g)%y1(j)<=block(g)%ycent(nel2Cen) .AND. &
                 block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
                (block(g)%z1(k)<=block(g)%zcent(nel2Cen) .AND. &
                 block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
-               !print*,i,j,k
                block(g)%cell(i,j,k) = 2
 
             ENDIF
@@ -563,7 +415,6 @@ module biocfd_search
         block(g)%ibCellCount = 0
          block(g)%solidCellCount = 0
          block(g)%fluidCellCount = 0
- !!$acc parallel loop collapse(3) present(cell) reduction(+: solidCellCount, fluidCellCount, ibCellCount)
          DO k = 2, block(g)%nz+1
          DO j = 2, block(g)%ny+1
          DO i = 2, block(g)%nx+1
@@ -578,9 +429,6 @@ module biocfd_search
          END DO
          END DO
          END DO
- !!$acc end parallel
- !GOTO 1000
-   !!$acc update self(cell)
       WRITE(filename1,22)char_f
  22   FORMAT(A3,'_inter_cell.dat')
       open(82,file=filename1,status='unknown')
@@ -596,7 +444,6 @@ module biocfd_search
        end do
     enddo
       close(82)
-     ! GOTO 1000
       WRITE(filename1,23)char_f
  23   FORMAT(A3,'_fluid_cell.dat')
       open(83,file=filename1,status='unknown')
@@ -629,7 +476,6 @@ module biocfd_search
     enddo
       close(84)
 
-! 1000 CONTINUE
          WRITE(filename1,2) g
  2       FORMAT('butter_cellcount_f.',i3.3,".dat")
          OPEN(12,FILE=filename1,FORM='formatted')
@@ -643,8 +489,6 @@ module biocfd_search
         END DO
      END SUBROUTINE tagging_th
 
-!***********************************************************************
-!**************************************************************************
      SUBROUTINE tagging_th_move
 
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
@@ -655,8 +499,6 @@ module biocfd_search
                               n2dotn, cent_x, cent_y, cent_z, dis_cen, dis_pnt
 
         CHARACTER(LEN=120) :: filename1
-        !g=2
-        !g=2
         DO g=blk_start,nblocks
         if ( block(g)%move_check == 1)then
             block(g)% ibCellCount = 0
@@ -667,15 +509,10 @@ module biocfd_search
         block(g)%nodeIdTag = 0
         n2dotn = 0
 
-!!$acc enter data copyin(cell, cell2, xp, yp, zp, x1, y1, z1, xu, yu, zu, xv, yv, zv, xw, yw, zw, nodeIdTag)
-!!$acc parallel loop collapse(3) present(nodeIdTag, xcent, ycent, zcent, cosAlpha, cosBeta, cosGamma, cell, xp, yp, zp, x1, y1, z1)
 !$acc parallel loop collapse(3) default(present)
         DO k = block(g)%k_startSearch, block(g)%k_endSearch
         DO j = block(g)%j_startSearch, block(g)%j_endSearch
         DO i = block(g)%i_startSearch, block(g)%i_endSearch
-       !DO k = 2, block(g)%nz
-       !DO j = 2, block(g)%ny
-       !DO i = 2, block(g)%nx
             minDis  = 1e14_dp
             minDis1 = 1e14_dp
 
@@ -705,8 +542,6 @@ module biocfd_search
                   nel2Pnt   = m
                ENDIF
             ENDDO
-               !    write(*,*)block(g)%x1(i),xcent(nel2Cen)
-   ! 112          FORMAT(' ',I8,' ',I8,' ',I8,' ',I8)
             IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen).AND. &
                 block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
                (block(g)%y1(j)<=block(g)%ycent(nel2Cen).AND. &
@@ -751,69 +586,12 @@ module biocfd_search
            END DO
 !$acc end parallel
 
-!    !$acc parallel loop collapse(3) default(present) private(i,j,k)
-!       DO  k = k_startSearch, k_endSearch
-!       DO  j = j_startSearch, j_endSearch
-!       DO  i = i_startSearch, i_endSearch
-!               flag_cell=0
-!          IF ((block(g)%xp(i) .ge. 0.31 .and. block(g)%xp(i) .le. 0.362) .and. (block(g)%yp(j).ge. 0.485 .and. block(g)%yp(j) .le. 0.52) .and. (block(g)%zp(k) .ge. 0.487 .and. block(g)%zp(k) .le. 0.503) .and. block(g)%cell(i,j,k) .eq. 0)then
-!
-!         IF ((block(g)%xp(i) .ge. 0.348 .and. block(g)%xp(i) .le. 0.377))then
-!             IF ((block(g)%yp(j) .ge. 0.497 .and. block(g)%yp(j) .le. 0.5023))then
-!                IF ((block(g)%zp(k) .ge. 0.49704 .and. block(g)%zp(k) .le. 0.5023))then
-!                       IF (block(g)%cell(i,j,k) .eq. 0)then
-
-!                               block(g)%cell(i,j,k)=1
-!        ENDIF
-!        ENDIF
-!        ENDIF
-!        ENDIF
-
-!
-!               !$acc loop seq collapse(3)
-!               DO k1=k-1,k+1
-!               DO j1=j-1,j+1
-!               DO i1=i-1,i+1
-!                  if (block(g)% cell(i1,j1,k1) .ne. 0 )then
-!                         flag_cell= flag_cell + 1
-!                  else
-!                         flag_cell= flag_cell + 0
-!
-!                  end if
-!                 !if (block(g)% cell(i1,j1,k1) .eq. 0 .and. (i1 .ne. i) .and. (j1 .ne. j) .and. (k1 .ne. k) )then
-!                 !       flag_cell=0
-!                 !else
-!                 !       flag_cell=1
-!                 !end if
-!               END DO
-!               END DO
-!               END DO
-!               if (flag_cell .le. 26 .and. flag_cell .ge.23)then
-!               !if (flag_cell .eq. 26)then
-!                   block(g)%cell(i,j,k)=1
-!               end if
-!          END IF
-!     END DO
-!     END DO
-!     END DO
-!    !$acc end parallel
-
-
-            !  ENDIF
-           !else
-           !     print*, i,j,k
-
-
-
-
         block(g)%ibCellCount = 0
          block(g)%solidCellCount = 0
          block(g)%fluidCellCount = 0
-!!$acc parallel loop collapse(3) present(cell) reduction(+: solidCellCount, fluidCellCount, ibCellCount)
          DO k = 2, block(g)%nz+1
          DO j = 2, block(g)%ny+1
          DO i = 2, block(g)%nx+1
-            !n       = i-1  + nx*(j-2)  + nx*ny*(k-2)
             IF (block(g)%cell(i,j,k)==1) THEN
                 block(g)%solidCellCount = block(g)%solidCellCount + 1
             ELSEIF (block(g)%cell(i,j,k)==0) THEN
@@ -824,9 +602,7 @@ module biocfd_search
          END DO
          END DO
          END DO
-!!$acc end parallel
       GOTO 1000
-!!$acc update self(cell)
       WRITE(filename1,22)char_f
  22   FORMAT(A3,'_inter_cell.dat')
       open(82,file=filename1,status='unknown')
@@ -842,7 +618,6 @@ module biocfd_search
        end do
       enddo
       close(82)
-     ! GOTO 1000
       WRITE(filename1,23)char_f
  23   FORMAT(A3,'_fluid_cell.dat')
       open(83,file=filename1,status='unknown')
@@ -888,20 +663,11 @@ module biocfd_search
         b_blk_no=intfr(g)%b_blk
 
         if ( block(b_blk_no)%move_check == 1)then
-        !print*,'inside tag_mv'
        call fineUpdate_mv(g)
        call fineUpdate_bd_mv(g)
-       !!print*,b_blk_no,'inside_tag_mv'
-       !call solidCellBC_move(b_blk_no)
-       !call updateVelocity_newv(b_blk_no)
-       ! call writeOutput
-       ! pause
         endif
         ENDDO
      END SUBROUTINE tagging_th_move
-
-!***********************************************************************
-!**************************************************************************
 
      SUBROUTINE findTScells
 
@@ -911,7 +677,7 @@ module biocfd_search
 
 
         print*,'inside findTScells'
-        !g=2
+
         DO g=blk_start, nblocks
         !$acc parallel loop collapse(3) default(present)
                  DO k = 2, block(g)%nz+1
@@ -923,8 +689,6 @@ module biocfd_search
                  END DO
         !$acc end parallel
 
-
-        !!$acc parallel loop present(interceptedIndexPtr, ibSurfId, xp, yp, zp, cosAlpha, cosBeta, cosGamma, nelp, cell, cell2, deltax, deltay, deltaz)
         !$acc parallel loop default(present)
         DO n = 1, block(g)%ibCellCount
         i = block(g)%interceptedIndexPtr(n, 1)
@@ -965,7 +729,6 @@ module biocfd_search
 
         block(g)%TSCellCount = 0
         tscnt=0
-        !!$acc parallel loop collapse(3) default(present) reduction(+: TSCellCount)
         !$acc parallel loop collapse(3) default(present) reduction(+:tscnt)
                  DO k = 2, block(g)%nz+1
                  DO j = 2, block(g)%ny+1
@@ -980,7 +743,6 @@ module biocfd_search
         !$acc end parallel
 
         block(g)%TSCellCount = tscnt
-        !!$acc update self(cell2)
         print*, 'TScell count =', block(g)%TSCellCount
 
         ALLOCATE(block(g)%TSIndexPtr(block(g)%TSCellCount,3))
@@ -1000,8 +762,6 @@ module biocfd_search
                  END DO
                  END DO
 
-        !!$acc enter data copyin(TSIndexPtr)
-
         ALLOCATE(&
           block(g)%u2_ghost(block(g)%TSCellCount),  &
           block(g)%u2t_ghost(block(g)%TSCellCount), &
@@ -1019,10 +779,6 @@ module biocfd_search
           block(g)%w1t_ghost(block(g)%TSCellCount), &
           block(g)%index_ts(block(g)%TSCellCount))
 
-
-        !!$acc enter data create(u2_ghost, u2t_ghost, v2_ghost, v2t_ghost, w2_ghost, w2t_ghost, p_ghost, pt_ghost, u1_ghost, u1t_ghost, v1_ghost, v1t_ghost, w1_ghost, w1t_ghost, index_ts)
-
-        !!$acc parallel loop present(TSIndexPtr, interceptedIndexPtr, cell2, cell, nelp, nelu1, nelu2, nelv1, nelv2, u2_ghost, u2t_ghost, v2_ghost, v2t_ghost, p_ghost, pt_ghost, u1_ghost, u1t_ghost, v1_ghost, v1t_ghost, w2_ghost, w2t_ghost, w1_ghost, w1t_ghost, index_ts)
         !$acc parallel loop default(present)
         DO n = 1, block(g)%TSCellCount
         i = block(g)%TSIndexPtr(n, 1)
@@ -1055,9 +811,7 @@ module biocfd_search
         !$acc end parallel
 
 
-!               print*, 'TScell done'
          GOTO 1000
-        !!$acc update self(cell,cell2)
              WRITE(filename1,111) ita
          111   FORMAT('TS/ts.',i9.9,".dat")
              OPEN(UNIT = 82, FILE = filename1, STATUS = 'unknown')
@@ -1076,10 +830,7 @@ module biocfd_search
               close(82)
          1000 CONTINUE
            enddo
-         ! STOP
              END SUBROUTINE findTScells
-!***********************************************************************
-!***********************************************************************
 
      SUBROUTINE selectiveRetagging_th
 
@@ -1090,11 +841,8 @@ module biocfd_search
         REAL(dp)      :: n1x, n1y, n1z, n2x, n2y, n2z, minDis, minDis1, dis_cen, dis_pnt, &
                               n2dotn, cent_x, cent_y, cent_z
 
-        !g=2
-        !g=2
        DO g=blk_start,nblocks
         if( block(g)%blk_mv_tag ==0)then
-!!!$acc parallel loop present(interceptedIndexPtr, nodeIdTag, xp, yp, zp, x1, y1, z1, xcent, ycent, zcent, cosAlpha, cosBeta, cosGamma, cell)
 !$acc parallel loop gang vector default(present)
         DO nn = 1, block(g)%ibCellCount
         i1 = block(g)%interceptedIndexPtr(nn, 1)
@@ -1157,7 +905,6 @@ module biocfd_search
         ENDDO
 !$acc end parallel
 
-!!$acc parallel loop present(interceptedIndexPtr, nodeIdTag, cell)
 !$acc parallel loop gang vector default(present)
         DO nn = 1, block(g)%ibCellCount
         i1 = block(g)%interceptedIndexPtr(nn, 1)
@@ -1183,97 +930,12 @@ module biocfd_search
            END DO
            END DO
         ENDDO
-!$acc end parallel
-!    !$acc parallel loop collapse(3) default(present) private(i,j,k)
-!       DO  k = k_startSearch, k_endSearch
-!       DO  j = j_startSearch, j_endSearch
-!       DO  i = i_startSearch, i_endSearch
-!               flag_cell=0
-!          IF ((block(g)%xp(i) .ge. 0.31 .and. block(g)%xp(i) .le. 0.362) .and. (block(g)%yp(j).ge. 0.485 .and. block(g)%yp(j) .le. 0.52) .and. (block(g)%zp(k) .ge. 0.487 .and. block(g)%zp(k) .le. 0.503) .and. block(g)%cell(i,j,k) .eq. 0)then
-!
-!         IF ((block(g)%xp(i) .ge. 0.348 .and. block(g)%xp(i) .le. 0.377))then
-!             IF ((block(g)%yp(j) .ge. 0.497 .and. block(g)%yp(j) .le. 0.5023))then
-!                IF ((block(g)%zp(k) .ge. 0.49704 .and. block(g)%zp(k) .le. 0.5023))then
-!                       IF (block(g)%cell(i,j,k) .eq. 0)then
-
-!                               block(g)%cell(i,j,k)=1
-!        ENDIF
-!        ENDIF
-!        ENDIF
-!        ENDIF
-
-!
-!               !$acc loop seq collapse(3)
-!               DO k1=k-1,k+1
-!               DO j1=j-1,j+1
-!               DO i1=i-1,i+1
-!                  if (block(g)% cell(i1,j1,k1) .ne. 0 )then
-!                         flag_cell= flag_cell + 1
-!                  else
-!                         flag_cell= flag_cell + 0
-!
-!                  end if
-!                 !if (block(g)% cell(i1,j1,k1) .eq. 0 .and. (i1 .ne. i) .and. (j1 .ne. j) .and. (k1 .ne. k) )then
-!                 !       flag_cell=0
-!                 !else
-!                 !       flag_cell=1
-!                 !end if
-!               END DO
-!               END DO
-!               END DO
-!               if (flag_cell .le. 26 .and. flag_cell .ge.23)then
-!               !if (flag_cell .eq. 26)then
-!                   block(g)%cell(i,j,k)=1
-!               end if
-!          END IF
-!     END DO
-!     END DO
-!     END DO
-!    !$acc end parallel
-
-!    !$acc parallel loop default(present) private(flag_cell)
-!       DO nn = 1, ibCellCount
-!          i1 = interceptedIndexPtr(nn, 1)
-!          j1 = interceptedIndexPtr(nn, 2)
-!          k1 = interceptedIndexPtr(nn, 3)
-!    !!$acc parallel loop collapse(3) default(present)
-!          DO k = k1-1, k1+1
-!          DO j = j1-1, j1+1
-!          DO i = i1-1, i1+1
-!               flag_cell=0
-!          IF ((block(g)%xp(i) .ge. 0.31 .and. block(g)%xp(i) .le. 0.362) .and. (block(g)%yp(j).ge. 0.485 .and. block(g)%yp(j) .le. 0.52) .and. (block(g)%zp(k) .ge. 0.487 .and. block(g)%zp(k) .le. 0.503) .and. block(g)%cell(i,j,k) .eq. 0)then
-!
-!               !$acc loop seq collapse(3)
-!               DO k2=k-1,k+1
-!               DO j2=j-1,j+1
-!               DO i2=i-1,i+1
-!                  !if (block(g)% cell(i2,j2,k2) .eq. 0 .and. (i2 .ne. i) .and. (j2 .ne. j) .and. (k2 .ne. k) )then
-!                  if (block(g)% cell(i2,j2,k2) .ne. 0 )then
-!                         flag_cell= flag_cell + 1
-!                  else
-!                         flag_cell= flag_cell + 0
-!                  end if
-!               END DO
-!               END DO
-!               END DO
-!               !print*, flag_cell
-!               if (flag_cell .le. 26 .and. flag_cell .ge.23)then
-!                   block(g)%cell(i,j,k)=1
-!               end if
-!          END IF
-!               END DO
-!               END DO
-!               END DO
-!    !!$acc end parallel
-!     END DO
-!    !$acc end parallel
   block(g)%ibCellCount = 0
   block(g)%solidCellCount = 0
 block(g)%fluidCellCount = 0
 sdcnt=0
 flcnt=0
 ibcnt=0
-!!$acc parallel loop collapse(3) present(cell) reduction(+: solidCellCount, fluidCellCount, ibCellCount)
 !$acc parallel loop gang vector collapse(3) default(present) private(i,j,k,n) reduction(+: sdcnt, flcnt, ibcnt)
          DO k = 2, block(g)%nz+1
          DO j = 2, block(g)%ny+1
@@ -1296,64 +958,14 @@ ibcnt=0
   block(g)%ibCellCount = ibcnt
   block(g)%solidCellCount = sdcnt
 block(g)%fluidCellCount = flcnt
-!!$acc update self(cell,cell2)
  GOTO 111
-!      IF (mod(ita,200).eq.0) THEN
-!       WRITE(filename1,991)ita
-!991    FORMAT('inter',i9.9,'.dat')
-!        !open(82,file='inter.dat',status='unknown')
-!        open(82,file=filename1,status='unknown')
-!       write(82,*)'variables = "x", "y","z", "var"'
-!         do k = 2, block(g)%nz+1
-!        do j = 2,block(g)% ny+1
-!        do i = 2, block(g)%nx+1
-!         n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-!        if(block(g)%cell(i,j,k).eq.2)then
-!        write(82,*) block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), block(g)%cell2(i,j,k)
-!        endif
-!        end do
-!        end do
-!         enddo
-!       close(82)
-!goto 111
-!       open(83,file='fluid.dat',status='unknown')
-!       write(83,*)'variables = "x", "y","z","var"'
-!        do k = 2, block(g)%nz+1
-!        do j = 2, block(g)%ny+1
-!        do i = 2, block(g)%nx+1
-!         n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-!        if(block(g)%cell(i,j,k).eq.0)then
-!        write(83,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 0
-!        endif
-!        end do
-!        end do
-!         enddo
-!       close(83)
- !111 continue
-!       WRITE(filename2,992)ita
-!992    FORMAT('solid',i9.9,'.dat')
-!       !open(84,file='solid.dat',status='unknown')
-!        open(82,file=filename2,status='unknown')
-!       write(84,*)'variables = "x", "y","z","var"'
-!        do k = 2, block(g)%nz+1
-!        do j = 2, block(g)%ny+1
-!        do i = 2, block(g)%nx+1
-!         n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-!        if(block(g)%cell(i,j,k).eq.1)then
-!        write(84,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 1
-!        endif
-!        end do
-!        end do
-!         enddo
-!       close(84)
-!      ENDIF
  111 CONTINUE
        print*, 'selective retagging', block(g)%ibCellCount, block(g)%fluidCellCount, &
                 block(g)%solidCellCount
      END IF
        ENDDO
      END SUBROUTINE selectiveRetagging_th
-!***********************************************************************
+
      SUBROUTINE cellCount_solid
 
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
@@ -1371,12 +983,9 @@ block(g)%fluidCellCount = flcnt
                   block(g)%fluidIndexPtr(block(g)%fluidCellCount, 3), &
                   block(g)%solidIndexPtr(block(g)%solidCellCount, 3))
 
-        !!$acc update host(cell)
-
          DO k = 2, block(g)%nz+1
          DO j = 2, block(g)%ny+1
          DO i = 2, block(g)%nx+1
-               !n  = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
 
                IF (block(g)%cell(i,j,k)==0) THEN
                   iPt1 = iPt1 + 1
@@ -1435,14 +1044,10 @@ block(g)%fluidCellCount = flcnt
             ENDIF
          ENDDO
 
-        !!$acc update device(interceptedIndexPtr, block(g)%fluidIndexPtr, solidIndexPtr)
-        !!$acc update device(redCellIndexPtr, blackCellIndexPtr)
-
             print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
         END DO
             !print*, "cellCount done"
      END SUBROUTINE cellCount_solid
-!**************************************************************************
 
      SUBROUTINE computeNormDistance
 
@@ -1465,12 +1070,6 @@ block(g)%fluidCellCount = flcnt
         block(g)%u1NormDis(ibxx), block(g)%u2NormDis(ibxx) , block(g)%v1NormDis(ibxx), &
         block(g)%v2NormDis(ibxx) , block(g)%w1NormDis(ibxx), block(g)%w2NormDis(ibxx))
 
-       !!$acc parallel loop gang vector  &
-       !!$acc private (i, j, k, n1x, n2x, n3x, n1y, n2y, n3y, n1z, n2z, n3z, nel2p)          &
-       !!$acc present (xp, yp, zp, x1, y1, z1, interceptedIndexPtr, minElemcell, nelp, nelu1,          &
-       !!$acc          nelu2, nelv1, nelv2, nelw1, nelw2, pNormDis, u1NormDis, u2NormDis, v1NormDis,   &
-       !!$acc          v2NormDis, w1NormDis, w2NormDis, xcent, ycent, zcent, cosAlpha, cosBeta, cosGamma, cell)
-       ! print*,'1'
         !$acc parallel loop gang vector default(present) &
         !$acc private (i, j, k, n1x, n2x, n3x, n1y, n2y, n3y, n1z, n2z, n3z, nel2p)
         DO k = 1, block(g)%ibCellCount
@@ -1542,13 +1141,6 @@ block(g)%fluidCellCount = flcnt
            block(g)% nelv2(k) = nel2v2
            block(g)% nelw1(k) = nel2w1
            block(g)% nelw2(k) = nel2w2
-           !nu1nu2 = cosAlpha(nel2u1)*cosAlpha(nel2u2) + cosBeta(nel2u1)*cosBeta(nel2u2) + cosGamma(nel2u1)*cosGamma(nel2u2)
-           !nu1nv1 = cosAlpha(nel2u1)*cosAlpha(nel2v1) + cosBeta(nel2u1)*cosBeta(nel2v1) + cosGamma(nel2u1)*cosGamma(nel2v1)
-           !nu1nv2 = cosAlpha(nel2u1)*cosAlpha(nel2v2) + cosBeta(nel2u1)*cosBeta(nel2v2) + cosGamma(nel2u1)*cosGamma(nel2v2)
-           !nu1nw1 = cosAlpha(nel2u1)*cosAlpha(nel2w1) + cosBeta(nel2u1)*cosBeta(nel2w1) + cosGamma(nel2u1)*cosGamma(nel2w1)
-           !nu1nw2 = cosAlpha(nel2w2)*cosAlpha(nel2w2) + cosBeta(nel2u1)*cosBeta(nel2w2) + cosGamma(nel2u1)*cosGamma(nel2w2)
-           !block(g)%cell2(i, j, k) = 0
-           !IF (nu1nu2.LT.0 .OR. nu1nv1.LT.0 .OR. nu1nv2.LT.0 .OR. nu1nw1.LT.0 .OR. nu1nw2.LT.0 ) block(g)%cell2(i,j,k) = 2
           block(g)% pNormDis(k)  = (n1x -block(g)% xcent(nel2p))*block(g)%cosAlpha(nel2p) + &
                    (n1y -block(g)% ycent(nel2p))*block(g)%cosBeta(nel2p)  + &
                    (n1z -block(g)% zcent(nel2p))*block(g)%cosGamma(nel2p)
@@ -1585,8 +1177,6 @@ block(g)%fluidCellCount = flcnt
 
      END SUBROUTINE computeNormDistance
 
-!******************************************************************
-
         SUBROUTINE fine_block_cell
 
         INTEGER(int64) :: i, j, k, g, factor, a_blk_no, b_blk_no
@@ -1601,22 +1191,6 @@ block(g)%fluidCellCount = flcnt
            b_blk_no=intfr(g)%b_blk
            factor=intfr(g)%b_msh/intfr(g)%a_msh
 
-
-       !nx_var_r=block(a_blk_no)%irc
-       !ny_var_r=block(a_blk_no)%jrc
-       !nx_var_t=block(a_blk_no)%itc
-       !ny_var_t=block(a_blk_no)%jtc
-       !nx_var_tn=block(a_blk_no)%itn
-       !ny_var_tn=block(a_blk_no)%jtn
-       !st_rc_x=block(a_blk_no)%irc_st
-       !en_rc_x=block(a_blk_no)%irc_en
-       !st_rc_y=block(a_blk_no)%jrc_st
-       !en_rc_y=block(a_blk_no)%jrc_en
-
-
-       ! DO j = st_rc_y, en_rc_y
-       ! DO i = st_rc_x, en_rc_x
-       !!$acc parallel loop gang vector default(present) firstprivate(a_blk_no,b_blk_no,factor)
          DO k = 2, block(a_blk_no)%nz +1
          DO j = 2, block(a_blk_no)%ny +1
          DO i = 2, block(a_blk_no)%nx +1
@@ -1650,21 +1224,11 @@ block(g)%fluidCellCount = flcnt
         ENDDO
         ENDDO
         ENDDO
-        !!$acc end parallel
         ENDDO
-       ! DO j = st_rc_y, en_rc_y
-       ! DO i = st_rc_x, en_rc_x
-      !! DO j = 2, block(1)%ny +1
-      !! DO i = 2, block(1)%nx +1
-      !!        block(1)%cell(i,j)=block(1)%cell_n(i,j)
-      !!ENDDO
-      !!ENDDO
 
 
         end subroutine fine_block_cell
-!**************************************************************************
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE cellCount_solid_coarse_mv
 
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
@@ -1673,17 +1237,7 @@ block(g)%fluidCellCount = flcnt
         g=1
 
         if ( coarse_flcnt_check == 1)then
-      ! nx_var_r=block(g)%irc
-         !end do
-      ! ny_var_r=block(g)%jrc
-      ! nx_var_t=block(g)%itc
-      ! ny_var_t=block(g)%jtc
-      ! nx_var_tn=block(g)%itn
-      ! ny_var_tn=block(g)%jtn
-      ! st_rc_x=block(g)%irc_st
-      ! en_rc_x=block(g)%irc_en
-      ! st_rc_y=block(g)%jrc_st
-      ! en_rc_y=block(g)%jrc_en
+
         block(g)%fluidCellCount=0
          iPt  = 0
          iPt1 = 0
@@ -1701,29 +1255,15 @@ block(g)%fluidCellCount = flcnt
          DEALLOCATE (block(g)%fluidIndexPtr)
          print*,'aft deall'
          ALLOCATE (block(g)%fluidIndexPtr(block(g)%fluidCellCount,3))
-         !print*,'aft all'
-         !!$acc update self(cell)
-       ! !$acc loop collapse(2) seq
          DO k = 2, block(g)%nz +1
          DO j = 2, block(g)%ny +1
          DO i = 2, block(g)%nx +1
-        !DO j = st_rc_y, en_rc_y
-        !DO i = st_rc_x, en_rc_x
-               !n   = (j-st_rc_y)*nx_var_r + (i-st_rc_x+1)
                n=    i-1  + (block(g)%nx)*(j-2)
                IF (block(g)%cell(i,j,k)==0) THEN
                   iPt1 = iPt1 + 1
                   block(g)%fluidIndexPtr(iPt1, 1) = i
                   block(g)%fluidIndexPtr(iPt1, 2) = j
                   block(g)%fluidIndexPtr(iPt1, 3) = k
-         !    ELSEIF (block(g)%cell(i,j).eq.1) THEN
-         !       iPt2 = iPt2 + 1
-         !       block(g)%solidIndexPtr(iPt2, 1) = i
-         !       block(g)%solidIndexPtr(iPt2, 2) = j
-         !    ELSEIF (block(g)%cell(i,j).eq.2) THEN
-         !       iPt = iPt + 1
-         !       block(g)%interceptedIndexPtr(iPt, 1) = i
-         !       block(g)%interceptedIndexPtr(iPt, 2) = j
                ENDIF
          END DO
          END DO
@@ -1731,8 +1271,6 @@ block(g)%fluidCellCount = flcnt
          block(g)%redCellCount = 0
          block(g)%blackCellCount  = 0
 
-!!$acc enter data copyin(solidIndexPtr,interceptedIndexPtr, fluidIndexPtr)
-!!$acc parallel loop present(fluidIndexPtr) reduction(+: block(g)%redCellCount, block(g)%blackCellCount)
          DO n = 1, block(g)%fluidCellCount
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
@@ -1743,14 +1281,12 @@ block(g)%fluidCellCount = flcnt
                block(g)%blackCellCount = block(g)%blackCellCount + 1
             ENDIF
          ENDDO
-!!$acc end parallel
          DEALLOCATE (block(g)%redCellIndexPtr ,block(g)%blackCellIndexPtr)
          ALLOCATE(block(g)%redCellIndexPtr(block(g)%redCellCount,3) , &
                   block(g)%blackCellIndexPtr(block(g)%blackCellCount,3))
          ipt1 = 0
          iPt = 0
 
-!!$acc loop seq
          DO n = 1, block(g)%fluidCellCount
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
@@ -1767,7 +1303,7 @@ block(g)%fluidCellCount = flcnt
                block(g)%blackCellIndexPtr(iPt1, 3) = k
             ENDIF
          ENDDO
-!!$acc enter data copyin(redCellIndexPtr, blackCellIndexPtr)
+
             print*, g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
           ENDIF
           coarse_flcnt_check=0
@@ -1784,10 +1320,6 @@ block(g)%fluidCellCount = flcnt
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
         mg1=block(b_blk_no)%cintp*block(1)%dx
-        !margin=0.008 + (block(b_blk_no)%cintp*block(1)%dx)
-       !marginx=dmin1((0.365-0.300-mg1),(0.490-0.400-mg1))
-       !marginy=dmin1((0.600-0.500-mg1),(0.500-0.410-mg1))
-       !marginz=dmin1((0.600-0.500-mg1),(0.500-0.410-mg1))
         marginx=4.5_dp*mg1
         marginy=5*mg1
         marginz=1.52_dp*mg1
@@ -1806,38 +1338,23 @@ block(g)%fluidCellCount = flcnt
         print*,'ydsip',abs(yval_dw-intfr(g)%yintf_start),abs(yval_up - intfr(g)%yintf_end)
         print*,block(b_blk_no)%xnode1(block(b_blk_no)%mkx1),block(b_blk_no)%nxtx_cent
         print*,block(b_blk_no)%ynode1(block(b_blk_no)%mk),block(b_blk_no)%nxty_cent
-       ! print*,'xdisp',g,xdisp1
-       ! print*,'zdisp',g,zdisp1
         block(b_blk_no)%move_amty=0
         block(b_blk_no)%move_amtx=0
         block(b_blk_no)%move_amtz=0
-       !print*,block(b_blk_no)%ynode(block(b_blk_no)%bt_pt),intfr(g)%yintf_start,abs(block(b_blk_no)%ynode(block(b_blk_no)%bt_pt) - intfr(g)%yintf_start)
-      ! print*,(abs(block(b_blk_no)%piv_y - intfr(g)%yintf_start) )
-      ! print*,(abs(block(b_blk_no)%piv_y - intfr(g)%yintf_end)   )
         if ( (abs(xval_lt - intfr(g)%xintf_start)      <= marginx )  .or. &
-             !(abs(xval_rt - intfr(g)%xintf_end)        .le. marginx ) .or. &
              (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start)      <= marginz )  .or. &
              (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end)        <= marginz )  .or. &
              ((abs(yval_dw - intfr(g)%yintf_start) <= marginy ) )   .or. &
              ((abs(yval_up - intfr(g)%yintf_end)  <= marginy ) ) )then
-            ! ((abs(block(b_blk_no)%nxty_cent-y_dw_lt - intfr(g)%yintf_start) .le. marginy ) .and. block(g)%ydot .le.0)   .or. &
-            ! ((abs(block(b_blk_no)%nxty_cent+y_up_lt - intfr(g)%yintf_end)  .le. marginy ) .and. block(g)%ydot .ge.0) )then
-
-        !if ( (xdisp1 .lt. marginx) .or. (ydisp1 .lt. marginy) .or. (zdisp1 .lt. marginz))then
 
                 block(b_blk_no)%move_check=1
              block(b_blk_no)%blk_mv_tag=1.
                  coarse_flcnt_check=1
-             !   if( ydisp1 .lt. marginy)then
-            !if( (abs(block(b_blk_no)%nxty_cent - y_dw_lt - intfr(g)%yintf_start) .le. marginy  ) .or. &
-            !    (abs(block(b_blk_no)%nxty_cent + y_up_lt - intfr(g)%yintf_end) .le. marginy))then
             if( abs(yval_dw - intfr(g)%yintf_start) <= marginy    .or. &
                 (abs(yval_up - intfr(g)%yintf_end)  <= marginy ) )then
 
                 block(b_blk_no)%move_amty = &
                   floor((block(b_blk_no)%nxty_cent -block(b_blk_no)%inity_cent)/block(b_blk_no)%dy)
-               !print*,block(b_blk_no)%move_amty,block(b_blk_no)%nxty_cent -block(b_blk_no)%inity_cent,block(b_blk_no)%dy
-               !print*,block(b_blk_no)%nxty_cent ,block(b_blk_no)%inity_cent
                 if ( abs(block(b_blk_no)%move_amty) < factor)then
                         if ( block(b_blk_no)%move_amty < 0)then
                         block(b_blk_no)%move_amty=-factor
@@ -1858,9 +1375,7 @@ block(g)%fluidCellCount = flcnt
                 block(b_blk_no)%inity_cent=block(b_blk_no)%nxty_cent
 
                 endif
-                !if( xdisp1 .lt. dmin1((0.390-0.320-mg1),(0.490-0.390-mg1)))then
         if ( (abs(xval_lt- intfr(g)%xintf_start) < marginx ) )then
-!             (abs(xval_rt- intfr(g)%xintf_end)   .lt. marginx )) then
                 block(b_blk_no)%move_amtx = &
                   floor((block(b_blk_no)%nxtx_cent - block(b_blk_no)%initx_cent) &
                   / block(b_blk_no)%dx) - factor
@@ -1884,7 +1399,6 @@ block(g)%fluidCellCount = flcnt
                 endif
                 block(b_blk_no)%initx_cent=block(b_blk_no)%nxtx_cent
                 endif
-                !if( zdisp1 .lt. dmin1((0.600-0.500-mg1),(0.500-0.410-mg1)))then
             if( (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start) < (0.500_dp-0.410_dp-mg1)) .or. &
              (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end)   < (0.600_dp-0.500_dp-mg1) ))then
                 block(b_blk_no)%move_amtz = &
@@ -1911,50 +1425,7 @@ block(g)%fluidCellCount = flcnt
                  print*,'blk_movez',block(b_blk_no)%move_amtz
                  print*,'blk_movey',block(b_blk_no)%move_amty
                  print*,'blk_movex',block(b_blk_no)%move_amtx
-               !intfr(g)%yintf_start=intfr(g)%yintf_start + block(b_blk_no)%move_amty * block(b_blk_no)%dy
-               !intfr(g)%yintf_end=intfr(g)%yintf_end + block(b_blk_no)%move_amty * block(b_blk_no)%dy
-       !! endif
-!!!     if ( ita .eq. 2) then
-!!!             block(b_blk_no)%move_check=1
-!!!             block(b_blk_no)%move_amty=-10
-!!!             block(b_blk_no)%move_amtx=0
-!!!             block(b_blk_no)%blk_mv_tag=1.
-!!!     endif
 
-      !!if ( ita .le. 3) then
-      !!!if ( mod(ita,10) .eq. 0)then
-      !!        block(b_blk_no)%move_amty=32
-      !!        block(b_blk_no)%move_amtx=-32
-      !!endif
-        !dist1=(block(b_blk_no)%ynode(block(b_blk_)%tp_pt) - block(b_blk_no)%yintf_end)**2
-        !if (dist1 .lt. 1.5) then
-
-      !!if ( mod(ita,10) .eq. 0)then
-      !!         block(b_blk_no)%move_check=1
-      !!         coarse_flcnt_check=1
-        !if( block(b_blk_no)%move_amty .lt. 0) then
-       !if ( block(b_blk_no)%y1(3) .lt. 18)then
-       !        block(b_blk_no)%move_amty=50
-       !elseif ( block(b_blk_no)%y1(3) .gt. 18)then
-       !        block(b_blk_no)%move_amty=-50
-       !elseif ( block(b_blk_no)%y1(3) .eq. 18 .and. block(b_blk_no)%move_amty .eq.50)then
-       !        block(b_blk_no)%move_amty=50
-       !elseif ( block(b_blk_no)%y1(3) .eq. 18 .and. block(b_blk_no)%move_amty .eq. -50)then
-       !        block(b_blk_no)%move_amty=-50
-       !endif
-       !if ( block(b_blk_no)%x1(3) .lt. 8)then
-       !        block(b_blk_no)%move_amtx=50
-       !elseif ( block(b_blk_no)%x1(3) .gt. 8)then
-       !        block(b_blk_no)%move_amtx=-50
-       !elseif ( block(b_blk_no)%x1(3) .eq. 8 .and. block(b_blk_no)%move_amtx .eq.50)then
-       !        block(b_blk_no)%move_amtx=50
-       !elseif ( block(b_blk_no)%x1(3) .eq. 8 .and. block(b_blk_no)%move_amtx .eq. -50)then
-       !        block(b_blk_no)%move_amtx=-50
-       !endif
-
-       !!    block(b_blk_no)%move_amty = block(b_blk_no)%move_amty * ((-1))
-       !!    block(b_blk_no)%move_amtx = block(b_blk_no)%move_amtx * ((-1))
-       !!    block(b_blk_no)%blk_mv_tag=1.
        intfr(g)%xintf_st_new=dmax1(intfr(g)%xintf_start,intfr(g)%xintf_start &
                              + (block(b_blk_no)%move_amtx * block(b_blk_no)%dx))
        intfr(g)%xintf_en_new=dmin1(intfr(g)%xintf_end,intfr(g)%xintf_end &
@@ -1984,19 +1455,6 @@ block(g)%fluidCellCount = flcnt
        print*,'ystart_nw',intfr(g)%yintf_st_new,'yend_nw',intfr(g)%yintf_en_new
        print*,'xstart_nw',intfr(g)%xintf_st_new,'xend_nw',intfr(g)%xintf_en_new
 
-       !block(b_blk_no)%cell_n=0
-       !DO i=1,block(b_blk_no)%nx+2
-       !DO j=1,block(b_blk_no)%ny+2
-       !   if( block(b_blk_no)%xp(i) .gt. intfr(g)%xintf_st_new .and. &
-       !       block(b_blk_no)%xp(i) .lt. intfr(g)%xintf_en_new .and. &
-       !       block(b_blk_no)%yp(i) .gt. intfr(g)%yintf_st_new .and. &
-       !       block(b_blk_no)%yp(i) .lt. intfr(g)%yintf_en_new )then
-
-       !        block(b_blk_no)%cell_n=1
-       !
-       !   endif
-       !ENDDO
-       !ENDDO
         DO i=1,block(b_blk_no)%nx+2
            if( block(b_blk_no)%xp(i) > intfr(g)%xintf_st_new)then
                 block(b_blk_no)%cpy_x_start=i
@@ -2063,9 +1521,6 @@ block(g)%fluidCellCount = flcnt
         ENDDO
         end subroutine block_move_check
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!**********************************************************************
-
         SUBROUTINE change_block_coords
 
 
@@ -2084,8 +1539,6 @@ block(g)%fluidCellCount = flcnt
         print*, 'chz',block(g)%move_amtz , block(g)%dz
         print*, 'chy',block(g)%move_amty , block(g)%dy
         print*, 'chx',block(g)%move_amtx , block(g)%dx
-       !block(g)%yshift_move=yshift+change_y_f
-       !block(g)%xshift_move=xshift+change_x_f
 
         DO i = 1, block(g)%nx+3
            block(g)%x1(i) = block(g)%x1(i) + change_x_f
@@ -2096,7 +1549,6 @@ block(g)%fluidCellCount = flcnt
            block(g)%y1(i) = block(g)%y1(i) + change_y_f
                   ! print*,'y1a',block(g)%y1(i)
         ENDDO
-       ! pause
         DO i = 1, block(g)%nz+3
            block(g)%z1(i) = block(g)%z1(i)+ change_z_f
         ENDDO
@@ -2159,83 +1611,6 @@ block(g)%fluidCellCount = flcnt
         ENDIF
 
         ENDDO
-      ! block(g)%u_dum=0
-      ! block(g)%v_dum=0
-      ! block(g)%p_dum=0
-
-      ! DO i=1,block(g)%nx+2
-      ! DO j=1,block(g)%ny+2
-      !     if (block(1)%cell_n(i,j) .eq. 1 .and. block(1)%cell(i,j) .eq. 1)then
-      !     i_new=i+block(g)%move_amtx
-      !     j_new=j+block(g)%move_amty
-      !     block(g)%u_dum(i,j)=block(g)%u(i_new,j_new)
-      !     block(g)%v_dum(i,j)=block(g)%v(i_new,j_new)
-      !     block(g)%p_dum(i,j)=block(g)%p(i_new,j_new)
-      !     endif
-      ! ENDDO
-      ! ENDDO
-
-!!      DO i = block(g)%itc_st, block(g)%itc_en
-!!         block(g)%xu(i) = 0.5_rk*(block(g)%x1(i)+block(g)%x1(i+1))
-!!         block(g)%xp(i) = block(g)%xu(i)
-!!             ! print*,i,block(g)%y1(i), block(g)%yu(i)
-!!      END DO
-!!      DO i = block(g)%itn_st, block(g)%itn_en
-!!         block(g)%xv(i) = block(g)%x1(i)
-!!      ENDDO
-
-!!!!y
-
-!!      DO i = block(g)%jtc_st, block(g)%jtc_en
-!!         block(g)%yu(i) = 0.5_rk*(block(g)%y1(i)+block(g)%y1(i+1))
-!!         block(g)%yp(i) = block(g)%yu(i)
-!!             ! print*,i,block(g)%y1(i), block(g)%yu(i)
-!!      END DO
-!!      DO i = block(g)%jtn_st, block(g)%jtn_en
-!!         block(g)%yv(i) = block(g)%y1(i)
-!!      ENDDO
-        !block(g)%move_check=0
-
-!!!!search
-      !! DO i = block(g)%irn_st, block(g)%irn_en
-      !!       if (block(g)%x1(i) .gt. 9.5)then
-      !!        block(g)%i_startSearch= i-10
-      !!        exit
-      !!       endif
-      !! ENDDO
-      !! DO i = block(g)%i_startSearch, block(g)%irn_en
-      !!       if (block(g)%x1(i) .gt. 10.5)then
-      !!        block(g)%i_endSearch= i+10
-      !!        exit
-      !!       endif
-      !! ENDDO
-
-      !! DO i = block(g)%jrn_st, block(g)%jrn_en
-      !!       if (block(g)%y1(i) .gt. 19.5)then
-      !!        block(g)%j_startSearch= i-10
-      !!        exit
-      !!       endif
-      !! ENDDO
-      !! DO i = block(g)%j_startSearch, block(g)%jrn_en
-      !!       if (block(g)%y1(i) .gt. 20.5)then
-      !!        block(g)%j_endSearch= i+10
-      !!        exit
-      !!       endif
-      !! ENDDO
-       ! print*, block(g)%y1(1), change_y_f
-     !     DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%cosAlpha, block(g)%cosBeta, block(g)%area)
-     !     CALL computeSurfaceVariables_move(g)
-     !     CALL computeSurfaceNorm_move(g)
-        !print*, 'before tag mv'
-        !call tagging_block_move(g)
-!!          DEALLOCATE(block(g)%interceptedIndexPtr, block(g)%pNormDis,block(g)%nelp, &
-!!             block(g)%nelu1, block(g)%nelu2, block(g)%nelv1, block(g)%nelv2, block(g)%u1NormDis, block(g)%u2NormDis, &
-!!             block(g)%v1NormDis, block(g)%v2NormDis,block(g)%solidIndexPtr)
-!!     !print*,'After deallocate'
-!!         !DO i=1,nblocks
-!!              DEALLOCATE(block(g)%fluidIndexPtr,block(g)%redCellIndexPtr,block(g)%blackCellIndexPtr)
-!!       CALL cellCount_solid_move(g)
-!!      call computeNormDistance_move(g)
 
         DO g=1,intflines
         a_blk_no=intfr(g)%a_blk
@@ -2254,8 +1629,6 @@ block(g)%fluidCellCount = flcnt
 
                 block(b_blk_no)%cell_n(i,j,k)=1
 
-          !else
-          !     print*,'not',i,j
            endif
         ENDDO
         ENDDO
@@ -2310,11 +1683,7 @@ block(g)%fluidCellCount = flcnt
         countx_st=block(b_blk_no)%cpy_x_start
         county_st=block(b_blk_no)%cpy_y_start
         countz_st=block(b_blk_no)%cpy_z_start
-       !print*,block(b_blk_no)%cpy_x_start_mv,block(b_blk_no)%cpy_x_end_mv
-       !print*,block(b_blk_no)%cpy_y_start_mv,block(b_blk_no)%cpy_y_end_mv
         OPEN(UNIT=12,FILE='log.dat',STATUS='unknown',access='append')
-        ! 11 FORMAT(2F13.5)
-        ! 111  FORMAT(6I6)
         block(b_blk_no)%u=0
         block(b_blk_no)%v=0
         block(b_blk_no)%w=0
@@ -2329,10 +1698,6 @@ block(g)%fluidCellCount = flcnt
                 block(b_blk_no)%v(i,j,k)=block(b_blk_no)%v_dum(countx_st,county_st,countz_st)
                 block(b_blk_no)%w(i,j,k)=block(b_blk_no)%w_dum(countx_st,county_st,countz_st)
                 block(b_blk_no)%p(i,j,k)=block(b_blk_no)%p_dum(countx_st,county_st,countz_st)
-!               write(12,111)i,countx_st,j,county_st,k,countz_st
-!               write(12,11)block(b_blk_no)%xp(i),block(b_blk_no)%xp_dum(countx_st)
-!               write(12,11)block(b_blk_no)%yp(j),block(b_blk_no)%yp_dum(county_st)
-!               write(12,11)block(b_blk_no)%zp(k),block(b_blk_no)%zp_dum(countz_st)
                 county_st=county_st+1
         ENDDO
                 countx_st=countx_st+1
@@ -2341,7 +1706,6 @@ block(g)%fluidCellCount = flcnt
         ENDDO
         print*,'aft'
         close(12)
-       ! pause
         ENDIF
         ENDDO
 
@@ -2349,7 +1713,6 @@ block(g)%fluidCellCount = flcnt
 
         end subroutine change_block_coords
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE change_block_interface
 
         INTEGER(int64) :: i,j,g, a_blk_no, b_blk_no, factor
@@ -2366,7 +1729,6 @@ block(g)%fluidCellCount = flcnt
 
         intfr(g)%px_interface_det(1,j) = intfr(g)%px_interface_det(1,j) &
                                          + (block(b_blk_no)%move_amtx/factor)
-        !print*,j,intfr(g)%py_interface_det(1,j)
         ENDDO
         DO j=1,intfr(g)%counterxu
 
@@ -2415,7 +1777,6 @@ block(g)%fluidCellCount = flcnt
 
         intfr(g)%pz_interface_det(1,j) = intfr(g)%pz_interface_det(1,j) &
                                          + (block(b_blk_no)%move_amtz/factor)
-        !print*,j,intfr(g)%py_interface_det(1,j)
         ENDDO
         DO j=1,intfr(g)%counterzu
 
@@ -2435,10 +1796,6 @@ block(g)%fluidCellCount = flcnt
                                          + (block(b_blk_no)%move_amtz/factor)
 
         ENDDO
-      !!call fineUpdate
-      !!call fineUpdate_p
-      !!call solidCellBC_move(b_blk_no)
-        !block(b_blk_no)%move_check=0
         DO j=1,intflines
         print*,'**********************px***************************'
         DO i=1,intfr(j)%counterxp
@@ -2604,7 +1961,6 @@ block(g)%fluidCellCount = flcnt
 
         end subroutine change_block_interface
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         SUBROUTINE cellCount_solid_coarse
 
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
@@ -2613,18 +1969,6 @@ block(g)%fluidCellCount = flcnt
         INTEGER (int64) ::  g
         g=1
 
-!        if ( coarse_flcnt_check .eq. 1)then
-      ! nx_var_r=block(g)%irc
-         !end do
-      ! ny_var_r=block(g)%jrc
-      ! nx_var_t=block(g)%itc
-      ! ny_var_t=block(g)%jtc
-      ! nx_var_tn=block(g)%itn
-      ! ny_var_tn=block(g)%jtn
-      ! st_rc_x=block(g)%irc_st
-      ! en_rc_x=block(g)%irc_en
-      ! st_rc_y=block(g)%jrc_st
-      ! en_rc_y=block(g)%jrc_en
         block(g)%fluidCellCount=0
          iPt  = 0
          iPt1 = 0
@@ -2639,29 +1983,14 @@ block(g)%fluidCellCount = flcnt
          end do
          end do
          ALLOCATE (block(g)%fluidIndexPtr(block(g)%fluidCellCount,3))
-         !print*,'aft all'
-         !!$acc update self(cell)
-       ! !$acc loop collapse(2) seq
          DO k = 2, block(g)%nz +1
          DO j = 2, block(g)%ny +1
          DO i = 2, block(g)%nx +1
-        !DO j = st_rc_y, en_rc_y
-        !DO i = st_rc_x, en_rc_x
-            !n   = (j-st_rc_y)*nx_var_r + (i-st_rc_x+1)
-           ! n=    i-1  + (block(g)%nx)*(j-2)
             IF (block(g)%cell(i,j,k)==0) THEN
                iPt1 = iPt1 + 1
                block(g)%fluidIndexPtr(iPt1, 1) = i
                block(g)%fluidIndexPtr(iPt1, 2) = j
                block(g)%fluidIndexPtr(iPt1, 3) = k
-       !    ELSEIF (block(g)%cell(i,j).eq.1) THEN
-       !       iPt2 = iPt2 + 1
-       !       block(g)%solidIndexPtr(iPt2, 1) = i
-       !       block(g)%solidIndexPtr(iPt2, 2) = j
-       !    ELSEIF (block(g)%cell(i,j).eq.2) THEN
-       !       iPt = iPt + 1
-       !       block(g)%interceptedIndexPtr(iPt, 1) = i
-       !       block(g)%interceptedIndexPtr(iPt, 2) = j
             ENDIF
          END DO
          END DO
@@ -2669,8 +1998,6 @@ block(g)%fluidCellCount = flcnt
          block(g)%redCellCount = 0
          block(g)%blackCellCount  = 0
 
-!!$acc enter data copyin(solidIndexPtr,interceptedIndexPtr, fluidIndexPtr)
-!!$acc parallel loop present(fluidIndexPtr) reduction(+: block(g)%redCellCount, block(g)%blackCellCount)
          DO n = 1, block(g)%fluidCellCount
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
@@ -2681,14 +2008,13 @@ block(g)%fluidCellCount = flcnt
                block(g)%blackCellCount = block(g)%blackCellCount + 1
             ENDIF
          ENDDO
-!!$acc end parallel
+
          !DEALLOCATE (block(g)%redCellIndexPtr ,block(g)%blackCellIndexPtr)
          ALLOCATE (block(g)%redCellIndexPtr(block(g)%redCellCount,3), &
                    block(g)%blackCellIndexPtr(block(g)%blackCellCount,3))
          ipt1 = 0
          iPt = 0
 
-!!$acc loop seq
          DO n = 1, block(g)%fluidCellCount
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
@@ -2705,476 +2031,8 @@ block(g)%fluidCellCount = flcnt
                block(g)%blackCellIndexPtr(iPt1, 3) = k
             ENDIF
          ENDDO
-!!$acc enter data copyin(redCellIndexPtr, blackCellIndexPtr)
+
             print*, g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
-         ! ENDIF
-         ! coarse_flcnt_check=0
 
         END SUBROUTINE cellCount_solid_coarse
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-!******************************************************************
-
-!    SUBROUTINE tagging
-!
-!       IMPLICIT NONE
-!       INTEGER, PARAMETER :: rk = selected_real_kind(8)
-!       INTEGER (int64) ::  n, m, i, j, k, n1, n2, n3, n4, nel2n, g, ibElems_cnt
-!
-!       INTEGER            :: iPt, iPt1
-!       REAL (dp)      :: n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis, minDis, &
-!                             n1dotn, n2dotn, n3dotn, n4dotn, n5dotn, n6dotn, n7dotn, n8dotn, n9dotn,  &
-!                             cent_x, cent_y, cent_z
-!       CHARACTER(LEN=100) :: cLine
-!       CHARACTER*150  filename1
-!       DO g=blk_start,nblocks
-!       ALLOCATE(block(g)%minElemcell(block(g)%nx+2,block(g)%ny+2,block(g)%nz+2))
-!
-!       !print*,'inside tagging'
-!
-!       block(g)%ibCellCount = 0
-!       block(g)%fluidCellCount = 0
-!       block(g)%solidCellCount = 0
-!       block(g)%cell = 0
-!       block(g)%minElemcell = 0
-!       n1dotn = 0
-!       n2dotn = 0
-!       n3dotn = 0
-!       n4dotn = 0
-!       n5dotn = 0
-!       n6dotn = 0
-!       n7dotn = 0
-!       n8dotn = 0
-!       n9dotn = 0
-!     !  GOTO 1010
-!      !!$acc parallel loop gang vector collapse(3)        &
-!      !!$acc present (cosAlpha, cosBeta, cosGamma, xcent, ycent, zcent, cell, minElemcell, x1, y1, z1, xp, yp, zp)       &
-!      !!$acc private(n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis, minDis, nel2n, m, cent_x, cent_y, cent_z,         &
-!      !!$acc         n1dotn, n2dotn, n3dotn, n4dotn, n5dotn, n6dotn, n7dotn, n8dotn, n9dotn)
-!     !$acc parallel loop gang vector collapse(3)        &
-!     !$acc default(present)       &
-!     !$acc private(n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis, minDis, nel2n, m, cent_x, cent_y, cent_z,         &
-!     !$acc         n1dotn, n2dotn, n3dotn, n4dotn, n5dotn, n6dotn, n7dotn, n8dotn, n9dotn)
-!
-!       DO k = block(g)%k_startSearch, block(g)%k_endSearch
-!       DO j = block(g)%j_startSearch, block(g)%j_endSearch
-!       DO i = block(g)%i_startSearch, block(g)%i_endSearch
-!
-!          m = 0
-!          minDis = 1e14
-!
-!          n1x = block(g)%xp(i)
-!          n1y = block(g)%yp(j)
-!          n1z = block(g)%zp(k)
-!
-!          n2x = block(g)%x1(i)
-!          n3x = block(g)%x1(i+1)
-!
-!          n2y = block(g)%y1(j)
-!          n3y = block(g)%y1(j+1)
-!
-!          n2z = block(g)%z1(k)
-!          n3z = block(g)%z1(k+1)
-!
-!          !ibElems_cnt=block(g)%ibElemCnt
-
-!         !print*,i,j,k
-!          !$acc loop seq
-!          !DO m = 1, ibElems_cnt
-!          DO m = 1, block(g)%ibElems
-!             cent_x = block(g)%xcent(m)
-!             cent_y = block(g)%ycent(m)
-!             cent_z = block(g)%zcent(m)
-!             dis  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
-!             IF (dis.LT.minDis) THEN
-!                minDis   = dis
-!                nel2n    = m
-!             ENDIF
-!          ENDDO
-!          block(g)%minElemcell(i,j,k) = nel2n
-!
-!            !n1dotn  = (n1x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                    !(n1y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                    !(n1z - block(g)%zcent(nel2n))*cosGamma(nel2n)
-
-!            n2dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                     (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                     (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-
-!            n3dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                     (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                     (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-
-!            n4dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                     (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                     (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-!
-!            n5dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                     (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                     (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-
-!           n6dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                     (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                     (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-
-!            n7dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                     (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                     (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-
-!            n8dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                     (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                     (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-!
-!            n9dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                     (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                     (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-!
-!          !n       = i-1  + nx*(j-2)  + block(g)%nx*ny*(k-2)
-!
-!          IF ( n2dotn.LE.-1e-16 .AND. n3dotn.LE.-1e-16 .AND. n4dotn.LE.-1e-16 .AND. n5dotn.LE.-1e-16  &
-!              .AND. n6dotn.LE.-1e-16 .AND. n7dotn.LE.-1e-16 .AND. n8dotn.LE.-1e-16 .AND. n9dotn.LE.-1e-16) THEN
-!       	    block(g)%cell(i,j,k) = 1
-!          ELSEIF (n2dotn.GT.-1e-16 .AND. n3dotn.GT.-1e-16 .AND. n4dotn.GT.-1e-16 .AND. n5dotn.GT.-1e-16 &
-!       	    .AND. n6dotn.GT.-1e-16 .AND. n7dotn.GT.-1e-16 .AND. n8dotn.GT.-1e-16 .AND. n9dotn.GT.-1e-16) THEN
-!                 block(g)%cell(i,j,k) = 0
-!          ELSE
-!                 block(g)%cell(i,j,k) = 2
-!
-!          ENDIF
-!
-!         END DO
-!         END DO
-!         END DO
-!
-!        !$acc end parallel
-!        !!$acc update host(cell)
-!        WRITE(filename1,1) g
-! 1      FORMAT('sphere_f.',i3.3,".dat")
-!         OPEN(11,FILE=filename1,status='unknown')
-!       DO k = 1, block(g)%nz+2
-!       DO j = 1, block(g)%ny+2
-!       DO i = 1, block(g)%nx+2
-!       WRITE(11,*) block(g)%cell(i,j,k), block(g)%minElemcell(i,j,k)
-!       END DO
-!       END DO
-!       END DO
-!       CLOSE(11)
-
-
-
-
-
-!
-!        block(g)%ibCellCount = 0
-!        block(g)%solidCellCount = 0
-!        block(g)%fluidCellCount = 0
-!
-!       !!$acc parallel loop gang vector collapse(3) default(present) reduction(+: solidCellCount, fluidCellCount, ibCellCount)
-!        DO k = 2, block(g)%nz+1
-!        DO j = 2, block(g)%ny+1
-!        DO i = 2, block(g)%nx+1
-!           !n       = i-1  + nx*(j-2)  + block(g)%nx*block(g)%block(g)%ny*(k-2)
-!           IF (block(g)%cell(i,j,k).eq.1) THEN
-!              block(g)%solidCellCount = block(g)%solidCellCount + 1
-!           ELSEIF (block(g)%cell(i,j,k).eq.0) THEN
-!              block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
-!           ELSEIF (block(g)%cell(i,j,k).eq.2) THEN
-!              block(g)%ibCellCount = block(g)%ibCellCount + 1
-!           ENDIF
-!         END DO
-!         END DO
-!         END DO
-!       !!$acc end parallel
-!
-!     GOTO 1000
-!       !1010 open(82,file='inter.dat',status='unknown')
-!       !  1010  continue
-!      open(82,file='inter.dat',form='formatted')
-!     !write(82,*)'variables = "x", "y","z", "var"'
-!       read(82,*) cLine
-!       do k = 2, block(g)%nz+1
-!      do j = 2, block(g)%ny+1
-!      do i = 2, block(g)%nx+1
-!       !n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-!      if(block(g)%cell(i,j,k).eq.2)then
-!     ! write(82,*) block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 2
-!      read(82,*) block(g)%xp(i),block(g)%yp(j),block(g)%zp(k)
-!      read(82,*) block(g)%cell(i,j,k)
-!              block(g)%ibCellCount = block(g)%ibCellCount + 1
-!      endif
-!      end do
-!      end do
-!       enddo
-!     close(82)
-!
-!     !open(83,file='fluid.dat',status='unknown')
-!     open(83,file='fluid.dat',form='formatted')
-!     !write(83,*)'variables = "x", "y","z","var"'
-!       read(83,*)cLine
-!      do k = 2, block(g)%nz+1
-!      do j = 2, block(g)%ny+1
-!      do i = 2, block(g)%nx+1
-!       !n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
-!      if(block(g)%cell(i,j,k).eq.0)then
-!     ! write(83,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 0
-!      read(83,*) block(g)%xp(i),block(g)%yp(j),block(g)%zp(k)
-!      read(83,*) block(g)%cell(i,j,k)
-!              block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
-!      endif
-!      end do
-!      end do
-!       enddo
-!     close(83)
-!
-!     !open(84,file='solid.dat',status='unknown')
-!     open(84,file='solid.dat',form='formatted')
-!    ! write(84,*)'variables = "x", "y","z","var"'
-!       read(84,*)cLine
-!      do k = 2, block(g)%nz+1
-!      do j = 2, block(g)%ny+1
-!      do i = 2, block(g)%nx+1
-!       !n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
-!      if(block(g)%cell(i,j,k).eq.1)then
-!     ! write(84,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 1
-!      read(84,*) block(g)%xp(i),block(g)%yp(j),block(g)%zp(k)
-!      read(84,*) block(g)%cell(i,j,k)
-!              block(g)%solidCellCount = block(g)%solidCellCount + 1
-!      endif
-!      end do
-!      end do
-!       enddo
-!     close(84)
-
-!1000   CONTINUE
-
-!        WRITE(filename1,2) g
-!2       FORMAT('sphere_cellcount_f.',i3.3,".dat")
-!        OPEN(12,FILE=filename1,FORM='formatted')
-!       WRITE(12,*) block(g)%solidCellCount, block(g)%fluidCellCount, block(g)%ibCellCount
-!       CLOSE(12)
-
-
-!
-!       print*, 'search done'
-!       Print*, 'imms. cells=', block(g)%ibCellCount
-!       Print*, 'fluid cells=', block(g)%fluidCellCount
-!        Print*, 'solid cells=', block(g)%solidCellCount
-
-!       END DO
-!    END SUBROUTINE tagging
-!
-!    SUBROUTINE selectiveRetagging
-!
-!       IMPLICIT NONE
-!       INTEGER, PARAMETER :: rk = selected_real_kind(8)
-!       INTEGER (int64) ::  n, m, i, j, k, n1, n2, n3, n4, i1, j1, k1, nn, &
-!                              nel2n, sumId,g, tag_flag, ibElems_cnt
-!       INTEGER            :: iPt, iPt1, ibcnt, flcnt, sldcnt
-!       REAL (dp)      :: n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis , minDis, &
-!                             n1dotn, n2dotn, n3dotn, n4dotn, n5dotn, n6dotn, n7dotn, n8dotn, n9dotn,  &
-!                             cent_x, cent_y, cent_z
-!
-!       DO g=blk_start,nblocks
-!        if( block(g)%blk_mv_tag .eq.0)then
-!    ALLOCATE(block(g)%minElemcell(block(g)%nx+2,block(g)%ny+2,block(g)%nz+2))
-!
-!
-!       tag_flag=1
-!    block(g)%minElemcell(:,:,:) = 0
-!    n1dotn = 0
-!       n2dotn = 0
-!       n3dotn = 0
-!       n4dotn = 0
-!       n5dotn = 0
-!       n6dotn = 0
-!       n7dotn = 0
-!       n8dotn = 0
-!       n9dotn = 0
-
-!       !!$acc parallel loop gang vector       &
-!       !!$acc present(interceptedIndexPtr, xp, yp, zp, x1, y1, z1, xcent, ycent, zcent, cosAlpha, cosBeta, cosGamma, cell, minElemcell)  &
-!       !!$acc private(n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis, minDis, m, nel2n, cent_x, cent_y, cent_z,   &
-!       !!$acc         n1dotn, n2dotn, n3dotn, n4dotn, n5dotn, n6dotn, n7dotn, n8dotn, n9dotn, i1, j1, k1, i, j, k)
-!
-!     !$acc parallel loop gang vector         &
-!     !$acc default(present)       &
-!     !$acc private(n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z, dis, minDis, nel2n, m, cent_x, cent_y, cent_z,         &
-!     !$acc         n1dotn, n2dotn, n3dotn, n4dotn, n5dotn, n6dotn, n7dotn, n8dotn, n9dotn)
-!       DO nn = 1, block(g)%ibCellCount
-!           i1 = block(g)%interceptedIndexPtr(nn, 1)
-!           j1 = block(g)%interceptedIndexPtr(nn, 2)
-!           k1 = block(g)%interceptedIndexPtr(nn, 3)
-!
-!          !$acc loop collapse(3) seq
-!           DO k = k1-2, k1+3
-!           DO j = j1-2, j1+3
-!           DO i = i1-2, i1+3
-!              m = 0
-!           minDis = 1e14
-!   	 n1x = block(g)%xp(i)
-!   	 n1y = block(g)%yp(j)
-!   	 n1z = block(g)%zp(k)
-!
-!   	 n2x = block(g)%x1(i)
-!   	 n3x = block(g)%x1(i+1)
-!
-!   	 n2y = block(g)%y1(j)
-!   	 n3y = block(g)%y1(j+1)
-!
-!   	 n2z = block(g)%z1(k)
-!   	 n3z = block(g)%z1(k+1)
-!
-!          !ibElems_cnt=block(g)%ibElemCnt
-!   	 !$acc loop seq
-!   	 !DO m = 1, ibElems_cnt
-!   	 DO m = 1, block(g)%ibElems
-!   	    cent_x = block(g)%xcent(m)
-!   	    cent_y = block(g)%ycent(m)
-!   	    cent_z = block(g)%zcent(m)
-!   	    dis  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
-!   	    IF (dis.LT.minDis) THEN
-!   		 minDis   = dis
-!   		 nel2n    = m
-!              ENDIF
-!           ENDDO
-!
-!           block(g)%minElemcell(i,j,k) = nel2n
-!
-!   	 !n1dotn  = (n1x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!              !          (n1y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!              !          (n1z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-
-!   	 n2dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                        (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                        (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-
-!   	 n3dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                        (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                        (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-
-!   	 n4dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                        (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                        (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-!
-!   	 n5dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                        (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                        (n2z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-
-!   	 n6dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                        (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                        (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-
-!   	 n7dotn  = (n2x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                        (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                        (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-
-!   	 n8dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                        (n2y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                        (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-!
-!   	 n9dotn  = (n3x - block(g)%xcent(nel2n))*block(g)%cosAlpha(nel2n) + &
-!                        (n3y - block(g)%ycent(nel2n))*block(g)%cosBeta(nel2n)  + &
-!                        (n3z - block(g)%zcent(nel2n))*block(g)%cosGamma(nel2n)
-!
-!   	 !n       = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
-!
-!           IF (n2dotn.LE.-1e-16 .AND. n3dotn.LE.-1e-16 .AND. n4dotn.LE.-1e-16 .AND. n5dotn.LE.-1e-16  &
-!   	    .AND. n6dotn.LE.-1e-16 .AND. n7dotn.LE.-1e-16 .AND. n8dotn.LE.-1e-16 .AND. n9dotn.LE.-1e-16) THEN
-!   		   block(g)%cell(i,j,k) = 1
-!           ELSEIF (n2dotn.GT.-1e-16 .AND. n3dotn.GT.-1e-16 .AND. n4dotn.GT.-1e-16 .AND. n5dotn.GT.-1e-16 &
-!   	    .AND. n6dotn.GT.-1e-16 .AND. n7dotn.GT.-1e-16 .AND. n8dotn.GT.-1e-16 .AND. n9dotn.GT.-1e-16) THEN
-!   		   block(g)%cell(i,j,k) = 0
-!           ELSE
-!   		   block(g)%cell(i,j,k) = 2
-!   	 ENDIF
-!         END DO
-!         END DO
-!         END DO
-!     ENDDO
-!       !$acc end parallel
-
-!       !!$acc update host(cell)
-
-!     block(g)%ibCellCount = 0
-!     block(g)%solidCellCount = 0
-!     block(g)%fluidCellCount = 0
-!     ibcnt=0.
-!     flcnt=0.
-!     sldcnt=0.
-!       !!$acc parallel loop collapse(3) present(cell) reduction(+: solidCellCount, fluidCellCount, ibCellCount)
-!       !$acc parallel loop collapse(3) default(present) reduction(+: sldcnt, flcnt, ibcnt)
-!        DO k = 2, block(g)%nz+1
-!        DO j = 2, block(g)%ny+1
-!        DO i = 2, block(g)%nx+1
-!        !n       = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
-!           IF (block(g)%cell(i,j,k).eq.1) THEN
-!   	 !block(g)%solidCellCount = block(g)%solidCellCount + 1
-!   	    sldcnt = sldcnt + 1
-!           ELSEIF (block(g)%cell(i,j,k).eq.0) THEN
-!            !  block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
-!   	    flcnt = flcnt + 1
-!           ELSEIF (block(g)%cell(i,j,k).eq.2) THEN
-!             ! block(g)%ibCellCount = block(g)%ibCellCount + 1
-!   	    ibcnt = ibcnt + 1
-!           ENDIF
-!         END DO
-!         END DO
-!         END DO
-!       !$acc end parallel
-!
-!     block(g)%ibCellCount = ibcnt
-!     block(g)%solidCellCount = sldcnt
-!     block(g)%fluidCellCount = flcnt
-!      GOTO 1001
-!
-!      IF (ita.eq.500) THEN
-!    open(82,file='inter.dat',status='unknown')
-!       write(82,*)'variables = "x", "y","z", "var"'
-!     do k = 2, block(g)%nz+1
-!        do j = 2, block(g)%ny+1
-!        do i = 2, block(g)%nx+1
-!     !n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
-!        if(block(g)%cell(i,j,k).eq.2)then
-!        write(82,*) block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 2
-!        endif
-!        end do
-!        end do
-!     enddo
-!       close(82)
-!
-!       open(83,file='fluid.dat',status='unknown')
-!       write(83,*)'variables = "x", "y","z","var"'
-!        do k = 2, block(g)%nz+1
-!        do j = 2, block(g)%ny+1
-!        do i = 2, block(g)%nx+1
-!     !n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
-!        if(block(g)%cell(i,j,k).eq.0)then
-!        write(83,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 0
-!        endif
-!        end do
-!        end do
-!     enddo
-!       close(83)
-!
-!       open(84,file='solid.dat',status='unknown')
-!       write(84,*)'variables = "x", "y","z","var"'
-!        do k = 2, block(g)%nz+1
-!        do j = 2, block(g)%ny+1
-!        do i = 2, block(g)%nx+1
-!     !n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*ny*(k-2)
-!        if(block(g)%cell(i,j,k).eq.1)then
-!        write(84,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 1
-!        endif
-!        end do
-!        end do
-!     enddo
-!       close(84)
-!      ENDIF
-!1001  CONTINUE
-!      print*, 'selective retagging', block(g)%ibCellCount, block(g)%fluidCellCount, block(g)%solidCellCount
-!       ENDIF
-!       END DO
-!    END SUBROUTINE selectiveRetagging
-!***********************************************************************
 end module biocfd_search
