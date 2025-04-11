@@ -84,7 +84,6 @@ SUBROUTINE velocityBC
 
       SUBROUTINE solidCellBC
          INTEGER (int64):: i, j, k, n, g
-         
          DO g=blk_start,nblocks
         !$acc parallel loop gang vector &
         !$acc default(present) &
