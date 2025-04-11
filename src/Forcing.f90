@@ -19,7 +19,6 @@ SUBROUTINE pressureForcing1
                          p_z1_x1, p_z2_x1, p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e
 
       dpdn = 0._rk
-        !g=2
         DO g=blk_start,nblocks
 
 
@@ -30,13 +29,7 @@ SUBROUTINE pressureForcing1
  !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z,ac_x_al,ac_y_al,at_x_al,at_y_al)         &
  !$acc default(present)  &
  !$acc firstprivate (block(g)%nx, block(g)%ny,block(g)%nz)
-
-!!$omp parallel do private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, &
-!!$omp cval, p_pos1, sur2nodeDis, dpdn,p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1, &
-!!$omp  p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, k, j, i, il, jl, kl, i_x1, i_y1, i_z1) firstprivate (g) num_threads(40)
       DO n = 1, block(g)%ibCellCount
-
-         !dpdn = (-(v_curr-v_prev)/deltat)*block(g)%cosBeta(block(g)%nelp(n))
          IF (block(g)%ibSurfId(block(g)%nelp(n))==50) THEN
             !dpdn = 0.
             ac_z = 0.  !-block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
@@ -54,11 +47,6 @@ SUBROUTINE pressureForcing1
             ac_y = -block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
             at_z =  block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
             at_y = -block(g)%thetaDDot*(block(g)%zcent(block(g)%nelp(n)) - block(g)%piv_z)
-          !!ac_x_al = -block(g)%alphaDot**2*(block(g)%xcent(block(g)%nelp(n)) - block(g)%piv_x )
-          !!ac_y_al = -block(g)%alphaDot**2*(block(g)%ycent(block(g)%nelp(n)) -block(g)%piv_y)
-          !!at_x_al =  block(g)%alphaDDot*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
-          !!at_y_al = -block(g)%alphaDDot*(block(g)%xcent(block(g)%nelp(n)) - block(g)%piv_x)
-            !dpdn = -((ac_z + at_z)*block(g)%cosAlpha(block(g)%nelp(n)) + (ac_y + at_y)*block(g)%cosBeta(block(g)%nelp(n)) !+ yddot*block(g)%cosBeta(block(g)%nelp(n)))
         ELSEIF (block(g)%ibSurfId(block(g)%nelp(n))==52) THEN
             block(g)%thetaDot  = block(g)%thetaDot2
             block(g)%thetaDDot = block(g)%thetaDDot2
@@ -66,16 +54,10 @@ SUBROUTINE pressureForcing1
             ac_y = -block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
             at_z =  block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
             at_y = -block(g)%thetaDDot*(block(g)%zcent(block(g)%nelp(n)) - block(g)%piv_z)
-          !!ac_x_al = -block(g)%alphaDot**2*(block(g)%xcent(block(g)%nelp(n)) - block(g)%piv_x )
-          !!ac_y_al = -block(g)%alphaDot**2*(block(g)%ycent(block(g)%nelp(n)) -block(g)%piv_y)
-          !!at_x_al =  block(g)%alphaDDot*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
-          !!at_y_al = -block(g)%alphaDDot*(block(g)%xcent(block(g)%nelp(n)) - block(g)%piv_x)
-            !dpdn = -((ac_z + at_z)*block(g)%cosAlpha(block(g)%nelp(n)) + (ac_y + at_y)*block(g)%cosBeta(block(g)%nelp(n)) !+ yddot*block(g)%cosBeta(block(g)%nelp(n)))
         ENDIF
          dpdn = -((ac_z + at_z)*block(g)%cosGamma(block(g)%nelp(n)) + (ac_y + at_y) * &
                   block(g)%cosBeta(block(g)%nelp(n)))-block(g)%yddot * &
                      block(g)%cosBeta(block(g)%nelp(n))
-         !dpdn = -((ac_z + at_z)*-block(g)%cosGamma(block(g)%nelp(n)) + (ac_y + at_y + ac_y_al + at_y_al)*-block(g)%cosBeta(block(g)%nelp(n)) + (ac_x_al+at_x_al)*-block(g)%cosAlpha(block(g)%nelp(n)))  !+ yddot*block(g)%cosBeta(block(g)%nelp(n)))
 
          i = block(g)%interceptedIndexPtr(n, 1)
          j = block(g)%interceptedIndexPtr(n, 2)
@@ -181,15 +163,12 @@ SUBROUTINE pressureForcing1
 
          block(g)%p(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
       ENDDO
-! !$omp end parallel do
  !$acc end parallel
       ENDDO
 
      !print*, "Leaving PressureForcing"
 END SUBROUTINE pressureForcing1
-!***********************************************************************
 
-!***********************************************************************
 SUBROUTINE velocityForcing1
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1, g
@@ -206,24 +185,6 @@ SUBROUTINE velocityForcing1
                          v_z2_x2, w_x1_z1, w_x2_z1, w_x1_z2, w_x2_z2, &
                          w_z1_x1, w_z2_x1, w_z1_x2, w_z2_x2
 
-!!$acc parallel loop gang vector         &
-!!$acc private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,           &
-!!$acc          aval, bval, cval, sur2nodeDis, h1, h2,               &
-!!$acc          usurf, u_pos1, u_x1, u_x2, u_y1, u_y2, u_z1, u_z2,   &
-!!$acc          vsurf, v_pos1, v_x1, v_x2, v_y1, v_y2, v_z1, v_z2,   &
-!!$acc          wsurf, w_pos1, w_x1, w_x2, w_y1, w_y2, w_z1, w_z2,   &
-!!$acc          dudn_e, dudx_e, dudy_e, dudz_e, dvdn_e, dvdx_e, dvdy_e, dvdz_e,  &
-!!$acc          dwdn_e, dwdx_e, dwdy_e, dwdz_e, u_x1_z1, u_x2_z1, u_x1_z2, u_x2_z2, u_z1_x1,  &
-!!$acc          u_z2_x1, u_z1_x2, u_z2_x2, v_x1_z1, v_x2_z1, v_x1_z2, v_x2_z2, v_z1_x1, v_z2_x1, v_z1_x2, &
-!!$acc          v_z2_x2, w_x1_z1, w_x2_z1, w_x1_z2, w_x2_z2, w_z1_x1, w_z2_x1, w_z1_x2, w_z2_x2, k, j, i, il, jl, kl, i_x1, i_y1, i_z1) &
-!!$acc present (block(g)%interceptedIndexPtr, block(g)%deltax, block(g)%deltay, block(g)%deltaz, block(g)%cosAlpha, block(g)%cosBeta, block(g)%cosGamma,    &
-!!$acc           ut, block(g)%u2NormDis, block(g)%u1NormDis, block(g)%nelu2, block(g)%nelu1, xu, yu, zu,      &
-!!$acc           vt, block(g)%v2NormDis, block(g)%v1NormDis, block(g)%nelv2, block(g)%nelv1, xv, yv, zv,      &
-!!$acc           wt, block(g)%w2NormDis, block(g)%w1NormDis, block(g)%nelw2, block(g)%nelw1, xw, yw, zw)      &
-!!$acc firstprivate (block(g)%nx, block(g)%ny,block(g)%nz)
-
-
-        !g=2
         DO g=blk_start, nblocks
  !$acc parallel loop gang vector         &
  !$acc private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,           &
@@ -238,18 +199,6 @@ SUBROUTINE velocityForcing1
  !$acc default(present)   &
  !$acc firstprivate (block(g)%nx, block(g)%ny,block(g)%nz)
 
-
-!!$omp parallel do private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,           &
-!!$omp         aval, bval, cval, sur2nodeDis, h1, h2,               &
-!!$omp         usurf, u_pos1, u_x1, u_x2, u_y1, u_y2, u_z1, u_z2,   &
-!!$omp         vsurf, v_pos1, v_x1, v_x2, v_y1, v_y2, v_z1, v_z2,   &
-!!$omp         wsurf, w_pos1, w_x1, w_x2, w_y1, w_y2, w_z1, w_z2,   &
-!!!$omp         dudn_e, dudx_e, dudy_e, dudz_e, dvdn_e, dvdx_e, dvdy_e, dvdz_e,  &
-!!!$omp         dwdn_e, dwdx_e, dwdy_e, dwdz_e, u_x1_z1, u_x2_z1, u_x1_z2, u_x2_z2, u_z1_x1,  &
-!!!$omp         u_z2_x1, u_z1_x2, u_z2_x2, v_x1_z1, v_x2_z1, v_x1_z2, v_x2_z2, v_z1_x1, v_z2_x1, v_z1_x2, &
-!!!$omp         v_z2_x2, w_x1_z1, w_x2_z1, w_x1_z2, w_x2_z2, w_z1_x1, w_z2_x1, w_z1_x2, w_z2_x2, k, j, i, il, jl, kl, i_x1, i_y1, i_z1) &
-!!!$omp         firstprivate (g)  num_threads(40)
-
       DO n = 1, block(g)%ibCellCount
 
          !usurf = 0._rk
@@ -257,10 +206,8 @@ SUBROUTINE velocityForcing1
              usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu2(n))==51) THEN
              usurf = 0._dp + block(g)%xdot
-           !!usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(n)) - block(g)%piv_y)
          ELSEIF (block(g)%ibSurfId(block(g)%nelu2(n))==52) THEN
              usurf = 0._dp +block(g)%xdot
-           !!usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(n)) - block(g)%piv_y)
          ENDIF
          i = block(g)%interceptedIndexPtr(n, 1)
          j = block(g)%interceptedIndexPtr(n, 2)
@@ -290,13 +237,7 @@ SUBROUTINE velocityForcing1
          DO kl = 1, block(g)%nz+1
             if(pos1_z>=block(g)%zu(kl).and.pos1_z<block(g)%zu(kl+1)) i_z1 = kl
          END DO
-
-         !IF(i_x1.EQ.1) i_x1 = 2
-         !IF(i_y1.EQ.1) i_y1 = 2
-         !IF(i_z1.EQ.1) i_z1 = 2
          IF(i_x1==block(g)%nx+2) i_x1 = block(g)%nx+1
-         !IF(i_y1.EQ.block(g)%ny+2) i_y1 = block(g)%ny+1
-         !IF(i_z1.EQ.block(g)%nz+2) i_z1 = block(g)%nz+1
 
          !interpolation along x @ z1 plane
          u_x1_z1 = block(g)%ut(i_x1-1, i_y1, i_z1) + (block(g)%ut(i_x1, i_y1, i_z1) &
@@ -373,7 +314,6 @@ SUBROUTINE velocityForcing1
          bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%ut(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-!***********************************************************************
 
 !******************************U(i-1,j,k)*******************************
          !usurf = u_curr
@@ -382,10 +322,8 @@ SUBROUTINE velocityForcing1
              usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu1(n))==51) THEN
              usurf = 0._dp + block(g)%xdot
-           !!usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(n)) - block(g)%piv_y)
          ELSEIF (block(g)%ibSurfId(block(g)%nelu1(n))==52) THEN
              usurf = 0._dp + block(g)%xdot
-           !!usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(n)) - block(g)%piv_y)
          ENDIF
          sur2nodeDis = block(g)%u1NormDis(n)
 
@@ -411,11 +349,6 @@ SUBROUTINE velocityForcing1
          END DO
 
          IF(i_x1==1) i_x1 = 2
-         !IF(i_y1.EQ.1) i_y1 = 2
-         !IF(i_z1.EQ.1) i_z1 = 2
-         !IF(i_x1.EQ.block(g)%nx+2) i_x1 = block(g)%nx+1
-         !IF(i_y1.EQ.block(g)%ny+2) i_y1 = block(g)%ny+1
-         !IF(i_z1.EQ.block(g)%nz+2) i_z1 = block(g)%nz+1
 
          !interpolation along x @ z1 plane
          u_x1_z1 = block(g)%ut(i_x1-1, i_y1, i_z1) + (block(g)%ut(i_x1, i_y1, i_z1) &
@@ -492,7 +425,6 @@ SUBROUTINE velocityForcing1
          bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%ut(i-1,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-!***********************************************************************
 
 !**************************V(i,j,k)*************************************
          !vsurf = v_curr
@@ -503,12 +435,10 @@ SUBROUTINE velocityForcing1
            block(g)%thetaDot =  block(g)%thetaDot1
            vsurf = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) &
                    - block(g)%piv_z) + block(g)%ydot
-           !!vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z) + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv2(n))-block(g)%piv_x)
          ELSEIF (block(g)%ibSurfId(block(g)%nelv2(n))==52) THEN
            block(g)%thetaDot =  block(g)%thetaDot2
            vsurf = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) &
                    - block(g)%piv_z)+ block(g)%ydot  ! + ydot
-           !!vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z) + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv2(n))-block(g)%piv_x)
          ENDIF
 
          sur2nodeDis = block(g)%v2NormDis(n)
@@ -534,12 +464,7 @@ SUBROUTINE velocityForcing1
             if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
          END DO
 
-         !IF(i_x1.EQ.1) i_x1 = 2
-         !IF(i_y1.EQ.1) i_y1 = 2
-         !IF(i_z1.EQ.1) i_z1 = 2
-         !IF(i_x1.EQ.block(g)%nx+2) i_x1 = block(g)%nx+1
          IF(i_y1==block(g)%ny+2) i_y1 = block(g)%ny+1
-         !IF(i_z1.EQ.block(g)%nz+2) i_z1 = block(g)%nz+1
 
          !interpolation along x @ z1 plane
          v_x1_z1 = block(g)%vt(i_x1, i_y1-1, i_z1)   + (block(g)%vt(i_x1+1, i_y1-1, i_z1) &
@@ -617,8 +542,6 @@ SUBROUTINE velocityForcing1
          bval = 2._dp/n1*(v_pos1 - vsurf) - dvdn_e
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%vt(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-!***********************************************************************
-
 !**************************V(i,j-1,k)*************************************
          !vsurf = v_curr
          !vsurf = 0._rk
@@ -628,12 +551,10 @@ SUBROUTINE velocityForcing1
            block(g)%thetaDot =  block(g)%thetaDot1
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z) &
                       + block(g)%ydot
-           !!vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)  + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv1(n))-block(g)%piv_x)
          ELSEIF (block(g)%ibSurfId(block(g)%nelv1(n))==52) THEN
            block(g)%thetaDot =  block(g)%thetaDot2
            vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z) &
                       + block(g)%ydot  ! + ydot
-           !!vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)  + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv1(n))-block(g)%piv_x)
          ENDIF
          sur2nodeDis = block(g)%v1NormDis(n)
 
@@ -658,12 +579,7 @@ SUBROUTINE velocityForcing1
             if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
          END DO
 
-         !IF(i_x1.EQ.1) i_x1 = 2
          IF(i_y1==1) i_y1 = 2
-         !IF(i_z1.EQ.1) i_z1 = 2
-         !IF(i_x1.EQ.block(g)%nx+2) i_x1 = block(g)%nx+1
-         !IF(i_y1.EQ.block(g)%ny+2) i_y1 = block(g)%ny+1
-         !IF(i_z1.EQ.block(g)%nz+2) i_z1 = block(g)%nz+1
 
          !interpolation along x @ z1 plane
          v_x1_z1 = block(g)%vt(i_x1, i_y1-1, i_z1)   + (block(g)%vt(i_x1+1, i_y1-1, i_z1) &
@@ -741,8 +657,6 @@ SUBROUTINE velocityForcing1
          bval = 2._dp/n1*(v_pos1 - vsurf) - dvdn_e
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%vt(i,j-1,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-!***********************************************************************
-
 !**************************W(i,j,k)*************************************
          !wsurf = w_curr
          !wsurf = 0._rk
@@ -778,11 +692,6 @@ SUBROUTINE velocityForcing1
             if(pos1_z>=block(g)%zw(kl).and.pos1_z<block(g)%zw(kl+1)) i_z1 = kl
          END DO
 
-         !IF(i_x1.EQ.1) i_x1 = 2
-         !IF(i_y1.EQ.1) i_y1 = 2
-         !IF(i_z1.EQ.1) i_z1 = 2
-         !IF(i_x1.EQ.block(g)%nx+2) i_x1 = block(g)%nx+1
-         !IF(i_y1.EQ.block(g)%ny+2) i_y1 = block(g)%ny+1
          IF(i_z1==block(g)%nz+2) i_z1 = block(g)%nz+1
 
          !interpolation along x @ z1 plane
@@ -860,8 +769,6 @@ SUBROUTINE velocityForcing1
          bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%wt(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-!***********************************************************************
-
 !**************************W(i,j,k-1)*************************************
          !wsurf = w_curr
          wsurf = 0._rk
@@ -897,12 +804,7 @@ SUBROUTINE velocityForcing1
             if(pos1_z>=block(g)%zw(kl).and.pos1_z<block(g)%zw(kl+1)) i_z1 = kl
          END DO
 
-         !IF(i_x1.EQ.1) i_x1 = 2
-         !IF(i_y1.EQ.1) i_y1 = 2
          IF(i_z1==1) i_z1 = 2
-         !IF(i_x1.EQ.block(g)%nx+2) i_x1 = block(g)%nx+1
-         !IF(i_y1.EQ.block(g)%ny+2) i_y1 = block(g)%ny+1
-         !IF(i_z1.EQ.block(g)%nz+2) i_z1 = block(g)%nz+1
 
          !interpolation along x @ z1 plane
          w_x1_z1 = block(g)%wt(i_x1, i_y1, i_z1-1)   + (block(g)%wt(i_x1+1, i_y1, i_z1-1) &
@@ -979,18 +881,12 @@ SUBROUTINE velocityForcing1
          bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%wt(i,j,k-1) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-!***********************************************************************
       ENDDO
-!!!$omp end parallel do
 !$acc end parallel
       ENDDO
 
-     !print*, "Leaving VelocityForcing"
 END SUBROUTINE velocityForcing1
 
-
-
-!***********************************************************************
 SUBROUTINE pressureForcingGhost
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
@@ -1000,13 +896,8 @@ SUBROUTINE pressureForcingGhost
                          p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1, p_z1_x2, p_z2_x2, &
                          h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e
 
-
-
-        !g=2
         DO g=blk_start, nblocks
       dpdn = 0._rk
-        !print*,'inside pressureghost'
-      !!$acc parallel loop present(block(g)%ibSurfId, block(g)%xcent, block(g)%ycent, block(g)%zcent, cell2, block(g)%TSIndexPtr, pNormDis, nelp, deltax, deltay, deltaz, block(g)%cosAlpha, block(g)%cosBeta, block(g)%cosGamma, xp, yp, zp, p, block(g)%p_ghost, block(g)%pt_ghost, cell, block(g)%index_ts)
  !$acc parallel loop gang vector                                                                    &
  !$acc private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
@@ -1016,15 +907,10 @@ SUBROUTINE pressureForcingGhost
  !$acc firstprivate (block(g)%nx, block(g)%ny,block(g)%nz)
       DO n = 1, block(g)%TSCellCount
 
-         !dpdn = (-(v_curr-v_prev)/deltat)*block(g)%cosBeta(block(g)%nelp(n))
-        !print *,n
         i = block(g)%TSIndexPtr(n, 1)
         j = block(g)%TSIndexPtr(n, 2)
         k = block(g)%TSIndexPtr(n, 3)
-        !PRINT*,I,J,K
-       ! IF (block(g)%cell2(i,j,k).EQ.2) THEN
         IF (block(g)%ibSurfId(block(g)%nelp(block(g)%index_ts(n)))==50) THEN
-            !dpdn = 0.
             ac_z = 0.  !-block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
             ac_y = 0.  !-block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_z = 0.  ! block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
@@ -1045,12 +931,6 @@ SUBROUTINE pressureForcingGhost
             at_y = -block(g)%thetaDDot*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) &
                    - block(g)%piv_z)
 
-          !!ac_x_al = -block(g)%alphaDot**2*(block(g)%xcent(block(g)%index_ts(n)) - block(g)%piv_x )
-          !!ac_y_al = -block(g)%alphaDot**2*(block(g)%ycent(block(g)%index_ts(n)) -block(g)%piv_y)
-          !!at_x_al =  block(g)%alphaDDot*(block(g)%ycent(block(g)%index_ts(n)) - block(g)%piv_y)
-          !!at_y_al = -block(g)%alphaDDot*(block(g)%xcent(block(g)%index_ts(n)) - block(g)%piv_x)
-
-            !dpdn = -((ac_z + at_z)*-block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n))) + (ac_y + at_y)*-block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n))))  !+ yddot*block(g)%cosBeta(block(g)%nelp(n)))
         ELSEIF (block(g)%ibSurfId(block(g)%nelp(block(g)%index_ts(n)))==52) THEN
             block(g)%thetaDot  = block(g)%thetaDot2
             block(g)%thetaDDot = block(g)%thetaDDot2
@@ -1062,15 +942,10 @@ SUBROUTINE pressureForcingGhost
                    - block(g)%piv_y)
             at_y = -block(g)%thetaDDot*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) &
                    - block(g)%piv_z)
-          !!ac_x_al = -block(g)%alphaDot**2*(block(g)%xcent(block(g)%index_ts(n)) - block(g)%piv_x )
-          !!ac_y_al = -block(g)%alphaDot**2*(block(g)%ycent(block(g)%index_ts(n)) -block(g)%piv_y)
-          !!at_x_al =  block(g)%alphaDDot*(block(g)%ycent(block(g)%index_ts(n)) - block(g)%piv_y)
-          !!at_y_al = -block(g)%alphaDDot*(block(g)%xcent(block(g)%index_ts(n)) - block(g)%piv_x)
         ENDIF
             dpdn = -((ac_z + at_z)* -block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(n))) &
                    + (ac_y + at_y)* -block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n)))) &
                    - (block(g)%yddot*(-block(g)%cosBeta(block(g)%index_ts(n))))
-         !dpdn = -((ac_z + at_z)*-block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(n))) + (ac_y + at_y + ac_y_al + at_y_al)*-block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n))) + (ac_x_al+at_x_al)*-block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n))))  !+ yddot*block(g)%cosBeta(block(g)%nelp(n)))
 
          sur2nodeDis = -block(g)%pNormDis(block(g)%index_ts(n))
 
@@ -1083,11 +958,6 @@ SUBROUTINE pressureForcingGhost
          pos1_x = block(g)%xp(i) + pt1*-block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n)))
          pos1_y = block(g)%yp(j) + pt1*-block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n)))
          pos1_z = block(g)%zp(k) + pt1*-block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(n)))
-         !ac_x = -block(g)%thetaDot**2*(block(g)%xcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_x)
-         !ac_y = -block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
-         !at_x =  block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
-         !at_y = -block(g)%thetaDDot*(block(g)%xcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_x)
-         !dpdn = -((ac_x + at_x)*-block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n))) + (ac_y + at_y)*-block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n))) + yddot*-block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n))))
          !$acc loop seq
          DO il = i-7, i+7
             if(pos1_x>=block(g)%xp(il).and.pos1_x<block(g)%xp(il+1)) i_x1 = il
@@ -1100,7 +970,6 @@ SUBROUTINE pressureForcingGhost
          DO kl = k-7, k+7
             if(pos1_z>=block(g)%zp(kl).and.pos1_z<block(g)%zp(kl+1)) i_z1 = kl
          END DO
-         !IF (cell(i_x1, i_y1, i_z1).EQ.0) THEN
          !interpolation along x  @ z1 plane
          p_x1_z1 = block(g)%p(i_x1, i_y1, i_z1)   + (block(g)%p(i_x1+1, i_y1, i_z1)   &
                    - block(g)%p(i_x1, i_y1, i_z1))  &
@@ -1177,18 +1046,12 @@ SUBROUTINE pressureForcingGhost
          cvaL = p_pos1 - (dpdn_e + dpdn)*n1*0.5_dp
 
          block(g)%p_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-         !ELSE
-         !block(g)%p_ghost(n) =  p(i,j,k)
-         !ENDIF
          block(g)%pt_ghost(n) = block(g)%p(i,j,k)
-         !ENDIF
       ENDDO
       !$acc end parallel
       ENDDO
 END SUBROUTINE pressureForcingGhost
 
-
-!***********************************************************************
 SUBROUTINE velocityForcingGhost
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
@@ -1203,10 +1066,7 @@ SUBROUTINE velocityForcingGhost
                          v_x1_z1, v_x2_z1, v_x1_z2, v_x2_z2, v_z1_x1, v_z2_x1, v_z1_x2, v_z2_x2, &
                          w_x1_z1, w_x2_z1, w_x1_z2, w_x2_z2, w_z1_x1, w_z2_x1, w_z1_x2, w_z2_x2
 
-        !g=2
-        !g=2
         DO g=blk_start,nblocks
-      !!$acc parallel loop present(block(g)%ibSurfId, block(g)%index_ts, block(g)%xcent, block(g)%ycent, block(g)%zcent, u, v, w, block(g)%TSIndexPtr, cell2, block(g)%u2_ghost, block(g)%u2t_ghost, block(g)%v2_ghost, block(g)%v2t_ghost, block(g)%w2_ghost, block(g)%w2t_ghost, block(g)%u1_ghost, block(g)%u1t_ghost, block(g)%v1_ghost, block(g)%v1t_ghost, block(g)%w1_ghost, block(g)%w1t_ghost, block(g)%u2NormDis, block(g)%u1NormDis, block(g)%v2NormDis, block(g)%v1NormDis, block(g)%w2NormDis, block(g)%w1NormDis, block(g)%nelu2, block(g)%nelu1, block(g)%nelv2, block(g)%nelv1, block(g)%nelw2, block(g)%nelw1, deltax, deltay, deltaz, block(g)%cosAlpha, block(g)%cosBeta, cosgamma, xu, yu, zu, xv, yv, zv, xw, yw, zw, ut, vt, wt, cell)
  !$acc parallel loop gang vector         &
  !$acc private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,           &
  !$acc          aval, bval, cval, sur2nodeDis, h1, h2,               &
@@ -1231,13 +1091,10 @@ SUBROUTINE velocityForcingGhost
              usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu2(block(g)%index_ts(n)))==51) THEN
              usurf = 0._dp + block(g)%xdot
-           !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(block(g)%index_ts(n))) -block(g)%piv_y)
          ELSEIF (block(g)%ibSurfId(block(g)%nelu2(block(g)%index_ts(n)))==52) THEN
-           !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(block(g)%index_ts(n)))-block(g)%piv_y)
            usurf = 0._dp + block(g)%xdot
          ENDIF
 
-         !usurf = block(g)%thetaDot*(block(g)%ycent(block(g)%nelu2(block(g)%index_ts(n)))-block(g)%piv_y)
          sur2nodeDis = -block(g)%u2NormDis(block(g)%index_ts(n))
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 &
@@ -1263,7 +1120,6 @@ SUBROUTINE velocityForcingGhost
             if(pos1_z>=block(g)%zu(kl).and.pos1_z<block(g)%zu(kl+1)) i_z1 = kl
          END DO
 
-         !IF (cell(i_x1, i_y1, i_z1).EQ.0) THEN
          !interpolation along x @ z1 plane
          u_x1_z1 = block(g)%ut(i_x1-1, i_y1, i_z1)   + (block(g)%ut(i_x1, i_y1, i_z1)   &
                    - block(g)%ut(i_x1-1, i_y1, i_z1)) &
@@ -1339,26 +1195,17 @@ SUBROUTINE velocityForcingGhost
          bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%u2_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-         !ELSE
-         !block(g)%u2_ghost(n) = u(i,j,k)
-         !ENDIF
          block(g)%u2t_ghost(n) = block(g)%u(i,j,k)
-!***********************************************************************
-
 !******************************U(i-1,j,k)*******************************
          !usurf = u_curr
          IF (block(g)%ibSurfID(block(g)%nelu1(block(g)%index_ts(n)))==50) THEN
              usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu1(block(g)%index_ts(n)))==51) THEN
              usurf = 0._dp + block(g)%xdot
-           !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(block(g)%index_ts(n)))-block(g)%piv_y)
          ELSEIF (block(g)%ibSurfId(block(g)%nelu1(block(g)%index_ts(n)))==52) THEN
-           !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(block(g)%index_ts(n)))-block(g)%piv_y)
            usurf = 0._dp + block(g)%xdot
          ENDIF
 
-
-         !usurf = block(g)%thetaDot*(block(g)%ycent(block(g)%nelu1(block(g)%index_ts(n)))-block(g)%piv_y)
          sur2nodeDis = -block(g)%u1NormDis(block(g)%index_ts(n))
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
@@ -1382,7 +1229,6 @@ SUBROUTINE velocityForcingGhost
             if(pos1_z>=block(g)%zu(kl).and.pos1_z<block(g)%zu(kl+1)) i_z1 = kl
          END DO
 
-         !IF (cell(i_x1, i_y1, i_z1).EQ.0) THEN
          !interpolation along x @ z1 plane
          u_x1_z1 = block(g)%ut(i_x1-1, i_y1, i_z1)   + (block(g)%ut(i_x1, i_y1, i_z1)   &
                   - block(g)%ut(i_x1-1, i_y1, i_z1)) &
@@ -1458,11 +1304,7 @@ SUBROUTINE velocityForcingGhost
          bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%u1_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-         !ELSE
-         !block(g)%u1_ghost(n) = u(i-1,j,k)
-         !ENDIF
          block(g)%u1t_ghost(n) = block(g)%u(i-1,j,k)
-!***********************************************************************
 
 !**************************V(i,j,k)*************************************
          !vsurf = v_curr
@@ -1482,7 +1324,6 @@ SUBROUTINE velocityForcingGhost
                    - block(g)%piv_x) + block(g)%ydot  ! + ydot
          ENDIF
 
-         !vsurf =  -block(g)%thetaDot*(block(g)%xcent(block(g)%nelv2(block(g)%index_ts(n))) - block(g)%piv_x) + ydot
          sur2nodeDis = -block(g)%v2NormDis(block(g)%index_ts(n))
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
@@ -1506,7 +1347,6 @@ SUBROUTINE velocityForcingGhost
             if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
          END DO
 
-         ! IF (cell(i_x1, i_y1, i_z1).EQ.0) THEN
          !interpolation along x @ z1 plane
          v_x1_z1 = block(g)%vt(i_x1, i_y1-1, i_z1)   + (block(g)%vt(i_x1+1, i_y1-1, i_z1) &
                   - block(g)%vt(i_x1, i_y1-1, i_z1))&
@@ -1587,8 +1427,6 @@ SUBROUTINE velocityForcingGhost
          !block(g)%v2_ghost(n) = v(i,j,k)
          !ENDIF
          block(g)%v2t_ghost(n) = block(g)%v(i,j,k)
-!***********************************************************************
-
 !**************************V(i,j-1,k)*************************************
          !vsurf = v_curr
          IF (block(g)%ibSurfID(block(g)%nelv1(block(g)%index_ts(n)))==50) THEN
@@ -1607,8 +1445,6 @@ SUBROUTINE velocityForcingGhost
                       - block(g)%piv_x)+ block(g)%ydot  ! + ydot
          ENDIF
 
-
-         !vsurf =  -block(g)%thetaDot*(block(g)%xcent(block(g)%nelv1(block(g)%index_ts(n))) - block(g)%piv_x) + ydot
          sur2nodeDis = -block(g)%v1NormDis(block(g)%index_ts(n))
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 &
@@ -1632,7 +1468,6 @@ SUBROUTINE velocityForcingGhost
             if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
          END DO
 
-         !IF (cell(i_x1, i_y1, i_z1).EQ.0) THEN
          !interpolation along x @ z1 plane
          v_x1_z1 = block(g)%vt(i_x1, i_y1-1, i_z1)   + (block(g)%vt(i_x1+1, i_y1-1, i_z1) &
                    - block(g)%vt(i_x1, i_y1-1, i_z1)) &
@@ -1709,12 +1544,7 @@ SUBROUTINE velocityForcingGhost
          bval = 2._dp/n1*(v_pos1 - vsurf) - dvdn_e
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%v1_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-         !ELSE
-         !block(g)%v1_ghost(n) = v(i,j-1,k)
-         !ENDIF
          block(g)%v1t_ghost(n) = block(g)%v(i,j-1,k)
-!***********************************************************************
-
 !**************************W(i,j,k)*************************************
          !wsurf = w_curr
          wsurf = 0._rk
@@ -1753,7 +1583,6 @@ SUBROUTINE velocityForcingGhost
          DO kl = k-7, k+7
             if(pos1_z>=block(g)%zw(kl).and.pos1_z<block(g)%zw(kl+1)) i_z1 = kl
          END DO
-         !IF (cell(i_x1, i_y1, i_z1).EQ.0) THEN
          !interpolation along x @ z1 plane
          w_x1_z1 = block(g)%wt(i_x1, i_y1, i_z1-1)   + (block(g)%wt(i_x1+1, i_y1, i_z1-1) &
                    - block(g)%wt(i_x1, i_y1, i_z1-1)) &
@@ -1833,9 +1662,6 @@ SUBROUTINE velocityForcingGhost
          !block(g)%w2_ghost(n) = w(i,j,k)
          !ENDIF
          block(g)%w2t_ghost(n) = block(g)%w(i,j,k)
-
-!***********************************************************************
-
 !**************************W(i,j,k-1)*************************************
          !wsurf = w_curr
          wsurf = 0._rk
@@ -1950,12 +1776,7 @@ SUBROUTINE velocityForcingGhost
          bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%w1_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-         !ELSE
-         !block(g)%w1_ghost(n) = w(i,j,k-1)
-         !ENDIF
          block(g)%w1t_ghost(n) = block(g)%w(i,j,k-1)
-!***********************************************************************
-        !ENDIF
       ENDDO
       !$acc end parallel
       ENDDO
@@ -1972,10 +1793,8 @@ SUBROUTINE pressureForcingField
                          p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1, p_z1_x2, p_z2_x2, &
                          h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e
 
-        !g=2
        DO g=blk_start,nblocks
       dpdn = 0._rk
-      !!$acc parallel loop present(block(g)%ibSurfId, block(g)%xcent, block(g)%ycent, block(g)%zcent, block(g)%interceptedIndexPtr, block(g)%pNormDis, nelp, deltax, deltay, deltaz, block(g)%cosAlpha, block(g)%cosBeta, block(g)%cosGamma, xp, yp, zp, p)
  !$acc parallel loop gang vector                                                                                          &
  !$acc private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
@@ -1985,7 +1804,6 @@ SUBROUTINE pressureForcingField
  !$acc firstprivate (block(g)%nx, block(g)%ny,block(g)%nz)
       DO n = 1, block(g)%ibCellCount
          IF (block(g)%ibSurfId(block(g)%nelp(n))==50) THEN
-            !dpdn = 0.
             ac_z = 0.  !-block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
             ac_y = 0.  !-block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_z = 0.  ! block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
@@ -2001,11 +1819,6 @@ SUBROUTINE pressureForcingField
             ac_y = -block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
             at_z =  block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
             at_y = -block(g)%thetaDDot*(block(g)%zcent(block(g)%nelp(n)) - block(g)%piv_z)
-          !!ac_x_al = -block(g)%alphaDot**2*(block(g)%xcent(block(g)%nelp(n)) -block(g)%piv_x )
-          !!ac_y_al = -block(g)%alphaDot**2*(block(g)%ycent(block(g)%nelp(n)) -block(g)%piv_y )
-          !!at_x_al =  block(g)%alphaDDot*(block(g)%ycent(block(g)%nelp(n)) -block(g)%piv_y )
-          !!at_y_al = -block(g)%alphaDDot*(block(g)%xcent(block(g)%nelp(n)) -block(g)%piv_x )
-            !dpdn = -((ac_z + at_z)*block(g)%cosAlpha(block(g)%nelp(n)) + (ac_y + at_y)*block(g)%cosBeta(block(g)%nelp(n)) !+ yddot*block(g)%cosBeta(block(g)%nelp(n)))
         ELSEIF (block(g)%ibSurfId(block(g)%nelp(n))==52) THEN
             block(g)%thetaDot  = block(g)%thetaDot2
             block(g)%thetaDDot = block(g)%thetaDDot2
@@ -2013,22 +1826,10 @@ SUBROUTINE pressureForcingField
             ac_y = -block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
             at_z =  block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
             at_y = -block(g)%thetaDDot*(block(g)%zcent(block(g)%nelp(n)) - block(g)%piv_z)
-          !!ac_x_al = -block(g)%alphaDot**2*(block(g)%xcent(block(g)%nelp(n)) -block(g)%piv_x )
-          !!ac_y_al = -block(g)%alphaDot**2*(block(g)%ycent(block(g)%nelp(n)) -block(g)%piv_y )
-          !!at_x_al =  block(g)%alphaDDot*(block(g)%ycent(block(g)%nelp(n)) -block(g)%piv_y )
-          !!at_y_al = -block(g)%alphaDDot*(block(g)%xcent(block(g)%nelp(n)) -block(g)%piv_x )
-            !dpdn = -((ac_z + at_z)*block(g)%cosAlpha(block(g)%nelp(n)) + (ac_y + at_y)*block(g)%cosBeta(block(g)%nelp(n)) !+ yddot*block(g)%cosBeta(block(g)%nelp(n)))
         ENDIF
          dpdn = -((ac_z + at_z)*block(g)%cosGamma(block(g)%nelp(n)) &
                 + (ac_y + at_y)*block(g)%cosBeta(block(g)%nelp(n))) &
                 -block(g)%yddot*block(g)%cosBeta(block(g)%nelp(n))
-         !dpdn = -((ac_z + at_z)*-block(g)%cosGamma(block(g)%nelp(n)) + (ac_y + at_y + ac_y_al + at_y_al)*-block(g)%cosBeta(block(g)%nelp(n)) + (ac_x_al+at_x_al)*-block(g)%cosAlpha(block(g)%nelp(n)))  !+ yddot*block(g)%cosBeta(block(g)%nelp(n)))
-
-         !ac_x = -block(g)%thetaDot**2*(block(g)%xcent(block(g)%nelp(n)) - block(g)%piv_x)
-         !ac_y = -block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
-         !at_x =  block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
-         !at_y = -block(g)%thetaDDot*(block(g)%xcent(block(g)%nelp(n)) - block(g)%piv_x)
-         !dpdn = -((ac_x + at_x)*block(g)%cosAlpha(block(g)%nelp(n)) + (ac_y + at_y)*block(g)%cosBeta(block(g)%nelp(n)) + yddot*block(g)%cosBeta(block(g)%nelp(n)))
 
          i = block(g)%interceptedIndexPtr(n, 1)
          j = block(g)%interceptedIndexPtr(n, 2)
@@ -2138,8 +1939,6 @@ SUBROUTINE pressureForcingField
       ENDDO
 END SUBROUTINE pressureForcingField
 
-!*****************************************************
-!*****************************************************************************
 SUBROUTINE velocityForcingField
       INTEGER, PARAMETER :: rk = selected_real_kind(8)
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
@@ -2156,9 +1955,7 @@ SUBROUTINE velocityForcingField
                          v_z2_x2, w_x1_z1, w_x2_z1, w_x1_z2, w_x2_z2, &
                          w_z1_x1, w_z2_x1, w_z1_x2, w_z2_x2
 
-        !g=2
         DO g=blk_start,nblocks
-      !!$acc parallel loop present(block(g)%ibSurfId, block(g)%xcent, block(g)%ycent, block(g)%zcent, u, v, w, block(g)%interceptedIndexPtr, block(g)%u2NormDis, block(g)%u1NormDis, block(g)%v2NormDis, block(g)%v1NormDis, block(g)%w2NormDis, block(g)%w1NormDis, block(g)%nelu2, block(g)%nelu1, block(g)%nelv2, block(g)%nelv1, block(g)%nelw2, block(g)%nelw1, deltax, block(g)%deltay, deltaz, block(g)%cosAlpha, block(g)%cosBeta, cosgamma, xu, yu, zu, xv, yv, zv, xw, yw, zw, ut, vt, wt)
  !$acc parallel loop gang vector         &
  !$acc private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,           &
  !$acc          aval, bval, cval, sur2nodeDis, h1, h2,               &
@@ -2183,13 +1980,10 @@ SUBROUTINE velocityForcingField
              usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu2(n))==51) THEN
              usurf = 0._dp + block(g)%xdot
-           !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(n)) - block(g)%piv_y)
          ELSEIF (block(g)%ibSurfId(block(g)%nelu2(n))==52) THEN
              usurf = 0._dp + block(g)%xdot
-           !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu2(n)) - block(g)%piv_y)
          ENDIF
 
-         !usurf = block(g)%thetaDot*(block(g)%ycent(block(g)%nelu2(n)) - block(g)%piv_y)
          sur2nodeDis = block(g)%u2NormDis(n)
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
@@ -2288,21 +2082,16 @@ SUBROUTINE velocityForcingField
          bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%u(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-!***********************************************************************
-
 !******************************U(i-1,j,k)*******************************
          !usurf = u_curr
          IF (block(g)%ibSurfID(block(g)%nelu1(n))==50) THEN
              usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu1(n))==51) THEN
              usurf = 0._dp + block(g)%xdot
-           !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(n)) - block(g)%piv_y)
          ELSEIF (block(g)%ibSurfId(block(g)%nelu1(n))==52) THEN
              usurf = 0._dp + block(g)%xdot
-           !usurf = block(g)%alphaDot * (block(g)%ycent(block(g)%nelu1(n)) - block(g)%piv_y)
          ENDIF
 
-         !usurf = block(g)%thetaDot*(block(g)%ycent(block(g)%nelu1(n)) - block(g)%piv_y)
          sur2nodeDis = block(g)%u1NormDis(n)
 
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 &
@@ -2402,27 +2191,22 @@ SUBROUTINE velocityForcingField
          bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%u(i-1,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-!***********************************************************************
-
 !**************************V(i,j,k)*************************************
          !vsurf = v_curr
          IF (block(g)%ibSurfID(block(g)%nelv2(n))==50) THEN
            vsurf = 0._dp + block(g)%ydot
          ELSEIF (block(g)%ibSurfID(block(g)%nelv2(n))==51) THEN
            block(g)%thetaDot =  block(g)%thetaDot1
-           !vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z)
            vsurf = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z) &
                    + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv2(n)) - block(g)%piv_x) &
                    + block(g)%ydot
          ELSEIF (block(g)%ibSurfId(block(g)%nelv2(n))==52) THEN
            block(g)%thetaDot =  block(g)%thetaDot2
-           !vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z)! + ydot
            vsurf = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z) &
                    + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv2(n)) - block(g)%piv_x) &
                    + block(g)%ydot
          ENDIF
 
-         !vsurf =  -block(g)%thetaDot*(block(g)%xcent(block(g)%nelv2(n)) - block(g)%piv_x) + ydot
          sur2nodeDis = block(g)%v2NormDis(n)
 
          pt1 = 1.21_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
@@ -2522,8 +2306,6 @@ SUBROUTINE velocityForcingField
          bval = 2._dp/n1*(v_pos1 - vsurf) - dvdn_e
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%v(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-!***********************************************************************
-
 !**************************V(i,j-1,k)*************************************
          !vsurf = v_curr
          IF (block(g)%ibSurfID(block(g)%nelv1(n))==50) THEN
@@ -2642,8 +2424,6 @@ SUBROUTINE velocityForcingField
          bval = 2._dp/n1*(v_pos1 - vsurf) - dvdn_e
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%v(i,j-1,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-!***********************************************************************
-
 !**************************W(i,j,k)*************************************
          !wsurf = w_curr
          IF (block(g)%ibSurfID(block(g)%nelw2(n))==50) THEN
@@ -2656,7 +2436,6 @@ SUBROUTINE velocityForcingField
            wsurf    = block(g)%thetaDot*(block(g)%ycent(block(g)%nelw2(n)) - block(g)%piv_y)  ! + ydot
          ENDIF
 
-         !wsurf = 0._rk
          sur2nodeDis = block(g)%w2NormDis(n)
          pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
@@ -2754,10 +2533,7 @@ SUBROUTINE velocityForcingField
          bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%w(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-!***********************************************************************
-
 !**************************W(i,j,k-1)*************************************
-         !wsurf = w_curr
          wsurf = 0._rk
          IF (block(g)%ibSurfID(block(g)%nelw1(n))==50) THEN
            wsurf = 0.
@@ -2867,7 +2643,6 @@ SUBROUTINE velocityForcingField
          bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%w(i,j,k-1) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-!***********************************************************************
       ENDDO
       !$acc end parallel
       ENDDO
