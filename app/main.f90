@@ -1,5 +1,7 @@
 
       PROGRAM main
+        use, intrinsic :: iso_fortran_env, only: int64
+        ! allow(use-all) - TODO: Aim to fix this in the future
         USE global
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
@@ -20,7 +22,7 @@
              velocityforcing1, velocityforcingfield, velocityforcingghost
         IMPLICIT NONE
 
-        INTEGER (KIND=8) :: g
+        INTEGER (int64) :: g
         CALL readInput
         CALL readBlockInterface
         CALL readSurfaceMeshGmsh
@@ -73,7 +75,8 @@
         !$acc wait
         CALL body_plot
         DO g=blk_start, nblocks
-        DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent,block(g)%cosAlpha, block(g)%cosBeta, block(g)%cosGamma,block(g)%alpha3,block(g)%beta3, block(g)%gamma3)
+           DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent,block(g)%cosAlpha, &
+                block(g)%cosBeta, block(g)%cosGamma,block(g)%alpha3,block(g)%beta3, block(g)%gamma3)
             block(g)%blk_mv_tag=0.
         END DO
         print *,10
@@ -90,9 +93,17 @@
            CALL selectiveRetagging_th
         DO g=blk_start, nblocks
             block(g)%blk_mv_tag=0.
-                DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,block(g)% pNormDis,block(g)% nelp,block(g)% nelu1,block(g)% nelu2,block(g)% nelv1,block(g)% nelv2,block(g)% nelw1,block(g)% nelw2,block(g)% u1NormDis,block(g)% u2NormDis ,block(g)% v1NormDis,block(g)% v2NormDis,block(g)% w1NormDis,block(g)% w2NormDis,block(g)% solidIndexPtr)
+              DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,&
+                   block(g)% pNormDis,block(g)% nelp,block(g)% nelu1,block(g)% nelu2,&
+                   block(g)% nelv1,block(g)% nelv2,block(g)% nelw1,block(g)% nelw2,&
+                   block(g)% u1NormDis,block(g)% u2NormDis ,block(g)% v1NormDis,&
+                   block(g)% v2NormDis,block(g)% w1NormDis,block(g)% w2NormDis,&
+                   block(g)% solidIndexPtr)
         DEALLOCATE( block(g)%fluidIndexPtr,block(g)% redCellIndexPtr, block(g)%blackCellIndexPtr)
-        DEALLOCATE(block(g)%p_ghost,block(g)% pt_ghost,block(g)% u2_ghost,block(g)% u2t_ghost,block(g)% v2_ghost,block(g)% v2t_ghost,block(g)% w2_ghost, block(g)%w2t_ghost,block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, block(g)%w1_ghost,block(g)% w1t_ghost)
+        DEALLOCATE(block(g)%p_ghost,block(g)% pt_ghost,block(g)% u2_ghost,block(g)% u2t_ghost,&
+             block(g)% v2_ghost,block(g)% v2t_ghost,block(g)% w2_ghost, block(g)%w2t_ghost,&
+             block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, &
+             block(g)%w1_ghost,block(g)% w1t_ghost)
        END DO
 
             CALL cellCount_solid
