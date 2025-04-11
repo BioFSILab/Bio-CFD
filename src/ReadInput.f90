@@ -8,40 +8,23 @@ module biocfd_read_input
   public :: readInput, readBlockInterface, readSurfaceMeshGmsh
 
   contains
-!cssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+
       SUBROUTINE readInput
        INTEGER (int64) :: i, j , k , g, nx_var, ny_var, nz_var
         CHARACTER(len=160)  :: filename1
 
-        !OPEN(60, FILE = 'geometries/2blk/inputdata', FORM = 'formatted')
         OPEN(60, FILE = 'inputdata', FORM = 'formatted')
-       !READ(60,*) nx, ny, nz,  &
-       !           re,      &
-       !           itamax, eps1, pcItaMax, &
-       !           u0, v0,  w0, &
-       !           surGeoPoints, a0, freq, aoa, piv_pt,&
-       !           xShift, yShift, zShift,           &
-       !           istart, dt_order, inor, &
-       !           i_startSearch, i_endSearch, &
-       !           j_startSearch, j_endSearch, &
-       !           k_startSearch, k_endSearch
         READ(60,*) nblocks, intflines,  &
-                   !re,      &
                    itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
                    re,rho_f, mu_f, l_c, &
                    u0, v0,  w0,  &
-                   !surGeoPoints,a0, a0y, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
                    surGeoPoints,a0y, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
                    istart, dt_order, inor, dxmin
-                  !i_startSearch, i_endSearch, &
-                  !j_startSearch, j_endSearch, &
-                  !k_startSearch, k_endSearch
         CLOSE(60)
         allocate(Blocks :: block(nblocks))
         allocate(Interfaces :: intfr(intflines))
 
         OPEN(77, FILE = 'body_search.dat', FORM = 'formatted')
-        !OPEN(77, FILE = 'geometries/2blk/0.01/body_search.dat', FORM = 'formatted')
         DO g=1,nblocks
                 READ(77,*) block(g)%i_startSearch, block(g)%i_endSearch, &
                            block(g)%j_startSearch, block(g)%j_endSearch, &
@@ -52,7 +35,6 @@ module biocfd_read_input
         END DO
         CLOSE(77)
         OPEN(77, FILE = 'grid_shift.dat', FORM = 'formatted')
-        !OPEN(77, FILE = 'geometries/2blk/0.01/body_search.dat', FORM = 'formatted')
         DO g=1,nblocks
         READ(77,*) block(g)%gx_shift, block(g)%gy_shift, block(g)%gz_shift
         block(g)%gx_shift=block(g)%gx_shift*0.001_dp
@@ -61,7 +43,7 @@ module biocfd_read_input
         END DO
         CLOSE(77)
         OPEN(77, FILE = 'shift.dat', FORM = 'formatted')
-        !OPEN(77, FILE = 'geometries/2blk/0.01/body_search.dat', FORM = 'formatted')
+
         DO g=1,nblocks
         READ(77,*) block(g)%xshift, block(g)%yshift, block(g)%zshift
         write(*,*) block(g)%xshift, block(g)%yshift, block(g)%zshift
@@ -84,9 +66,7 @@ module biocfd_read_input
         alpha_m1=abs(alpha_m)
         theta_m1=abs(theta_m)
         dxmin = 0.001_dp*dxmin
-        !xShift = 0.001*xShift
-        !yShift = 0.001*yShift
-        !zShift = 0.001*zShift
+
         OPEN(77, FILE = 'flap_amp.dat', FORM = 'formatted')
         DO g=blk_start,nblocks
                 READ(77,*) block(g)%a0
@@ -107,23 +87,8 @@ module biocfd_read_input
         deltat = 1._dp/(4._dp*freq*dt_order)  !0.00041666666666_dp! *5e-4
         disp = block(blk_start)%a0*cos(2*pi*freq*deltat)
         alpha  = 1._dp
-      !!freq=(mu_f*re*180)/(4*theta_m*pi*l_c*l_c)
-      !!u_tip=4*((pi*theta_m)/180)*l_c*freq
-      ! freq=(mu_f*re*180)/(4*45*pi*l_c*l_c)
        u_tip=4*((pi*45)/180)*l_c*freq
-      !rev = rho_f/(mu_f)
-      !!u0 = re/(rev*l_c)
-      !u0 = 1.
-      !!re = rev
-      !!a0y = 2*sin(pi/6)*l_c
-      !!freq = freq*u0/l_c
-      !!deltat = 1./(4.*freq*dt_order)!0.00041666666666_dp! *5e-4
-      !!lwing=74.
-      !!lwing = 0.001*lwing
 
-      !!deltat=(dxmin)/(u_tip*dt_order)
-      !!disp = a0*cos(2*pi*freq*deltat)
-      !!alpha  = 1._dp
         Print*, 'dxmin =', dxmin
         Print*, 'u0 =', u0
         print*, 'dt =',  deltat
@@ -156,14 +121,11 @@ module biocfd_read_input
         WRITE(111,*) '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
         CLOSE(111)
 
-        !uc = 1.
         ita = 0
         ita1 = 0
         totime = 0._dp
         print*, 'dt =',  deltat, 'ita = ', ita, 'totime = ', totime
-        !print*, 'total cells =', nx*ny*nz
 
-        !OPEN(51, FILE = 'geometries/2blk/0.01/block_details.dat', FORM = 'formatted')
         OPEN(51, FILE = 'block_details.dat', FORM = 'formatted')
        DO i=1,nblocks
 
@@ -181,7 +143,6 @@ module biocfd_read_input
        END DO
        CLOSE(51)
         print*,'after allocation'
-        !call findSolidBlk
 
          DO i=1,nblocks
              nx_var=block(i)%nx
@@ -221,12 +182,6 @@ module biocfd_read_input
 
 
          print*, 'after allocation'
-      ! ALLOCATE( x1(nx+3), y1(ny+3), z1(nz+3), &
-      !           deltax(nx+2), deltay(ny+2), deltz(nz+2))
-      ! ALLOCATE( xu(nx+3), yu(ny+2), zu(nz+2), &
-      !           xv(nx+2), yv(ny+3), zv(nz+2), &
-      !           xw(nx+2), yw(ny+2), zw(nz+3), &
-      !           xp(nx+2), yp(ny+2), zp(nz+2))
 
         do i=1, nblocks
             block(i)%fineg=block(i)%dx
@@ -244,66 +199,13 @@ module biocfd_read_input
                    block(i)%nx, block(i)%ny,block(i)%nz, block(i)%dx, block(i)%dy,block(i)%dz
          END DO
 
-!       ! DO r = 1, nblocks-1
-!       DO r = 1, nblocks
-!              !j=fl_blk(r)
-!              j=r
-!           !DO j =1, nblocks
-!           DO i = 2, block(j)%nx+1
-!              block(j)%deltax(i) = block(j)%dx
-!              block(j)%x1(i)=(i-2) *block(j)%dx + block(j)%xstart
-!           END DO
-!           block(j)%x1(block(j)%nx+2) =block(j)%x1(block(j)%nx+1) + block(j)%deltax(block(j)%nx+1)
-!
-!           block(j)%deltax(1)    = block(j)%deltax(2)
-!           block(j)%deltax(block(j)%nx+2) =block(j)%deltax(block(j)%nx+1)
-!           block(j)%x1(1)        = block(j)%x1(2) - block(j)%deltax(1)
-!           block(j)%x1(block(j)%nx+3)     = block(j)%x1(block(j)%nx+2)+ block(j)%deltax(block(j)%nx+2)
-!      end do
-
-
-!       !DO r = 1, nblocks-1
-!       DO r = 1, nblocks
-!          !j=fl_blk(r)
-!          j=r
-!       !DO j =1, nblocks
-!        DO i = 2, block(j)%ny+1
-!          block(j)%deltay(i) = block(j)%dy
-!          block(j)%y1(i)=(i-2) *block(j)%dy + block(j)%ystart
-!       END DO
-!       block(j)%y1(block(j)%ny+2) =block(j)%y1(block(j)%ny+1) + block(j)%deltay(block(j)%ny+1)
-
-!       block(j)%deltay(1)    = block(j)%deltay(2)
-!       block(j)%deltay(block(j)%ny+2) =block(j)%deltay(block(j)%ny+1)
-!       block(j)%y1(1)        = block(j)%y1(2) - block(j)%deltay(1)
-!       block(j)%y1(block(j)%ny+3)     = block(j)%y1(block(j)%ny+2)+ block(j)%deltay(block(j)%ny+2)
-!     end do
-
-!       !DO r = 1, nblocks-1
-!       DO r = 1, nblocks
-!              !j=fl_blk(r)
-!              j=r
-!           !DO j =1, nblocks
-!            DO i = 2, block(j)%nz+1
-!              block(j)%deltaz(i) = block(j)%dz
-!              block(j)%z1(i)=(i-2) *block(j)%dz + block(j)%zstart
-!           END DO
-!           block(j)%z1(block(j)%nz+2) =block(j)%z1(block(j)%nz+1) +block(j)%deltaz(block(j)%nz+1)
-!
-!           block(j)%deltaz(1)    = block(j)%deltaz(2)
-!           block(j)%deltaz(block(j)%nz+2) =block(j)%deltaz(block(j)%nz+1)
-!           block(j)%z1(1)        = block(j)%z1(2) - block(j)%deltaz(1)
-!           block(j)%z1(block(j)%nz+3)     = block(j)%z1(block(j)%nz+2)+ block(j)%deltaz(block(j)%nz+2)
-!      end do
-
-
 
          Do g=1,nblocks
          !OPEN(61, FILE = 'xgrid_d50_498_3d_30.txt', FORM = 'formatted')
          !OPEN(61, FILE = 'xgrid_257_d20_3d_30.txt', FORM = 'formatted')
 
          WRITE(filename1,8282) g,block(g)%nx+1
- !8282    FORMAT('geometries/2blk/0.01/xgrid_bk',i1,'_',i3.3,'.txt')
+
  8282    FORMAT('xgrid_bk',i1,'_',i3.3,'.txt')
          OPEN(61, FILE = filename1, FORM = 'formatted')
          DO i = 2, block(g)%nx+2
@@ -323,14 +225,12 @@ module biocfd_read_input
          block(g)%x1(1) = block(g)%x1(2) - block(g)%deltax(1)
          block(g)%x1(block(g)%nx+3) = block(g)%x1(block(g)%nx+2) + block(g)%deltax(block(g)%nx+2)
 
-         !OPEN(62, FILE = 'ygrid_111_d20_3d_30.txt', FORM = 'formatted')
          WRITE(filename1,8383) g,block(g)%ny+1
-! 8383    FORMAT('geometries/2blk/0.01/ygrid_bk',i1,'_',i3.3,'.txt')
+
  8383    FORMAT('ygrid_bk',i1,'_',i3.3,'.txt')
          OPEN(62, FILE = filename1, FORM = 'formatted')
          DO i = 2, block(g)%ny+2
             READ(62, *) block(g)%y1(i)
-               ! print*,'y1',g,block(g)%y1(i)
                  block(g)%y1(i)=0.001_dp*block(g)%y1(i)
                     block(g)%y1(i)=block(g)%y1(i) + block(g)%gy_shift
          END DO
@@ -345,15 +245,11 @@ module biocfd_read_input
          block(g)%y1(1) = block(g)%y1(2) - block(g)%deltay(1)
          block(g)%y1(block(g)%ny+3) = block(g)%y1(block(g)%ny+2) + block(g)%deltay(block(g)%ny+2)
 
-
-         !OPEN(63, FILE = 'zgrid_41_d20_3d_2.txt', FORM = 'formatted')
          WRITE(filename1,8484) g,block(g)%nz+1
- !8484    FORMAT('geometries/2blk/0.01/zgrid_bk',i1,'_',i3.3,'.txt')
  8484    FORMAT('zgrid_bk',i1,'_',i3.3,'.txt')
          OPEN(63, FILE =filename1, FORM = 'formatted')
          DO i = 2, block(g)%nz+2
             READ(63, *) block(g)%z1(i)
-               ! print*,'z1',g,block(g)%z1(i)
                  block(g)%z1(i)=0.001_dp*block(g)%z1(i)
                     block(g)%z1(i)=block(g)%z1(i) + block(g)%gz_shift
          END DO
@@ -415,9 +311,7 @@ module biocfd_read_input
           END DO
         ENDDO
         DO g=1,nblocks
-       !DO k=2,block(g)%nz+1
-       !DO j=2,block(g)%ny+1
-       !DO i=2,block(g)%nx+1
+
         DO k=1,block(g)%nz+1
         DO j=1,block(g)%ny+1
         DO i=1,block(g)%nx+1
@@ -447,11 +341,7 @@ module biocfd_read_input
         END DO
         END DO
 
-       !!$acc update device (deltax, deltay, deltaz
-       !!$acc update device (x1, y1, z1, xu, yu, zu, xv, yv, zv, xw, yw, zw, xp, yp, zp)
       END SUBROUTINE readInput
-
-!************************************************************************************************
 
       SUBROUTINE readSurfaceMeshGmsh
        INTEGER(int64) :: n, i1, i2, i3, i5, g
@@ -459,12 +349,7 @@ module biocfd_read_input
 
 
        DO g=blk_start, nblocks
-       !OPEN(121, FILE ='geometries/sphere_0.0075r_0.00025.msh', form = 'formatted')               !READ SURFACE MESH FILE
        OPEN(121, FILE ='geometries/butterflyMedium.msh', form = 'formatted')               !READ SURFACE MESH FILE
-       !OPEN(121, FILE ='geometries/sphere_0.75r_0.025.msh', form = 'formatted')               !READ SURFACE MESH FILE
-       !OPEN(121, FILE ='geometries/sphere_0.75r_0.03.msh', form = 'formatted')               !READ SURFACE MESH FILE
-       !OPEN(121, FILE ='geometries/sphere_0.75r_0.01.msh', form = 'formatted')               !READ SURFACE MESH FILE
-       !OPEN(121, FILE ='geometries/sphere_0.083r_0.004.msh', form = 'formatted')               !READ SURFACE MESH FILE
         DO n = 1, 4
            READ (121,*) cLine
         END DO
@@ -474,7 +359,6 @@ module biocfd_read_input
         block(g)%ibNodeId = 50
         DO n = 1, block(g)%ibNodes
            READ (121,*) i1, block(g)%xnode(n), block(g)%ynode(n), block(g)%znode(n)
-           !READ (121,*) i1, ynode(n), znode(n), xnode(n)
            block(g)%xnode(n)=block(g)%xnode(n)*0.001_dp
            block(g)%ynode(n)=block(g)%ynode(n)*0.001_dp
            block(g)%znode(n)=block(g)%znode(n)*0.001_dp
@@ -496,27 +380,7 @@ module biocfd_read_input
         DO n = 1, block(g)%ibElems
         READ (121,*) i1, i2, i3, block(g)%ibSurfId(n), i5, &
         block(g)%ibElP1(n), block(g)%ibElP2(n), block(g)%ibElP3(n)
-          !Print*, n, ibElP1(n), ibElP2(n)
         END DO
-       !do n = 1, ibNodes
-         !print*, n, xnode(n), ynode(n)
-       !end do
-       !  if (a4 .ne. 50)then
-       !        num=num+1
-       !  i1         =  a1
-       !  i2         =  a2
-       !  i3         =  a3
-       !  ibSurfId(num)= a4
-       !  i5         = a5
-       !  ibElP1(num)  = a6
-       !  ibElP2(num)  =  a7
-       !  ibElP3(num)  = a8
-       !  endif
-          !Print*, n, ibsurfId(n), ibElP2(n)
-       !do n = 1, ibNodes
-         !print*, n, xnode(n), ynode(n)
-       !end do
-       ! ibElems= num
        DO n = 1, block(g)%ibElems
        IF (block(g)%ibSurfId(n)==51) THEN
            block(g)%ibNodeId(block(g)%ibELP1(n)) = 51
@@ -536,26 +400,17 @@ module biocfd_read_input
           ENDIF
         ENDDO
 
-       !DO n = 1, ibNodes
-       !   WRITE(*,*) ibNodeId(n)
-       !ENDDO
        CLOSE(121)
        PRINT *, 'SURFACE MESH READING COMPLETE'
        PRINT *, 'ibNodes =', block(g)%ibNodes, 'ibElems =', block(g)%ibElems
        END DO
 
-       !!$acc update device (xnode, ynode, znode, ibElP1, ibElP2, ibElP3)
       END SUBROUTINE readSurfaceMeshGmsh
-!***********************************************************************
 
         SUBROUTINE readBlockInterface
         INTEGER(int64) :: i
 
-       !ALLOCATE(a_blk(intfLines),a_msh(intfLines),a_intf(intfLines),b_blk(intfLines),b_msh(intfLines),b_intf(intfLines),xintf_start(intfLines),xintf_end(intfLines),yintf_start(intfLines),yintf_end(i             ntfLines))
-
-      !type(Interfaces),dimension(intflines) :: intfr
          print*,'Inside readBlockInterface'
-        !OPEN(51, FILE = 'geometries/2blk/0.01/interface_details.dat', FORM = 'formatted')
         OPEN(51, FILE = 'interface_details.dat', FORM = 'formatted')
         DO i=1, intflines
         READ(51,*) intfr(i)%a_blk, intfr(i)%a_msh, intfr(i)%a_intf, &
@@ -578,45 +433,5 @@ module biocfd_read_input
         END DO
         CLOSE(51)
 
-        !print*,a_blk(1),a_msh(1),a_intf(1),b_blk(1),b_msh(1),b_intf(1),xintf_start(1),xintf_end(1),yintf_start(1),yintf_end(1)
          end subroutine readBlockInterface
-
-
-
-!***********************************************************************
-!     SUBROUTINE readSurfaceMeshGambit
-!      USE global
-!      IMPLICIT NONE
-!      INTEGER (KIND = 8) :: n, i1, i2, i3, i4
-!      CHARACTER (LEN = 72) :: cLine
-!
-!      OPEN(121, FILE = 'geometries/bend_ellipse_ha.neu', form = 'formatted')               !READ SURFACE MESH FILE
-!       DO n = 1, 6
-!          READ (121,*) cLine
-!       END DO
-!       READ (121,*) ibNodes, ibElems, i1, i2, i3, i4
-!       ALLOCATE ( xnode(ibNodes), ynode(ibNodes), znode(ibNodes) )
-!       DO n = 1, 2
-!          READ (121,*) cLine
-!       END DO
-!       DO n = 1, ibNodes
-!          READ (121,*) i1, xnode(n), ynode(n), znode(n)
-!       END DO
-!       DO n = 1, 2
-!         READ (121,*) cLine
-!       END DO
-!       ALLOCATE ( ibElP1(ibElems), ibElP2(ibElems), ibElP3(ibElems) )
-!       ibElP1 = 0
-!       ibElP2 = 0
-!       ibElP3 = 0
-!       DO n = 1, ibElems
-!         READ (121,*) i1, i2, i3, ibElP1(n), ibElP2(n), ibElP3(n)
-!       END DO
-!      CLOSE(121)
-!      PRINT *, 'SURFACE MESH READING COMPLETE'
-!      PRINT *, 'ibNodes =', ibNodes, 'ibElems =', ibElems
-
-!      !!$acc update device (xnode, ynode, znode, ibElP1, ibElP2, ibElP3)
-!     END SUBROUTINE readSurfaceMeshGambit
-!*******************************************************************
 end module biocfd_read_input
