@@ -1192,8 +1192,6 @@ contains
 !c     duw / dx
        u15 = block(g)%u(i-1,j,k) + block(g)%u(i-1,j,k+1)
        u16 = u11
-!cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-
 !cccccccccccccccccccccccccc    diff -v    ccccccccccccccccccccccccccccccc
 !c     dvu / dx
        v1a = block(g)%v(i,j-1,k)  + block(g)%v(i+1,j-1,k)
@@ -1220,8 +1218,6 @@ contains
 !c     dvw / dy
        v15 = block(g)%v(i,j-1,k)  + block(g)%v(i,j-1,k+1)
        v16 = v13
-!cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-
 !cccccccccccccccccccccccccccc  diff - w  cccccccccccccccccccccccccccccccc
 !c     dwu / dz
        w1a = block(g)%w(i,j,k-1)  + block(g)%w(i+1,j,k-1)
