@@ -200,7 +200,6 @@ SUBROUTINE velocityForcing1
 
       DO n = 1, block(g)%ibCellCount
 
-         !usurf = 0._rk
          IF (block(g)%ibSurfID(block(g)%nelu2(n))==50) THEN
              usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu2(n))==51) THEN
@@ -213,7 +212,6 @@ SUBROUTINE velocityForcing1
          k = block(g)%interceptedIndexPtr(n, 3)
 
 !***********************U(i,j,k)****************************************
-         !usurf = u_curr
          sur2nodeDis = block(g)%u2NormDis(n)
 
          pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
@@ -315,8 +313,6 @@ SUBROUTINE velocityForcing1
          block(g)%ut(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 
 !******************************U(i-1,j,k)*******************************
-         !usurf = u_curr
-         !usurf = 0._rk
          IF (block(g)%ibSurfID(block(g)%nelu1(n))==50) THEN
              usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu1(n))==51) THEN
@@ -426,8 +422,6 @@ SUBROUTINE velocityForcing1
          block(g)%ut(i-1,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 
 !**************************V(i,j,k)*************************************
-         !vsurf = v_curr
-         !vsurf = 0._rk
          IF (block(g)%ibSurfID(block(g)%nelv2(n))==50) THEN
                  vsurf = 0._dp + block(g)%ydot
          ELSEIF (block(g)%ibSurfID(block(g)%nelv2(n))==51) THEN
@@ -542,8 +536,6 @@ SUBROUTINE velocityForcing1
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%vt(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !**************************V(i,j-1,k)*************************************
-         !vsurf = v_curr
-         !vsurf = 0._rk
          IF (block(g)%ibSurfID(block(g)%nelv1(n))==50) THEN
            vsurf = 0._dp+ block(g)%ydot
          ELSEIF (block(g)%ibSurfID(block(g)%nelv1(n))==51) THEN
@@ -657,8 +649,6 @@ SUBROUTINE velocityForcing1
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%vt(i,j-1,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !**************************W(i,j,k)*************************************
-         !wsurf = w_curr
-         !wsurf = 0._rk
          IF (block(g)%ibSurfID(block(g)%nelw2(n))==50) THEN
            wsurf = 0.
          ELSEIF (block(g)%ibSurfID(block(g)%nelw2(n))==51) THEN
@@ -769,7 +759,6 @@ SUBROUTINE velocityForcing1
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%wt(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !**************************W(i,j,k-1)*************************************
-         !wsurf = w_curr
          wsurf = 0._rk
          IF (block(g)%ibSurfID(block(g)%nelw1(n))==50) THEN
            wsurf = 0.
@@ -1085,7 +1074,6 @@ SUBROUTINE velocityForcingGhost
         k = block(g)%TSIndexPtr(n, 3)
         !IF (block(g)%cell2(i,j,k).EQ.2) THEN
 !***********************U(i,j,k)****************************************
-         !usurf = u_curr
          IF (block(g)%ibSurfID(block(g)%nelu2(block(g)%index_ts(n)))==50) THEN
              usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu2(block(g)%index_ts(n)))==51) THEN
@@ -1196,7 +1184,6 @@ SUBROUTINE velocityForcingGhost
          block(g)%u2_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          block(g)%u2t_ghost(n) = block(g)%u(i,j,k)
 !******************************U(i-1,j,k)*******************************
-         !usurf = u_curr
          IF (block(g)%ibSurfID(block(g)%nelu1(block(g)%index_ts(n)))==50) THEN
              usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu1(block(g)%index_ts(n)))==51) THEN
@@ -1306,7 +1293,6 @@ SUBROUTINE velocityForcingGhost
          block(g)%u1t_ghost(n) = block(g)%u(i-1,j,k)
 
 !**************************V(i,j,k)*************************************
-         !vsurf = v_curr
          IF (block(g)%ibSurfID(block(g)%nelv2(block(g)%index_ts(n)))==50) THEN
            vsurf = 0._dp+ block(g)%ydot
          ELSEIF (block(g)%ibSurfID(block(g)%nelv2(block(g)%index_ts(n)))==51) THEN
@@ -1427,7 +1413,6 @@ SUBROUTINE velocityForcingGhost
          !ENDIF
          block(g)%v2t_ghost(n) = block(g)%v(i,j,k)
 !**************************V(i,j-1,k)*************************************
-         !vsurf = v_curr
          IF (block(g)%ibSurfID(block(g)%nelv1(block(g)%index_ts(n)))==50) THEN
            vsurf = 0._dp + block(g)%ydot
          ELSEIF (block(g)%ibSurfID(block(g)%nelv1(block(g)%index_ts(n)))==51) THEN
@@ -1545,7 +1530,6 @@ SUBROUTINE velocityForcingGhost
          block(g)%v1_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          block(g)%v1t_ghost(n) = block(g)%v(i,j-1,k)
 !**************************W(i,j,k)*************************************
-         !wsurf = w_curr
          wsurf = 0._rk
          IF (block(g)%ibSurfID(block(g)%nelw2(block(g)%index_ts(n)))==50) THEN
            wsurf = 0.
@@ -1662,7 +1646,6 @@ SUBROUTINE velocityForcingGhost
          !ENDIF
          block(g)%w2t_ghost(n) = block(g)%w(i,j,k)
 !**************************W(i,j,k-1)*************************************
-         !wsurf = w_curr
          wsurf = 0._rk
          IF (block(g)%ibSurfID(block(g)%nelw1(block(g)%index_ts(n)))==50) THEN
            wsurf = 0.
@@ -1974,7 +1957,6 @@ SUBROUTINE velocityForcingField
          k = block(g)%interceptedIndexPtr(n, 3)
 
 !***********************U(i,j,k)****************************************
-         !usurf = u_curr
          IF (block(g)%ibSurfID(block(g)%nelu2(n))==50) THEN
              usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu2(n))==51) THEN
@@ -2082,7 +2064,6 @@ SUBROUTINE velocityForcingField
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%u(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !******************************U(i-1,j,k)*******************************
-         !usurf = u_curr
          IF (block(g)%ibSurfID(block(g)%nelu1(n))==50) THEN
              usurf = 0._dp + block(g)%xdot
          ELSEIF (block(g)%ibSurfID(block(g)%nelu1(n))==51) THEN
@@ -2191,7 +2172,6 @@ SUBROUTINE velocityForcingField
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
          block(g)%u(i-1,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !**************************V(i,j,k)*************************************
-         !vsurf = v_curr
          IF (block(g)%ibSurfID(block(g)%nelv2(n))==50) THEN
            vsurf = 0._dp + block(g)%ydot
          ELSEIF (block(g)%ibSurfID(block(g)%nelv2(n))==51) THEN
@@ -2306,7 +2286,6 @@ SUBROUTINE velocityForcingField
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%v(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !**************************V(i,j-1,k)*************************************
-         !vsurf = v_curr
          IF (block(g)%ibSurfID(block(g)%nelv1(n))==50) THEN
            vsurf = 0._dp + block(g)%ydot
          ELSEIF (block(g)%ibSurfID(block(g)%nelv1(n))==51) THEN
@@ -2424,7 +2403,6 @@ SUBROUTINE velocityForcingField
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
          block(g)%v(i,j-1,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !**************************W(i,j,k)*************************************
-         !wsurf = w_curr
          IF (block(g)%ibSurfID(block(g)%nelw2(n))==50) THEN
            wsurf = 0.
          ELSEIF (block(g)%ibSurfID(block(g)%nelw2(n))==51) THEN
