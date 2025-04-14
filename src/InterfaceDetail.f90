@@ -14,10 +14,6 @@ SUBROUTINE interfaceDetail
         a_blk_no, b_blk_no, xx1_p, xx2_p, &
         a_mm_x, a_mm_y,a_mm_z
 
-       ! do g=1,nblocks
-       !   !$ acc enter data copyin(block(g)%xp,block(g)%yp,block(g)%xu,block(g)%yu, block(g)%xv,block(g)%yv)
-       !  end do
-
         print*, 'before allocation in interface'
         a_max_intf_length=0
         b_max_intf_length=0
@@ -25,31 +21,19 @@ SUBROUTINE interfaceDetail
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
            factor=intfr(g)%b_msh/intfr(g)%a_msh
-          !a_maxx=FLOOR((intfr(g)%xintf_end-intfr(g)%xintf_start)/block(a_blk_no)%dx) +1
-          !a_maxy=FLOOR((intfr(g)%yintf_end-intfr(g)%yintf_start)/block(a_blk_no)%dy) +1
-          !a_maxz=FLOOR((intfr(g)%zintf_end-intfr(g)%zintf_start)/block(a_blk_no)%dz) +1
            a_maxx=block(a_blk_no)%nx+3
            a_maxy=block(a_blk_no)%ny+3
            a_maxz=block(a_blk_no)%nz+3
            a_mm=max(a_maxx,a_maxy,a_maxz)
-!          if (a_max_intf_length .lt. a_mm)then
-!               a_max_intf_length=a_mm
-!          end if
            b_maxx=block(b_blk_no)%nx+3
            b_maxy=block(b_blk_no)%ny+3
            b_maxz=block(b_blk_no)%nz+3
-          !b_maxx=FLOOR((intfr(g)%xintf_end-intfr(g)%xintf_start)/block(b_blk_no)%dx) +1
-          !b_maxy=FLOOR((intfr(g)%yintf_end-intfr(g)%yintf_start)/block(b_blk_no)%dy) +1
-          !b_maxz=FLOOR((intfr(g)%zintf_end-intfr(g)%zintf_start)/block(b_blk_no)%dz) +1
            b_mm=max(b_maxx,b_maxy,b_maxz)
         a_mm_x=int(block(b_blk_no)%nx/factor) +3
         a_mm_y=int(block(b_blk_no)%ny/factor) +3
         a_mm_z=int(block(b_blk_no)%nz/factor) +3
         print*,a_mm_x,a_mm_y,a_mm_z
         print*,block(b_blk_no)%nx, factor
-!          if (b_max_intf_length .lt. b_mm)then
-!               b_max_intf_length=b_mm
-!          end if
         a_mm=max(a_mm,b_mm)
         ALLOCATE(intfr(g)%px_interface_det(3,a_mm_x))
         ALLOCATE(intfr(g)%ux_interface_det(3,a_mm_x))
@@ -64,7 +48,6 @@ SUBROUTINE interfaceDetail
         ALLOCATE(intfr(g)%vy_interface_det(3,a_mm_y))
         ALLOCATE(intfr(g)%wy_interface_det(3,a_mm_y))
         END DO
-!       print*,'After first do loop in interface detail'
 
 !coarse mesh start and end index
 
