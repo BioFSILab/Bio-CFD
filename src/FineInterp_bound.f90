@@ -17,7 +17,7 @@ SUBROUTINE fineUpdate_bd
              bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
         REAL (dp) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
 
-        INTEGER(int64) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, &
+        INTEGER(int64) :: i,j,k, varx1,varx2, vary1, vary2, tar_x, tar_y, loc_x, &
              loc_y, g, a_blk_no, b_blk_no
         INTEGER(int64) :: varz1,varz2, tar_z, loc_z
 
@@ -35,8 +35,6 @@ SUBROUTINE fineUpdate_bd
         DO k=1,intfr(g)%counterzp
         DO j=1,intfr(g)%counteryp
 
-
-
         varx1=intfr(g)%px_interface_det(2,i)
         varx2=intfr(g)%px_interface_det(3,i)
         vary1=intfr(g)%py_interface_det(2,j)
@@ -48,12 +46,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -114,12 +109,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -181,12 +173,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -247,12 +236,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -314,12 +300,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -380,12 +363,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -448,12 +428,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -514,12 +491,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -582,12 +556,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -648,12 +619,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -715,12 +683,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -781,12 +746,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -847,12 +809,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -913,12 +872,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -980,12 +936,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -1046,12 +999,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -1113,12 +1063,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -1179,12 +1126,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -1245,12 +1189,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -1311,12 +1252,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -1378,12 +1316,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -1444,12 +1379,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -1511,12 +1443,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -1577,12 +1506,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -1640,7 +1566,7 @@ SUBROUTINE fineUpdate_bd
              bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
         REAL (dp) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
 
-        INTEGER(int64) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, &
+        INTEGER(int64) :: i,j,k, varx1,varx2, vary1, vary2, tar_x, tar_y, loc_x, &
              loc_y,g, a_blk_no, b_blk_no
         INTEGER(int64) :: varz1,varz2, tar_z, loc_z
 
@@ -1670,12 +1596,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -1737,12 +1660,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -1805,12 +1725,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -1872,12 +1789,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -1940,12 +1854,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -2007,12 +1918,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -2072,7 +1980,7 @@ SUBROUTINE fineUpdate_bd
              bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
         REAL (dp) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
 
-        INTEGER(int64) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, &
+        INTEGER(int64) :: i,j,k, varx1,varx2, vary1, vary2, tar_x, tar_y, loc_x, &
              loc_y,g, a_blk_no, b_blk_no
         INTEGER(int64) :: varz1,varz2, tar_z, loc_z
 
@@ -2103,12 +2011,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -2169,12 +2074,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -2236,12 +2138,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -2302,12 +2201,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -2369,12 +2265,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -2435,12 +2328,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -2499,12 +2389,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -2565,12 +2452,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -2632,12 +2516,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -2698,12 +2579,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -2765,12 +2643,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -2831,12 +2706,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -2897,12 +2769,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -2963,12 +2832,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -3030,12 +2896,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -3096,12 +2959,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -3163,12 +3023,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -3229,12 +3086,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -3292,7 +3146,7 @@ SUBROUTINE fineUpdate_bd
              bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
         REAL (dp) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
 
-        INTEGER(int64) :: i,j,k,q,s, varx1,varx2, vary1, vary2, l,tar_x, tar_y, loc_x, &
+        INTEGER(int64) :: i,j,k, varx1,varx2, vary1, vary2, tar_x, tar_y, loc_x, &
              loc_y, a_blk_no, b_blk_no
         INTEGER(int64) :: varz1,varz2, tar_z, loc_z
          INTEGER (int64), INTENT(IN) :: g
@@ -3318,12 +3172,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -3384,12 +3235,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -3451,12 +3299,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -3517,12 +3362,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -3584,12 +3426,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -3650,12 +3489,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xp(tar_x)
                 bl_intp_valy=block(b_blk_no)%yp(tar_y)
@@ -3715,12 +3551,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -3781,12 +3614,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -3848,12 +3678,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -3914,12 +3741,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -3980,12 +3804,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -4045,12 +3866,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%uy_interface_det(1,j)
         loc_z=intfr(g)%uz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xu(tar_x)
                 bl_intp_valy=block(b_blk_no)%yu(tar_y)
@@ -4112,12 +3930,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -4178,12 +3993,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -4245,12 +4057,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -4311,12 +4120,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -4377,12 +4183,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -4443,12 +4246,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%vy_interface_det(1,j)
         loc_z=intfr(g)%vz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xv(tar_x)
                 bl_intp_valy=block(b_blk_no)%yv(tar_y)
@@ -4511,12 +4311,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -4577,12 +4374,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -4644,12 +4438,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -4710,12 +4501,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -4777,12 +4565,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
@@ -4843,12 +4628,9 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%wy_interface_det(1,j)
         loc_z=intfr(g)%wz_interface_det(1,k)
 
-        DO q=varz1,varz2
-        DO l=vary1,vary2
-        DO s=varx1,varx2
-                tar_x=s
-                tar_y=l
-                tar_z=q
+        DO tar_z=varz1,varz2
+        DO tar_y=vary1,vary2
+        DO tar_x=varx1,varx2
 
                 bl_intp_valx=block(b_blk_no)%xw(tar_x)
                 bl_intp_valy=block(b_blk_no)%yw(tar_y)
