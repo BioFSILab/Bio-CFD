@@ -102,10 +102,6 @@ module biocfd_pcor_vcor
            i = block(g)%fluidIndexPtr(n, 1)
            j = block(g)%fluidIndexPtr(n, 2)
            k = block(g)%fluidIndexPtr(n, 3)
-           !block(g)%dudt = dabs((block(g)%ut(i,j,k) - block(g)%u(i,j,k)))/deltat
-           !block(g)%dvdt = dabs((block(g)%vt(i,j,k) - block(g)%v(i,j,k)))/deltat
-           !block(g)% dwdt = dabs((block(g)%wt(i,j,k) - block(g)%w(i,j,k)))/deltat
-           !block(g)%derrStdSt = dmax1(block(g)%derrStdSt, block(g)%dudt,block(g)%dvdt, block(g)%dwdt)
            er_dudt = dabs((block(g)%ut(i,j,k) - block(g)%u(i,j,k)))/deltat
            er_dvdt = dabs((block(g)%vt(i,j,k) - block(g)%v(i,j,k)))/deltat
            er_dwdt = dabs((block(g)%wt(i,j,k) - block(g)%w(i,j,k)))/deltat
@@ -134,9 +130,6 @@ module biocfd_pcor_vcor
                  max_nIterPcor=block(i)%nIterPcor
               end if
               totalTime=totime + totalTime
-              !if ( block(i)%divmax >max_divmax)then
-              !   max_divmax=block(i)%divmax
-              !end if
               if ( block(i)%nit >max_nit)then
                  max_nit=block(i)%nit
               end if
