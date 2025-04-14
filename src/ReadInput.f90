@@ -13,6 +13,10 @@ module biocfd_read_input
       SUBROUTINE readInput
        INTEGER (int64) :: i, j , k , g, nx_var, ny_var, nz_var
         CHARACTER(len=160)  :: filename1
+       ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
+       !     not dependent on diff for checking code changes don't break code
+       !     Variables removed from Blocks 'xstart, xend, ystart, yend, zstart, zend'
+       REAL(dp) :: xs_temp,xe_temp,ys_temp,ye_temp,zs_temp,ze_temp
 
         OPEN(60, FILE = 'inputdata', FORM = 'formatted')
         READ(60,*) nblocks, intflines,  &
@@ -130,17 +134,9 @@ module biocfd_read_input
         OPEN(51, FILE = 'block_details.dat', FORM = 'formatted')
        DO i=1,nblocks
 
-        read(51, *) block(i)%xstart, block(i)%xend, &
-                    block(i)%ystart, block(i)%yend, &
-                    block(i)%zstart, block(i)%zend, &
+        read(51, *) xs_temp,xe_temp,ys_temp,ye_temp,zs_temp,ze_temp,&
                     block(i)%nx, block(i)%ny, block(i)%nz, &
                     block(i)%dx, block(i)%dy, block(i)%dz
-        block(i)%xstart= block(i)%xstart* 0.001_dp
-        block(i)%xend=  block(i)%xend*0.001_dp
-        block(i)%ystart= block(i)%ystart*0.001_dp
-        block(i)%yend=block(i)%yend*0.001_dp
-        block(i)%zstart=block(i)%zstart*0.001_dp
-        block(i)%zend=block(i)%zend*0.001_dp
        END DO
        CLOSE(51)
         print*,'after allocation'
@@ -194,10 +190,9 @@ module biocfd_read_input
 
          DO i=1,nblocks
         print *,'For block blockno,xstart,xend,ystart,yend,nx,ny,dx,dy:',&
-                   i, block(i)%xstart, block(i)%xend, &
-                   block(i)%ystart, block(i)%yend, &
-                   block(i)%zstart, block(i)%zend, &
-                   block(i)%nx, block(i)%ny,block(i)%nz, block(i)%dx, block(i)%dy,block(i)%dz
+             i, xs_temp*0.001_dp,xe_temp*0.001_dp,ys_temp*0.001_dp,ye_temp*0.001_dp,&
+             zs_temp*0.001_dp,ze_temp*0.001_dp,&
+              block(i)%nx, block(i)%ny,block(i)%nz, block(i)%dx, block(i)%dy,block(i)%dz
          END DO
 
 
