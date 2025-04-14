@@ -1,5 +1,5 @@
 module test_search
-  use, intrinsic :: iso_fortran_env, only: dp => real64
+  use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use testdrive, only : error_type, unittest_type, new_unittest, check
   implicit none
   private
@@ -19,7 +19,7 @@ contains
 
   subroutine test_find_dist_node(error)
     use biocfd_search, only : findDistnode
-    use global
+    use global, only : block, blk_start, nblocks
     !> Error handling
     type(error_type), allocatable, intent(out) :: error
 
