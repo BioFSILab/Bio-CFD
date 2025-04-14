@@ -7,6 +7,10 @@ on:
 #  push:
 #    branches: [main]
 
+
+permissions:
+  pull-requests: read|write
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
