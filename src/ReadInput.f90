@@ -202,8 +202,6 @@ module biocfd_read_input
 
 
          Do g=1,nblocks
-         !OPEN(61, FILE = 'xgrid_d50_498_3d_30.txt', FORM = 'formatted')
-         !OPEN(61, FILE = 'xgrid_257_d20_3d_30.txt', FORM = 'formatted')
 
          WRITE(filename1,8282) g,block(g)%nx+1
 
@@ -213,7 +211,6 @@ module biocfd_read_input
             READ(61, *) block(g)%x1(i)
                 block(g)%x1(i)=0.001_dp*block(g)%x1(i)
                     block(g)%x1(i)=block(g)%x1(i) + block(g)%gx_shift
-                !print*,'x1',g,block(g)%x1(i)
          END DO
          CLOSE(61)
 
