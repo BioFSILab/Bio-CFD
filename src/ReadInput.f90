@@ -16,7 +16,8 @@ module biocfd_read_input
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
        !     not dependent on diff for checking code changes don't break code
        !     Variables removed from Blocks 'xstart, xend, ystart, yend, zstart, zend'
-       REAL(dp) :: xs_temp,xe_temp,ys_temp,ye_temp,zs_temp,ze_temp
+       REAL(dp),ALLOCATABLE,DIMENSION(:) :: xstart_temp,xend_temp,&
+       ystart_temp,yend_temp,zstart_temp,zend_temp
 
         OPEN(60, FILE = 'inputdata', FORM = 'formatted')
         READ(60,*) nblocks, intflines,  &
@@ -28,7 +29,9 @@ module biocfd_read_input
         CLOSE(60)
         allocate(Blocks :: block(nblocks))
         allocate(Interfaces :: intfr(intflines))
-
+        allocate(xstart_temp(nblocks),xend_temp(nblocks),&
+        ystart_temp(nblocks),yend_temp(nblocks),&
+        zstart_temp(nblocks),zend_temp(nblocks))
         OPEN(77, FILE = 'body_search.dat', FORM = 'formatted')
         DO g=1,nblocks
                 READ(77,*) block(g)%i_startSearch, block(g)%i_endSearch, &
@@ -134,7 +137,8 @@ module biocfd_read_input
         OPEN(51, FILE = 'block_details.dat', FORM = 'formatted')
        DO i=1,nblocks
 
-        read(51, *) xs_temp,xe_temp,ys_temp,ye_temp,zs_temp,ze_temp,&
+        read(51, *) xs_temp(i),xe_temp(i),ys_temp(i),&
+                    ye_temp(i),zs_temp(i),ze_temp(i),&
                     block(i)%nx, block(i)%ny, block(i)%nz, &
                     block(i)%dx, block(i)%dy, block(i)%dz
        END DO
@@ -190,8 +194,9 @@ module biocfd_read_input
 
          DO i=1,nblocks
         print *,'For block blockno,xstart,xend,ystart,yend,nx,ny,dx,dy:',&
-             i, xs_temp*0.001_dp,xe_temp*0.001_dp,ys_temp*0.001_dp,ye_temp*0.001_dp,&
-             zs_temp*0.001_dp,ze_temp*0.001_dp,&
+             i, xs_temp(i)*0.001_dp,xe_temp(i)*0.001_dp,&
+             ys_temp(i)*0.001_dp,ye_temp(i)*0.001_dp,&
+             zs_temp(i)*0.001_dp,ze_temp(i)*0.001_dp,&
               block(i)%nx, block(i)%ny,block(i)%nz, block(i)%dx, block(i)%dy,block(i)%dz
          END DO
 
