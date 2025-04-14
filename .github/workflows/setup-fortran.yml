@@ -9,7 +9,9 @@ on:
 
 
 permissions:
-  pull-requests: read|write
+  contents: read
+  actions: read
+  pull-requests: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
