@@ -53,10 +53,9 @@ jobs:
           fpm test
 
       - name: Generate code coverage report
-        continue-on-error: true
         if: ${{ matrix.toolchain.compiler == 'gcc' }}
         run: |
-          gcov ./build/gfortran*/Bio-CFD/src_* -r ./src/
+          gcov ./build/gfortran*/Bio-CFD/*.gcda -r 
 
       - name: Setup LCOV
         if: ${{ matrix.toolchain.compiler == 'gcc' }}
