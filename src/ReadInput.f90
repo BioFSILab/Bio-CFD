@@ -137,8 +137,8 @@ module biocfd_read_input
         OPEN(51, FILE = 'block_details.dat', FORM = 'formatted')
        DO i=1,nblocks
 
-        read(51, *) xs_temp(i),xe_temp(i),ys_temp(i),&
-                    ye_temp(i),zs_temp(i),ze_temp(i),&
+        read(51, *) xstart_temp(i),xend_temp(i),ystart_temp(i),&
+                    yend_temp(i),zstart_temp(i),zend_temp(i),&
                     block(i)%nx, block(i)%ny, block(i)%nz, &
                     block(i)%dx, block(i)%dy, block(i)%dz
        END DO
@@ -194,9 +194,9 @@ module biocfd_read_input
 
          DO i=1,nblocks
         print *,'For block blockno,xstart,xend,ystart,yend,nx,ny,dx,dy:',&
-             i, xs_temp(i)*0.001_dp,xe_temp(i)*0.001_dp,&
-             ys_temp(i)*0.001_dp,ye_temp(i)*0.001_dp,&
-             zs_temp(i)*0.001_dp,ze_temp(i)*0.001_dp,&
+             i, xstart_temp(i)*0.001_dp,xend_temp(i)*0.001_dp,&
+             ystart_temp(i)*0.001_dp,yend_temp(i)*0.001_dp,&
+             zstart_temp(i)*0.001_dp,zend_temp(i)*0.001_dp,&
               block(i)%nx, block(i)%ny,block(i)%nz, block(i)%dx, block(i)%dy,block(i)%dz
          END DO
 
