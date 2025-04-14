@@ -344,12 +344,10 @@ module biocfd_search
                dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
                dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
                IF (dis_cen<minDis) THEN
-                  !print*,'1',i,j,k
                   minDis    = dis_cen
                   nel2Cen   = m
                ENDIF
                IF (dis_pnt<minDis1) THEN
-                  !print*,'2',i,j,k
                   minDis1   = dis_pnt
                   nel2Pnt   = m
                ENDIF
@@ -418,7 +416,6 @@ module biocfd_search
          DO k = 2, block(g)%nz+1
          DO j = 2, block(g)%ny+1
          DO i = 2, block(g)%nx+1
-               !n       = i-1  + nx*(j-2)  + nx*ny*(k-2)
                IF (block(g)%cell(i,j,k)==1) THEN
                   block(g)%solidCellCount = block(g)%solidCellCount + 1
                ELSEIF (block(g)%cell(i,j,k)==0) THEN
@@ -485,7 +482,6 @@ module biocfd_search
          Print*, 'imms. cells=', block(g)%ibCellCount
         Print*, 'fluid cells=',block(g)%fluidCellCount
         Print*, 'solid cells=', block(g)%solidCellCount
-        !stop
         END DO
      END SUBROUTINE tagging_th
 
@@ -532,12 +528,10 @@ module biocfd_search
                dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
                dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
                IF (dis_cen<minDis) THEN
-                  !print*,'1',i,j,k
                   minDis    = dis_cen
                   nel2Cen   = m
                ENDIF
                IF (dis_pnt<minDis1) THEN
-                  !print*,'2',i,j,k
                   minDis1   = dis_pnt
                   nel2Pnt   = m
                ENDIF
@@ -548,7 +542,6 @@ module biocfd_search
                 block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
                (block(g)%z1(k)<=block(g)%zcent(nel2Cen).AND. &
                 block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
-               !print*,i,j,k
                block(g)%cell(i,j,k) = 2
 
             ENDIF
@@ -655,7 +648,6 @@ module biocfd_search
          Print*, 'imms. cells=', block(g)%ibCellCount
         Print*, 'fluid cells=',block(g)%fluidCellCount
         Print*, 'solid cells=', block(g)%solidCellCount
-        !stop
         endif
         ENDDO
         DO g=1,intflines
@@ -695,31 +687,6 @@ module biocfd_search
         j = block(g)%interceptedIndexPtr(n, 2)
         k = block(g)%interceptedIndexPtr(n, 3)
          GOTO 1
-                  !pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)
-                  !pos1_x  = block(g)%xp(i) + pt1*cosAlpha(nelp(n))
-                  !pos1_y  = block(g)%yp(j) + pt1*cosBeta(nelp(n))
-                  !pos1_z  = block(g)%zp(k) + pt1*cosGamma(nelp(n))
-                  !pos2_x  = block(g)%xp(i) - pt1*cosAlpha(nelp(n))
-                  !pos2_y  = block(g)%yp(j) - pt1*cosBeta(nelp(n))
-                  !pos2_z  = block(g)%zp(k) - pt1*cosGamma(nelp(n))
-                  !
-                  !!$acc loop seq
-                  !DO il = i-7, i+7
-                  !   if(pos1_x.ge.block(g)%xp(il).and.pos1_x.lt.block(g)%xp(il+1)) i_x1 = il
-                  !   if(pos2_x.ge.block(g)%xp(il).and.pos2_x.lt.block(g)%xp(il+1)) i_x2 = il
-                  !END DO
-                  !!$acc loop seq
-                  !DO jl = j-7, j+7
-                  !   if(pos1_y.ge.block(g)%yp(jl).and.pos1_y.lt.block(g)%yp(jl+1)) i_y1 = jl
-                  !   if(pos2_y.ge.block(g)%yp(jl).and.pos2_y.lt.block(g)%yp(jl+1)) i_y2 = jl
-                  !END DO
-                  !!$acc loop seq
-                  !DO kl = k-7, k+7
-                  !   if(pos1_z.ge.block(g)%zp(kl).and.pos1_z.lt.block(g)%zp(kl+1)) i_z1 = kl
-                  !   if(pos2_z.ge.block(g)%zp(kl).and.pos2_z.lt.block(g)%zp(kl+1)) i_z2 = kl
-                  !END DO
-                  !block(g)%cell2(i, j, k) = 0
-                  !IF(block(g)%cell(i_x1, i_y1, i_z1).EQ.0 .AND. block(g)%cell(i_x2, i_y2, i_z2).EQ.0) block(g)%cell2(i, j, k) = 2
          1  CONTINUE
          IF(block(g)%ibSurfID(block(g)%nelp(n))==51.OR.block(g)%ibSurfID(block(g)%nelp(n))==52) &
             block(g)%cell2(i, j, k) = 2
@@ -820,7 +787,6 @@ module biocfd_search
                do k = 2, block(g)%nz+1
                do j = 2, block(g)%ny+1
                do i = 2, block(g)%nx+1
-        	!n = i-1  + nx*(j-2)  + nx*ny*(k-2)
                   if(block(g)%cell2(i,j,k)==2)then
                     write(82,*) block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), block(g)%cell2(i,j,k)
                   endif
@@ -942,13 +908,10 @@ ibcnt=0
          DO i = 2, block(g)%nx+1
             n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
             IF (block(g)%cell(i,j,k)==1) THEN
-                !block(g)%solidCellCount = block(g)%solidCellCount + 1
                 sdcnt = sdcnt + 1
             ELSEIF (block(g)%cell(i,j,k)==0) THEN
-               !block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
                flcnt  = flcnt + 1
             ELSEIF (block(g)%cell(i,j,k)==2) THEN
-               ! block(g)%ibCellCount = block(g)%ibCellCount + 1
                 ibcnt = ibcnt + 1
             ENDIF
          END DO
@@ -1046,7 +1009,6 @@ block(g)%fluidCellCount = flcnt
 
             print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
         END DO
-            !print*, "cellCount done"
      END SUBROUTINE cellCount_solid
 
      SUBROUTINE computeNormDistance
@@ -1091,7 +1053,6 @@ block(g)%fluidCellCount = flcnt
            n1z = block(g)%zp(block(g)%interceptedIndexPtr(k, 3))
            n2z = block(g)%z1(block(g)%interceptedIndexPtr(k, 3))
            n3z = block(g)%z1(block(g)%interceptedIndexPtr(k, 3)+1)
-          !print*,  normDisPtr(k, 2), n3x, normDisPtr(k, 2), n3y
           !$acc loop seq
         DO m = 1, block(g)%ibElems
         cent_x = block(g)%xcent(m)
@@ -1207,7 +1168,6 @@ block(g)%fluidCellCount = flcnt
 
                 block(a_blk_no)%cell_n(i,j,k)=1
                 block(a_blk_no)%cell(i,j,k)=1
-                !print*,block(a_blk_no)%xp(i),block(a_blk_no)%yp(j),block(a_blk_no)%cell(i,j)
 
         endif
         if ( block(a_blk_no)%xp(i) >= intfr(g)%xintf_start .and. &
@@ -1218,7 +1178,6 @@ block(g)%fluidCellCount = flcnt
              block(a_blk_no)%yp(j) <= intfr(g)%yintf_end   )then
 
                 block(a_blk_no)%cell_pr(i,j,k)=1
-                !print*,block(a_blk_no)%xp(i),block(a_blk_no)%yp(j),block(a_blk_no)%cell(i,j)
 
         endif
         ENDDO
@@ -1328,9 +1287,7 @@ block(g)%fluidCellCount = flcnt
         yval_dw=dmin1(block(b_blk_no)%ynode1(block(b_blk_no)%mk),block(b_blk_no)%nxty_cent-0.02_dp)
         xval_lt=(block(b_blk_no)%xnode1(block(b_blk_no)%mkx1))
         xval_rt=(block(b_blk_no)%xnode1(block(b_blk_no)%mkx2))
-        !ydisp1= dmin1(abs(block(b_blk_no)%nxty_cent-y_dw_lt - intfr(g)%yintf_start),abs(block(b_blk_no)%nxty_cent+y_up_lt - intfr(g)%yintf_end))
         ydisp1= dmin1(abs(yval_dw-intfr(g)%yintf_start),abs(yval_up - intfr(g)%yintf_end))
-        !xdisp1= dmin1(abs(xval_lt - intfr(g)%xintf_start),abs(xval_rt - intfr(g)%xintf_end))
         xdisp1= (abs(xval_lt - intfr(g)%xintf_start))
         zdisp1= dmin1(abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start), &
                       abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end))
@@ -1515,7 +1472,6 @@ block(g)%fluidCellCount = flcnt
         block(b_blk_no)%xp_dum=block(b_blk_no)%xp
         block(b_blk_no)%yp_dum=block(b_blk_no)%yp
         block(b_blk_no)%zp_dum=block(b_blk_no)%zp
-        !pause
         endif
 
         ENDDO
@@ -1693,7 +1649,6 @@ block(g)%fluidCellCount = flcnt
         DO i=block(b_blk_no)%cpy_x_start_mv,block(b_blk_no)%cpy_x_end_mv
         county_st=block(b_blk_no)%cpy_y_start
         DO j=block(b_blk_no)%cpy_y_start_mv,block(b_blk_no)%cpy_y_end_mv
-                !print*,'inside'
                 block(b_blk_no)%u(i,j,k)=block(b_blk_no)%u_dum(countx_st,county_st,countz_st)
                 block(b_blk_no)%v(i,j,k)=block(b_blk_no)%v_dum(countx_st,county_st,countz_st)
                 block(b_blk_no)%w(i,j,k)=block(b_blk_no)%w_dum(countx_st,county_st,countz_st)
@@ -1753,7 +1708,6 @@ block(g)%fluidCellCount = flcnt
 
         intfr(g)%py_interface_det(1,j) = intfr(g)%py_interface_det(1,j) &
                                          + (block(b_blk_no)%move_amty/factor)
-        !print*,j,intfr(g)%py_interface_det(1,j)
         ENDDO
         DO j=1,intfr(g)%counteryu
 
@@ -1965,7 +1919,6 @@ block(g)%fluidCellCount = flcnt
 
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k
-        !INTEGER (kind = 8),Intent(in) ::  g
         INTEGER (int64) ::  g
         g=1
 
@@ -2009,7 +1962,6 @@ block(g)%fluidCellCount = flcnt
             ENDIF
          ENDDO
 
-         !DEALLOCATE (block(g)%redCellIndexPtr ,block(g)%blackCellIndexPtr)
          ALLOCATE (block(g)%redCellIndexPtr(block(g)%redCellCount,3), &
                    block(g)%blackCellIndexPtr(block(g)%blackCellCount,3))
          ipt1 = 0
