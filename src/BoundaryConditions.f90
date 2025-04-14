@@ -46,14 +46,10 @@ SUBROUTINE velocityBC
 
           block(g)%ut(i,1,k) = block(g)%ut(i,2,k)
           block(g)%wt(i,1,k) = block(g)%wt(i,2,k)
-        !block(g)%ut(i,1,k) =  block(g)%ut(i,2,k)
-        !block(g)%wt(i,1,k) =  block(g)%wt(i,2,k)
          block(g)%vt(i,2,k) =  0._dp
 
           block(g)%ut(i,block(g)%ny+2,k) = block(g)%ut(i,block(g)%ny+1,k)                                      !wall no slip - closed channel
           block(g)%wt(i,block(g)%ny+2,k) = block(g)%wt(i,block(g)%ny+1,k)
-        !block(g)%ut(i,block(g)%ny+2,k) =  block(g)%ut(i,block(g)%ny+1,k)                                      !symmetric bc - open channel
-        !block(g)%wt(i,block(g)%ny+2,k) =  block(g)%wt(i,block(g)%ny+1,k)
          block(g)%vt(i,block(g)%ny+1,k) =  0._dp
 
 
@@ -68,14 +64,10 @@ SUBROUTINE velocityBC
       DO  i = 2, block(g)%nx+1
          block(g)%ut(i,j,1) =  block(g)%ut(i,j,2)
          block(g)%vt(i,j,1) =  block(g)%vt(i,j,2)
-        !block(g)%ut(i,j,1) =  block(g)%ut(i,j,2)
-        !block(g)%vt(i,j,1) =  block(g)%vt(i,j,2)
          block(g)%wt(i,j,1) =  0._dp
 
          block(g)%ut(i,j,block(g)%nz+2) =  block(g)%ut(i,j,block(g)%nz+1)                                      !wall no slip - closed channel
          block(g)%vt(i,j,block(g)%nz+2) =  block(g)%vt(i,j,block(g)%nz+1)
-        !block(g)%ut(i,j,block(g)%nz+2) =  block(g)%ut(i,j,block(g)%nz+1)                                      !symmetric bc - open channel
-        !block(g)%vt(i,j,block(g)%nz+2) =  block(g)%vt(i,j,block(g)%nz+1)
          block(g)%wt(i,j,block(g)%nz+1) =  0._dp
 
       END DO
