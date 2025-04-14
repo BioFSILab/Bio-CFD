@@ -66,7 +66,6 @@ contains
 
           DO g=1,nblocks
           if (ita == 1 )then
-          !DO g=1,nblocks
           WRITE(filename1,108)
   108     FORMAT("out/butterfly.dat")
           OPEN(UNIT=857,FILE=filename1,STATUS='unknown')
