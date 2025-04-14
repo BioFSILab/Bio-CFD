@@ -234,7 +234,6 @@ SUBROUTINE fineUpdate_bd
         j=intfr(g)%counteryp
 
         DO k=1,intfr(g)%counterzp
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxp
 
         varx1=intfr(g)%px_interface_det(2,i)
@@ -252,7 +251,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -320,7 +318,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -369,7 +366,6 @@ SUBROUTINE fineUpdate_bd
 !!!!!!k=counteryp
         k=intfr(g)%counterzp
 
-        !DO k=1,intfr(g)%counterzp
         DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxp
 
@@ -388,7 +384,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -457,7 +452,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -524,7 +518,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -574,7 +567,6 @@ SUBROUTINE fineUpdate_bd
         j=1
 
         DO k=1,intfr(g)%counterzu
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxu
 
 
@@ -594,7 +586,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -644,7 +635,6 @@ SUBROUTINE fineUpdate_bd
         j=intfr(g)%counteryu
 
         DO k=1,intfr(g)%counterzu
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxu
 
         varx1=intfr(g)%ux_interface_det(2,i)
@@ -662,7 +652,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -730,7 +719,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -779,7 +767,6 @@ SUBROUTINE fineUpdate_bd
 !!!!!!k=counteryp
         k=intfr(g)%counterzu
 
-        !DO k=1,intfr(g)%counterzp
         DO j=1,intfr(g)%counteryu
         DO i=1,intfr(g)%counterxu
 
@@ -798,7 +785,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -865,7 +851,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -932,7 +917,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -981,7 +965,6 @@ SUBROUTINE fineUpdate_bd
         j=1
 
         DO k=1,intfr(g)%counterzv
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxv
 
 
@@ -1001,7 +984,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -1051,7 +1033,6 @@ SUBROUTINE fineUpdate_bd
         j=intfr(g)%counteryv
 
         DO k=1,intfr(g)%counterzv
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxv
 
         varx1=intfr(g)%vx_interface_det(2,i)
@@ -1136,7 +1117,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -1185,7 +1165,6 @@ SUBROUTINE fineUpdate_bd
 !!!!!!k=counteryp
         k=intfr(g)%counterzv
 
-        !DO k=1,intfr(g)%counterzp
         DO j=1,intfr(g)%counteryv
         DO i=1,intfr(g)%counterxv
 
@@ -1204,7 +1183,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -1271,7 +1249,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -1338,7 +1315,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -1387,7 +1363,6 @@ SUBROUTINE fineUpdate_bd
         j=1
 
         DO k=1,intfr(g)%counterzw
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxw
 
 
@@ -1407,7 +1382,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -1457,7 +1431,6 @@ SUBROUTINE fineUpdate_bd
         j=intfr(g)%counteryw
 
         DO k=1,intfr(g)%counterzw
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxw
 
         varx1=intfr(g)%wx_interface_det(2,i)
@@ -1475,7 +1448,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -1543,7 +1515,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -1592,7 +1563,6 @@ SUBROUTINE fineUpdate_bd
 !!!!!!k=counteryp
         k=intfr(g)%counterzw
 
-        !DO k=1,intfr(g)%counterzp
         DO j=1,intfr(g)%counteryw
         DO i=1,intfr(g)%counterxw
 
@@ -1611,7 +1581,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -1705,7 +1674,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -1891,7 +1859,6 @@ SUBROUTINE fineUpdate_bd
         j=intfr(g)%counteryp
 
         DO k=1,intfr(g)%counterzp
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxp
 
         varx1=intfr(g)%px_interface_det(2,i)
@@ -1909,7 +1876,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -1978,7 +1944,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -2028,7 +1993,6 @@ SUBROUTINE fineUpdate_bd
 !!!!!!k=counteryp
         k=intfr(g)%counterzp
 
-        !DO k=1,intfr(g)%counterzp
         DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxp
 
@@ -2047,7 +2011,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -2210,7 +2173,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -2259,7 +2221,6 @@ SUBROUTINE fineUpdate_bd
         j=1
 
         DO k=1,intfr(g)%counterzu
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxu
 
 
@@ -2279,7 +2240,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -2329,7 +2289,6 @@ SUBROUTINE fineUpdate_bd
         j=intfr(g)%counteryu
 
         DO k=1,intfr(g)%counterzu
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxu
 
         varx1=intfr(g)%ux_interface_det(2,i)
@@ -2347,7 +2306,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -2395,7 +2353,6 @@ SUBROUTINE fineUpdate_bd
 
         k=1
 
-        !DO k=1,intfr(g)%counterzp
         DO j=1,intfr(g)%counteryu
         DO i=1,intfr(g)%counterxu
 
@@ -2416,7 +2373,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -2465,7 +2421,6 @@ SUBROUTINE fineUpdate_bd
 !!!!!!k=counteryp
         k=intfr(g)%counterzu
 
-        !DO k=1,intfr(g)%counterzp
         DO j=1,intfr(g)%counteryu
         DO i=1,intfr(g)%counterxu
 
@@ -2484,7 +2439,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -2663,7 +2617,6 @@ SUBROUTINE fineUpdate_bd
         j=1
 
         DO k=1,intfr(g)%counterzv
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxv
 
 
@@ -2683,7 +2636,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -2733,7 +2685,6 @@ SUBROUTINE fineUpdate_bd
         j=intfr(g)%counteryv
 
         DO k=1,intfr(g)%counterzv
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxv
 
         varx1=intfr(g)%vx_interface_det(2,i)
@@ -2866,7 +2817,6 @@ SUBROUTINE fineUpdate_bd
 !!!!!!k=counteryp
         k=intfr(g)%counterzv
 
-        !DO k=1,intfr(g)%counterzp
         DO j=1,intfr(g)%counteryv
         DO i=1,intfr(g)%counterxv
 
@@ -2935,13 +2885,6 @@ SUBROUTINE fineUpdate_bd
 
         DO k=1,intfr(g)%counterzw
         DO j=1,intfr(g)%counteryw
-        !DO i=1,intfr(g)%counterxp
-
-      ! if ( i .eq. 1 .or. i .eq. intfr(g)%counterxp .or. &
-      !      j .eq. 1 .or. j .eq. intfr(g)%counteryp .or. &
-      !      k .eq. 1 .or. k .eq. intfr(g)%counterzp )then
-
-
 
         varx1=intfr(g)%wx_interface_det(2,i)
         varx2=intfr(g)%wx_interface_det(3,i)
@@ -2958,7 +2901,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -3141,7 +3083,6 @@ SUBROUTINE fineUpdate_bd
         j=intfr(g)%counteryw
 
         DO k=1,intfr(g)%counterzw
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxw
 
         varx1=intfr(g)%wx_interface_det(2,i)
@@ -3159,7 +3100,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
@@ -3496,7 +3436,6 @@ SUBROUTINE fineUpdate_bd
         j=1
 
         DO k=1,intfr(g)%counterzp
-        !DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxp
 
 
@@ -3697,7 +3636,6 @@ SUBROUTINE fineUpdate_bd
 !!!!!!k=counteryp
         k=intfr(g)%counterzp
 
-        !DO k=1,intfr(g)%counterzp
         DO j=1,intfr(g)%counteryp
         DO i=1,intfr(g)%counterxp
 
@@ -3716,7 +3654,6 @@ SUBROUTINE fineUpdate_bd
         DO l=vary1,vary2
         DO s=varx1,varx2
                 tar_x=s
-                !tar_y=1
                 tar_y=l
                 tar_z=q
 
