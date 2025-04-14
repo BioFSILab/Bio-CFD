@@ -166,7 +166,6 @@ SUBROUTINE pressureForcing1
  !$acc end parallel
       ENDDO
 
-     !print*, "Leaving PressureForcing"
 END SUBROUTINE pressureForcing1
 
 SUBROUTINE velocityForcing1
