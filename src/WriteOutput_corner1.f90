@@ -10,7 +10,6 @@ module biocfd_write_output_corner1
 
 contains
       SUBROUTINE writeOutput1
-       INTEGER, PARAMETER :: rk = selected_real_kind(8)
        CHARACTER(len=150)  :: filename1
        INTEGER  :: k, i, j, g
        REAL (dp) :: u1, v1, w1
@@ -41,7 +40,6 @@ contains
       END SUBROUTINE writeOutput1
 
       SUBROUTINE writeResult
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER::  i, j, k,g
        CHARACTER(len=70)  :: filename1
         IF(mod(ita,500)==0)THEN

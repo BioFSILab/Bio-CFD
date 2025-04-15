@@ -11,14 +11,14 @@ module biocfd_forcing
 
   contains
 SUBROUTINE pressureForcing1
-      INTEGER, PARAMETER :: rk = selected_real_kind(8)
+
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1, g
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, &
                          aval, bval, cval, p_pos1, sur2nodeDis, dpdn, p_x1, p_x2, &
                          p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, &
                          p_z1_x1, p_z2_x1, p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e
 
-      dpdn = 0._rk
+      dpdn = 0._dp
         DO g=blk_start,nblocks
 
 
@@ -65,7 +65,7 @@ SUBROUTINE pressureForcing1
 
          sur2nodeDis = block(g)%pNormDis(n)
 
-         pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
+         pt1 = 1.5_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -169,7 +169,7 @@ SUBROUTINE pressureForcing1
 END SUBROUTINE pressureForcing1
 
 SUBROUTINE velocityForcing1
-      INTEGER, PARAMETER :: rk = selected_real_kind(8)
+
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1, g
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1,  &
                          aval, bval, cval, sur2nodeDis, h1, h2, &
@@ -214,7 +214,7 @@ SUBROUTINE velocityForcing1
 !***********************U(i,j,k)****************************************
          sur2nodeDis = block(g)%u2NormDis(n)
 
-         pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
+         pt1 = 1.5_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -322,7 +322,7 @@ SUBROUTINE velocityForcing1
          ENDIF
          sur2nodeDis = block(g)%u1NormDis(n)
 
-         pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
+         pt1 = 1.5_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -436,7 +436,7 @@ SUBROUTINE velocityForcing1
 
          sur2nodeDis = block(g)%v2NormDis(n)
 
-         pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 &
+         pt1 = 1.5_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 &
                + block(g)%deltaz(k)**2) + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -549,7 +549,7 @@ SUBROUTINE velocityForcing1
          ENDIF
          sur2nodeDis = block(g)%v1NormDis(n)
 
-         pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
+         pt1 = 1.5_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -660,7 +660,7 @@ SUBROUTINE velocityForcing1
          ENDIF
          sur2nodeDis = block(g)%w2NormDis(n)
 
-         pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
+         pt1 = 1.5_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -759,7 +759,7 @@ SUBROUTINE velocityForcing1
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%wt(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !**************************W(i,j,k-1)*************************************
-         wsurf = 0._rk
+         wsurf = 0._dp
          IF (block(g)%ibSurfID(block(g)%nelw1(n))==50) THEN
            wsurf = 0.
          ELSEIF (block(g)%ibSurfID(block(g)%nelw1(n))==51) THEN
@@ -771,7 +771,7 @@ SUBROUTINE velocityForcing1
          ENDIF
          sur2nodeDis = block(g)%w1NormDis(n)
 
-         pt1 = 1.5_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
+         pt1 = 1.5_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -876,7 +876,7 @@ SUBROUTINE velocityForcing1
 END SUBROUTINE velocityForcing1
 
 SUBROUTINE pressureForcingGhost
-      INTEGER, PARAMETER :: rk = selected_real_kind(8)
+
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, &
                          aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
@@ -885,7 +885,7 @@ SUBROUTINE pressureForcingGhost
                          h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e
 
         DO g=blk_start, nblocks
-      dpdn = 0._rk
+      dpdn = 0._dp
  !$acc parallel loop gang vector                                                                    &
  !$acc private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
@@ -937,7 +937,7 @@ SUBROUTINE pressureForcingGhost
 
          sur2nodeDis = -block(g)%pNormDis(block(g)%index_ts(n))
 
-         pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 &
+         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 &
                              + block(g)%deltay(j)**2 &
                              + block(g)%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
@@ -1041,7 +1041,7 @@ SUBROUTINE pressureForcingGhost
 END SUBROUTINE pressureForcingGhost
 
 SUBROUTINE velocityForcingGhost
-      INTEGER, PARAMETER :: rk = selected_real_kind(8)
+
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1,  &
                          aval, bval, cval, sur2nodeDis, h1, h2, &
@@ -1084,7 +1084,7 @@ SUBROUTINE velocityForcingGhost
 
          sur2nodeDis = -block(g)%u2NormDis(block(g)%index_ts(n))
 
-         pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 &
+         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 &
                + block(g)%deltay(j)**2 &
                + block(g)%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
@@ -1194,7 +1194,7 @@ SUBROUTINE velocityForcingGhost
 
          sur2nodeDis = -block(g)%u1NormDis(block(g)%index_ts(n))
 
-         pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -1311,7 +1311,7 @@ SUBROUTINE velocityForcingGhost
 
          sur2nodeDis = -block(g)%v2NormDis(block(g)%index_ts(n))
 
-         pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -1431,7 +1431,7 @@ SUBROUTINE velocityForcingGhost
 
          sur2nodeDis = -block(g)%v1NormDis(block(g)%index_ts(n))
 
-         pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 &
+         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 &
                + block(g)%deltaz(k)**2) + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -1530,7 +1530,7 @@ SUBROUTINE velocityForcingGhost
          block(g)%v1_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          block(g)%v1t_ghost(n) = block(g)%v(i,j-1,k)
 !**************************W(i,j,k)*************************************
-         wsurf = 0._rk
+         wsurf = 0._dp
          IF (block(g)%ibSurfID(block(g)%nelw2(block(g)%index_ts(n)))==50) THEN
            wsurf = 0.
          ELSEIF (block(g)%ibSurfID(block(g)%nelw2(block(g)%index_ts(n)))==51) THEN
@@ -1546,7 +1546,7 @@ SUBROUTINE velocityForcingGhost
 
          sur2nodeDis = -block(g)%w2NormDis(block(g)%index_ts(n))
 
-         pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -1646,7 +1646,7 @@ SUBROUTINE velocityForcingGhost
          !ENDIF
          block(g)%w2t_ghost(n) = block(g)%w(i,j,k)
 !**************************W(i,j,k-1)*************************************
-         wsurf = 0._rk
+         wsurf = 0._dp
          IF (block(g)%ibSurfID(block(g)%nelw1(block(g)%index_ts(n)))==50) THEN
            wsurf = 0.
          ELSEIF (block(g)%ibSurfID(block(g)%nelw1(block(g)%index_ts(n)))==51) THEN
@@ -1662,7 +1662,7 @@ SUBROUTINE velocityForcingGhost
 
          sur2nodeDis = -block(g)%w1NormDis(block(g)%index_ts(n))
 
-         pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -1767,7 +1767,7 @@ END SUBROUTINE velocityForcingGhost
 !***********************************************************************
 
 SUBROUTINE pressureForcingField
-      INTEGER, PARAMETER :: rk = selected_real_kind(8)
+
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, &
                          aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
@@ -1776,7 +1776,7 @@ SUBROUTINE pressureForcingField
                          h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e
 
        DO g=blk_start,nblocks
-      dpdn = 0._rk
+      dpdn = 0._dp
  !$acc parallel loop gang vector                                                                                          &
  !$acc private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
@@ -1819,7 +1819,7 @@ SUBROUTINE pressureForcingField
 
          sur2nodeDis = block(g)%pNormDis(n)
 
-         pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -1922,7 +1922,7 @@ SUBROUTINE pressureForcingField
 END SUBROUTINE pressureForcingField
 
 SUBROUTINE velocityForcingField
-      INTEGER, PARAMETER :: rk = selected_real_kind(8)
+
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1,  &
                          aval, bval, cval, sur2nodeDis, h1, h2, &
@@ -1967,7 +1967,7 @@ SUBROUTINE velocityForcingField
 
          sur2nodeDis = block(g)%u2NormDis(n)
 
-         pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -2074,7 +2074,7 @@ SUBROUTINE velocityForcingField
 
          sur2nodeDis = block(g)%u1NormDis(n)
 
-         pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 &
+         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 &
                + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
@@ -2188,7 +2188,7 @@ SUBROUTINE velocityForcingField
 
          sur2nodeDis = block(g)%v2NormDis(n)
 
-         pt1 = 1.21_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.21_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -2305,7 +2305,7 @@ SUBROUTINE velocityForcingField
          !vsurf =  -block(g)%thetaDot*(block(g)%xcent(block(g)%nelv1(n)) - block(g)%piv_x) + ydot
          sur2nodeDis = block(g)%v1NormDis(n)
 
-         pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -2414,7 +2414,7 @@ SUBROUTINE velocityForcingField
          ENDIF
 
          sur2nodeDis = block(g)%w2NormDis(n)
-         pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -2511,7 +2511,7 @@ SUBROUTINE velocityForcingField
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%w(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !**************************W(i,j,k-1)*************************************
-         wsurf = 0._rk
+         wsurf = 0._dp
          IF (block(g)%ibSurfID(block(g)%nelw1(n))==50) THEN
            wsurf = 0.
          ELSEIF (block(g)%ibSurfID(block(g)%nelw1(n))==51) THEN
@@ -2524,7 +2524,7 @@ SUBROUTINE velocityForcingField
 
          sur2nodeDis = block(g)%w1NormDis(n)
 
-         pt1 = 1.51_rk*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node

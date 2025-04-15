@@ -15,19 +15,18 @@ module biocfd_pcor_vcor
       SUBROUTINE poissonSolver
 
         INTEGER(int64) :: i, j,k, n, g
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         REAL (dp)    :: max_derr1, max_derr2, max_div, max_derrStdSt
         REAL (dp)    :: er_dudt, er_dvdt, er_dwdt, err_ds
         INTEGER(int64) :: max_nIterPcor, max_nit
         CHARACTER(len=160) :: filename1
 
-          max_derrStdst=0._rk
-          max_derr1=0._rk
-          max_derr2=0._rk
+          max_derrStdst=0._dp
+          max_derr1=0._dp
+          max_derr2=0._dp
           max_nIterPcor=0
-          max_div=0._rk
-          max_nit=0._rk
-          err_ds=0._rk
+          max_div=0._dp
+          max_nit=0._dp
+          err_ds=0._dp
           er_dudt=0.
           er_dvdt=0.
           er_dwdt=0.
@@ -47,8 +46,8 @@ module biocfd_pcor_vcor
         END DO
         !$acc end parallel
         block(g)%nIterPcor=0
-        block(g)%derr2  = 0._rk
-        block(g)%derrStdSt=0._rk
+        block(g)%derr2  = 0._dp
+        block(g)%derrStdSt=0._dp
         block(g)%rhs=0.0
         end do
 
@@ -237,7 +236,6 @@ module biocfd_pcor_vcor
 
       SUBROUTINE REDBLACKSOR_linear(g)
 
-         INTEGER, PARAMETER :: rk = selected_real_kind(8)
          INTEGER(int64) :: n, i, j, k, gg, nx_var, ny_var,nz_var,nxy
          REAL (dp) :: errSum,var,derr4
          INTEGER(int64),INTENT(IN) ::g
@@ -259,8 +257,8 @@ module biocfd_pcor_vcor
 
         derr4=11111.
          nxy= nx_var * ny_var
-         block(g)%derr2 = 0._rk
-         errSum = 0._rk
+         block(g)%derr2 = 0._dp
+         errSum = 0._dp
  3       block(g)%nIterPcor=block(g)%nIterPcor+1
 
         var=0.
@@ -280,7 +278,7 @@ module biocfd_pcor_vcor
               -block(gg)%Acz(k-1,1)*block(gg)%pco(i,j,k-1) &
               -block(gg)%Acz(k-1,3)*block(gg)%pco(i,j,k+1)) / &
               (block(gg)%Acx(i-1,2)+block(gg)%Acy(j-1,2)+block(gg)%Acz(k-1,2))
-            block(gg)%pc(i,j,k) = (1._rk-omega)*block(gg)%pco(i,j,k) +omega*block(gg)%pc(i,j,k)
+            block(gg)%pc(i,j,k) = (1._dp-omega)*block(gg)%pco(i,j,k) +omega*block(gg)%pc(i,j,k)
 
  10      CONTINUE
         !$omp end parallel do
@@ -301,7 +299,7 @@ module biocfd_pcor_vcor
               -block(gg)%Acz(k-1,1)*block(gg)%pc(i,j,k-1) &
               -block(gg)%Acz(k-1,3)*block(gg)%pc(i,j,k+1)) / &
               (block(gg)%Acx(i-1,2)+block(gg)%Acy(j-1,2)+block(gg)%Acz(k-1,2))
-            block(gg)%pc(i,j,k) = (1._rk-omega)*block(gg)%pco(i,j,k) +omega*block(gg)%pc(i,j,k)
+            block(gg)%pc(i,j,k) = (1._dp-omega)*block(gg)%pco(i,j,k) +omega*block(gg)%pc(i,j,k)
 
  20      CONTINUE
         !$omp end parallel do

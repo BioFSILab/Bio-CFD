@@ -46,18 +46,17 @@ module biocfd_search
         end subroutine findDistnode
 
      SUBROUTINE shiftSurfaceNodesInitial
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER(int64) ::  i, g
         REAL(dp)      ::  xr1, yr1, zr1, angt
         REAL(dp)      :: bdy,bdfr
 
-        phase_angle = phase_angle*pi/180_rk
-        aoa1 = aoa*pi/180_rk
+        phase_angle = phase_angle*pi/180_dp
+        aoa1 = aoa*pi/180_dp
         aoa2 = -aoa1
-        alpha_m = alpha_m*pi/180_rk
-        theta_m = theta_m*pi/180_rk
+        alpha_m = alpha_m*pi/180_dp
+        theta_m = theta_m*pi/180_dp
         a0y = 0.  !a0y
-        ang_theta = 0.  !2._rk*pi*freq
+        ang_theta = 0.  !2._dp*pi*freq
         alpha_t=(alpha_m*0.5_dp)*(1+cos(ang_theta*(totime+deltat)+phase_angle))
         theta_t       =  theta_m*cos(ang_theta*(totime+deltat))
         DO g=blk_start,nblocks
@@ -69,7 +68,7 @@ module biocfd_search
         xfact=0.05_dp
         bdfr=15
         bdy=15*dxmin
-        angt  =  2._rk*pi*bdfr
+        angt  =  2._dp*pi*bdfr
 
         ac_x_al=0.
         ac_y_al=0.
@@ -88,8 +87,8 @@ module biocfd_search
         block(g)%ymove = 0.
         block(g)%zmove = 0.
 
-        block(g)%a0 = block(g)%a0*pi/180_rk
-         angt  =  2._rk*pi*block(g)%bfreq
+        block(g)%a0 = block(g)%a0*pi/180_dp
+         angt  =  2._dp*pi*block(g)%bfreq
          block(g)%xpth1=block(g)%xshift-(ita*dxmin*xfact)
         block(g)%xpth2=block(g)%xshift-(ita*dxmin*xfact)
         block(g)%ypth1=(block(g)%yamp)*sin(angt*block(g)%xshift)
@@ -99,29 +98,29 @@ module biocfd_search
         block(g)%piv_z = block(g)%zshift
 
         block(g)%thetaDot  =  0.
-        block(g)% thetaDDot =  0._rk
-        block(g)% thetaDot   =  0.  !ang_theta*a0*cos(2._rk*pi*freq*totime + phase_angle)
+        block(g)% thetaDDot =  0._dp
+        block(g)% thetaDot   =  0.  !ang_theta*a0*cos(2._dp*pi*freq*totime + phase_angle)
         block(g)%thetaDot1  = 0.
         block(g)% thetaDot2  = 0.
         block(g)% alphaDot  = 0.
-        block(g)%alphaDDot  = 0.  !-ang_theta*ang_theta*a0*sin(2._rk*pi*freq*totime + phase_angle)
+        block(g)%alphaDDot  = 0.  !-ang_theta*ang_theta*a0*sin(2._dp*pi*freq*totime + phase_angle)
         block(g)% thetaDDot1 = 0.
         block(g)%thetaDDot2 = 0.
-        block(g)% thetaDDot  = 0.  !-ang_theta*ang_theta*a0*sin(2._rk*pi*freq*totime + phase_angle)
+        block(g)% thetaDDot  = 0.  !-ang_theta*ang_theta*a0*sin(2._dp*pi*freq*totime + phase_angle)
        block(g)%yt         =  bdy*sin(2*pi*bdfr*totime )
        block(g)%ydot       =  angt*bdy*cos(2*pi*bdfr*totime)
        block(g)%yddot      =  -angt*angt*bdy*sin(2*pi*bdfr*totime)
        block(g)%xt         =  block(g)%xshift- (ita*dxmin*xfact)
        block(g)%xdot       =  -(dxmin*xfact)/deltat
        block(g)%xddot      =  0.
-        block(g)%u_prev = 0._rk
-        block(g)%u_curr = 0._rk
-        block(g)%v_prev = 0._rk
-        block(g)%v_curr = 0._rk
-        block(g)%w_prev = 0._rk
-        block(g)%w_curr = 0._rk
-        block(g)%Total_VP_FY = 0._rk
-        block(g)%Total_VP_FX = 0._rk
+        block(g)%u_prev = 0._dp
+        block(g)%u_curr = 0._dp
+        block(g)%v_prev = 0._dp
+        block(g)%v_curr = 0._dp
+        block(g)%w_prev = 0._dp
+        block(g)%w_curr = 0._dp
+        block(g)%Total_VP_FY = 0._dp
+        block(g)%Total_VP_FX = 0._dp
         block(g)%inity_cent=block(g)%yshift
         block(g)%nxty_cent=block(g)%yshift
         block(g)%initx_cent=block(g)%xshift
@@ -157,7 +156,6 @@ module biocfd_search
 
       SUBROUTINE computeSurfaceVariables
 
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER(int64) ::  i, g
         REAL(dp)      ::  xr1, yr1, zr1
         REAL(dp)      :: angg, angt
@@ -166,12 +164,12 @@ module biocfd_search
 
         DO g=blk_start,nblocks
         angg=90
-        aoa1       =  (block(g)%a0)*sin(2._rk*pi*freq*(totime+deltat) + phase_angle)
+        aoa1       =  (block(g)%a0)*sin(2._dp*pi*freq*(totime+deltat) + phase_angle)
         aoa2       = -aoa1
-        ang_theta  =  2._rk*pi*freq
+        ang_theta  =  2._dp*pi*freq
         bdfr=block(g)%bfreq
         bdy=block(g)%yamp
-        angt  =  2._rk*pi*bdfr
+        angt  =  2._dp*pi*bdfr
 
         block(g)%xpth2=block(g)%xshift-(ita*dxmin*xfact)
         block(g)%ypth2=(block(g)%yamp)*sin(angt*block(g)%xpth2)
@@ -179,8 +177,8 @@ module biocfd_search
         block(g)%ypth1=block(g)%ypth2
         block(g)%xpth1=block(g)%xpth2
         PRINT*, "angles =", aoa1*180._dp/pi, aoa2*180._dp/pi
-        block(g)%thetaDot1 = ang_theta*block(g)%a0*cos(2._rk*pi*freq*(totime+deltat) + phase_angle)
-        block(g)%thetaDDot1 = -ang_theta*ang_theta*block(g)%a0*sin(2._rk*pi*freq*(totime+deltat) &
+        block(g)%thetaDot1 = ang_theta*block(g)%a0*cos(2._dp*pi*freq*(totime+deltat) + phase_angle)
+        block(g)%thetaDDot1 = -ang_theta*ang_theta*block(g)%a0*sin(2._dp*pi*freq*(totime+deltat) &
                               + phase_angle)
         block(g)%thetaDot2  = -block(g)%thetaDot1
         block(g)%thetaDDot2 = -block(g)%thetaDDot1
@@ -241,7 +239,6 @@ module biocfd_search
 
       SUBROUTINE computeSurfaceNorm
 
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER(int64) ::  n, g  !c1, c2, c3, c4
         REAL(dp)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL, binor
         REAL(dp)      :: var_xcent, var_ycent, var_zcent
@@ -271,9 +268,9 @@ module biocfd_search
            p3z = block(g)%znode1(block(g)%ibElP3(n))                       !z coordinate element node 3
 
 
-           var_xcent =  (p2x+p1x+p3x)/3._rk                  !centroid x coordinate element
-           var_ycent =  (p2y+p1y+p3y)/3._rk                  !centroid y coordinate element
-           var_zcent =  (p2z+p1z+p3z)/3._rk                  !centroid z coordinate element
+           var_xcent =  (p2x+p1x+p3x)/3._dp                  !centroid x coordinate element
+           var_ycent =  (p2y+p1y+p3y)/3._dp                  !centroid y coordinate element
+           var_zcent =  (p2z+p1z+p3z)/3._dp                  !centroid z coordinate element
 
            block(g)%xcent(n) =  var_xcent                  !centroid x coordinate element
            block(g)%ycent(n) =  var_ycent                  !centroid y coordinate element
@@ -306,7 +303,6 @@ module biocfd_search
 
      SUBROUTINE tagging_th
 
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER(int64) :: g, n, m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
         REAL(dp)      :: n1x, n1y, n1z, n2x, n2y, n2z, minDis1, minDis, &
                          n2dotn, cent_x, cent_y, cent_z, dis_cen, dis_pnt
@@ -487,9 +483,7 @@ module biocfd_search
 
      SUBROUTINE tagging_th_move
 
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER(int64) :: g, m, i, j, k, nel2Cen, nel2Pnt, sumNodeId
-
         INTEGER            :: a_blk_no, b_blk_no
         REAL(dp)      :: n1x, n1y, n1z, n2x,n2y,n2z, minDis1, minDis, &
                               n2dotn, cent_x, cent_y, cent_z, dis_cen, dis_pnt
@@ -614,7 +608,6 @@ module biocfd_search
 
      SUBROUTINE findTScells
 
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER            :: g,i, j, k, i1, j1, k1, iPt1, m, n, tscnt
 
 
@@ -730,7 +723,6 @@ module biocfd_search
 
      SUBROUTINE selectiveRetagging_th
 
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER(int64) ::  n, g, m, i, j, k, i1, j1, k1, nn, &
                                nel2Pnt, nel2Cen, sumNodeID
         INTEGER            :: flcnt, sdcnt, ibcnt
@@ -859,7 +851,6 @@ block(g)%fluidCellCount = flcnt
 
      SUBROUTINE cellCount_solid
 
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k, g
 
         print*, "cellCount started"
@@ -941,7 +932,6 @@ block(g)%fluidCellCount = flcnt
 
      SUBROUTINE computeNormDistance
 
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER            ::  nel2u1, nel2u2, nel2v1, nel2v2, nel2w1, nel2w2
         INTEGER            :: k, nel2p, g, ibxx, m
         REAL(dp) :: n1x, n2x, n3x, n1y, n2y, n3y, n1z, n2z, n3z, &
@@ -1118,7 +1108,6 @@ block(g)%fluidCellCount = flcnt
 
         SUBROUTINE cellCount_solid_coarse_mv
 
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER(int64) ::  n, iPt, iPt1, iPt2, i, j, k
         INTEGER(int64) ::  g
         g=1
@@ -1411,7 +1400,6 @@ block(g)%fluidCellCount = flcnt
         INTEGER(int64) :: i,j,k,g, a_blk_no, b_blk_no,countx_st,countz_st,county_st
         REAL(dp) :: change_y_f,change_x_f
         REAL(dp) :: change_z_f
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         DO g=blk_start,nblocks
 
         if ( block(g)% move_check == 1) then
@@ -1450,19 +1438,19 @@ block(g)%fluidCellCount = flcnt
         ENDDO
 
         DO i = 1, block(g)%ny+2
-           block(g)%yu(i) = 0.5_rk*(block(g)%y1(i)+block(g)%y1(i+1))
+           block(g)%yu(i) = 0.5_dp*(block(g)%y1(i)+block(g)%y1(i+1))
            block(g)%yw(i) = block(g)%yu(i)
            block(g)%yp(i) = block(g)%yu(i)
         END DO
 
         DO i = 1, block(g)%nx+2
-           block(g)%xv(i) = 0.5_rk*(block(g)%x1(i)+block(g)%x1(i+1))
+           block(g)%xv(i) = 0.5_dp*(block(g)%x1(i)+block(g)%x1(i+1))
            block(g)%xw(i) = block(g)%xv(i)
            block(g)%xp(i) = block(g)%xv(i)
         END DO
 
         DO i = 1, block(g)%nz+2
-           block(g)%zu(i) = 0.5_rk*(block(g)%z1(i)+block(g)%z1(i+1))
+           block(g)%zu(i) = 0.5_dp*(block(g)%z1(i)+block(g)%z1(i+1))
            block(g)%zv(i) = block(g)%zu(i)
            block(g)%zp(i) = block(g)%zu(i)
         END DO
@@ -1599,7 +1587,6 @@ block(g)%fluidCellCount = flcnt
         SUBROUTINE change_block_interface
 
         INTEGER(int64) :: i,j,g, a_blk_no, b_blk_no, factor
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
 
 
 
@@ -1845,7 +1832,6 @@ block(g)%fluidCellCount = flcnt
 
         SUBROUTINE cellCount_solid_coarse
 
-        INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k
         INTEGER (int64) ::  g
         g=1
