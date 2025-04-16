@@ -488,13 +488,12 @@ module biocfd_search
      SUBROUTINE tagging_th_move
 
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
-        INTEGER(int64) :: g, n, m, i, j, k, nel2Cen, nel2Pnt, sumNodeId
+        INTEGER(int64) :: g, m, i, j, k, nel2Cen, nel2Pnt, sumNodeId
 
         INTEGER            :: a_blk_no, b_blk_no
         REAL(dp)      :: n1x, n1y, n1z, n2x,n2y,n2z, minDis1, minDis, &
                               n2dotn, cent_x, cent_y, cent_z, dis_cen, dis_pnt
 
-        CHARACTER(LEN=120) :: filename1
         DO g=blk_start,nblocks
         if ( block(g)%move_check == 1)then
             block(g)% ibCellCount = 0
@@ -617,7 +616,6 @@ module biocfd_search
 
         INTEGER, PARAMETER :: rk = selected_real_kind(8)
         INTEGER            :: g,i, j, k, i1, j1, k1, iPt1, m, n, tscnt
-        CHARACTER(len=70) :: filename1
 
 
         print*,'inside findTScells'
