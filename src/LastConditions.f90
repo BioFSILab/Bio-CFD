@@ -38,12 +38,14 @@ module biocfd_last_conditions
        WRITE(filename3,3) g, re
   3     FORMAT('out/aorta_chkpt.',i3.3,'.',f6.1,".dat")
        OPEN (1, FILE=filename3, FORM='formatted')
-       DO 30 k = 1, block(g)%nz+2
-       DO 30 j = 1, block(g)%ny+2
-       DO 30 i = 1, block(g)%nx+2
+       DO k = 1, block(g)%nz+2
+       DO j = 1, block(g)%ny+2
+       DO i = 1, block(g)%nx+2
          READ(1,*) block(g)%u(i,j,k), block(g)%v(i,j,k), block(g)%w(i,j,k), block(g)%p(i,j,k), &
                    totime, ita, ita1
- 30    CONTINUE
+      END DO
+      END DO
+      END DO
        CLOSE(1)
         END DO
 
