@@ -23,7 +23,7 @@ SUBROUTINE pressureForcing1
 
 
  !$acc parallel loop gang vector                                                                                          &
- !$acc private (n,diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
+ !$acc private (n, n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
  !$acc           p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
  !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z,ac_x_al,ac_y_al,at_x_al,at_y_al)         &
@@ -186,7 +186,7 @@ SUBROUTINE velocityForcing1
 
         DO g=blk_start, nblocks
  !$acc parallel loop gang vector         &
- !$acc private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,           &
+ !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1,           &
  !$acc          aval, bval, cval, sur2nodeDis, h1, h2,               &
  !$acc          usurf, u_pos1, u_x1, u_x2, u_y1, u_y2, u_z1, u_z2,   &
  !$acc          vsurf, v_pos1, v_x1, v_x2, v_y1, v_y2, v_z1, v_z2,   &
@@ -887,7 +887,7 @@ SUBROUTINE pressureForcingGhost
         DO g=blk_start, nblocks
       dpdn = 0._dp
  !$acc parallel loop gang vector                                                                    &
- !$acc private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
+ !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
  !$acc           p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
  !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z,ac_x_al,ac_y_al,at_x_al,at_y_al)         &
@@ -1056,7 +1056,7 @@ SUBROUTINE velocityForcingGhost
 
         DO g=blk_start,nblocks
  !$acc parallel loop gang vector         &
- !$acc private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,           &
+ !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1,           &
  !$acc          aval, bval, cval, sur2nodeDis, h1, h2,               &
  !$acc          usurf, u_pos1, u_x1, u_x2, u_y1, u_y2, u_z1, u_z2,   &
  !$acc          vsurf, v_pos1, v_x1, v_x2, v_y1, v_y2, v_z1, v_z2,   &
@@ -1778,7 +1778,7 @@ SUBROUTINE pressureForcingField
        DO g=blk_start,nblocks
       dpdn = 0._dp
  !$acc parallel loop gang vector                                                                                          &
- !$acc private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
+ !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
  !$acc           p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
  !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z,ac_x_al,ac_y_al,at_x_al,at_y_al)         &
@@ -1939,7 +1939,7 @@ SUBROUTINE velocityForcingField
 
         DO g=blk_start,nblocks
  !$acc parallel loop gang vector         &
- !$acc private (diagCell, n1, pos1_x, pos1_y, pos1_z, pt1,           &
+ !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1,           &
  !$acc          aval, bval, cval, sur2nodeDis, h1, h2,               &
  !$acc          usurf, u_pos1, u_x1, u_x2, u_y1, u_y2, u_z1, u_z2,   &
  !$acc          vsurf, v_pos1, v_x1, v_x2, v_y1, v_y2, v_z1, v_z2,   &
