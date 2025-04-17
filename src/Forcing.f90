@@ -931,9 +931,9 @@ SUBROUTINE pressureForcingGhost
             at_y = -block(g)%thetaDDot*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) &
                    - block(g)%piv_z)
         ENDIF
-            dpdn = -((ac_z + at_z)* -block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(n))) &
-                   + (ac_y + at_y)* -block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n)))) &
-                   - (block(g)%yddot*(-block(g)%cosBeta(block(g)%index_ts(n))))
+            dpdn = ((ac_z + at_z)* block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(n))) &
+                  + (ac_y + at_y)* block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n)))) &
+                   + (block(g)%yddot*(block(g)%cosBeta(block(g)%index_ts(n))))
 
          sur2nodeDis = -block(g)%pNormDis(block(g)%index_ts(n))
 
@@ -943,9 +943,9 @@ SUBROUTINE pressureForcingGhost
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xp(i) + pt1*-block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n)))
-         pos1_y = block(g)%yp(j) + pt1*-block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n)))
-         pos1_z = block(g)%zp(k) + pt1*-block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(n)))
+         pos1_x = block(g)%xp(i) - pt1*block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n)))
+         pos1_y = block(g)%yp(j) - pt1*block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n)))
+         pos1_z = block(g)%zp(k) - pt1*block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(n)))
          !$acc loop seq
          DO il = i-7, i+7
             if(pos1_x>=block(g)%xp(il).and.pos1_x<block(g)%xp(il+1)) i_x1 = il
@@ -1023,9 +1023,9 @@ SUBROUTINE pressureForcingGhost
          h1 = dabs(block(g)%zp(i_z1)   - pos1_z)
          dpdz_e = (h1**2*p_z2 - h2**2*p_z1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
-         dpdn_e = dpdx_e*-block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n))) &
-                  + dpdy_e*-block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n))) &
-                  + dpdz_e*-block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(n)))
+         dpdn_e = -dpdx_e*block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n))) &
+                  - dpdy_e*block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n))) &
+                  - dpdz_e*block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(n)))
 
          n1 = pt1 + sur2nodeDis
 
@@ -1090,9 +1090,9 @@ SUBROUTINE velocityForcingGhost
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xu(i+1) + pt1*-block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(n)))
-         pos1_y = block(g)%yu(j) + pt1*-block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(n)))
-         pos1_z = block(g)%zu(k) + pt1*-block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(n)))
+         pos1_x = block(g)%xu(i+1) - pt1*block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(n)))
+         pos1_y = block(g)%yu(j) - pt1*block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(n)))
+         pos1_z = block(g)%zu(k) - pt1*block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(n)))
 
          !$acc loop seq
          DO il = i-7, i+7
@@ -1172,9 +1172,9 @@ SUBROUTINE velocityForcingGhost
          h1 = dabs(block(g)%zu(i_z1)   - pos1_z)
          dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
-         dudn_e = dudx_e*-block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(n))) &
-                  + dudy_e*-block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(n))) &
-                  + dudz_e*-block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(n)))
+         dudn_e = -dudx_e*block(g)%cosAlpha(block(g)%nelu2(block(g)%index_ts(n))) &
+                  - dudy_e*block(g)%cosBeta(block(g)%nelu2(block(g)%index_ts(n))) &
+                  - dudz_e*block(g)%cosGamma(block(g)%nelu2(block(g)%index_ts(n)))
 
          n1 = pt1 + sur2nodeDis
 
@@ -1198,9 +1198,9 @@ SUBROUTINE velocityForcingGhost
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xu(i) + pt1*-block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(n)))
-         pos1_y = block(g)%yu(j) + pt1*-block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(n)))
-         pos1_z = block(g)%zu(k) + pt1*-block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(n)))
+         pos1_x = block(g)%xu(i) - pt1*block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(n)))
+         pos1_y = block(g)%yu(j) - pt1*block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(n)))
+         pos1_z = block(g)%zu(k) - pt1*block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(n)))
 
          !$acc loop seq
          DO il = i-7, i+7
@@ -1280,9 +1280,9 @@ SUBROUTINE velocityForcingGhost
          h1 = dabs(block(g)%zu(i_z1)   - pos1_z)
          dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
-         dudn_e = dudx_e*-block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(n))) &
-                  + dudy_e*-block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(n))) &
-                  + dudz_e*-block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(n)))
+         dudn_e = -dudx_e*block(g)%cosAlpha(block(g)%nelu1(block(g)%index_ts(n))) &
+                  - dudy_e*block(g)%cosBeta(block(g)%nelu1(block(g)%index_ts(n))) &
+                  - dudz_e*block(g)%cosGamma(block(g)%nelu1(block(g)%index_ts(n)))
 
          n1 = pt1 + sur2nodeDis
 
@@ -1315,9 +1315,9 @@ SUBROUTINE velocityForcingGhost
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xv(i) + pt1*-block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(n)))
-         pos1_y = block(g)%yv(j+1) + pt1*-block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(n)))
-         pos1_z = block(g)%zv(k) + pt1*-block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(n)))
+         pos1_x = block(g)%xv(i) - pt1*block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(n)))
+         pos1_y = block(g)%yv(j+1) - pt1*block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(n)))
+         pos1_z = block(g)%zv(k) - pt1*block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(n)))
 
          !$acc loop seq
          DO il = i-7, i+7
@@ -1398,9 +1398,9 @@ SUBROUTINE velocityForcingGhost
          dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
-         dvdn_e = dvdx_e*-block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(n))) &
-                  + dvdy_e*-block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(n))) &
-                  + dvdz_e*-block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(n)))
+         dvdn_e = -dvdx_e*block(g)%cosAlpha(block(g)%nelv2(block(g)%index_ts(n))) &
+                  - dvdy_e*block(g)%cosBeta(block(g)%nelv2(block(g)%index_ts(n))) &
+                  - dvdz_e*block(g)%cosGamma(block(g)%nelv2(block(g)%index_ts(n)))
 
          n1 = pt1 + sur2nodeDis
 
@@ -1435,9 +1435,9 @@ SUBROUTINE velocityForcingGhost
                + block(g)%deltaz(k)**2) + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xv(i) + pt1*-block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(n)))
-         pos1_y = block(g)%yv(j) + pt1*-block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(n)))
-         pos1_z = block(g)%zv(k) + pt1*-block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(n)))
+         pos1_x = block(g)%xv(i) - pt1*block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(n)))
+         pos1_y = block(g)%yv(j) - pt1*block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(n)))
+         pos1_z = block(g)%zv(k) - pt1*block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(n)))
 
          !$acc loop seq
          DO il = i-7, i+7
@@ -1518,9 +1518,9 @@ SUBROUTINE velocityForcingGhost
          dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
-         dvdn_e = dvdx_e*-block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(n))) &
-                  + dvdy_e*-block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(n))) &
-                  + dvdz_e*-block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(n)))
+         dvdn_e = -dvdx_e*block(g)%cosAlpha(block(g)%nelv1(block(g)%index_ts(n))) &
+                  - dvdy_e*block(g)%cosBeta(block(g)%nelv1(block(g)%index_ts(n))) &
+                  - dvdz_e*block(g)%cosGamma(block(g)%nelv1(block(g)%index_ts(n)))
 
          n1 = pt1 + sur2nodeDis
 
@@ -1550,9 +1550,9 @@ SUBROUTINE velocityForcingGhost
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xw(i) + pt1*-block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(n)))
-         pos1_y = block(g)%yw(j) + pt1*-block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(n)))
-         pos1_z = block(g)%zw(k+1) + pt1*-block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(n)))
+         pos1_x = block(g)%xw(i) - pt1*block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(n)))
+         pos1_y = block(g)%yw(j) - pt1*block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(n)))
+         pos1_z = block(g)%zw(k+1) - pt1*block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(n)))
 
          !$acc loop seq
          DO il = i-7, i+7
@@ -1631,9 +1631,9 @@ SUBROUTINE velocityForcingGhost
          dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
-         dwdn_e = dwdx_e*-block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(n))) &
-                  + dwdy_e*-block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(n))) &
-                  + dwdz_e*-block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(n)))
+         dwdn_e = -dwdx_e*block(g)%cosAlpha(block(g)%nelw2(block(g)%index_ts(n))) &
+                  - dwdy_e*block(g)%cosBeta(block(g)%nelw2(block(g)%index_ts(n))) &
+                  - dwdz_e*block(g)%cosGamma(block(g)%nelw2(block(g)%index_ts(n)))
 
          n1 = pt1 + sur2nodeDis
 
@@ -1666,9 +1666,9 @@ SUBROUTINE velocityForcingGhost
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xw(i) + pt1*-block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(n)))
-         pos1_y = block(g)%yw(j) + pt1*-block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(n)))
-         pos1_z = block(g)%zw(k) + pt1*-block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(n)))
+         pos1_x = block(g)%xw(i) - pt1*block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(n)))
+         pos1_y = block(g)%yw(j) - pt1*block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(n)))
+         pos1_z = block(g)%zw(k) - pt1*block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(n)))
 
          !$acc loop seq
          DO il = i-7, i+7
@@ -1748,9 +1748,9 @@ SUBROUTINE velocityForcingGhost
          dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
-         dwdn_e = dwdx_e*-block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(n))) &
-                  + dwdy_e*-block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(n))) &
-                  + dwdz_e*-block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(n)))
+         dwdn_e = -dwdx_e*block(g)%cosAlpha(block(g)%nelw1(block(g)%index_ts(n))) &
+                  - dwdy_e*block(g)%cosBeta(block(g)%nelw1(block(g)%index_ts(n))) &
+                  - dwdz_e*block(g)%cosGamma(block(g)%nelw1(block(g)%index_ts(n)))
 
          n1 = pt1 + sur2nodeDis
 

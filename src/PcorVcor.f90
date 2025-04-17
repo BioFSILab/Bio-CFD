@@ -136,7 +136,7 @@ module biocfd_pcor_vcor
 
             WRITE(filename1,1)
  1          FORMAT('sphere_iter.dat')
-         OPEN(111,FILE=filename1,ACCESS='Append',STATUS='unknown')
+         OPEN(111,FILE=filename1,POSITION='APPEND',STATUS='unknown')
          WRITE(111,126)   ita, block(1)%nIterPcor, block(2)%nIterPcor, omega1, omega2, solverTime
          WRITE(*,16) ita, max_nIterPcor, max_derr2, max_derrStdSt, totalTime
  126      FORMAT(' ',I8, 2I10, 2F6.2,F14.9)
@@ -343,13 +343,15 @@ module biocfd_pcor_vcor
          INTEGER (int64), INTENT(IN) :: g
         if (block(g)%move_check == 1) then
         !$acc parallel loop gang vector collapse(2) default(present)
-        DO 70 k = 1, block(g)%nz+2
-        DO 70 j = 1, block(g)%ny+2
-        DO 70 i = 1, block(g)%nx+2
+        DO k = 1, block(g)%nz+2
+        DO j = 1, block(g)%ny+2
+        DO i = 1, block(g)%nx+2
            block(g)%ut(i,j,k) = block(g)%u(i,j,k)
            block(g)%vt(i,j,k) = block(g)%v(i,j,k)
            block(g)%wt(i,j,k) = block(g)%w(i,j,k)
- 70    CONTINUE
+       END DO
+       END DO
+       END DO
        !$acc end parallel
         endif
 

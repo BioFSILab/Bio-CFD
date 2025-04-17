@@ -116,7 +116,7 @@ module biocfd_read_input
         CLOSE(77)
 
 
-        OPEN(111,FILE='init_params.dat',ACCESS='Append',STATUS='unknown')
+        OPEN(111,FILE='init_params.dat',POSITION='APPEND',STATUS='unknown')
         WRITE(111,*) 'dxmin, u0, deltat, re'
         WRITE(111,166) dxmin, u0, deltat, re
 166     FORMAT(2F10.6,E15.6,F8.2)

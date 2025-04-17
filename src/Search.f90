@@ -205,7 +205,7 @@ module biocfd_search
         block(g)%nxtx_cent= block(g)%nxtx_cent + block(g)%xmove
         WRITE(filename1,1) block(g)%fineg,re, g
       1  FORMAT('d',I4.4,'_index.',F8.2,'.',i3.1,".dat")
-        OPEN(UNIT = 17, FILE = filename1,Access='Append', STATUS = 'unknown')
+        OPEN(UNIT = 17, FILE = filename1,POSITION='APPEND', STATUS = 'unknown')
         write(17,14) totime, block(g)%nxty_cent, block(g)%inity_cent, block(g)%ymove, &
                      block(g)%nxtx_cent, block(g)%xmove
      close(17)
@@ -1555,7 +1555,7 @@ block(g)%fluidCellCount = flcnt
         countx_st=block(b_blk_no)%cpy_x_start
         county_st=block(b_blk_no)%cpy_y_start
         countz_st=block(b_blk_no)%cpy_z_start
-        OPEN(UNIT=12,FILE='log.dat',STATUS='unknown',access='append')
+        OPEN(UNIT=12,FILE='log.dat',STATUS='unknown',POSITION='APPEND')
         block(b_blk_no)%u=0
         block(b_blk_no)%v=0
         block(b_blk_no)%w=0
