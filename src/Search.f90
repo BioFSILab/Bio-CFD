@@ -951,7 +951,7 @@ block(g)%fluidCellCount = flcnt
         block(g)%v2NormDis(ibxx) , block(g)%w1NormDis(ibxx), block(g)%w2NormDis(ibxx))
 
         !$acc parallel loop gang vector default(present) &
-        !$acc private (i, j, k, n1x, n2x, n3x, n1y, n2y, n3y, n1z, n2z, n3z, nel2p)
+        !$acc private (k, n1x, n2x, n3x, n1y, n2y, n3y, n1z, n2z, n3z, nel2p)
         DO k = 1, block(g)%ibCellCount
 
            m = 0
