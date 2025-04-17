@@ -264,7 +264,7 @@ module biocfd_pcor_vcor
         var=0.
 
         !$acc parallel loop gang vector default(present) firstprivate(deltat, omega) private (i, j, k)
-        !$omp parallel do private (i,ip,j,k,n) num_threads(48)
+        !$omp parallel do private (i,j,k,n) num_threads(48)
          DO 10 n = 1, block(gg)%redCellCount
             i = block(gg)%redCellIndexPtr(n, 1)
             j = block(gg)%redCellIndexPtr(n, 2)
@@ -285,7 +285,7 @@ module biocfd_pcor_vcor
         !$acc end parallel
 
         !$acc parallel loop gang vector default(present) firstprivate(deltat, omega) private (i, j, k)
-        !$omp parallel do private (i,ip,j,k,n) num_threads(48)
+        !$omp parallel do private (i,j,k,n) num_threads(48)
          DO 20 n = 1, block(gg)%blackCellCount
              i = block(gg)%blackCellIndexPtr(n, 1)
              j = block(gg)%blackCellIndexPtr(n, 2)
