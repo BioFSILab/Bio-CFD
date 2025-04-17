@@ -33,6 +33,11 @@ jobs:
           - {compiler: intel, version: '2025.0'}
           - {compiler: intel-classic, version: '2021.10'}
           - {compiler: nvidia-hpc, version: '25.1'}
+          # Compile with OpenMP since there are some directives
+          - {compiler: gcc, version: 14, FPM_FFLAGS="-fopenmp"}
+          # Compile with OpenACC since there are some directives
+          - {compiler: gcc, version: 14, FPM_FFLAGS="-fopenacc"}
+          - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS="-fopenacc"}
           # lfortran can't compile the code at the moment, we will
           # keep an eye on the progress of the project in the hope
           # that we can add this back in the future
