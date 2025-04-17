@@ -23,16 +23,18 @@ contains
             WRITE(786,*)'variables="x","y","z","u","v","w","p","totime","cellid","cell_n","cell_pr"'
             WRITE(786,*) 'zone, ', 'i = ', block(g)%nx,' j = ', block(g)%ny, ' k = ', block(g)%nz
 
-            DO 30 k = 2, block(g)%nz+1
-            DO 30 j = 2, block(g)%ny+1
-            DO 30 i = 2, block(g)%nx+1
+            DO k = 2, block(g)%nz+1
+            DO j = 2, block(g)%ny+1
+            DO i = 2, block(g)%nx+1
                u1 = 0.5_dp*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))
                v1 = 0.5_dp*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
                w1 = 0.5_dp*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
                WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u1, v1, w1, &
                             block(g)%p(i,j,k), totime, block(g)%cell(i,j,k) , &
                             block(g)%cell_n(i,j,k) , block(g)%cell_pr(i,j,k)
- 30         CONTINUE
+            END DO
+            END DO
+            END DO
             CLOSE(786)
         end do
         !$acc wait
@@ -47,12 +49,14 @@ contains
            WRITE(filename1,22)char_f,g,re,block(2)%dx
  22          FORMAT('out/Chkpt/',A3,'_butter_chkpt.',i3.3,'.',f6.1,'.',f8.6,".dat")
         OPEN (1,FILE=filename1,FORM='formatted')
-        DO 30 k = 1, block(g)%nz+2
-        DO 30 j = 1, block(g)%ny+2
-        DO 30 i = 1, block(g)%nx+2
+        DO k = 1, block(g)%nz+2
+        DO j = 1, block(g)%ny+2
+        DO i = 1, block(g)%nx+2
           WRITE(1,*) block(g)%u(i,j,k), block(g)%v(i,j,k), block(g)%w(i,j,k), &
         block(g)%p(i,j,k), totime, ita, ita1
- 30     CONTINUE
+       END DO
+       END DO
+       END DO
         CLOSE(22)
         END DO
         END IF
