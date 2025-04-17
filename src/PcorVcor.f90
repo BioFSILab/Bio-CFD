@@ -306,7 +306,7 @@ module biocfd_pcor_vcor
         !$acc end parallel
 
 
-       if(mod(block(gg)%nIterPcor,5) ==0)then
+       if(mod(block(gg)%nIterPcor,5_int64) ==0)then
        derr4=0.
         !$acc parallel loop gang vector reduction(max:derr4) default(present) private (i, j, k, var)
         !$omp parallel do private (i,j,k,n,var) reduction(max:derr4) num_threads(48)

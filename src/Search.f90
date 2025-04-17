@@ -896,7 +896,7 @@ block(g)%fluidCellCount = flcnt
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
 
-            IF (mod(i+j+k,2)==1) THEN
+            IF (mod(i+j+k,2_int64)==1) THEN
                block(g)%redCellCount = block(g)%redCellCount + 1
             ELSE
                block(g)%blackCellCount = block(g)%blackCellCount + 1
@@ -911,7 +911,7 @@ block(g)%fluidCellCount = flcnt
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
 
-            IF (mod(i+j+k,2)==1) THEN
+            IF (mod(i+j+k,2_int64)==1) THEN
                iPt = iPt + 1
                block(g)%redCellIndexPtr(iPt, 1) = i
                block(g)%redCellIndexPtr(iPt, 2) = j
@@ -1151,7 +1151,7 @@ block(g)%fluidCellCount = flcnt
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
-            IF (mod(i+j+k,2)==1) THEN
+            IF (mod(i+j+k,2_int64)==1) THEN
                block(g)%redCellCount = block(g)%redCellCount + 1
             ELSE
                block(g)%blackCellCount = block(g)%blackCellCount + 1
@@ -1167,7 +1167,7 @@ block(g)%fluidCellCount = flcnt
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
-            IF (mod(i+j+k,2)==1) THEN
+            IF (mod(i+j+k,2_int64)==1) THEN
                iPt = iPt + 1
                block(g)%redCellIndexPtr(iPt, 1) = i
                block(g)%redCellIndexPtr(iPt, 2) = j
@@ -1869,7 +1869,7 @@ block(g)%fluidCellCount = flcnt
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
-            IF (mod(i+j+k,2)==1) THEN
+            IF (mod(i+j+k,2_int64)==1) THEN
                block(g)%redCellCount = block(g)%redCellCount + 1
             ELSE
                block(g)%blackCellCount = block(g)%blackCellCount + 1
@@ -1885,7 +1885,7 @@ block(g)%fluidCellCount = flcnt
             i = block(g)%fluidIndexPtr(n, 1)
             j = block(g)%fluidIndexPtr(n, 2)
             k = block(g)%fluidIndexPtr(n, 3)
-            IF (mod(i+j+k,2)==1) THEN
+            IF (mod(i+j+k,2_int64)==1) THEN
                iPt = iPt + 1
                block(g)%redCellIndexPtr(iPt, 1) = i
                block(g)%redCellIndexPtr(iPt, 2) = j
