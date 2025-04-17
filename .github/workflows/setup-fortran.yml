@@ -37,7 +37,8 @@ jobs:
           - {compiler: gcc, version: 14, FPM_FFLAGS: "-fopenmp", tag: "-openmp"}
           - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS: "-mp", tag: "-openmp"}
           # Compile with OpenACC since there are some directives
-          - {compiler: gcc, version: 14, FPM_FFLAGS: "-fopenacc", tag: "-openacc"}
+          # TODO: Removing gcc with -fopenacc for now (see #102)
+          # - {compiler: gcc, version: 14, FPM_FFLAGS: "-fopenacc", tag: "-openacc"}
           - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS: "-acc=multicore", tag: "-openacc"}
           # lfortran can't compile the code at the moment, we will
           # keep an eye on the progress of the project in the hope
