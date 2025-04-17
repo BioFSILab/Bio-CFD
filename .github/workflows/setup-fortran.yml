@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   test:
-    name: ${{ matrix.os }}-${{ matrix.toolchain.compiler }}
+    name: ${{ matrix.os }}-${{ matrix.toolchain.compiler }}${{ matrix.toolchain.tag }}
     runs-on: ${{ matrix.os }}
     env:
       FPM_FFLAGS: ${{ matrix.toolchain.FPM_FFLAGS }}
@@ -34,10 +34,11 @@ jobs:
           - {compiler: intel-classic, version: '2021.10'}
           - {compiler: nvidia-hpc, version: '25.1'}
           # Compile with OpenMP since there are some directives
-          - {compiler: gcc, version: 14, FPM_FFLAGS="-fopenmp"}
+          - {compiler: gcc, version: 14, FPM_FFLAGS="-fopenmp", tag="-openmp"}
+          - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS="-mp", tag="-openmp"}
           # Compile with OpenACC since there are some directives
-          - {compiler: gcc, version: 14, FPM_FFLAGS="-fopenacc"}
-          - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS="-fopenacc"}
+          - {compiler: gcc, version: 14, FPM_FFLAGS="-fopenacc", tag="-openacc"}
+          - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS="-acc=multicore", tag="-openacc"}
           # lfortran can't compile the code at the moment, we will
           # keep an eye on the progress of the project in the hope
           # that we can add this back in the future
