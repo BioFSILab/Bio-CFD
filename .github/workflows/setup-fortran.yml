@@ -34,11 +34,11 @@ jobs:
           - {compiler: intel-classic, version: '2021.10'}
           - {compiler: nvidia-hpc, version: '25.1'}
           # Compile with OpenMP since there are some directives
-          - {compiler: gcc, version: 14, FPM_FFLAGS="-fopenmp", tag="-openmp"}
-          - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS="-mp", tag="-openmp"}
+          - {compiler: gcc, version: 14, FPM_FFLAGS: "-fopenmp", tag: "-openmp"}
+          - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS: "-mp", tag: "-openmp"}
           # Compile with OpenACC since there are some directives
-          - {compiler: gcc, version: 14, FPM_FFLAGS="-fopenacc", tag="-openacc"}
-          - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS="-acc=multicore", tag="-openacc"}
+          - {compiler: gcc, version: 14, FPM_FFLAGS: "-fopenacc", tag: "-openacc"}
+          - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS: "-acc=multicore", tag: "-openacc"}
           # lfortran can't compile the code at the moment, we will
           # keep an eye on the progress of the project in the hope
           # that we can add this back in the future
@@ -61,23 +61,23 @@ jobs:
           fpm test
 
       - name: Generate code coverage report
-        if: ${{ contains(matrix.toolchain.FPM_FFLAGS, "coverage") }}
+        if: ${{ contains(matrix.toolchain.FPM_FFLAGS, 'coverage') }}
         run: |
           gcov ./build/gfortran*/Bio-CFD/*.gcda -r 
 
       - name: Setup LCOV
-        if: ${{ contains(matrix.toolchain.FPM_FFLAGS, "coverage") }}
+        if: ${{ contains(matrix.toolchain.FPM_FFLAGS, 'coverage') }}
         uses: hrishikesh-kadam/setup-lcov@v1
 
       - name: Remove folders from coverage report
-        if: ${{ contains(matrix.toolchain.FPM_FFLAGS, "coverage") }}
+        if: ${{ contains(matrix.toolchain.FPM_FFLAGS, 'coverage') }}
         run: |
           lcov --directory . --capture --output-file coverage.info --gcov-tool gcov
           lcov --remove coverage.info "$PWD/test/*" --output-file coverage.info
           lcov --remove coverage.info "$PWD/build/*" --output-file coverage.info
 
       - name: Report code coverage as comment
-        if: ${{ contains(matrix.toolchain.FPM_FFLAGS, "coverage") }}
+        if: ${{ contains(matrix.toolchain.FPM_FFLAGS, 'coverage') }}
         uses: zgosalvez/github-actions-report-lcov@v4
         with:
           coverage-files: coverage.info
