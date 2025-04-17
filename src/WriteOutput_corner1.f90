@@ -14,7 +14,7 @@ contains
        INTEGER  :: k, i, j, g
        REAL (dp) :: u1, v1, w1
 
-         IF((mod(ita,200) ==0 .or. ita <= 2 ))then
+         IF((mod(ita,200_int64) ==0 .or. ita <= 2 ))then
 
            Do g=1,nblocks
        WRITE(filename1,1)char_f,ita,g,re,block(2)%dx,nblocks
@@ -44,7 +44,7 @@ contains
       SUBROUTINE writeResult
         INTEGER::  i, j, k,g
        CHARACTER(len=70)  :: filename1
-        IF(mod(ita,500)==0)THEN
+        IF(mod(ita,500_int64)==0)THEN
            Do g=1,nblocks
            WRITE(filename1,22)char_f,g,re,block(2)%dx
  22          FORMAT('out/Chkpt/',A3,'_butter_chkpt.',i3.3,'.',f6.1,'.',f8.6,".dat")
