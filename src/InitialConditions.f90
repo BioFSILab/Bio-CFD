@@ -58,12 +58,9 @@ module biocfd_initial_conditions
         block(i)%vflu_rms = 0._dp
         block(i)%wflu_rms = 0._dp
         block(i)%pflu_rms = 0._dp
-        block(i)%uvflu_avg = 0._dp
-        block(i)%vwflu_avg = 0._dp
-        block(i)%uwflu_avg = 0._dp
         end do
-        SUMWSS = 0._dp            !SUMWSS global real array(nsurf)
-        SIGNWSS = 0._dp           !SIGNWSS global real array(nsurf)
+        ! SUMWSS = 0._dp            !SUMWSS global real array(nsurf)
+        ! SIGNWSS = 0._dp           !SIGNWSS global real array(nsurf)
         ita = 0
         ita1 = 0
         totime = 0.
