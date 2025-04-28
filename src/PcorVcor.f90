@@ -48,7 +48,6 @@ module biocfd_pcor_vcor
         block(g)%nIterPcor=0
         block(g)%derr2  = 0._dp
         block(g)%derrStdSt=0._dp
-        block(g)%rhs=0.0
         end do
 
         solverTime=0.
