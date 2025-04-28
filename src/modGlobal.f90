@@ -72,7 +72,6 @@ MODULE global
                                                       uv_avg,vw_avg,uw_avg, &
                                                       uflu_avg,vflu_avg,wflu_avg,pflu_avg, &
                                                       uflu_rms,vflu_rms,wflu_rms,pflu_rms, &
-                                                      uvflu_avg,vwflu_avg,uwflu_avg, &
                                                       u2_sum,v2_sum,w2_sum,p2_sum,  &
                                                       u2_avg,v2_avg,w2_avg,p2_avg,  &
                                                       ufl,vfl,wfl,  &
