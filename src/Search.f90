@@ -304,7 +304,7 @@ module biocfd_search
      SUBROUTINE tagging_th
 
         INTEGER(int64) :: g, n, m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
-        REAL(dp)      :: n1x, n1y, n1z, n2x, n2y, n2z, minDis1, minDis, &
+        REAL(dp)      :: minDis1, minDis, &
                          n2dotn, cent_x, cent_y, cent_z, dis_cen, dis_pnt
 
         CHARACTER(LEN=120) :: filename1
@@ -318,27 +318,23 @@ module biocfd_search
         n2dotn = 0
 
  !$acc parallel loop collapse(3) default(present)
+        !$omp parallel do default(none) private(minDis, minDis1) &
+        !$omp& private(cent_x, cent_y, cent_z) &
+        !$omp& private(dis_cen, dis_pnt, nel2Cen, nel2Pnt, n2dotn) &
+        !$omp& shared(g, block)
         DO k = block(g)%k_startSearch, block(g)%k_endSearch
         DO j = block(g)%j_startSearch, block(g)%j_endSearch
         DO i = block(g)%i_startSearch, block(g)%i_endSearch
             minDis  = 1e14_dp
             minDis1 = 1e14_dp
 
-            n1x = block(g)%xp(i)
-            n1y = block(g)%yp(j)
-            n1z = block(g)%zp(k)
-
-            n2x = block(g)%x1(i)
-            n2y = block(g)%y1(j)
-            n2z = block(g)%z1(k)
-
             !$acc loop seq
             DO m = 1, block(g)%ibElems
             cent_x = block(g)%xcent(m)
             cent_y = block(g)%ycent(m)
             cent_z = block(g)%zcent(m)
-               dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
-               dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
+               dis_cen  = dsqrt( (block(g)%yp(j)-cent_y)**2 + (block(g)%xp(i)-cent_x)**2  + (block(g)%zp(k)-cent_z)**2)
+               dis_pnt  = dsqrt( (block(g)%y1(j)-cent_y)**2 + (block(g)%x1(i)-cent_x)**2  + (block(g)%z1(k)-cent_z)**2)
                IF (dis_cen<minDis) THEN
                   minDis    = dis_cen
                   nel2Cen   = m
@@ -358,9 +354,9 @@ module biocfd_search
 
             ENDIF
 
-                        n2dotn  = (n2x - block(g)%xcent(nel2Pnt))*block(g)%cosAlpha(nel2Pnt) + &
-                           (n2y - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
-                           (n2z - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
+            n2dotn  = (block(g)%x1(i) - block(g)%xcent(nel2Pnt))*block(g)%cosAlpha(nel2Pnt) + &
+                      (block(g)%y1(j) - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
+                      (block(g)%z1(k) - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
 
             IF (n2dotn>=-1e-16_dp) THEN
                block(g)%nodeIdTag(i,j,k) = 0
@@ -370,6 +366,7 @@ module biocfd_search
          END DO
          END DO
          END DO
+         !$omp end parallel do
 !$acc end parallel
 
 !$acc parallel loop collapse(3) default(present)
