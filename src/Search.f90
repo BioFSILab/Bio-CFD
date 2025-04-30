@@ -304,9 +304,9 @@ module biocfd_search
      SUBROUTINE tagging_th
 
         INTEGER(int64) :: g, n, m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
-        REAL(dp)      :: minDis1, minDis, &
-                         n2dotn, cent_x, cent_y, cent_z, dis_cen, dis_pnt
-
+        REAL(dp)      :: n2dotn
+        !> This temporary array holds distance calculations
+        real(dp), allocatable, dimension(:) :: temp_var
         CHARACTER(LEN=120) :: filename1
         DO g=blk_start, nblocks
         block(g)%ibCellCount = 0
@@ -317,33 +317,37 @@ module biocfd_search
         block(g)%nodeIdTag = 0
         n2dotn = 0
 
+        allocate(temp_var(block(g)%ibElems))
+
  !$acc parallel loop collapse(3) default(present)
-        !$omp parallel do default(none) private(minDis, minDis1) &
-        !$omp& private(cent_x, cent_y, cent_z) &
-        !$omp& private(dis_cen, dis_pnt, nel2Cen, nel2Pnt, n2dotn) &
-        !$omp& shared(g, block)
+        !$omp parallel do default(none) private(nel2Cen, nel2Pnt, n2dotn, temp_var) shared(g, block)
         DO k = block(g)%k_startSearch, block(g)%k_endSearch
         DO j = block(g)%j_startSearch, block(g)%j_endSearch
         DO i = block(g)%i_startSearch, block(g)%i_endSearch
-            minDis  = 1e14_dp
-            minDis1 = 1e14_dp
+            ! minDis  = 1e14_dp
+            ! minDis1 = 1e14_dp
 
-            !$acc loop seq
-            DO m = 1, block(g)%ibElems
-            cent_x = block(g)%xcent(m)
-            cent_y = block(g)%ycent(m)
-            cent_z = block(g)%zcent(m)
-               dis_cen  = dsqrt( (block(g)%yp(j)-cent_y)**2 + (block(g)%xp(i)-cent_x)**2  + (block(g)%zp(k)-cent_z)**2)
-               dis_pnt  = dsqrt( (block(g)%y1(j)-cent_y)**2 + (block(g)%x1(i)-cent_x)**2  + (block(g)%z1(k)-cent_z)**2)
-               IF (dis_cen<minDis) THEN
-                  minDis    = dis_cen
-                  nel2Cen   = m
-               ENDIF
-               IF (dis_pnt<minDis1) THEN
-                  minDis1   = dis_pnt
-                  nel2Pnt   = m
-               ENDIF
-            ENDDO
+            temp_var = dsqrt( (block(g)%yp(j)-block(g)%ycent)**2 + (block(g)%xp(i)-block(g)%xcent)**2  + (block(g)%zp(k)-block(g)%zcent)**2)
+            nel2cen = minloc(temp_var, dim=1)
+            temp_var = dsqrt( (block(g)%y1(j)-block(g)%ycent)**2 + (block(g)%x1(i)-block(g)%xcent)**2  + (block(g)%z1(k)-block(g)%zcent)**2)
+            nel2pnt = minloc(temp_var, dim=1)
+            ! !$acc loop seq
+            ! DO m = 1, block(g)%ibElems
+            ! cent_x = block(g)%xcent(m)
+            ! cent_y = block(g)%ycent(m)
+            ! cent_z = block(g)%zcent(m)
+            !    dis_cen  = dsqrt( (block(g)%yp(j)-cent_y)**2 + (block(g)%xp(i)-cent_x)**2  + (block(g)%zp(k)-cent_z)**2)
+            !    dis_pnt  = dsqrt( (block(g)%y1(j)-cent_y)**2 + (block(g)%x1(i)-cent_x)**2  + (block(g)%z1(k)-cent_z)**2)
+            !    IF (dis_cen<minDis) THEN
+            !       minDis    = dis_cen
+            !       nel2Cen   = m
+            !    ENDIF
+            !    IF (dis_pnt<minDis1) THEN
+            !       minDis1   = dis_pnt
+            !       nel2Pnt   = m
+            !    ENDIF
+            ! ENDDO
+
             IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen) .AND. &
                 block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
                (block(g)%y1(j)<=block(g)%ycent(nel2Cen) .AND. &
@@ -368,6 +372,8 @@ module biocfd_search
          END DO
          !$omp end parallel do
 !$acc end parallel
+
+         deallocate(temp_var)
 
 !$acc parallel loop collapse(3) default(present)
            DO k = block(g)%k_startSearch, block(g)%k_endSearch
