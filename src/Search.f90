@@ -320,7 +320,9 @@ module biocfd_search
         allocate(temp_var(block(g)%ibElems))
 
  !$acc parallel loop collapse(3) default(present)
-        !$omp parallel do default(none) private(nel2Cen, nel2Pnt, n2dotn, temp_var) shared(g, block)
+        !$omp parallel default(none)  &
+        !$omp& private(nel2Cen, nel2Pnt, n2dotn, temp_var, sumNodeId) shared(g, block)
+        !$omp do collapse(3)
         DO k = block(g)%k_startSearch, block(g)%k_endSearch
         DO j = block(g)%j_startSearch, block(g)%j_endSearch
         DO i = block(g)%i_startSearch, block(g)%i_endSearch
@@ -355,12 +357,12 @@ module biocfd_search
          END DO
          END DO
          END DO
-         !$omp end parallel do
+         !$omp end do
+
 !$acc end parallel
 
-         deallocate(temp_var)
-
 !$acc parallel loop collapse(3) default(present)
+           !$omp do collapse(3)
            DO k = block(g)%k_startSearch, block(g)%k_endSearch
            DO j = block(g)%j_startSearch, block(g)%j_endSearch
            DO i = block(g)%i_startSearch, block(g)%i_endSearch
@@ -377,7 +379,11 @@ module biocfd_search
            END DO
            END DO
            END DO
+           !$omp end do
 !$acc end parallel
+           !$omp end parallel
+
+          deallocate(temp_var)
 
 
          WRITE(filename1,1) g
