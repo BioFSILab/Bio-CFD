@@ -1,6 +1,6 @@
 
       PROGRAM main
-        use, intrinsic :: iso_fortran_env, only: int64
+        use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         ! allow(use-all) - TODO: Aim to fix this in the future
         USE global
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
@@ -23,6 +23,7 @@
         IMPLICIT NONE
 
         INTEGER (int64) :: g
+        real(dp) :: dstart1, dfinish1
         CALL readInput
         CALL readBlockInterface
         CALL readSurfaceMeshGmsh
