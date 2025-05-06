@@ -15,7 +15,7 @@ MODULE global
                                 freq, &
                                 u0, v0, w0, p0,Uavg,  &
                                 eps1, epsi, epsDiv, re, rev, divmax,   &
-                                fx, fy,  alpha, pct, pct1, dstart1,dfinish1, &
+                                fx, fy,  alpha, pct, pct1, &
                                 xfact,deltat, coupTime,totime, totalTime, dfinish, dstart, &
                                 solverTime, pi , msTime, mindx, al, uc
 
