@@ -14,7 +14,7 @@ SUBROUTINE velocityBC
 
       g=1
      !$acc parallel loop gang vector collapse (2) default(present)  &
-     !$acc firstprivate (uc, deltat, block(g)%nx)
+     !$acc firstprivate (uc, deltat)
       DO  k = 2, block(g)%nz+1
       DO  j = 2, block(g)%ny+1
         !uniform inlet
@@ -37,10 +37,9 @@ SUBROUTINE velocityBC
                                     uc*(block(g)%w(block(g)%nx+2,j,k)-block(g)%w(block(g)%nx+1,j,k))
         END DO
         END DO
-     !$acc end parallel
+     !$acc end parallel loop
 
-     !$acc parallel loop gang vector collapse (2) default(present) &
-     !$acc firstprivate (block(g)%ny)
+     !$acc parallel loop gang vector collapse (2) default(present)
       DO k = 2, block(g)%nz+1
       DO i = 2, block(g)%nx+1
 
@@ -56,10 +55,9 @@ SUBROUTINE velocityBC
 
         END DO
         END DO
-     !$acc end parallel
+     !$acc end parallel loop
 
-     !$acc parallel loop gang vector collapse (2) default(present) &
-     !$acc firstprivate (block(g)%nz)
+     !$acc parallel loop gang vector collapse (2) default(present)
       DO  j = 2, block(g)%ny+1
       DO  i = 2, block(g)%nx+1
          block(g)%ut(i,j,1) =  block(g)%ut(i,j,2)
@@ -72,7 +70,7 @@ SUBROUTINE velocityBC
 
       END DO
       END DO
-      !$acc end parallel
+      !$acc end parallel loop
       END SUBROUTINE velocityBC
 
       SUBROUTINE solidCellBC
@@ -90,7 +88,7 @@ SUBROUTINE velocityBC
             block(g)%wt(i,j,k) = 0._dp
             block(g)%p(i,j,k)  = 0._dp
          END DO
-        !$acc end parallel
+        !$acc end parallel loop
          END DO
       END SUBROUTINE solidCellBC
 
@@ -113,7 +111,7 @@ SUBROUTINE velocityBC
             block(g)%v(i,j,k) = 0._dp
             block(g)%w(i,j,k) = 0._dp
          END DO
-         !$acc end parallel
+         !$acc end parallel loop
         endif
       END SUBROUTINE solidCellBC_move
 

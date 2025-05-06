@@ -292,7 +292,7 @@ module biocfd_search
            block(g)%cosBeta(n)  = block(g)%cosBeta(n)/lenEl*binor                !direction cosine unit normal along y
            block(g)%cosGamma(n) = block(g)%cosGamma(n)/lenEl*binor               !direction cosine unit normal along z
         ENDDO
-       !$acc end parallel
+       !$acc end parallel loop
 
         print*, 'SurfaceNorm done, inor =', inor
 
@@ -373,7 +373,7 @@ module biocfd_search
          END DO
          END DO
          !$omp end parallel do
-!$acc end parallel
+!$acc end parallel loop
 
 !$acc parallel loop collapse(3) default(present)
            DO k = block(g)%k_startSearch, block(g)%k_endSearch
@@ -391,7 +391,7 @@ module biocfd_search
            END DO
            END DO
            END DO
-!$acc end parallel
+!$acc end parallel loop
 
 
          WRITE(filename1,1) g
@@ -553,7 +553,7 @@ module biocfd_search
          END DO
          END DO
          END DO
-!$acc end parallel
+!$acc end parallel loop
 
 !$acc parallel loop collapse(3) default(present)
            DO k = block(g)%k_startSearch, block(g)%k_endSearch
@@ -572,7 +572,7 @@ module biocfd_search
            END DO
            END DO
            END DO
-!$acc end parallel
+!$acc end parallel loop
 
         block(g)%ibCellCount = 0
          block(g)%solidCellCount = 0
@@ -624,7 +624,7 @@ module biocfd_search
                  END DO
                  END DO
                  END DO
-        !$acc end parallel
+        !$acc end parallel loop
 
         !$acc parallel loop default(present)
         DO n = 1, block(g)%ibCellCount
@@ -635,7 +635,7 @@ module biocfd_search
             block(g)%cell2(i, j, k) = 2
 
          END DO
-        !$acc end parallel
+        !$acc end parallel loop
 
         block(g)%TSCellCount = 0
         tscnt=0
@@ -650,7 +650,7 @@ module biocfd_search
                  END DO
                  END DO
                  END DO
-        !$acc end parallel
+        !$acc end parallel loop
 
         block(g)%TSCellCount = tscnt
         print*, 'TScell count =', block(g)%TSCellCount
@@ -658,7 +658,6 @@ module biocfd_search
         ALLOCATE(block(g)%TSIndexPtr(block(g)%TSCellCount,3))
 
         iPt1 = 0
-        !$acc loop collapse(3) seq
                  DO k = 0, block(g)%nz+3
                  DO j = 0, block(g)%ny+3
                  DO i = 0, block(g)%nx+3
@@ -718,7 +717,7 @@ module biocfd_search
            block(g)%w1_ghost(n)  = 0.
            block(g)%w1t_ghost(n) = 0.
         ENDDO
-        !$acc end parallel
+        !$acc end parallel loop
 
            enddo
              END SUBROUTINE findTScells
@@ -793,7 +792,7 @@ module biocfd_search
            END DO
            END DO
         ENDDO
-!$acc end parallel
+!$acc end parallel loop
 
 !$acc parallel loop gang vector default(present)
         DO nn = 1, block(g)%ibCellCount
@@ -841,7 +840,7 @@ ibcnt=0
          END DO
          END DO
          END DO
-!$acc end parallel
+!$acc end parallel loop
   block(g)%ibCellCount = ibcnt
   block(g)%solidCellCount = sdcnt
 block(g)%fluidCellCount = flcnt
@@ -1050,7 +1049,7 @@ block(g)%fluidCellCount = flcnt
                            (n1y -block(g)% ycent(nel2w2))*block(g)%cosBeta(nel2w2)  + &
                            (n3z -block(g)% zcent(nel2w2))*block(g)%cosGamma(nel2w2)
         END DO
-        !$acc end parallel
+        !$acc end parallel loop
 
         ! DEALLOCATE (block(g)%minElemcell)
          END DO
