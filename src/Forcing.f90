@@ -27,8 +27,7 @@ SUBROUTINE pressureForcing1
  !$acc           dpdn_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
  !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z,ac_x_al,ac_y_al,at_x_al,at_y_al)         &
  !$acc default(present)  &
- !$acc private(derivatives) &
- !$acc firstprivate (block(g)%nx, block(g)%ny,block(g)%nz)
+ !$acc private(derivatives)
       DO n = 1, block(g)%ibCellCount
          IF (block(g)%ibSurfId(block(g)%nelp(n))==50) THEN
             !dpdn = 0.
@@ -102,7 +101,7 @@ SUBROUTINE pressureForcing1
 
          block(g)%p(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
       ENDDO
- !$acc end parallel
+ !$acc end parallel loop
       ENDDO
 
 END SUBROUTINE pressureForcing1
@@ -134,8 +133,7 @@ SUBROUTINE velocityForcing1
  !$acc          dwdn_e, dwdx_e, dwdy_e, dwdz_e, u_x1_z1, u_x2_z1, u_x1_z2, u_x2_z2, u_z1_x1,  &
  !$acc          u_z2_x1, u_z1_x2, u_z2_x2, v_x1_z1, v_x2_z1, v_x1_z2, v_x2_z2, v_z1_x1, v_z2_x1, v_z1_x2, &
  !$acc          v_z2_x2, w_x1_z1, w_x2_z1, w_x1_z2, w_x2_z2, w_z1_x1, w_z2_x1, w_z1_x2, w_z2_x2, k, j, i, il, jl, kl, i_x1, i_y1, i_z1) &
- !$acc default(present)   &
- !$acc firstprivate (block(g)%nx, block(g)%ny,block(g)%nz)
+ !$acc default(present)
 
       DO n = 1, block(g)%ibCellCount
 
@@ -809,7 +807,7 @@ SUBROUTINE velocityForcing1
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%wt(i,j,k-1) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
       ENDDO
-!$acc end parallel
+!$acc end parallel loop
       ENDDO
 
 END SUBROUTINE velocityForcing1
@@ -830,8 +828,7 @@ SUBROUTINE pressureForcingGhost
  !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
  !$acc           p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
  !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z,ac_x_al,ac_y_al,at_x_al,at_y_al)         &
- !$acc default(present)  &
- !$acc firstprivate (block(g)%nx, block(g)%ny,block(g)%nz)
+ !$acc default(present)
       DO n = 1, block(g)%TSCellCount
 
         i = block(g)%TSIndexPtr(n, 1)
@@ -975,7 +972,7 @@ SUBROUTINE pressureForcingGhost
          block(g)%p_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          block(g)%pt_ghost(n) = block(g)%p(i,j,k)
       ENDDO
-      !$acc end parallel
+      !$acc end parallel loop
       ENDDO
 END SUBROUTINE pressureForcingGhost
 
@@ -1004,8 +1001,7 @@ SUBROUTINE velocityForcingGhost
  !$acc          dwdn_e, dwdx_e, dwdy_e, dwdz_e, u_x1_z1, u_x2_z1, u_x1_z2, u_x2_z2, u_z1_x1,  &
  !$acc          u_z2_x1, u_z1_x2, u_z2_x2, v_x1_z1, v_x2_z1, v_x1_z2, v_x2_z2, v_z1_x1, v_z2_x1, v_z1_x2, &
  !$acc          v_z2_x2, w_x1_z1, w_x2_z1, w_x1_z2, w_x2_z2, w_z1_x1, w_z2_x1, w_z1_x2, w_z2_x2, k, j, i, il, jl, kl, i_x1, i_y1, i_z1) &
- !$acc default(present)   &
- !$acc firstprivate (block(g)%nx, block(g)%ny,block(g)%nz)
+ !$acc default(present)
       DO n = 1, block(g)%TSCellCount
 
         i = block(g)%TSIndexPtr(n, 1)
@@ -1699,7 +1695,7 @@ SUBROUTINE velocityForcingGhost
          block(g)%w1_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          block(g)%w1t_ghost(n) = block(g)%w(i,j,k-1)
       ENDDO
-      !$acc end parallel
+      !$acc end parallel loop
       ENDDO
 
 END SUBROUTINE velocityForcingGhost
@@ -1721,8 +1717,7 @@ SUBROUTINE pressureForcingField
  !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
  !$acc           p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
  !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z,ac_x_al,ac_y_al,at_x_al,at_y_al)         &
- !$acc default(present)  &
- !$acc firstprivate (block(g)%nx, block(g)%ny,block(g)%nz)
+ !$acc default(present)
       DO n = 1, block(g)%ibCellCount
          IF (block(g)%ibSurfId(block(g)%nelp(n))==50) THEN
             ac_z = 0.  !-block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
@@ -1856,7 +1851,7 @@ SUBROUTINE pressureForcingField
 
          block(g)%p(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
       ENDDO
-      !$acc end parallel
+      !$acc end parallel loop
       ENDDO
 END SUBROUTINE pressureForcingField
 
@@ -1887,8 +1882,7 @@ SUBROUTINE velocityForcingField
  !$acc          dwdn_e, dwdx_e, dwdy_e, dwdz_e, u_x1_z1, u_x2_z1, u_x1_z2, u_x2_z2, u_z1_x1,  &
  !$acc          u_z2_x1, u_z1_x2, u_z2_x2, v_x1_z1, v_x2_z1, v_x1_z2, v_x2_z2, v_z1_x1, v_z2_x1, v_z1_x2, &
  !$acc          v_z2_x2, w_x1_z1, w_x2_z1, w_x1_z2, w_x2_z2, w_z1_x1, w_z2_x1, w_z1_x2, w_z2_x2, k, j, i, il, jl, kl, i_x1, i_y1, i_z1) &
- !$acc default(present)   &
- !$acc firstprivate (block(g)%nx, block(g)%ny,block(g)%nz)
+ !$acc default(present)
       DO n = 1, block(g)%ibCellCount
 
          i = block(g)%interceptedIndexPtr(n, 1)
@@ -2560,7 +2554,7 @@ SUBROUTINE velocityForcingField
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          block(g)%w(i,j,k-1) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
       ENDDO
-      !$acc end parallel
+      !$acc end parallel loop
       ENDDO
 
 END SUBROUTINE velocityForcingField

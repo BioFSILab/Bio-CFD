@@ -44,7 +44,7 @@ module biocfd_pcor_vcor
         END DO
         END DO
         END DO
-        !$acc end parallel
+        !$acc end parallel loop
         block(g)%nIterPcor=0
         block(g)%derr2  = 0._dp
         block(g)%derrStdSt=0._dp
@@ -105,7 +105,7 @@ module biocfd_pcor_vcor
            er_dwdt = dabs((block(g)%wt(i,j,k) - block(g)%w(i,j,k)))/deltat
            err_ds = dmax1(err_ds, er_dudt,er_dvdt, er_dwdt)
          ENDDO
-         !$acc end parallel
+         !$acc end parallel loop
            block(g)%derrStdSt = err_ds
 
 
@@ -154,7 +154,7 @@ module biocfd_pcor_vcor
          END DO
          END DO
          END DO
-        !$acc end parallel
+        !$acc end parallel loop
         !$omp end parallel do
          END DO
         CALL fineUpdate_bd
@@ -182,7 +182,7 @@ module biocfd_pcor_vcor
              (block(gg)%wt(i,j,k) - block(gg)%wt(i,j,k-1))/block(gg)%deltaz(k)
 
          END DO
-        !$acc end parallel
+        !$acc end parallel loop
         !$omp end parallel do
 
       END SUBROUTINE computeDiv
@@ -202,7 +202,7 @@ module biocfd_pcor_vcor
             block(gg)%p(i,j,k) = block(gg)%p(i,j,k) + block(gg)%pc(i,j,k)
         END DO
         !$omp end parallel do
-        !$acc end parallel
+        !$acc end parallel loop
       END SUBROUTINE correctPressure
 
       SUBROUTINE correctVelocity(g)
@@ -229,7 +229,7 @@ module biocfd_pcor_vcor
                deltat/(0.5d0*(block(gg)%deltaz(k+1)+block(gg)%deltaz(k))) * &
                (block(gg)%pc(i,j,k+1)-block(gg)%pc(i,j,k))
  30      CONTINUE
-         !$acc end parallel
+         !$acc end parallel loop
         !$omp end parallel do
       END SUBROUTINE correctVelocity
 
@@ -281,7 +281,7 @@ module biocfd_pcor_vcor
 
  10      CONTINUE
         !$omp end parallel do
-        !$acc end parallel
+        !$acc end parallel loop
 
         !$acc parallel loop gang vector default(present) firstprivate(deltat, omega) private (i, j, k)
         !$omp parallel do private (i,j,k,n) num_threads(48)
@@ -302,7 +302,7 @@ module biocfd_pcor_vcor
 
  20      CONTINUE
         !$omp end parallel do
-        !$acc end parallel
+        !$acc end parallel loop
 
 
        if(mod(block(gg)%nIterPcor,5_int64) ==0)then
@@ -317,7 +317,7 @@ module biocfd_pcor_vcor
             derr4=dmax1(derr4,var)
  30      CONTINUE
         !$omp end parallel do
-        !$acc end parallel
+        !$acc end parallel loop
         end if
         !$acc parallel loop gang vector collapse(3) default(present) private (i, j, k)
         !$omp parallel do collapse (3) private (i,j,k) num_threads(48)
@@ -330,7 +330,7 @@ module biocfd_pcor_vcor
         END DO
         END DO
         !$omp end parallel do
-        !$acc end parallel
+        !$acc end parallel loop
 
          block(g)%derr2=derr4
          IF (derr4>=epsi .and. block(g)%nIterPcor <= pcItaMax) GOTO 3
@@ -351,7 +351,7 @@ module biocfd_pcor_vcor
        END DO
        END DO
        END DO
-       !$acc end parallel
+       !$acc end parallel loop
         endif
 
       END SUBROUTINE updateVelocity_newv

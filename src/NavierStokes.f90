@@ -1172,7 +1172,7 @@ IF (block(g)%cell2(i, j, k-1)==2) THEN
 ENDIF
        ENDDO
 !c***********************************************************************
-     !$acc end parallel
+     !$acc end parallel loop
         !$acc wait
 
        ENDDO
