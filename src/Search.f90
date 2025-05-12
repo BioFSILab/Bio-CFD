@@ -335,7 +335,10 @@ module biocfd_search
             cent_z = block(g)%zcent(m)
             ! I wanted to use associate here, but nvfortran doesn't
             ! like it on the GPU (although I can't find an existing
-            ! bug report of this)
+            ! bug report of this).
+            !
+            ! No need to take the sqrt because we are just looking for
+            ! the minimum distance
                dis_cen  = (block(g)%xp(i)-cent_x)**2 + (block(g)%yp(j)-cent_y)**2 &
                         + (block(g)%zp(k)-cent_z)**2
                dis_pnt  = (block(g)%x1(i)-cent_x)**2 + (block(g)%y1(j)-cent_y)**2 &
