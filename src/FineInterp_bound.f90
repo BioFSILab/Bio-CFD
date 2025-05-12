@@ -10,6 +10,10 @@ module biocfd_fine_interp_bound
 
   contains
 
+!> This subroutine is only used in one place (at the end of the
+!> poissonSolver subroutine). It would probably make sense to just
+!> move the loop directly into that subroutine so we can delete this
+!> one.
 SUBROUTINE fineUpdate_bd
         INTEGER(int64) :: g
 
@@ -454,10 +458,9 @@ SUBROUTINE fineUpdate_bd
            b_blk_no=intfr(g)%b_blk
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!uuuuuuu!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        i=1
-
         DO k=1,intfr(g)%counterzu
         DO j=1,intfr(g)%counteryu
+        DO i=1,intfr(g)%counterxu, intfr(g)%counterxu-1
 
 
 
@@ -517,73 +520,10 @@ SUBROUTINE fineUpdate_bd
 
         ENDDO
         ENDDO
-
-!!!!!!i=counterxu
-        i=intfr(g)%counterxu
-
-        DO k=1,intfr(g)%counterzu
-        DO j=1,intfr(g)%counteryu
-
-        varx1=intfr(g)%ux_interface_det(2,i)
-        varx2=intfr(g)%ux_interface_det(3,i)
-        vary1=intfr(g)%uy_interface_det(2,j)
-        vary2=intfr(g)%uy_interface_det(3,j)
-        varz1=intfr(g)%uz_interface_det(2,k)
-        varz2=intfr(g)%uz_interface_det(3,k)
-
-        loc_x=intfr(g)%ux_interface_det(1,i)
-        loc_y=intfr(g)%uy_interface_det(1,j)
-        loc_z=intfr(g)%uz_interface_det(1,k)
-
-        DO tar_z=varz1,varz2
-        DO tar_y=vary1,vary2
-        DO tar_x=varx1,varx2
-
-                bl_intp_valx=block(b_blk_no)%xu(tar_x)
-                bl_intp_valy=block(b_blk_no)%yu(tar_y)
-                bl_intp_valz=block(b_blk_no)%zu(tar_z)
-                bl_intp_x1=block(a_blk_no)%xu(loc_x-1)
-                bl_intp_x2=block(a_blk_no)%xu(loc_x+1)
-                bl_intp_y1=block(a_blk_no)%yu(loc_y-1)
-                bl_intp_y2=block(a_blk_no)%yu(loc_y+1)
-                bl_intp_z1=block(a_blk_no)%zu(loc_z-1)
-                bl_intp_z2=block(a_blk_no)%zu(loc_z+1)
-                bl_intp_f1=block(a_blk_no)%ut(loc_x-2,loc_y-1,loc_z-1)
-                bl_intp_f2=block(a_blk_no)%ut(loc_x,loc_y-1,loc_z-1)
-                bl_intp_f3=block(a_blk_no)%ut(loc_x,loc_y+1,loc_z-1)
-                bl_intp_f4=block(a_blk_no)%ut(loc_x-2,loc_y+1,loc_z-1)
-
-                bl_intp_deno= (bl_intp_x2-bl_intp_x1) * (bl_intp_y2-bl_intp_y1)
-                bl_intp_xtx= (bl_intp_x2 -bl_intp_valx)
-                bl_intp_xxo=(bl_intp_valx-bl_intp_x1)
-                bl_intp_yty=(bl_intp_y2-bl_intp_valy)
-                bl_intp_yyo=(bl_intp_valy-bl_intp_y1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-
-                bl_interp_ans1=(bl_intp_num/bl_intp_deno)
-                bl_intp_f1=block(a_blk_no)%ut(loc_x-2,loc_y-1,loc_z+1)
-                bl_intp_f2=block(a_blk_no)%ut(loc_x,loc_y-1,loc_z+1)
-                bl_intp_f3=block(a_blk_no)%ut(loc_x,loc_y+1,loc_z+1)
-                bl_intp_f4=block(a_blk_no)%ut(loc_x-2,loc_y+1,loc_z+1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-                bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
-                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
-                block(b_blk_no)%ut(tar_x-1,tar_y,tar_z)=bl_interp_ans
-                ENDDO
-                ENDDO
-                ENDDO
-
-        ENDDO
         ENDDO
 
-        j=1
-
         DO k=1,intfr(g)%counterzu
+        DO j=1,intfr(g)%counteryu, intfr(g)%counteryu-1
         DO i=1,intfr(g)%counterxu
 
 
@@ -644,72 +584,9 @@ SUBROUTINE fineUpdate_bd
 
         ENDDO
         ENDDO
-
-!!!!!!j=counteryp
-        j=intfr(g)%counteryu
-
-        DO k=1,intfr(g)%counterzu
-        DO i=1,intfr(g)%counterxu
-
-        varx1=intfr(g)%ux_interface_det(2,i)
-        varx2=intfr(g)%ux_interface_det(3,i)
-        vary1=intfr(g)%uy_interface_det(2,j)
-        vary2=intfr(g)%uy_interface_det(3,j)
-        varz1=intfr(g)%uz_interface_det(2,k)
-        varz2=intfr(g)%uz_interface_det(3,k)
-
-        loc_x=intfr(g)%ux_interface_det(1,i)
-        loc_y=intfr(g)%uy_interface_det(1,j)
-        loc_z=intfr(g)%uz_interface_det(1,k)
-
-        DO tar_z=varz1,varz2
-        DO tar_y=vary1,vary2
-        DO tar_x=varx1,varx2
-
-                bl_intp_valx=block(b_blk_no)%xu(tar_x)
-                bl_intp_valy=block(b_blk_no)%yu(tar_y)
-                bl_intp_valz=block(b_blk_no)%zu(tar_z)
-                bl_intp_x1=block(a_blk_no)%xu(loc_x-1)
-                bl_intp_x2=block(a_blk_no)%xu(loc_x+1)
-                bl_intp_y1=block(a_blk_no)%yu(loc_y-1)
-                bl_intp_y2=block(a_blk_no)%yu(loc_y+1)
-                bl_intp_z1=block(a_blk_no)%zu(loc_z-1)
-                bl_intp_z2=block(a_blk_no)%zu(loc_z+1)
-                bl_intp_f1=block(a_blk_no)%ut(loc_x-2,loc_y-1,loc_z-1)
-                bl_intp_f2=block(a_blk_no)%ut(loc_x,loc_y-1,loc_z-1)
-                bl_intp_f3=block(a_blk_no)%ut(loc_x,loc_y+1,loc_z-1)
-                bl_intp_f4=block(a_blk_no)%ut(loc_x-2,loc_y+1,loc_z-1)
-
-                bl_intp_deno= (bl_intp_x2-bl_intp_x1) * (bl_intp_y2-bl_intp_y1)
-                bl_intp_xtx= (bl_intp_x2 -bl_intp_valx)
-                bl_intp_xxo=(bl_intp_valx-bl_intp_x1)
-                bl_intp_yty=(bl_intp_y2-bl_intp_valy)
-                bl_intp_yyo=(bl_intp_valy-bl_intp_y1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-
-                bl_interp_ans1=(bl_intp_num/bl_intp_deno)
-                bl_intp_f1=block(a_blk_no)%ut(loc_x-2,loc_y-1,loc_z+1)
-                bl_intp_f2=block(a_blk_no)%ut(loc_x,loc_y-1,loc_z+1)
-                bl_intp_f3=block(a_blk_no)%ut(loc_x,loc_y+1,loc_z+1)
-                bl_intp_f4=block(a_blk_no)%ut(loc_x-2,loc_y+1,loc_z+1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-                bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
-                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
-                block(b_blk_no)%ut(tar_x-1,tar_y,tar_z)=bl_interp_ans
-                ENDDO
-                ENDDO
-                ENDDO
-
-        ENDDO
         ENDDO
 
-        k=1
-
+        DO k=1,intfr(g)%counterzu, intfr(g)%counterzu-1
         DO j=1,intfr(g)%counteryu
         DO i=1,intfr(g)%counterxu
 
@@ -771,136 +648,12 @@ SUBROUTINE fineUpdate_bd
 
         ENDDO
         ENDDO
-
-!!!!!!k=counteryp
-        k=intfr(g)%counterzu
-
-        DO j=1,intfr(g)%counteryu
-        DO i=1,intfr(g)%counterxu
-
-        varx1=intfr(g)%ux_interface_det(2,i)
-        varx2=intfr(g)%ux_interface_det(3,i)
-        vary1=intfr(g)%uy_interface_det(2,j)
-        vary2=intfr(g)%uy_interface_det(3,j)
-        varz1=intfr(g)%uz_interface_det(2,k)
-        varz2=intfr(g)%uz_interface_det(3,k)
-
-        loc_x=intfr(g)%ux_interface_det(1,i)
-        loc_y=intfr(g)%uy_interface_det(1,j)
-        loc_z=intfr(g)%uz_interface_det(1,k)
-
-        DO tar_z=varz1,varz2
-        DO tar_y=vary1,vary2
-        DO tar_x=varx1,varx2
-
-                bl_intp_valx=block(b_blk_no)%xu(tar_x)
-                bl_intp_valy=block(b_blk_no)%yu(tar_y)
-                bl_intp_valz=block(b_blk_no)%zu(tar_z)
-                bl_intp_x1=block(a_blk_no)%xu(loc_x-1)
-                bl_intp_x2=block(a_blk_no)%xu(loc_x+1)
-                bl_intp_y1=block(a_blk_no)%yu(loc_y-1)
-                bl_intp_y2=block(a_blk_no)%yu(loc_y+1)
-                bl_intp_z1=block(a_blk_no)%zu(loc_z-1)
-                bl_intp_z2=block(a_blk_no)%zu(loc_z+1)
-                bl_intp_f1=block(a_blk_no)%ut(loc_x-2,loc_y-1,loc_z-1)
-                bl_intp_f2=block(a_blk_no)%ut(loc_x,loc_y-1,loc_z-1)
-                bl_intp_f3=block(a_blk_no)%ut(loc_x,loc_y+1,loc_z-1)
-                bl_intp_f4=block(a_blk_no)%ut(loc_x-2,loc_y+1,loc_z-1)
-
-                bl_intp_deno= (bl_intp_x2-bl_intp_x1) * (bl_intp_y2-bl_intp_y1)
-                bl_intp_xtx= (bl_intp_x2 -bl_intp_valx)
-                bl_intp_xxo=(bl_intp_valx-bl_intp_x1)
-                bl_intp_yty=(bl_intp_y2-bl_intp_valy)
-                bl_intp_yyo=(bl_intp_valy-bl_intp_y1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-
-                bl_interp_ans1=(bl_intp_num/bl_intp_deno)
-                bl_intp_f1=block(a_blk_no)%ut(loc_x-2,loc_y-1,loc_z+1)
-                bl_intp_f2=block(a_blk_no)%ut(loc_x,loc_y-1,loc_z+1)
-                bl_intp_f3=block(a_blk_no)%ut(loc_x,loc_y+1,loc_z+1)
-                bl_intp_f4=block(a_blk_no)%ut(loc_x-2,loc_y+1,loc_z+1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-                bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
-                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
-                block(b_blk_no)%ut(tar_x-1,tar_y,tar_z)=bl_interp_ans
-                ENDDO
-                ENDDO
-                ENDDO
-
         ENDDO
-        ENDDO
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!vvvvvvv!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        i=1
-
         DO k=1,intfr(g)%counterzv
         DO j=1,intfr(g)%counteryv
-        varx1=intfr(g)%vx_interface_det(2,i)
-        varx2=intfr(g)%vx_interface_det(3,i)
-        vary1=intfr(g)%vy_interface_det(2,j)
-        vary2=intfr(g)%vy_interface_det(3,j)
-        varz1=intfr(g)%vz_interface_det(2,k)
-        varz2=intfr(g)%vz_interface_det(3,k)
-
-        loc_x=intfr(g)%vx_interface_det(1,i)
-        loc_y=intfr(g)%vy_interface_det(1,j)
-        loc_z=intfr(g)%vz_interface_det(1,k)
-
-        DO tar_z=varz1,varz2
-        DO tar_y=vary1,vary2
-        DO tar_x=varx1,varx2
-
-                bl_intp_valx=block(b_blk_no)%xv(tar_x)
-                bl_intp_valy=block(b_blk_no)%yv(tar_y)
-                bl_intp_valz=block(b_blk_no)%zv(tar_z)
-                bl_intp_x1=block(a_blk_no)%xv(loc_x-1)
-                bl_intp_x2=block(a_blk_no)%xv(loc_x+1)
-                bl_intp_y1=block(a_blk_no)%yv(loc_y-1)
-                bl_intp_y2=block(a_blk_no)%yv(loc_y+1)
-                bl_intp_z1=block(a_blk_no)%zv(loc_z-1)
-                bl_intp_z2=block(a_blk_no)%zv(loc_z+1)
-                bl_intp_f1=block(a_blk_no)%vt(loc_x-1,loc_y-2,loc_z-1)
-                bl_intp_f2=block(a_blk_no)%vt(loc_x+1,loc_y-2,loc_z-1)
-                bl_intp_f3=block(a_blk_no)%vt(loc_x+1,loc_y  ,loc_z-1)
-                bl_intp_f4=block(a_blk_no)%vt(loc_x-1,loc_y  ,loc_z-1)
-
-                bl_intp_deno= (bl_intp_x2-bl_intp_x1) * (bl_intp_y2-bl_intp_y1)
-                bl_intp_xtx= (bl_intp_x2 -bl_intp_valx)
-                bl_intp_xxo=(bl_intp_valx-bl_intp_x1)
-                bl_intp_yty=(bl_intp_y2-bl_intp_valy)
-                bl_intp_yyo=(bl_intp_valy-bl_intp_y1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-
-                bl_interp_ans1=(bl_intp_num/bl_intp_deno)
-                bl_intp_f1=block(a_blk_no)%vt(loc_x-1,loc_y-2,loc_z+1)
-                bl_intp_f2=block(a_blk_no)%vt(loc_x+1,loc_y-2,loc_z+1)
-                bl_intp_f3=block(a_blk_no)%vt(loc_x+1,loc_y  ,loc_z+1)
-                bl_intp_f4=block(a_blk_no)%vt(loc_x-1,loc_y  ,loc_z+1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-                bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
-                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
-                block(b_blk_no)%vt(tar_x,tar_y-1,tar_z)=bl_interp_ans
-                ENDDO
-                ENDDO
-                ENDDO
-
-        ENDDO
-        ENDDO
-
-!!!!!!i=counterxu
-        i=intfr(g)%counterxv
-
-        DO k=1,intfr(g)%counterzv
-        DO j=1,intfr(g)%counteryv
+        DO i=1,intfr(g)%counterxv,intfr(g)%counterxv-1
 
         varx1=intfr(g)%vx_interface_det(2,i)
         varx2=intfr(g)%vx_interface_det(3,i)
@@ -958,10 +711,10 @@ SUBROUTINE fineUpdate_bd
 
         ENDDO
         ENDDO
-
-        j=1
+        ENDDO
 
         DO k=1,intfr(g)%counterzv
+        DO j=1,intfr(g)%counteryv, intfr(g)%counteryv-1
         DO i=1,intfr(g)%counterxv
 
 
@@ -1022,72 +775,9 @@ SUBROUTINE fineUpdate_bd
 
         ENDDO
         ENDDO
-
-!!!!!!j=counteryp
-        j=intfr(g)%counteryv
-
-        DO k=1,intfr(g)%counterzv
-        DO i=1,intfr(g)%counterxv
-
-        varx1=intfr(g)%vx_interface_det(2,i)
-        varx2=intfr(g)%vx_interface_det(3,i)
-        vary1=intfr(g)%vy_interface_det(2,j)
-        vary2=intfr(g)%vy_interface_det(3,j)
-        varz1=intfr(g)%vz_interface_det(2,k)
-        varz2=intfr(g)%vz_interface_det(3,k)
-
-        loc_x=intfr(g)%vx_interface_det(1,i)
-        loc_y=intfr(g)%vy_interface_det(1,j)
-        loc_z=intfr(g)%vz_interface_det(1,k)
-
-        DO tar_z=varz1,varz2
-        DO tar_y=vary1,vary2
-        DO tar_x=varx1,varx2
-
-                bl_intp_valx=block(b_blk_no)%xv(tar_x)
-                bl_intp_valy=block(b_blk_no)%yv(tar_y)
-                bl_intp_valz=block(b_blk_no)%zv(tar_z)
-                bl_intp_x1=block(a_blk_no)%xv(loc_x-1)
-                bl_intp_x2=block(a_blk_no)%xv(loc_x+1)
-                bl_intp_y1=block(a_blk_no)%yv(loc_y-1)
-                bl_intp_y2=block(a_blk_no)%yv(loc_y+1)
-                bl_intp_z1=block(a_blk_no)%zv(loc_z-1)
-                bl_intp_z2=block(a_blk_no)%zv(loc_z+1)
-                bl_intp_f1=block(a_blk_no)%vt(loc_x-1,loc_y-2,loc_z-1)
-                bl_intp_f2=block(a_blk_no)%vt(loc_x+1,loc_y-2,loc_z-1)
-                bl_intp_f3=block(a_blk_no)%vt(loc_x+1,loc_y  ,loc_z-1)
-                bl_intp_f4=block(a_blk_no)%vt(loc_x-1,loc_y  ,loc_z-1)
-
-                bl_intp_deno= (bl_intp_x2-bl_intp_x1) * (bl_intp_y2-bl_intp_y1)
-                bl_intp_xtx= (bl_intp_x2 -bl_intp_valx)
-                bl_intp_xxo=(bl_intp_valx-bl_intp_x1)
-                bl_intp_yty=(bl_intp_y2-bl_intp_valy)
-                bl_intp_yyo=(bl_intp_valy-bl_intp_y1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-
-                bl_interp_ans1=(bl_intp_num/bl_intp_deno)
-                bl_intp_f1=block(a_blk_no)%vt(loc_x-1,loc_y-2,loc_z+1)
-                bl_intp_f2=block(a_blk_no)%vt(loc_x+1,loc_y-2,loc_z+1)
-                bl_intp_f3=block(a_blk_no)%vt(loc_x+1,loc_y  ,loc_z+1)
-                bl_intp_f4=block(a_blk_no)%vt(loc_x-1,loc_y  ,loc_z+1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-                bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
-                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
-                block(b_blk_no)%vt(tar_x,tar_y-1,tar_z)=bl_interp_ans
-                ENDDO
-                ENDDO
-                ENDDO
-
-        ENDDO
         ENDDO
 
-        k=1
-
+        DO k=1,intfr(g)%counterzv, intfr(g)%counterzv-1
         DO j=1,intfr(g)%counteryv
         DO i=1,intfr(g)%counterxv
 
@@ -1148,76 +838,14 @@ SUBROUTINE fineUpdate_bd
                 ENDDO
 
         ENDDO
-        ENDDO
-
-!!!!!!k=counteryp
-        k=intfr(g)%counterzv
-
-        DO j=1,intfr(g)%counteryv
-        DO i=1,intfr(g)%counterxv
-
-        varx1=intfr(g)%vx_interface_det(2,i)
-        varx2=intfr(g)%vx_interface_det(3,i)
-        vary1=intfr(g)%vy_interface_det(2,j)
-        vary2=intfr(g)%vy_interface_det(3,j)
-        varz1=intfr(g)%vz_interface_det(2,k)
-        varz2=intfr(g)%vz_interface_det(3,k)
-
-        loc_x=intfr(g)%vx_interface_det(1,i)
-        loc_y=intfr(g)%vy_interface_det(1,j)
-        loc_z=intfr(g)%vz_interface_det(1,k)
-
-        DO tar_z=varz1,varz2
-        DO tar_y=vary1,vary2
-        DO tar_x=varx1,varx2
-
-                bl_intp_valx=block(b_blk_no)%xv(tar_x)
-                bl_intp_valy=block(b_blk_no)%yv(tar_y)
-                bl_intp_valz=block(b_blk_no)%zv(tar_z)
-                bl_intp_x1=block(a_blk_no)%xv(loc_x-1)
-                bl_intp_x2=block(a_blk_no)%xv(loc_x+1)
-                bl_intp_y1=block(a_blk_no)%yv(loc_y-1)
-                bl_intp_y2=block(a_blk_no)%yv(loc_y+1)
-                bl_intp_z1=block(a_blk_no)%zv(loc_z-1)
-                bl_intp_z2=block(a_blk_no)%zv(loc_z+1)
-                bl_intp_f1=block(a_blk_no)%vt(loc_x-1,loc_y-2,loc_z-1)
-                bl_intp_f2=block(a_blk_no)%vt(loc_x+1,loc_y-2,loc_z-1)
-                bl_intp_f3=block(a_blk_no)%vt(loc_x+1,loc_y  ,loc_z-1)
-                bl_intp_f4=block(a_blk_no)%vt(loc_x-1,loc_y  ,loc_z-1)
-
-                bl_intp_deno= (bl_intp_x2-bl_intp_x1) * (bl_intp_y2-bl_intp_y1)
-                bl_intp_xtx= (bl_intp_x2 -bl_intp_valx)
-                bl_intp_xxo=(bl_intp_valx-bl_intp_x1)
-                bl_intp_yty=(bl_intp_y2-bl_intp_valy)
-                bl_intp_yyo=(bl_intp_valy-bl_intp_y1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-
-                bl_interp_ans1=(bl_intp_num/bl_intp_deno)
-                bl_intp_f1=block(a_blk_no)%vt(loc_x-1,loc_y-2,loc_z+1)
-                bl_intp_f2=block(a_blk_no)%vt(loc_x+1,loc_y-2,loc_z+1)
-                bl_intp_f3=block(a_blk_no)%vt(loc_x+1,loc_y  ,loc_z+1)
-                bl_intp_f4=block(a_blk_no)%vt(loc_x-1,loc_y  ,loc_z+1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-                bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
-                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
-                block(b_blk_no)%vt(tar_x,tar_y-1,tar_z)=bl_interp_ans
-                ENDDO
-                ENDDO
-                ENDDO
-
         ENDDO
         ENDDO
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!wwwwwww!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        i=1
 
         DO k=1,intfr(g)%counterzw
         DO j=1,intfr(g)%counteryw
+        DO i=1,intfr(g)%counterxw, intfr(g)%counterxw-1
 
         varx1=intfr(g)%wx_interface_det(2,i)
         varx2=intfr(g)%wx_interface_det(3,i)
@@ -1275,73 +903,11 @@ SUBROUTINE fineUpdate_bd
 
         ENDDO
         ENDDO
-
-!!!!!!i=counterxu
-        i=intfr(g)%counterxw
-
-        DO k=1,intfr(g)%counterzw
-        DO j=1,intfr(g)%counteryw
-
-        varx1=intfr(g)%wx_interface_det(2,i)
-        varx2=intfr(g)%wx_interface_det(3,i)
-        vary1=intfr(g)%wy_interface_det(2,j)
-        vary2=intfr(g)%wy_interface_det(3,j)
-        varz1=intfr(g)%wz_interface_det(2,k)
-        varz2=intfr(g)%wz_interface_det(3,k)
-
-        loc_x=intfr(g)%wx_interface_det(1,i)
-        loc_y=intfr(g)%wy_interface_det(1,j)
-        loc_z=intfr(g)%wz_interface_det(1,k)
-
-        DO tar_z=varz1,varz2
-        DO tar_y=vary1,vary2
-        DO tar_x=varx1,varx2
-
-                bl_intp_valx=block(b_blk_no)%xw(tar_x)
-                bl_intp_valy=block(b_blk_no)%yw(tar_y)
-                bl_intp_valz=block(b_blk_no)%zw(tar_z)
-                bl_intp_x1=block(a_blk_no)%xw(loc_x-1)
-                bl_intp_x2=block(a_blk_no)%xw(loc_x+1)
-                bl_intp_y1=block(a_blk_no)%yw(loc_y-1)
-                bl_intp_y2=block(a_blk_no)%yw(loc_y+1)
-                bl_intp_z1=block(a_blk_no)%zw(loc_z-1)
-                bl_intp_z2=block(a_blk_no)%zw(loc_z+1)
-                bl_intp_f1=block(a_blk_no)%wt(loc_x-1,loc_y-1,loc_z-2)
-                bl_intp_f2=block(a_blk_no)%wt(loc_x+1,loc_y-1,loc_z-2)
-                bl_intp_f3=block(a_blk_no)%wt(loc_x+1,loc_y+1,loc_z-2)
-                bl_intp_f4=block(a_blk_no)%wt(loc_x-1,loc_y+1,loc_z-2)
-
-                bl_intp_deno= (bl_intp_x2-bl_intp_x1) * (bl_intp_y2-bl_intp_y1)
-                bl_intp_xtx= (bl_intp_x2 -bl_intp_valx)
-                bl_intp_xxo=(bl_intp_valx-bl_intp_x1)
-                bl_intp_yty=(bl_intp_y2-bl_intp_valy)
-                bl_intp_yyo=(bl_intp_valy-bl_intp_y1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-
-                bl_interp_ans1=(bl_intp_num/bl_intp_deno)
-                bl_intp_f1=block(a_blk_no)%wt(loc_x-1,loc_y-1,loc_z)
-                bl_intp_f2=block(a_blk_no)%wt(loc_x+1,loc_y-1,loc_z)
-                bl_intp_f3=block(a_blk_no)%wt(loc_x+1,loc_y+1,loc_z)
-                bl_intp_f4=block(a_blk_no)%wt(loc_x-1,loc_y+1,loc_z)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-                bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
-                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
-                block(b_blk_no)%wt(tar_x,tar_y,tar_z-1)=bl_interp_ans
-                ENDDO
-                ENDDO
-                ENDDO
-
-        ENDDO
         ENDDO
 
-        j=1
 
         DO k=1,intfr(g)%counterzw
+        DO j=1,intfr(g)%counteryw, intfr(g)%counteryw-1
         DO i=1,intfr(g)%counterxw
 
 
@@ -1402,72 +968,9 @@ SUBROUTINE fineUpdate_bd
 
         ENDDO
         ENDDO
-
-!!!!!!j=counteryp
-        j=intfr(g)%counteryw
-
-        DO k=1,intfr(g)%counterzw
-        DO i=1,intfr(g)%counterxw
-
-        varx1=intfr(g)%wx_interface_det(2,i)
-        varx2=intfr(g)%wx_interface_det(3,i)
-        vary1=intfr(g)%wy_interface_det(2,j)
-        vary2=intfr(g)%wy_interface_det(3,j)
-        varz1=intfr(g)%wz_interface_det(2,k)
-        varz2=intfr(g)%wz_interface_det(3,k)
-
-        loc_x=intfr(g)%wx_interface_det(1,i)
-        loc_y=intfr(g)%wy_interface_det(1,j)
-        loc_z=intfr(g)%wz_interface_det(1,k)
-
-        DO tar_z=varz1,varz2
-        DO tar_y=vary1,vary2
-        DO tar_x=varx1,varx2
-
-                bl_intp_valx=block(b_blk_no)%xw(tar_x)
-                bl_intp_valy=block(b_blk_no)%yw(tar_y)
-                bl_intp_valz=block(b_blk_no)%zw(tar_z)
-                bl_intp_x1=block(a_blk_no)%xw(loc_x-1)
-                bl_intp_x2=block(a_blk_no)%xw(loc_x+1)
-                bl_intp_y1=block(a_blk_no)%yw(loc_y-1)
-                bl_intp_y2=block(a_blk_no)%yw(loc_y+1)
-                bl_intp_z1=block(a_blk_no)%zw(loc_z-1)
-                bl_intp_z2=block(a_blk_no)%zw(loc_z+1)
-                bl_intp_f1=block(a_blk_no)%wt(loc_x-1,loc_y-1,loc_z-2)
-                bl_intp_f2=block(a_blk_no)%wt(loc_x+1,loc_y-1,loc_z-2)
-                bl_intp_f3=block(a_blk_no)%wt(loc_x+1,loc_y+1,loc_z-2)
-                bl_intp_f4=block(a_blk_no)%wt(loc_x-1,loc_y+1,loc_z-2)
-
-                bl_intp_deno= (bl_intp_x2-bl_intp_x1) * (bl_intp_y2-bl_intp_y1)
-                bl_intp_xtx= (bl_intp_x2 -bl_intp_valx)
-                bl_intp_xxo=(bl_intp_valx-bl_intp_x1)
-                bl_intp_yty=(bl_intp_y2-bl_intp_valy)
-                bl_intp_yyo=(bl_intp_valy-bl_intp_y1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-
-                bl_interp_ans1=(bl_intp_num/bl_intp_deno)
-                bl_intp_f1=block(a_blk_no)%wt(loc_x-1,loc_y-1,loc_z  )
-                bl_intp_f2=block(a_blk_no)%wt(loc_x+1,loc_y-1,loc_z  )
-                bl_intp_f3=block(a_blk_no)%wt(loc_x+1,loc_y+1,loc_z  )
-                bl_intp_f4=block(a_blk_no)%wt(loc_x-1,loc_y+1,loc_z  )
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-                bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
-                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
-                block(b_blk_no)%wt(tar_x,tar_y,tar_z-1)=bl_interp_ans
-                ENDDO
-                ENDDO
-                ENDDO
-
-        ENDDO
         ENDDO
 
-        k=1
-
+        DO k=1,intfr(g)%counterzw, intfr(g)%counterzw-1
         DO j=1,intfr(g)%counteryw
         DO i=1,intfr(g)%counterxw
 
@@ -1529,70 +1032,7 @@ SUBROUTINE fineUpdate_bd
 
         ENDDO
         ENDDO
-
-!!!!!!k=counteryp
-        k=intfr(g)%counterzw
-
-        DO j=1,intfr(g)%counteryw
-        DO i=1,intfr(g)%counterxw
-
-        varx1=intfr(g)%wx_interface_det(2,i)
-        varx2=intfr(g)%wx_interface_det(3,i)
-        vary1=intfr(g)%wy_interface_det(2,j)
-        vary2=intfr(g)%wy_interface_det(3,j)
-        varz1=intfr(g)%wz_interface_det(2,k)
-        varz2=intfr(g)%wz_interface_det(3,k)
-
-        loc_x=intfr(g)%wx_interface_det(1,i)
-        loc_y=intfr(g)%wy_interface_det(1,j)
-        loc_z=intfr(g)%wz_interface_det(1,k)
-
-        DO tar_z=varz1,varz2
-        DO tar_y=vary1,vary2
-        DO tar_x=varx1,varx2
-
-                bl_intp_valx=block(b_blk_no)%xw(tar_x)
-                bl_intp_valy=block(b_blk_no)%yw(tar_y)
-                bl_intp_valz=block(b_blk_no)%zw(tar_z)
-                bl_intp_x1=block(a_blk_no)%xw(loc_x-1)
-                bl_intp_x2=block(a_blk_no)%xw(loc_x+1)
-                bl_intp_y1=block(a_blk_no)%yw(loc_y-1)
-                bl_intp_y2=block(a_blk_no)%yw(loc_y+1)
-                bl_intp_z1=block(a_blk_no)%zw(loc_z-1)
-                bl_intp_z2=block(a_blk_no)%zw(loc_z+1)
-                bl_intp_f1=block(a_blk_no)%wt(loc_x-1,loc_y-1,loc_z-2)
-                bl_intp_f2=block(a_blk_no)%wt(loc_x+1,loc_y-1,loc_z-2)
-                bl_intp_f3=block(a_blk_no)%wt(loc_x+1,loc_y+1,loc_z-2)
-                bl_intp_f4=block(a_blk_no)%wt(loc_x-1,loc_y+1,loc_z-2)
-
-                bl_intp_deno= (bl_intp_x2-bl_intp_x1) * (bl_intp_y2-bl_intp_y1)
-                bl_intp_xtx= (bl_intp_x2 -bl_intp_valx)
-                bl_intp_xxo=(bl_intp_valx-bl_intp_x1)
-                bl_intp_yty=(bl_intp_y2-bl_intp_valy)
-                bl_intp_yyo=(bl_intp_valy-bl_intp_y1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-
-                bl_interp_ans1=(bl_intp_num/bl_intp_deno)
-                bl_intp_f1=block(a_blk_no)%wt(loc_x-1,loc_y-1,loc_z  )
-                bl_intp_f2=block(a_blk_no)%wt(loc_x+1,loc_y-1,loc_z  )
-                bl_intp_f3=block(a_blk_no)%wt(loc_x+1,loc_y+1,loc_z  )
-                bl_intp_f4=block(a_blk_no)%wt(loc_x-1,loc_y+1,loc_z  )
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-                bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
-                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
-                block(b_blk_no)%wt(tar_x,tar_y,tar_z-1)=bl_interp_ans
-                ENDDO
-                ENDDO
-                ENDDO
-
         ENDDO
-        ENDDO
-
 
         ENDDO
 
