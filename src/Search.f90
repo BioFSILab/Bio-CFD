@@ -333,8 +333,13 @@ module biocfd_search
             cent_x = block(g)%xcent(m)
             cent_y = block(g)%ycent(m)
             cent_z = block(g)%zcent(m)
-               dis_cen  = dsqrt( (block(g)%yp(j)-cent_y)**2 + (block(g)%xp(i)-cent_x)**2  + (block(g)%zp(k)-cent_z)**2)
-               dis_pnt  = dsqrt( (block(g)%y1(j)-cent_y)**2 + (block(g)%x1(i)-cent_x)**2  + (block(g)%z1(k)-cent_z)**2)
+            ! There is no need to take the sqrt here because we are just comparing distances
+            associate (x => block(g)%xp(i), y => block(g)%yp(j), z => block(g)%zp(k))
+               dis_cen  = (x-cent_x)**2  + (y-cent_y)**2 + (z-cent_z)**2
+            end associate
+            associate (x => block(g)%x1(i), y => block(g)%y1(j), z => block(g)%z1(k))
+               dis_pnt  = (x-cent_x)**2  + (y-cent_y)**2 + (z-cent_z)**2
+            end associate
                IF (dis_cen<minDis) THEN
                   minDis    = dis_cen
                   nel2Cen   = m
@@ -344,6 +349,7 @@ module biocfd_search
                   nel2Pnt   = m
                ENDIF
             ENDDO
+
             IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen) .AND. &
                 block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
                (block(g)%y1(j)<=block(g)%ycent(nel2Cen) .AND. &
@@ -351,7 +357,6 @@ module biocfd_search
                (block(g)%z1(k)<=block(g)%zcent(nel2Cen) .AND. &
                 block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
                block(g)%cell(i,j,k) = 2
-
             ENDIF
 
             n2dotn  = (block(g)%x1(i) - block(g)%xcent(nel2Pnt))*block(g)%cosAlpha(nel2Pnt) + &
