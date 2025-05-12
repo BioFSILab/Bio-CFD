@@ -336,9 +336,9 @@ module biocfd_search
             ! I wanted to use associate here, but nvfortran doesn't
             ! like it on the GPU (although I can't find an existing
             ! bug report of this)
-               dis_cen  = (block(g)%yp(j)-cent_y)**2 + (block(g)%xp(i)-cent_x)**2 &
+               dis_cen  = (block(g)%xp(i)-cent_x)**2 + (block(g)%yp(j)-cent_y)**2 &
                         + (block(g)%zp(k)-cent_z)**2
-               dis_pnt  = (block(g)%y1(j)-cent_y)**2 + (block(g)%x1(i)-cent_x)**2 &
+               dis_pnt  = (block(g)%x1(i)-cent_x)**2 + (block(g)%y1(j)-cent_y)**2 &
                         + (block(g)%z1(k)-cent_z)**2
                IF (dis_cen<minDis) THEN
                   minDis    = dis_cen
@@ -379,7 +379,6 @@ module biocfd_search
            DO j = block(g)%j_startSearch, block(g)%j_endSearch
            DO i = block(g)%i_startSearch, block(g)%i_endSearch
                IF (block(g)%cell(i,j,k)/=2) THEN
-                  sumNodeId = 0
                   sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
                               + block(g)%nodeIdTag(i,j+1,k)    + block(g)%nodeIdTag(i+1,j+1,k)   &
                               + block(g)%nodeIdTag(i,j,k+1)    + block(g)%nodeIdTag(i+1,j,k+1)     &
@@ -408,7 +407,7 @@ module biocfd_search
 
 
 
-        block(g)%ibCellCount = 0
+         block(g)%ibCellCount = 0
          block(g)%solidCellCount = 0
          block(g)%fluidCellCount = 0
          DO k = 2, block(g)%nz+1
