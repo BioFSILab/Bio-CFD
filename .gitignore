@@ -37,3 +37,7 @@
 # Bio-CFD input files
 *.txt
 *.dat
+inputdata
+
+# msh files
+*.msh
