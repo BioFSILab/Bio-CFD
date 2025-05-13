@@ -2,6 +2,7 @@ module biocfd_forcing
   use, intrinsic :: iso_fortran_env, only: dp => real64
   ! allow(use-all) - TODO: Aim to fix this in the future
   use global
+  use biocfd_interpolation, only : linear_interpolation, bilinear_interpolation
   implicit none
 
   private
@@ -13,11 +14,10 @@ module biocfd_forcing
 SUBROUTINE pressureForcing1
 
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1, g
-      REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, &
-                         aval, bval, cval, p_pos1, sur2nodeDis, dpdn, p_x1, p_x2, &
-                         p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, &
-                         p_z1_x1, p_z2_x1, p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e
+      REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
+                   dpdn_e
 
+      real(dp) :: derivatives(3)
       dpdn = 0._dp
         DO g=blk_start,nblocks
 
@@ -86,74 +86,13 @@ SUBROUTINE pressureForcing1
             if(pos1_z>=block(g)%zp(kl).and.pos1_z<block(g)%zp(kl+1)) i_z1 = kl
          END DO
 
-         !interpolation along x  @ z1 plane
-         p_x1_z1 = block(g)%p(i_x1, i_y1, i_z1)   + (block(g)%p(i_x1+1, i_y1, i_z1) &
-                   - block(g)%p(i_x1, i_y1, i_z1)) &
-                   * (pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1) - block(g)%xp(i_x1))
-         p_x2_z1 = block(g)%p(i_x1, i_y1+1, i_z1) + (block(g)%p(i_x1+1, i_y1+1, i_z1) &
-                   - block(g)%p(i_x1, i_y1+1, i_z1)) &
-                   * (pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1) - block(g)%xp(i_x1))
+        call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
+                                           block(g)%xp, block(g)%yp, block(g)%zp, &
+                                           block(g)%p, p_pos1, derivatives)
 
-         !interpolation along x  @ z2 plane
-         p_x1_z2 = block(g)%p(i_x1, i_y1, i_z1+1)   + (block(g)%p(i_x1+1, i_y1, i_z1+1) &
-                   - block(g)%p(i_x1, i_y1, i_z1+1)) &
-                   * (pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1) - block(g)%xp(i_x1))
-         p_x2_z2 = block(g)%p(i_x1, i_y1+1, i_z1+1) + (block(g)%p(i_x1+1, i_y1+1, i_z1+1) &
-                   - block(g)%p(i_x1, i_y1+1, i_z1+1)) &
-                   * (pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1) - block(g)%xp(i_x1))
-
-         !This will be used for dpdz calculation point 1
-         p_z1 = p_x1_z1 + (p_x2_z1 - p_x1_z1) &
-                * (pos1_y - block(g)%yp(i_y1))/(block(g)%yp(i_y1+1)-block(g)%yp(i_y1))
-         p_z2 = p_x1_z2 + (p_x2_z2 - p_x1_z2) &
-                * (pos1_y - block(g)%yp(i_y1))/(block(g)%yp(i_y1+1)-block(g)%yp(i_y1))
-
-         !This will be used for dpdy calculation at point 1
-         p_y1 = p_x1_z1 + (p_x1_z2 - p_x1_z1) &
-                * (pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1)-block(g)%zp(i_z1))
-         p_y2 = p_x2_z1 + (p_x2_z2 - p_x2_z1) &
-                * (pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1)-block(g)%zp(i_z1))
-
-         !interpolation along z @ x1 plane
-         p_z1_x1 = block(g)%p(i_x1, i_y1, i_z1) + (block(g)%p(i_x1, i_y1, i_z1+1) &
-                   - block(g)%p(i_x1, i_y1, i_z1)) &
-                   * (pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1) - block(g)%zp(i_z1))
-         p_z2_x1 = block(g)%p(i_x1, i_y1+1, i_z1) + (block(g)%p(i_x1, i_y1+1, i_z1+1) &
-                   - block(g)%p(i_x1, i_y1+1, i_z1)) &
-                   * (pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1) - block(g)%zp(i_z1))
-
-         !interpolation along z @ x2 plane
-         p_z1_x2 = block(g)%p(i_x1+1, i_y1, i_z1) + (block(g)%p(i_x1+1, i_y1, i_z1+1) &
-                   - block(g)%p(i_x1+1, i_y1, i_z1)) &
-                   * (pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1) - block(g)%zp(i_z1))
-         p_z2_x2 = block(g)%p(i_x1+1, i_y1+1, i_z1) + (block(g)%p(i_x1+1, i_y1+1, i_z1+1) &
-                   - block(g)%p(i_x1+1, i_y1+1, i_z1)) &
-                   * (pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1) - block(g)%zp(i_z1))
-
-         !This will be used for dpdx calculation at point 1
-         p_x1 = p_z1_x1 + (p_z2_x1 - p_z1_x1) &
-                * (pos1_y - block(g)%yp(i_y1))/(block(g)%yp(i_y1+1)-block(g)%yp(i_y1))
-         p_x2 = p_z1_x2 + (p_z2_x2 - p_z1_x2) &
-                * (pos1_y - block(g)%yp(i_y1))/(block(g)%yp(i_y1+1)-block(g)%yp(i_y1))
-
-         p_pos1 = p_x1 + (p_x2 - p_x1) &
-                  * (pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1)-block(g)%xp(i_x1))
-
-         h2 = dabs(block(g)%xp(i_x1+1) - pos1_x)
-         h1 = dabs(block(g)%xp(i_x1)   - pos1_x)
-         dpdx_e = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
-
-         h2 = dabs(block(g)%yp(i_y1+1) - pos1_y)
-         h1 = dabs(block(g)%yp(i_y1)   - pos1_y)
-         dpdy_e = (h1**2*p_y2 - h2**2*p_y1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
-
-         h2 = dabs(block(g)%zp(i_z1+1) - pos1_z)
-         h1 = dabs(block(g)%zp(i_z1)   - pos1_z)
-         dpdz_e = (h1**2*p_z2 - h2**2*p_z1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
-
-         dpdn_e = dpdx_e*block(g)%cosAlpha(block(g)%nelp(n)) &
-                  + dpdy_e*block(g)%cosBeta(block(g)%nelp(n)) &
-                  + dpdz_e*block(g)%cosGamma(block(g)%nelp(n))
+        dpdn_e = derivatives(1) * block(g)%cosAlpha(block(g)%nelp(n)) &
+               + derivatives(2) * block(g)%cosBeta(block(g)%nelp(n)) &
+               + derivatives(3) * block(g)%cosGamma(block(g)%nelp(n))
 
          n1 = pt1 + sur2nodeDis
 
@@ -2625,4 +2564,70 @@ SUBROUTINE velocityForcingField
       ENDDO
 
 END SUBROUTINE velocityForcingField
+
+pure function compute_derivative(x, x2, x1, p_x, p_x2, p_x1) result(out)
+  real(dp), intent(in) :: x, x2, x1, p_x, p_x2, p_x1
+  real(dp) :: out
+
+  real(dp) :: h1, h2
+
+  h2 = abs(x2 - x)
+  h1 = abs(x1 - x)
+  out = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_x)/(h1*h2*(h1+h2)+1e-16_dp)
+end function compute_derivative
+
+pure function multi_bilinear_interpolation(x, y, z, i, j, k, xgrid, ygrid, zgrid, var) result(out)
+  real(dp), intent(in) :: x, y, z
+  integer, intent(in) :: i, j, k
+  real(dp), intent(in), dimension(:) :: xgrid, ygrid, zgrid
+  real(dp), intent(in), dimension(:, :, :) :: var
+  !> The out is [[x1, x2], [y1, y2], [z1, z1]]
+  real(dp) :: out(3, 2)
+
+  ! p_x1 y -- z plane
+  out(1, 1) = bilinear_interpolation(y, z, ygrid(j+1), ygrid(j), zgrid(k+1), zgrid(k), &
+                        [var(i, j, k), var(i, j+1, k), var(i, j, k+1), var(i, j+1, k+1)])
+  ! p_x2 y -- z plane
+  out(1, 2) = bilinear_interpolation(y, z, ygrid(j+1), ygrid(j), zgrid(k+1), zgrid(k), &
+                        [var(i+1, j, k), var(i+1, j+1, k), var(i+1, j, k+1), var(i+1, j+1, k+1)])
+
+  ! p_y1 x -- z plane
+  out(2, 1) = bilinear_interpolation(x, z, xgrid(i+1), xgrid(i), zgrid(k+1), zgrid(k), &
+                        [var(i, j, k), var(i+1, j, k), var(i, j, k+1), var(i+1, j, k+1)])
+  ! p_y2 x -- z plane
+  out(2, 2) = bilinear_interpolation(x, z, xgrid(i+1), xgrid(i), zgrid(k+1), zgrid(k), &
+                        [var(i, j+1, k), var(i+1, j+1, k), var(i, j+1, k+1), var(i+1, j+1, k+1)])
+
+  ! p_z1 x -- y plane
+  out(3, 1) = bilinear_interpolation(x, y, xgrid(i+1), xgrid(i), ygrid(j+1), ygrid(j), &
+                        [var(i, j, k), var(i+1, j, k), var(i, j+1, k), var(i+1, j+1, k)])
+  ! p_z2 x -- y plane
+  out(3, 2) = bilinear_interpolation(x, y, xgrid(i+1), xgrid(i), ygrid(j+1), ygrid(j), &
+                        [var(i, j, k+1), var(i+1, j, k+1), var(i, j+1, k+1), var(i+1, j+1, k+1)])
+
+end function multi_bilinear_interpolation
+
+subroutine compute_value_and_derivatives(x, y, z, i, j, k, xgrid, ygrid, zgrid, var, &
+                                         val, derivatives)
+  real(dp), intent(in) :: x, y, z
+  integer, intent(in) :: i, j, k
+  real(dp), intent(in), dimension(:) :: xgrid, ygrid, zgrid
+  real(dp), intent(in), dimension(:, :, :) :: var
+
+  real(dp), intent(out) :: val
+  real(dp), intent(out) :: derivatives(3)
+
+  ! Internal variables
+  ! tmp to hold interpolated results, [[x1, x2], [y1, y2], [z1, z1]]
+  real (dp) :: tmp(3, 2)
+
+  tmp = multi_bilinear_interpolation(x, y, z, i, j, k, xgrid, ygrid, zgrid, var)
+  val = linear_interpolation(x, xgrid(i+1), xgrid(i), tmp(1, 2), tmp(1, 1))
+
+  derivatives(1) = compute_derivative(x, xgrid(i+1), xgrid(i), val, tmp(1, 2), tmp(1, 1))
+  derivatives(2) = compute_derivative(y, ygrid(j+1), ygrid(j), val, tmp(2, 2), tmp(2, 1))
+  derivatives(3) = compute_derivative(z, zgrid(k+1), zgrid(k), val, tmp(3, 2), tmp(3, 1))
+
+end subroutine compute_value_and_derivatives
+
 end module biocfd_forcing
