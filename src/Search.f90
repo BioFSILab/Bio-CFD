@@ -305,7 +305,7 @@ module biocfd_search
 
         INTEGER(int64) :: g, n, m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
         REAL(dp)      :: minDis1, minDis, &
-                         n2dotn, cent_x, cent_y, cent_z, dis_cen, dis_pnt
+                         n2dotn, dis_cen, dis_pnt
 
         CHARACTER(LEN=120) :: filename1
         DO g=blk_start, nblocks
@@ -319,7 +319,6 @@ module biocfd_search
 
  !$acc parallel loop collapse(3) default(present)
         !$omp parallel do default(none) private(minDis, minDis1) &
-        !$omp& private(cent_x, cent_y, cent_z) &
         !$omp& private(dis_cen, dis_pnt, nel2Cen, nel2Pnt, n2dotn) &
         !$omp& shared(g, block)
         DO k = block(g)%k_startSearch, block(g)%k_endSearch
@@ -330,19 +329,18 @@ module biocfd_search
 
             !$acc loop seq
             DO m = 1, block(g)%ibElems
-            cent_x = block(g)%xcent(m)
-            cent_y = block(g)%ycent(m)
-            cent_z = block(g)%zcent(m)
             ! I wanted to use associate here, but nvfortran doesn't
             ! like it on the GPU (although I can't find an existing
             ! bug report of this).
             !
             ! No need to take the sqrt because we are just looking for
             ! the minimum distance
-               dis_cen  = (block(g)%xp(i)-cent_x)**2 + (block(g)%yp(j)-cent_y)**2 &
-                        + (block(g)%zp(k)-cent_z)**2
-               dis_pnt  = (block(g)%x1(i)-cent_x)**2 + (block(g)%y1(j)-cent_y)**2 &
-                        + (block(g)%z1(k)-cent_z)**2
+               dis_cen  = (block(g)%xp(i)-block(g)%xcent(m))**2 &
+                        + (block(g)%yp(j)-block(g)%ycent(m))**2 &
+                        + (block(g)%zp(k)-block(g)%zcent(m))**2
+               dis_pnt  = (block(g)%x1(i)-block(g)%xcent(m))**2 &
+                        + (block(g)%y1(j)-block(g)%ycent(m))**2 &
+                        + (block(g)%z1(k)-block(g)%zcent(m))**2
                IF (dis_cen<minDis) THEN
                   minDis    = dis_cen
                   nel2Cen   = m
