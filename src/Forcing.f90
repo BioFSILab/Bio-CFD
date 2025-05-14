@@ -2575,10 +2575,22 @@ pure function compute_derivative(x, x2, x1, p_x, p_x2, p_x1) result(out)
   out = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_x)/(h1*h2*(h1+h2)+1e-16_dp)
 end function compute_derivative
 
+!> Compute bilinear interpolation on six faces of a cuboid.
+!>
+!> Given the eight corners of a cuboid find the interpolated values on
+!> the faces of the cuboid at some target position e.g. if the corners
+!> are at [(x1,y1,z1), (x2,y1,z1), (x1,y2,z1), (x2,y2,z1), (x1,y1,z2),
+!> (x2,y1,z2), (x1,y2,z2), (x2,y2,z2)], and the target position is (x,
+!> y, z), returns the interpolated values of something at [(x,y,z1),
+!> (x,y,z2), (x,y1,z), (x,y2,z), (x1,y,z), (x2,y,z)].
 pure function multi_bilinear_interpolation(x, y, z, i, j, k, xgrid, ygrid, zgrid, var) result(out)
+  !> The target position for the interpolation
   real(dp), intent(in) :: x, y, z
+  !> The indices of the corners of the cuboid on the grid
   integer, intent(in) :: i, j, k
+  !> The grids determining the positions of the corners of the cuboid
   real(dp), intent(in), dimension(:) :: xgrid, ygrid, zgrid
+  !> The variable to be interpolated
   real(dp), intent(in), dimension(:, :, :) :: var
   !> The out is [[x1, x2], [y1, y2], [z1, z1]]
   real(dp) :: out(3, 2)
