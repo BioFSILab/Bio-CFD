@@ -31,13 +31,14 @@ module biocfd_interpolation
                 real(dp), intent(in) :: fvals(4)
                 real(dp) :: fout
 
-                real(dp) :: tmp(2, 1), tmp_fout(1, 1), denom
+                real(dp) :: numer, denom
 
-                tmp = matmul(reshape(fvals, [2, 2]), reshape([y2 - y, y - y1], [2, 1]))
+                numer = fvals(1) * (x2 - x) * (y2 - y) + fvals(3) * (x2 - x) * (y - y1) &
+                      + fvals(2) * (x - x1) * (y2 - y) + fvals(4) * (x - x1) * (y - y1)
+
                 denom = (x2 - x1) * (y2 - y1)
 
-                tmp_fout = (matmul(reshape([x2 - x, x - x1], [1, 2]), tmp) / denom)
-                fout = tmp_fout(1, 1)
+                fout = numer / denom
         end function bilinear_interpolation
 
 end module biocfd_interpolation
