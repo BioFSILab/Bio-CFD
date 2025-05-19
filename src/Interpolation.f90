@@ -8,9 +8,13 @@ module biocfd_interpolation
 
         contains
 
+        ! acc routine directives are needed in the following functions
+        ! to ensure that device versions are created
+
         !> Perform linear interpolation between two points
         !> See https://en.wikipedia.org/wiki/Linear_interpolation
         pure function linear_interpolation(x, x1, x0, y1, y0) result(y)
+                !$acc routine
                 real(dp), intent(in) :: x, x1, x0, y1, y0
                 real(dp) :: y
 
@@ -21,6 +25,7 @@ module biocfd_interpolation
         !> Perform bilinear interpolation
         !> See https://en.wikipedia.org/wiki/Bilinear_interpolation
         pure function bilinear_interpolation(x, y, x2, x1, y2, y1, fvals) result(fout)
+                !$acc routine
                 real(dp), intent(in) :: x, y, x2, x1, y2, y1
                 !> The values at [(x1, y1), (x2, y1), (x1, y2), (x2, y2)]
                 real(dp), intent(in) :: fvals(4)
