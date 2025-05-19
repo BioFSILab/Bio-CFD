@@ -27,6 +27,7 @@ SUBROUTINE pressureForcing1
  !$acc           dpdn_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
  !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z,ac_x_al,ac_y_al,at_x_al,at_y_al)         &
  !$acc default(present)  &
+ !$acc private(derivatives) &
  !$acc firstprivate (block(g)%nx, block(g)%ny,block(g)%nz)
       DO n = 1, block(g)%ibCellCount
          IF (block(g)%ibSurfId(block(g)%nelp(n))==50) THEN
