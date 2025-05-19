@@ -17,7 +17,11 @@
         use biocfd_last_conditions, only: lastConditions
         use biocfd_coefficient_matrix, only: coefficientMatrix
         use biocfd_navier_stokes, only: non_uni_coeff, nsmomentum2order
-        use biocfd_write_output_corner1, only: writeOutput1, body_plot, writeresult
+#if USE_HDF5 == 1
+  use biocfd_write_output_corner1, only: writeOutput1_hdf5, body_plot, writeresult
+#else
+  use biocfd_write_output_corner1, only: writeOutput1, body_plot, writeresult
+#endif
         use biocfd_forcing, only: pressureForcing1, pressureforcingfield, pressureforcingghost, &
              velocityforcing1, velocityforcingfield, velocityforcingghost
         IMPLICIT NONE
@@ -54,7 +58,11 @@
         CALL non_uni_coeff
         totime = totime + deltat
         st_flag=0
+#if USE_HDF5 == 1
+        CALL writeOutput1_hdf5
+#else
         CALL writeOutput1
+#endif
         coarse_flcnt_check=0
         print*, 'adam'
         DO
@@ -70,7 +78,11 @@
         CALL poissonSolver
         print *,7
         CALL pressureForcing1
+#if USE_HDF5 == 1
+        CALL writeOutput1_hdf5
+#else
         CALL writeOutput1
+#endif
         !$acc wait
         CALL writeResult
         !$acc wait
