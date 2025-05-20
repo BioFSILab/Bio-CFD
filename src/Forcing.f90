@@ -2,7 +2,7 @@ module biocfd_forcing
   use, intrinsic :: iso_fortran_env, only: dp => real64
   ! allow(use-all) - TODO: Aim to fix this in the future
   use global
-  use biocfd_interpolation, only : linear_interpolation, bilinear_interpolation
+  use biocfd_interpolation, only: linear_interpolation, bilinear_interpolation
   implicit none
 
   private
@@ -2576,49 +2576,6 @@ pure function compute_derivative(x, x2, x1, p_x, p_x2, p_x1) result(out)
   out = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_x)/(h1*h2*(h1+h2)+1e-16_dp)
 end function compute_derivative
 
-!> Compute bilinear interpolation on six faces of a cuboid.
-!>
-!> Given the eight corners of a cuboid find the interpolated values on
-!> the faces of the cuboid at some target position e.g. if the corners
-!> are at [(x1,y1,z1), (x2,y1,z1), (x1,y2,z1), (x2,y2,z1), (x1,y1,z2),
-!> (x2,y1,z2), (x1,y2,z2), (x2,y2,z2)], and the target position is (x,
-!> y, z), returns the interpolated values of something at [(x,y,z1),
-!> (x,y,z2), (x,y1,z), (x,y2,z), (x1,y,z), (x2,y,z)].
-pure function multi_bilinear_interpolation(x, y, z, i, j, k, xgrid, ygrid, zgrid, var) result(out)
-  !> The target position for the interpolation
-  real(dp), intent(in) :: x, y, z
-  !> The indices of the corners of the cuboid on the grid
-  integer, intent(in) :: i, j, k
-  !> The grids determining the positions of the corners of the cuboid
-  real(dp), intent(in), dimension(:) :: xgrid, ygrid, zgrid
-  !> The variable to be interpolated
-  real(dp), intent(in), dimension(:, :, :) :: var
-  !> The out is [[x1, x2], [y1, y2], [z1, z1]]
-  real(dp) :: out(3, 2)
-
-  ! p_x1 y -- z plane
-  out(1, 1) = bilinear_interpolation(y, z, ygrid(j+1), ygrid(j), zgrid(k+1), zgrid(k), &
-                        [var(i, j, k), var(i, j+1, k), var(i, j, k+1), var(i, j+1, k+1)])
-  ! p_x2 y -- z plane
-  out(1, 2) = bilinear_interpolation(y, z, ygrid(j+1), ygrid(j), zgrid(k+1), zgrid(k), &
-                        [var(i+1, j, k), var(i+1, j+1, k), var(i+1, j, k+1), var(i+1, j+1, k+1)])
-
-  ! p_y1 x -- z plane
-  out(2, 1) = bilinear_interpolation(x, z, xgrid(i+1), xgrid(i), zgrid(k+1), zgrid(k), &
-                        [var(i, j, k), var(i+1, j, k), var(i, j, k+1), var(i+1, j, k+1)])
-  ! p_y2 x -- z plane
-  out(2, 2) = bilinear_interpolation(x, z, xgrid(i+1), xgrid(i), zgrid(k+1), zgrid(k), &
-                        [var(i, j+1, k), var(i+1, j+1, k), var(i, j+1, k+1), var(i+1, j+1, k+1)])
-
-  ! p_z1 x -- y plane
-  out(3, 1) = bilinear_interpolation(x, y, xgrid(i+1), xgrid(i), ygrid(j+1), ygrid(j), &
-                        [var(i, j, k), var(i+1, j, k), var(i, j+1, k), var(i+1, j+1, k)])
-  ! p_z2 x -- y plane
-  out(3, 2) = bilinear_interpolation(x, y, xgrid(i+1), xgrid(i), ygrid(j+1), ygrid(j), &
-                        [var(i, j, k+1), var(i+1, j, k+1), var(i, j+1, k+1), var(i+1, j+1, k+1)])
-
-end function multi_bilinear_interpolation
-
 subroutine compute_value_and_derivatives(x, y, z, i, j, k, xgrid, ygrid, zgrid, var, &
                                          val, derivatives)
   real(dp), intent(in) :: x, y, z
@@ -2633,7 +2590,40 @@ subroutine compute_value_and_derivatives(x, y, z, i, j, k, xgrid, ygrid, zgrid, 
   ! tmp to hold interpolated results, [[x1, x2], [y1, y2], [z1, z1]]
   real (dp) :: tmp(3, 2)
 
-  tmp = multi_bilinear_interpolation(x, y, z, i, j, k, xgrid, ygrid, zgrid, var)
+  ! Compute bilinear interpolation on six faces of a cuboid.
+  !
+  ! Given the eight corners of a cuboid find the interpolated values on
+  ! the faces of the cuboid at some target position e.g. if the corners
+  ! are at [(x1,y1,z1), (x2,y1,z1), (x1,y2,z1), (x2,y2,z1), (x1,y1,z2),
+  ! (x2,y1,z2), (x1,y2,z2), (x2,y2,z2)], and the target position is (x,
+  ! y, z), returns the interpolated values of something at [(x,y,z1),
+  ! (x,y,z2), (x,y1,z), (x,y2,z), (x1,y,z), (x2,y,z)].
+  !
+  ! Note: the multi bilinear interpolation was originally in its own
+  ! function, but nvfortran had problems inlining it so it is "by
+  ! hand" inlined here
+  !
+  ! p_x1 y -- z plane
+  tmp(1, 1) = bilinear_interpolation(y, z, ygrid(j+1), ygrid(j), zgrid(k+1), zgrid(k), &
+                        [var(i, j, k), var(i, j+1, k), var(i, j, k+1), var(i, j+1, k+1)])
+  ! p_x2 y -- z plane
+  tmp(1, 2) = bilinear_interpolation(y, z, ygrid(j+1), ygrid(j), zgrid(k+1), zgrid(k), &
+                        [var(i+1, j, k), var(i+1, j+1, k), var(i+1, j, k+1), var(i+1, j+1, k+1)])
+
+  ! p_y1 x -- z plane
+  tmp(2, 1) = bilinear_interpolation(x, z, xgrid(i+1), xgrid(i), zgrid(k+1), zgrid(k), &
+                        [var(i, j, k), var(i+1, j, k), var(i, j, k+1), var(i+1, j, k+1)])
+  ! p_y2 x -- z plane
+  tmp(2, 2) = bilinear_interpolation(x, z, xgrid(i+1), xgrid(i), zgrid(k+1), zgrid(k), &
+                        [var(i, j+1, k), var(i+1, j+1, k), var(i, j+1, k+1), var(i+1, j+1, k+1)])
+
+  ! p_z1 x -- y plane
+  tmp(3, 1) = bilinear_interpolation(x, y, xgrid(i+1), xgrid(i), ygrid(j+1), ygrid(j), &
+                        [var(i, j, k), var(i+1, j, k), var(i, j+1, k), var(i+1, j+1, k)])
+  ! p_z2 x -- y plane
+  tmp(3, 2) = bilinear_interpolation(x, y, xgrid(i+1), xgrid(i), ygrid(j+1), ygrid(j), &
+                        [var(i, j, k+1), var(i+1, j, k+1), var(i, j+1, k+1), var(i+1, j+1, k+1)])
+
   val = linear_interpolation(x, xgrid(i+1), xgrid(i), tmp(1, 2), tmp(1, 1))
 
   derivatives(1) = compute_derivative(x, xgrid(i+1), xgrid(i), val, tmp(1, 2), tmp(1, 1))
