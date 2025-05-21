@@ -2604,27 +2604,27 @@ subroutine compute_value_and_derivatives(x, y, z, i, j, k, xgrid, ygrid, zgrid, 
   ! hand" inlined here
   !
   ! p_x1 y -- z plane
-  tmp(1, 1) = bilinear_interpolation(y, z, ygrid(j+1), ygrid(j), zgrid(k+1), zgrid(k), &
+  tmp(1, 1) = bilinear_interpolation(y, z, ygrid(j), ygrid(j+1), zgrid(k), zgrid(k+1), &
                         [var(i, j, k), var(i, j+1, k), var(i, j, k+1), var(i, j+1, k+1)])
   ! p_x2 y -- z plane
-  tmp(1, 2) = bilinear_interpolation(y, z, ygrid(j+1), ygrid(j), zgrid(k+1), zgrid(k), &
+  tmp(1, 2) = bilinear_interpolation(y, z, ygrid(j), ygrid(j+1), zgrid(k), zgrid(k+1), &
                         [var(i+1, j, k), var(i+1, j+1, k), var(i+1, j, k+1), var(i+1, j+1, k+1)])
 
   ! p_y1 x -- z plane
-  tmp(2, 1) = bilinear_interpolation(x, z, xgrid(i+1), xgrid(i), zgrid(k+1), zgrid(k), &
+  tmp(2, 1) = bilinear_interpolation(x, z, xgrid(i), xgrid(i+1), zgrid(k), zgrid(k+1), &
                         [var(i, j, k), var(i+1, j, k), var(i, j, k+1), var(i+1, j, k+1)])
   ! p_y2 x -- z plane
-  tmp(2, 2) = bilinear_interpolation(x, z, xgrid(i+1), xgrid(i), zgrid(k+1), zgrid(k), &
+  tmp(2, 2) = bilinear_interpolation(x, z, xgrid(i), xgrid(i+1), zgrid(k), zgrid(k+1), &
                         [var(i, j+1, k), var(i+1, j+1, k), var(i, j+1, k+1), var(i+1, j+1, k+1)])
 
   ! p_z1 x -- y plane
-  tmp(3, 1) = bilinear_interpolation(x, y, xgrid(i+1), xgrid(i), ygrid(j+1), ygrid(j), &
+  tmp(3, 1) = bilinear_interpolation(x, y, xgrid(i), xgrid(i+1), ygrid(j), ygrid(j+1), &
                         [var(i, j, k), var(i+1, j, k), var(i, j+1, k), var(i+1, j+1, k)])
   ! p_z2 x -- y plane
-  tmp(3, 2) = bilinear_interpolation(x, y, xgrid(i+1), xgrid(i), ygrid(j+1), ygrid(j), &
+  tmp(3, 2) = bilinear_interpolation(x, y, xgrid(i), xgrid(i+1), ygrid(j), ygrid(j+1), &
                         [var(i, j, k+1), var(i+1, j, k+1), var(i, j+1, k+1), var(i+1, j+1, k+1)])
 
-  val = linear_interpolation(x, xgrid(i+1), xgrid(i), tmp(1, 2), tmp(1, 1))
+  val = linear_interpolation(x, xgrid(i), xgrid(i+1), tmp(1, 1), tmp(1, 2))
 
   derivatives(1) = compute_derivative(x, xgrid(i+1), xgrid(i), val, tmp(1, 2), tmp(1, 1))
   derivatives(2) = compute_derivative(y, ygrid(j+1), ygrid(j), val, tmp(2, 2), tmp(2, 1))

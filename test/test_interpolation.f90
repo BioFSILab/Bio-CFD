@@ -52,13 +52,13 @@ contains
     real(dp) :: result
 
     ! Flat distribution
-    result = bilinear_interpolation(0.5_dp, 0.5_dp, 1._dp, 0._dp, 1._dp, 0._dp, &
+    result = bilinear_interpolation(0.5_dp, 0.5_dp, 0._dp, 1._dp, 0._dp, 1._dp, &
                                     [1._dp, 1._dp, 1._dp, 1._dp])
     call check(error, result, 1._dp)
     if (allocated(error)) return
 
      ! Actually extrapolation
-    result = bilinear_interpolation(2._dp, 0.5_dp, 1._dp, 0._dp, 1._dp, 0._dp, &
+    result = bilinear_interpolation(2._dp, 0.5_dp, 0._dp, 1._dp, 0._dp, 1._dp, &
                                     [1._dp, 2._dp, 3._dp, 4._dp])
     call check(error, result, 4._dp)
     if (allocated(error)) return
