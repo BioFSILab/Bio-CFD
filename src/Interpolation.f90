@@ -13,9 +13,9 @@ module biocfd_interpolation
 
         !> Perform linear interpolation between two points
         !> See https://en.wikipedia.org/wiki/Linear_interpolation
-        pure function linear_interpolation(x, x1, x0, y1, y0) result(y)
+        pure function linear_interpolation(x, x0, x1, y0, y1) result(y)
                 !$acc routine
-                real(dp), intent(in) :: x, x1, x0, y1, y0
+                real(dp), intent(in) :: x, x0, x1, y0, y1
                 real(dp) :: y
 
                 y = y0 + (x - x0) * (y1 - y0) / (x1 - x0)
@@ -24,9 +24,9 @@ module biocfd_interpolation
 
         !> Perform bilinear interpolation
         !> See https://en.wikipedia.org/wiki/Bilinear_interpolation
-        pure function bilinear_interpolation(x, y, x2, x1, y2, y1, fvals) result(fout)
+        pure function bilinear_interpolation(x, y, x1, x2, y1, y2, fvals) result(fout)
                 !$acc routine
-                real(dp), intent(in) :: x, y, x2, x1, y2, y1
+                real(dp), intent(in) :: x, y, x1, x2, y1, y2
                 !> The values at [(x1, y1), (x2, y1), (x1, y2), (x2, y2)]
                 real(dp), intent(in) :: fvals(4)
                 real(dp) :: fout
