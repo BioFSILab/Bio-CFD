@@ -19,6 +19,14 @@ contains
                          tmp_dx1, tmp_dx2, tmp_dx3, tmp_dx4, tmp_dy1, tmp_dy2, tmp_dy3,         &
                          tmp_dy4, tmp_dz1, tmp_dz2, tmp_dz3, tmp_dz4
 
+       real(dp) :: theta(3)
+       real(dp) :: f(8)
+       !> For s we will use special indexing, note that original code
+       !> doesn't have s77 or 87, but we'll just live with that for
+       !> now
+       real(dp) :: s(5:10, 1:7)
+       real(dp) :: ak(7)
+
 
         DO g=1,nblocks
         nx_var=block(g)%nx
@@ -68,87 +76,25 @@ contains
         ny_var=block(g)%ny
         nz_var=block(g)%nz
        do i=2,nx_var
-       theta_1=block(g)%deltax(i)/block(g)%deltax(i-1)
-       theta_2=block(g)%deltax(i+1)/block(g)%deltax(i)
-       theta_3=block(g)%deltax(i+2)/block(g)%deltax(i+1)
+       theta = block(g)%deltax(i:i+2) / block(g)%deltax(i-1:i+1)
+       f = compute_f(theta)
+       s = compute_s(theta(2), f)
 
-        f_1=theta_3
-        f_2=2.0_dp*theta_3+theta_3**2.0_dp
-       f_3=3.0_dp*theta_3+3.0_dp*theta_3**2.0_dp+theta_3**3.0_dp
-       f_4=4.0_dp*theta_3+6.0_dp*theta_3**2.0_dp+4.0_dp*theta_3**3.0_dp+theta_3**4.0_dp
-       f_5=1.0_dp/(theta_1*theta_2)
-       f_6=(2.0_dp*theta_1+1.0_dp)/((theta_1**2.0_dp)*(theta_2**2.0_dp))
-       f_7=(3.0_dp*theta_1**2.0_dp+3.0_dp*theta_1+1.0_dp)/((theta_1**3.0_dp)*(theta_2**3.0_dp))
-        f_8=(4.0_dp*theta_1**3.0_dp+6.0_dp*theta_1**2.0_dp+4.0_dp*theta_1+1.0_dp)/&
-            ((theta_1**4.0_dp)*(theta_2**4.0_dp))
+       block(g)%ca1_uu(i)=(s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1))
+       block(g)%ca2_uu(i)=(s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3))
+       block(g)%ca3_uu(i)=(s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7))
+       block(g)%ca4_uu(i)=(s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7))
+       block(g)%ca5_uu(i)=(s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2))
+       block(g)%ca6_uu(i)=(s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6))
 
-       s51=-1.0_dp/(theta_2**4.0_dp)
-       s52=f_4
-       s53=f_4
-       s54=s51
-       s55=-(f_1/(theta_2**4.0_dp)+f_4/theta_2)
-       s56=(f_4/(theta_2**2.0_dp)-f_2/(theta_2**4.0_dp))
-       s57=-(f_3/(theta_2**4.0_dp)+f_4/(theta_2**3.0_dp))
+       ak = compute_ak(theta)
 
-       s61=-1.0_dp
-       s62=f_8
-       s63=f_8
-       s64=-1.0
-       s65=(f_5+f_8)
-       s66=(f_8-f_6)
-       s67=(f_7+f_8)
-
-       s71=-1.0_dp
-       s72=(1.0_dp+f_4)
-       s73=f_4
-       s74=(f_4-f_1)
-       s75=(f_4-f_2)
-       s76=(f_4-f_3)
-
-       s81=-1.0_dp/(theta_2**4.0_dp)
-       s82=(f_8+(1.0_dp/theta_2**4.0_dp))
-       s83=f_8
-       s84=(f_5/(theta_2**4.0_dp)-f_8/theta_2)
-       s85=(f_8/(theta_2**2.0_dp)-f_6/(theta_2**4.0_dp))
-       s86=(f_7/(theta_2**4.0_dp)-f_8/(theta_2**3.0_dp))
-
-       s91=-s66*s51
-       s92=s56*s61
-       s93=-(s54*s66+s56*s62)
-       s94=(s56*s64+s66*s52)
-       s95=(s56*s63-s66*s53)
-       s96=(s56*s65-s66*s55)
-       s97=(s56*s67-s66*s57)
-
-       s101=-s85*s71
-       s102=-s85*s72
-       s103=s75*s81
-       s104=s75*s82
-       s105=(s75*s83-s85*s73)
-       s106=(s75*s84-s85*s74)
-       s107=(s75*s86-s85*s76)
-
-       block(g)%ca1_uu(i)=(s97*s101-s107*s91)
-       block(g)%ca2_uu(i)=(s97*s102+s107*s93)
-       block(g)%ca3_uu(i)=(s95*s107-s105*s97)
-       block(g)%ca4_uu(i)=(s94*s107+s104*s97)
-       block(g)%ca5_uu(i)=(s97*s103-s107*s92)
-       block(g)%ca6_uu(i)=(s97*s106-s107*s96)
-
-       ak_1=(1.0_dp+2.0_dp*theta_1)*(theta_3+theta_3**2.0_dp)*theta_2
-       ak_2=(1.0_dp+theta_1)*(2.0_dp*theta_3+theta_3**2.0_dp)
-       ak_3=(1.0_dp+theta_1)
-       ak_4=(1.0_dp+theta_1)*((1.0_dp+theta_3)**2.0_dp)
-       ak_5=((1.0_dp+theta_1)**2.0_dp)*(theta_3+theta_3**2.0_dp)*theta_2
-       ak_6=(theta_1**2.0_dp)*theta_2*(theta_3+theta_3**2.0_dp)
-       ak_7=(1.0_dp+theta_1)*(theta_3+theta_3**2.0_dp)*theta_2
-
-       block(g)%ck1_uu(i)=ak_3
-       block(g)%ck2_uu(i)=-ak_4
-       block(g)%ck3_uu(i)=(ak_1+ak_2)
-       block(g)%ck4_uu(i)=-ak_5
-       block(g)%ck5_uu(i)=ak_6
-       block(g)%ck6_uu(i)=ak_7
+       block(g)%ck1_uu(i) = ak(3)
+       block(g)%ck2_uu(i) = -ak(4)
+       block(g)%ck3_uu(i) = ak(1) + ak(2)
+       block(g)%ck4_uu(i) = -ak(5)
+       block(g)%ck5_uu(i) = ak(6)
+       block(g)%ck6_uu(i) = ak(7)
        enddo
         ENDDO
         DO g=1,nblocks
@@ -1558,4 +1504,88 @@ ENDIF
 
        ENDDO
       end subroutine nsMomentum2order
+
+
+    pure function compute_f(theta) result(f)
+        real(dp), intent(in) :: theta(3)
+        real(dp) :: f(8)
+
+        f(1) = theta(3)
+        f(2) = 2.0_dp*theta(3)+theta(3)**2.0_dp
+        f(3) = 3.0_dp*theta(3)+3.0_dp*theta(3)**2.0_dp+theta(3)**3.0_dp
+        f(4) = 4.0_dp*theta(3)+6.0_dp*theta(3)**2.0_dp+4.0_dp*theta(3)**3.0_dp+theta(3)**4.0_dp
+        f(5) = 1.0_dp/(theta(1)*theta(2))
+        f(6) = (2.0_dp*theta(1)+1.0_dp)/((theta(1)**2.0_dp)*(theta(2)**2.0_dp))
+        f(7) = (3.0_dp*theta(1)**2.0_dp+3.0_dp*theta(1)+1.0_dp)/ &
+               ((theta(1)**3.0_dp)*(theta(2)**3.0_dp))
+        f(8) = (4.0_dp*theta(1)**3.0_dp+6.0_dp*theta(1)**2.0_dp+4.0_dp*theta(1)+1.0_dp)/ &
+               ((theta(1)**4.0_dp)*(theta(2)**4.0_dp))
+    end function compute_f
+
+
+    pure function compute_s(theta_2, f) result(s)
+    !> Only need the 2nd element of theta
+       real(dp), intent(in) :: theta_2
+       real(dp), intent(in) :: f(8)
+       real(dp) :: s(5:10, 1:7)
+
+       s(5, 1) = -1.0_dp/(theta_2**4.0_dp)
+       s(5, 2) = f(4)
+       s(5, 3) = f(4)
+       s(5, 4) = s(5, 1)
+       s(5, 5) = -(f(1)/(theta_2**4.0_dp)+f(4)/theta_2)
+       s(5, 6) = (f(4)/(theta_2**2.0_dp)-f(2)/(theta_2**4.0_dp))
+       s(5, 7) = -(f(3)/(theta_2**4.0_dp)+f(4)/(theta_2**3.0_dp))
+
+       s(6, 1) = -1.0_dp
+       s(6, 2) = f(8)
+       s(6, 3) = f(8)
+       s(6, 4) = -1.0
+       s(6, 5) = (f(5)+f(8))
+       s(6, 6) = (f(8)-f(6))
+       s(6, 7) = (f(7)+f(8))
+
+       s(7, 1) = -1.0_dp
+       s(7, 2) = (1.0_dp+f(4))
+       s(7, 3) = f(4)
+       s(7, 4) = (f(4)-f(1))
+       s(7, 5) = (f(4)-f(2))
+       s(7, 6) = (f(4)-f(3))
+
+       s(8, 1) =-1.0_dp/(theta_2**4.0_dp)
+       s(8, 2) =(f(8)+(1.0_dp/theta_2**4.0_dp))
+       s(8, 3) =f(8)
+       s(8, 4) =(f(5)/(theta_2**4.0_dp)-f(8)/theta_2)
+       s(8, 5) =(f(8)/(theta_2**2.0_dp)-f(6)/(theta_2**4.0_dp))
+       s(8, 6) =(f(7)/(theta_2**4.0_dp)-f(8)/(theta_2**3.0_dp))
+
+       s(9, 1) = -s(6, 6) * s(5, 1)
+       s(9, 2) = s(5, 6) * s(6, 1)
+       s(9, 3) = -(s(5, 4) * s(6, 6) + s(5, 6) * s(6, 2))
+       s(9, 4) = (s(5, 6) * s(6, 4)+ s(6, 6) * s(5, 2))
+       s(9, 5) = (s(5, 6) * s(6, 3)- s(6, 6) * s(5, 3))
+       s(9, 6) = (s(5, 6) * s(6, 5)- s(6, 6) * s(5, 5))
+       s(9, 7) = (s(5, 6) * s(6, 7)- s(6, 6) * s(5, 7))
+
+       s(10, 1) = -s(8, 5) * s(7, 1)
+       s(10, 2) = -s(8, 5) * s(7, 2)
+       s(10, 3) = s(7, 5) * s(8, 1)
+       s(10, 4) = s(7, 5) * s(8, 2)
+       s(10, 5) = (s(7, 5) * s(8, 3) - s(8, 5) * s(7, 3))
+       s(10, 6) = (s(7, 5) * s(8, 4) - s(8, 5) * s(7, 4))
+       s(10, 7) = (s(7, 5) * s(8, 6) - s(8, 5) * s(7, 6))
+    end function compute_s
+
+    pure function compute_ak(theta) result(ak)
+       real(dp), intent(in) :: theta(3)
+       real(dp) :: ak(7)
+
+       ak(1) = (1.0_dp+2.0_dp*theta(1))*(theta(3)+theta(3)**2.0_dp)*theta(2)
+       ak(2) = (1.0_dp+theta(1))*(2.0_dp*theta(3)+theta(3)**2.0_dp)
+       ak(3) = (1.0_dp+theta(1))
+       ak(4) = (1.0_dp+theta(1))*((1.0_dp+theta(3))**2.0_dp)
+       ak(5) = ((1.0_dp+theta(1))**2.0_dp)*(theta(3)+theta(3)**2.0_dp)*theta(2)
+       ak(6) = (theta(1)**2.0_dp)*theta(2)*(theta(3)+theta(3)**2.0_dp)
+       ak(7) = (1.0_dp+theta(1))*(theta(3)+theta(3)**2.0_dp)*theta(2)
+end function compute_ak
 end module biocfd_navier_stokes
