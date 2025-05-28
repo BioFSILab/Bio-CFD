@@ -67,10 +67,8 @@ contains
        END DO
 
         DO g=1,nblocks
-        nx_var=block(g)%nx
-        ny_var=block(g)%ny
-        nz_var=block(g)%nz
-       do i=2,nx_var
+
+       do i=2, block(g)%nx
        theta = block(g)%deltax(i:i+2) / block(g)%deltax(i-1:i+1)
        f = compute_f(theta)
        s = compute_s(theta(2), f)
@@ -93,10 +91,8 @@ contains
        enddo
         ENDDO
         DO g=1,nblocks
-        nx_var=block(g)%nx
-        ny_var=block(g)%ny
-        nz_var=block(g)%nz
-       do j=2,ny_var
+
+       do j=2, block(g)%ny
 
        theta = block(g)%deltay(j:j+2) / block(g)%deltay(j-1:j+1)
 
@@ -122,10 +118,8 @@ contains
         ENDDO
 
         DO g=1,nblocks
-        nx_var=block(g)%nx
-        ny_var=block(g)%ny
-        nz_var=block(g)%nz
-       do k=2,nz_var
+
+       do k=2, block(g)%nz
 
        theta = block(g)%deltaz(k:k+2) / block(g)%deltaz(k-1:k+1)
 
@@ -151,10 +145,8 @@ contains
         END DO
 
         DO g=1,nblocks
-        nx_var=block(g)%nx
-        ny_var=block(g)%ny
-        nz_var=block(g)%nz
-       do i=2,nx_var
+
+       do i=2, block(g)%nx
        if(i==2)then
        tmp_dx1=block(g)%deltax(i-1)
        else
@@ -202,10 +194,8 @@ contains
         END DO
 
         DO g=1,nblocks
-        nx_var=block(g)%nx
-        ny_var=block(g)%ny
-        nz_var=block(g)%nz
-       do j=2,ny_var
+
+       do j=2, block(g)%ny
        if(j==2)then
        tmp_dy1=block(g)%deltay(j-1)
        else
@@ -253,10 +243,8 @@ contains
         ENDDO
 
         DO g=1,nblocks
-        nx_var=block(g)%nx
-        ny_var=block(g)%ny
-        nz_var=block(g)%nz
-       do k=2,nz_var
+
+       do k=2, block(g)%nz
        if(k==2)then
        tmp_dz1=block(g)%deltaz(k-1)
        else
