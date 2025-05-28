@@ -11,13 +11,8 @@ contains
 
        SUBROUTINE non_uni_coeff
        INTEGER  (dp) :: i, j, k, g, nx_var, ny_var, nz_var
-       REAL (dp)   :: f_1, f_2, f_3, f_4, f_5, f_6, f_7, f_8,                             &
-                         s51, s52, s53, s54, s55, s56, s57, s61, s62, s63, s64, s65, s66, s67,  &
-                         s71, s72, s73, s74, s75, s76, s81, s82, s83, s84, s85, s86, s91, s92,  &
-                         s93, s94, s95, s96, s97, s101, s102, s103, s104, s105, s106, s107,     &
-                         ak_1, ak_2, ak_3, ak_4, ak_5, ak_6, ak_7, theta_1, theta_2, theta_3,   &
-                         tmp_dx1, tmp_dx2, tmp_dx3, tmp_dx4, tmp_dy1, tmp_dy2, tmp_dy3,         &
-                         tmp_dy4, tmp_dz1, tmp_dz2, tmp_dz3, tmp_dz4
+       REAL (dp)   :: tmp_dx1, tmp_dx2, tmp_dx3, tmp_dx4, tmp_dy1, tmp_dy2, tmp_dy3,         &
+                      tmp_dy4, tmp_dz1, tmp_dz2, tmp_dz3, tmp_dz4
 
        real(dp) :: theta(3)
        real(dp) :: f(8)
@@ -102,9 +97,6 @@ contains
         ny_var=block(g)%ny
         nz_var=block(g)%nz
        do j=2,ny_var
-       theta_1=block(g)%deltay(j)/block(g)%deltay(j-1)
-       theta_2=block(g)%deltay(j+1)/block(g)%deltay(j)
-       theta_3=block(g)%deltay(j+2)/block(g)%deltay(j+1)
 
        theta = block(g)%deltay(j:j+2) / block(g)%deltay(j-1:j+1)
 
@@ -175,7 +167,7 @@ contains
        theta = [tmp_dx2/tmp_dx1, tmp_dx3/tmp_dx2, tmp_dx4/tmp_dx3]
 
        f = compute_f(theta)
-       s = compute_s(theta_2, f)
+       s = compute_s(theta(2), f)
 
        block(g)%ca1_uv(i) = (s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1))
        block(g)%ca2_uv(i) = (s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3))
