@@ -172,98 +172,39 @@ contains
        tmp_dx3=0.5_dp*(block(g)%deltax(i)+block(g)%deltax(i+1))
        tmp_dx4=0.5_dp*(block(g)%deltax(i+1)+block(g)%deltax(i+2))
 
-       theta_1=tmp_dx2/tmp_dx1
-       theta_2=tmp_dx3/tmp_dx2
-       theta_3=tmp_dx4/tmp_dx3
+       theta = [tmp_dx2/tmp_dx1, tmp_dx3/tmp_dx2, tmp_dx4/tmp_dx3]
 
-       f_1=theta_3
-       f_2=2.0_dp*theta_3+theta_3**2.0_dp
-       f_3=3.0_dp*theta_3+3.0_dp*theta_3**2.0_dp+theta_3**3.0_dp
-       f_4=4.0_dp*theta_3+6.0_dp*theta_3**2.0_dp+4.0_dp*theta_3**3.0_dp+theta_3**4.0_dp
-       f_5=1.0_dp/(theta_1*theta_2)
-       f_6=(2.0_dp*theta_1+1.0_dp)/((theta_1**2.0_dp)*(theta_2**2.0_dp))
-       f_7=(3.0_dp*theta_1**2.0_dp+3.0_dp*theta_1+1.0_dp)/((theta_1**3.0_dp)*(theta_2**3.0_dp))
-        f_8=(4.0_dp*theta_1**3.0_dp+6.0_dp*theta_1**2.0_dp+4.0_dp*theta_1+1.0_dp)/&
-            ((theta_1**4.0_dp)*(theta_2**4.0_dp))
+       f = compute_f(theta)
+       s = compute_s(theta_2, f)
 
-       s51=-1.0_dp/(theta_2**4.0_dp)
-       s52=f_4
-       s53=f_4
-       s54=s51
-       s55=-(f_1/(theta_2**4.0_dp)+f_4/theta_2)
-       s56=(f_4/(theta_2**2.0_dp)-f_2/(theta_2**4.0_dp))
-       s57=-(f_3/(theta_2**4.0_dp)+f_4/(theta_2**3.0_dp))
+       block(g)%ca1_uv(i) = (s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1))
+       block(g)%ca2_uv(i) = (s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3))
+       block(g)%ca3_uv(i) = (s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7))
+       block(g)%ca4_uv(i) = (s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7))
+       block(g)%ca5_uv(i) = (s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2))
+       block(g)%ca6_uv(i) = (s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6))
 
-       s61=-1.0_dp
-       s62=f_8
-       s63=f_8
-       s64=-1.0_dp
-       s65=(f_5+f_8)
-       s66=(f_8-f_6)
-       s67=(f_7+f_8)
+       block(g)%ca1_uw(i) = block(g)%ca1_uv(i)
+       block(g)%ca2_uw(i) = block(g)%ca2_uv(i)
+       block(g)%ca3_uw(i) = block(g)%ca3_uv(i)
+       block(g)%ca4_uw(i) = block(g)%ca4_uv(i)
+       block(g)%ca5_uw(i) = block(g)%ca5_uv(i)
+       block(g)%ca6_uw(i) = block(g)%ca6_uv(i)
 
-       s71=-1.0_dp
-       s72=(1.0_dp+f_4)
-       s73=f_4
-       s74=(f_4-f_1)
-       s75=(f_4-f_2)
-       s76=(f_4-f_3)
+       ak = compute_ak(theta)
 
-       s81=-1.0_dp/(theta_2**4.0_dp)
-       s82=(f_8+(1.0_dp/theta_2**4.0_dp))
-       s83=f_8
-       s84=(f_5/(theta_2**4.0_dp)-f_8/theta_2)
-       s85=(f_8/(theta_2**2.0_dp)-f_6/(theta_2**4.0_dp))
-       s86=(f_7/(theta_2**4.0_dp)-f_8/(theta_2**3.0_dp))
+       block(g)%ck1_uv(i) = ak(3)
+       block(g)%ck2_uv(i) = -ak(4)
+       block(g)%ck3_uv(i) = ak(1)+ak(2)
+       block(g)%ck4_uv(i) = -ak(5)
+       block(g)%ck5_uv(i) = ak(6)
+       block(g)%ck6_uv(i) = ak(7)
 
-       s91=-s66*s51
-       s92=s56*s61
-       s93=-(s54*s66+s56*s62)
-       s94=(s56*s64+s66*s52)
-       s95=(s56*s63-s66*s53)
-       s96=(s56*s65-s66*s55)
-       s97=(s56*s67-s66*s57)
-
-       s101=-s85*s71
-       s102=-s85*s72
-       s103=s75*s81
-       s104=s75*s82
-       s105=(s75*s83-s85*s73)
-       s106=(s75*s84-s85*s74)
-       s107=(s75*s86-s85*s76)
-
-       block(g)%ca1_uv(i)=(s97*s101-s107*s91)
-       block(g)%ca1_uw(i)=block(g)%ca1_uv(i)
-       block(g)%ca2_uv(i)=(s97*s102+s107*s93)
-       block(g)%ca2_uw(i)=block(g)%ca2_uv(i)
-       block(g)%ca3_uv(i)=(s95*s107-s105*s97)
-       block(g)%ca3_uw(i)=block(g)%ca3_uv(i)
-       block(g)%ca4_uv(i)=(s94*s107+s104*s97)
-       block(g)%ca4_uw(i)=block(g)%ca4_uv(i)
-       block(g)%ca5_uv(i)=(s97*s103-s107*s92)
-       block(g)%ca5_uw(i)=block(g)%ca5_uv(i)
-       block(g)%ca6_uv(i)=(s97*s106-s107*s96)
-       block(g)%ca6_uw(i)=block(g)%ca6_uv(i)
-
-       ak_1=(1.0_dp+2.0_dp*theta_1)*(theta_3+theta_3**2.0_dp)*theta_2
-       ak_2=(1.0_dp+theta_1)*(2.0_dp*theta_3+theta_3**2.0_dp)
-       ak_3=(1.0_dp+theta_1)
-       ak_4=(1.0_dp+theta_1)*((1.0_dp+theta_3)**2.0_dp)
-       ak_5=((1.0_dp+theta_1)**2.0_dp)*(theta_3+theta_3**2.0_dp)*theta_2
-       ak_6=(theta_1**2.0_dp)*theta_2*(theta_3+theta_3**2.0_dp)
-       ak_7=(1.0_dp+theta_1)*(theta_3+theta_3**2.0_dp)*theta_2
-
-       block(g)%ck1_uv(i)=ak_3
        block(g)%ck1_uw(i)=block(g)%ck1_uv(i)
-       block(g)%ck2_uv(i)=-ak_4
        block(g)%ck2_uw(i)=block(g)%ck2_uv(i)
-       block(g)%ck3_uv(i)=(ak_1+ak_2)
        block(g)%ck3_uw(i)=block(g)%ck3_uv(i)
-       block(g)%ck4_uv(i)=-ak_5
        block(g)%ck4_uw(i)=block(g)%ck4_uv(i)
-       block(g)%ck5_uv(i)=ak_6
        block(g)%ck5_uw(i)=block(g)%ck5_uv(i)
-       block(g)%ck6_uv(i)=ak_7
        block(g)%ck6_uw(i)=block(g)%ck6_uv(i)
        enddo
         END DO
@@ -282,98 +223,39 @@ contains
        tmp_dy3=0.5_dp*(block(g)%deltay(j)+block(g)%deltay(j+1))
        tmp_dy4=0.5_dp*(block(g)%deltay(j+1)+block(g)%deltay(j+2))
 
-       theta_1=tmp_dy2/tmp_dy1
-       theta_2=tmp_dy3/tmp_dy2
-       theta_3=tmp_dy4/tmp_dy3
+       theta= [tmp_dy2/tmp_dy1, tmp_dy3/tmp_dy2, tmp_dy4/tmp_dy3]
 
-       f_1=theta_3
-       f_2=2.0_dp*theta_3+theta_3**2.0_dp
-       f_3=3.0_dp*theta_3+3.0_dp*theta_3**2.0_dp+theta_3**3.0_dp
-       f_4=4.0_dp*theta_3+6.0_dp*theta_3**2.0_dp+4.0_dp*theta_3**3.0_dp+theta_3**4.0_dp
-       f_5=1.0_dp/(theta_1*theta_2)
-       f_6=(2.0_dp*theta_1+1.0_dp)/((theta_1**2.0_dp)*(theta_2**2.0_dp))
-       f_7=(3.0_dp*theta_1**2.0_dp+3.0_dp*theta_1+1.0_dp)/((theta_1**3.0_dp)*(theta_2**3.0_dp))
-        f_8=(4.0_dp*theta_1**3.0_dp+6.0_dp*theta_1**2.0_dp+4.0_dp*theta_1+1.0_dp)/&
-            ((theta_1**4.0_dp)*(theta_2**4.0_dp))
+       f = compute_f(theta)
+       s = compute_s(theta(2), f)
 
-       s51=-1.0_dp/(theta_2**4.0_dp)
-       s52=f_4
-       s53=f_4
-       s54=s51
-       s55=-(f_1/(theta_2**4.0_dp)+f_4/theta_2)
-       s56=(f_4/(theta_2**2.0_dp)-f_2/(theta_2**4.0_dp))
-       s57=-(f_3/(theta_2**4.0_dp)+f_4/(theta_2**3.0_dp))
+       block(g)%ca1_vu(j) = (s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1))
+       block(g)%ca2_vu(j) = (s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3))
+       block(g)%ca3_vu(j) = (s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7))
+       block(g)%ca4_vu(j) = (s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7))
+       block(g)%ca5_vu(j) = (s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2))
+       block(g)%ca6_vu(j) = (s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6))
 
-       s61=-1.0_dp
-       s62=f_8
-       s63=f_8
-       s64=-1.0_dp
-       s65=(f_5+f_8)
-       s66=(f_8-f_6)
-       s67=(f_7+f_8)
-
-       s71=-1.0_dp
-       s72=(1.0_dp+f_4)
-       s73=f_4
-       s74=(f_4-f_1)
-       s75=(f_4-f_2)
-       s76=(f_4-f_3)
-
-       s81=-1.0_dp/(theta_2**4.0_dp)
-       s82=(f_8+(1.0_dp/theta_2**4.0_dp))
-       s83=f_8
-       s84=(f_5/(theta_2**4.0_dp)-f_8/theta_2)
-       s85=(f_8/(theta_2**2.0_dp)-f_6/(theta_2**4.0_dp))
-       s86=(f_7/(theta_2**4.0_dp)-f_8/(theta_2**3.0_dp))
-
-       s91=-s66*s51
-       s92=s56*s61
-       s93=-(s54*s66+s56*s62)
-       s94=(s56*s64+s66*s52)
-       s95=(s56*s63-s66*s53)
-       s96=(s56*s65-s66*s55)
-       s97=(s56*s67-s66*s57)
-
-       s101=-s85*s71
-       s102=-s85*s72
-       s103=s75*s81
-       s104=s75*s82
-       s105=(s75*s83-s85*s73)
-       s106=(s75*s84-s85*s74)
-       s107=(s75*s86-s85*s76)
-
-       block(g)%ca1_vu(j)=(s97*s101-s107*s91)
        block(g)%ca1_vw(j)=block(g)%ca1_vu(j)
-       block(g)%ca2_vu(j)=(s97*s102+s107*s93)
        block(g)%ca2_vw(j)=block(g)%ca2_vu(j)
-       block(g)%ca3_vu(j)=(s95*s107-s105*s97)
        block(g)%ca3_vw(j)=block(g)%ca3_vu(j)
-       block(g)%ca4_vu(j)=(s94*s107+s104*s97)
        block(g)%ca4_vw(j)=block(g)%ca4_vu(j)
-       block(g)%ca5_vu(j)=(s97*s103-s107*s92)
        block(g)%ca5_vw(j)=block(g)%ca5_vu(j)
-       block(g)%ca6_vu(j)=(s97*s106-s107*s96)
        block(g)%ca6_vw(j)=block(g)%ca6_vu(j)
 
-       ak_1=(1.0_dp+2.0_dp*theta_1)*(theta_3+theta_3**2.0_dp)*theta_2
-       ak_2=(1.0_dp+theta_1)*(2.0_dp*theta_3+theta_3**2.0_dp)
-       ak_3=(1.0_dp+theta_1)
-       ak_4=(1.0_dp+theta_1)*((1.0_dp+theta_3)**2.0_dp)
-       ak_5=((1.0_dp+theta_1)**2.0_dp)*(theta_3+theta_3**2.0_dp)*theta_2
-       ak_6=(theta_1**2.0_dp)*theta_2*(theta_3+theta_3**2.0_dp)
-       ak_7=(1.0_dp+theta_1)*(theta_3+theta_3**2.0_dp)*theta_2
+       ak = compute_ak(theta)
 
-       block(g)%ck1_vu(j)=ak_3
+       block(g)%ck1_vu(j) = ak(3)
+       block(g)%ck2_vu(j) = -ak(4)
+       block(g)%ck3_vu(j) = ak(1) + ak(2)
+       block(g)%ck4_vu(j) = -ak(5)
+       block(g)%ck5_vu(j) = ak(6)
+       block(g)%ck6_vu(j) = ak(7)
+
        block(g)%ck1_vw(j)=block(g)%ck1_vu(j)
-       block(g)%ck2_vu(j)=-ak_4
        block(g)%ck2_vw(j)=block(g)%ck2_vu(j)
-       block(g)%ck3_vu(j)=(ak_1+ak_2)
        block(g)%ck3_vw(j)=block(g)%ck3_vu(j)
-       block(g)%ck4_vu(j)=-ak_5
        block(g)%ck4_vw(j)=block(g)%ck4_vu(j)
-       block(g)%ck5_vu(j)=ak_6
        block(g)%ck5_vw(j)=block(g)%ck5_vu(j)
-       block(g)%ck6_vu(j)=ak_7
        block(g)%ck6_vw(j)=block(g)%ck6_vu(j)
        enddo
         ENDDO
@@ -392,98 +274,39 @@ contains
        tmp_dz3=0.5_dp*(block(g)%deltaz(k)+block(g)%deltaz(k+1))
        tmp_dz4=0.5_dp*(block(g)%deltaz(k+1)+block(g)%deltaz(k+2))
 
-       theta_1=tmp_dz2/tmp_dz1
-       theta_2=tmp_dz3/tmp_dz2
-       theta_3=tmp_dz4/tmp_dz3
+       theta = [tmp_dz2/tmp_dz1, tmp_dz3/tmp_dz2, tmp_dz4/tmp_dz3]
 
-       f_1=theta_3
-       f_2=2.0_dp*theta_3+theta_3**2.0_dp
-       f_3=3.0_dp*theta_3+3.0_dp*theta_3**2.0_dp+theta_3**3.0_dp
-       f_4=4.0_dp*theta_3+6.0_dp*theta_3**2.0_dp+4.0_dp*theta_3**3.0_dp+theta_3**4.0_dp
-       f_5=1.0_dp/(theta_1*theta_2)
-       f_6=(2.0_dp*theta_1+1.0_dp)/((theta_1**2.0_dp)*(theta_2**2.0_dp))
-       f_7=(3.0_dp*theta_1**2.0_dp+3.0_dp*theta_1+1.0_dp)/((theta_1**3.0_dp)*(theta_2**3.0_dp))
-        f_8=(4.0_dp*theta_1**3.0_dp+6.0_dp*theta_1**2.0_dp+4.0_dp*theta_1+1.0_dp)/&
-            ((theta_1**4.0_dp)*(theta_2**4.0_dp))
+       f = compute_f(theta)
+       s = compute_s(theta(2), f)
 
-       s51=-1.0_dp/(theta_2**4.0_dp)
-       s52=f_4
-       s53=f_4
-       s54=s51
-       s55=-(f_1/(theta_2**4.0_dp)+f_4/theta_2)
-       s56=(f_4/(theta_2**2.0_dp)-f_2/(theta_2**4.0_dp))
-       s57=-(f_3/(theta_2**4.0_dp)+f_4/(theta_2**3.0_dp))
+       block(g)%ca1_wu(k) = (s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1))
+       block(g)%ca2_wu(k) = (s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3))
+       block(g)%ca3_wu(k) = (s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7))
+       block(g)%ca4_wu(k) = (s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7))
+       block(g)%ca5_wu(k) = (s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2))
+       block(g)%ca6_wu(k) = (s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6))
 
-       s61=-1.0_dp
-       s62=f_8
-       s63=f_8
-       s64=-1.0_dp
-       s65=(f_5+f_8)
-       s66=(f_8-f_6)
-       s67=(f_7+f_8)
-
-       s71=-1.0_dp
-       s72=(1.0_dp+f_4)
-       s73=f_4
-       s74=(f_4-f_1)
-       s75=(f_4-f_2)
-       s76=(f_4-f_3)
-
-       s81=-1.0_dp/(theta_2**4.0_dp)
-       s82=(f_8+(1.0_dp/theta_2**4.0_dp))
-       s83=f_8
-       s84=(f_5/(theta_2**4.0_dp)-f_8/theta_2)
-       s85=(f_8/(theta_2**2.0_dp)-f_6/(theta_2**4.0_dp))
-       s86=(f_7/(theta_2**4.0_dp)-f_8/(theta_2**3.0_dp))
-
-       s91=-s66*s51
-       s92=s56*s61
-       s93=-(s54*s66+s56*s62)
-       s94=(s56*s64+s66*s52)
-       s95=(s56*s63-s66*s53)
-       s96=(s56*s65-s66*s55)
-       s97=(s56*s67-s66*s57)
-
-       s101=-s85*s71
-       s102=-s85*s72
-       s103=s75*s81
-       s104=s75*s82
-       s105=(s75*s83-s85*s73)
-       s106=(s75*s84-s85*s74)
-       s107=(s75*s86-s85*s76)
-
-       block(g)%ca1_wu(k)=(s97*s101-s107*s91)
        block(g)%ca1_wv(k)=block(g)%ca1_wu(k)
-       block(g)%ca2_wu(k)=(s97*s102+s107*s93)
        block(g)%ca2_wv(k)=block(g)%ca2_wu(k)
-       block(g)%ca3_wu(k)=(s95*s107-s105*s97)
        block(g)%ca3_wv(k)=block(g)%ca3_wu(k)
-       block(g)%ca4_wu(k)=(s94*s107+s104*s97)
        block(g)%ca4_wv(k)=block(g)%ca4_wu(k)
-       block(g)%ca5_wu(k)=(s97*s103-s107*s92)
        block(g)%ca5_wv(k)=block(g)%ca5_wu(k)
-       block(g)%ca6_wu(k)=(s97*s106-s107*s96)
        block(g)%ca6_wv(k)=block(g)%ca6_wu(k)
 
-       ak_1=(1.0_dp+2.0_dp*theta_1)*(theta_3+theta_3**2.0_dp)*theta_2
-       ak_2=(1.0_dp+theta_1)*(2.0_dp*theta_3+theta_3**2.0_dp)
-       ak_3=(1.0_dp+theta_1)
-       ak_4=(1.0_dp+theta_1)*((1.0_dp+theta_3)**2.0_dp)
-       ak_5=((1.0_dp+theta_1)**2.0_dp)*(theta_3+theta_3**2.0_dp)*theta_2
-       ak_6=(theta_1**2.0_dp)*theta_2*(theta_3+theta_3**2.0_dp)
-       ak_7=(1.0_dp+theta_1)*(theta_3+theta_3**2.0_dp)*theta_2
+       ak = compute_ak(theta)
 
-       block(g)%ck1_wu(k)=ak_3
+       block(g)%ck1_wu(k) = ak(3)
+       block(g)%ck2_wu(k) = -ak(4)
+       block(g)%ck3_wu(k) = ak(1) + ak(2)
+       block(g)%ck4_wu(k) = -ak(5)
+       block(g)%ck5_wu(k) = ak(6)
+       block(g)%ck6_wu(k) = ak(7)
+
        block(g)%ck1_wv(k)=block(g)%ck1_wu(k)
-       block(g)%ck2_wu(k)=-ak_4
        block(g)%ck2_wv(k)=block(g)%ck2_wu(k)
-       block(g)%ck3_wu(k)=(ak_1+ak_2)
        block(g)%ck3_wv(k)=block(g)%ck3_wu(k)
-       block(g)%ck4_wu(k)=-ak_5
        block(g)%ck4_wv(k)=block(g)%ck4_wu(k)
-       block(g)%ck5_wu(k)=ak_6
        block(g)%ck5_wv(k)=block(g)%ck5_wu(k)
-       block(g)%ck6_wu(k)=ak_7
        block(g)%ck6_wv(k)=block(g)%ck6_wu(k)
        enddo
         END DO
