@@ -73,12 +73,12 @@ contains
        f = compute_f(theta)
        s = compute_s(theta(2), f)
 
-       block(g)%ca1_uu(i)=(s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1))
-       block(g)%ca2_uu(i)=(s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3))
-       block(g)%ca3_uu(i)=(s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7))
-       block(g)%ca4_uu(i)=(s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7))
-       block(g)%ca5_uu(i)=(s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2))
-       block(g)%ca6_uu(i)=(s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6))
+       block(g)%ca1_uu(i) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
+       block(g)%ca2_uu(i) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
+       block(g)%ca3_uu(i) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
+       block(g)%ca4_uu(i) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
+       block(g)%ca5_uu(i) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
+       block(g)%ca6_uu(i) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
 
        ak = compute_ak(theta)
 
@@ -99,12 +99,12 @@ contains
        f = compute_f(theta)
        s = compute_s(theta(2), f)
 
-       block(g)%ca1_vv(j) = (s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1))
-       block(g)%ca2_vv(j) = (s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3))
-       block(g)%ca3_vv(j) = (s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7))
-       block(g)%ca4_vv(j) = (s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7))
-       block(g)%ca5_vv(j) = (s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2))
-       block(g)%ca6_vv(j) = (s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6))
+       block(g)%ca1_vv(j) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
+       block(g)%ca2_vv(j) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
+       block(g)%ca3_vv(j) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
+       block(g)%ca4_vv(j) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
+       block(g)%ca5_vv(j) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
+       block(g)%ca6_vv(j) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
 
        ak = compute_ak(theta)
 
@@ -126,12 +126,12 @@ contains
        f = compute_f(theta)
        s = compute_s(theta(2), f)
 
-       block(g)%ca1_ww(k) = (s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1))
-       block(g)%ca2_ww(k) = (s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3))
-       block(g)%ca3_ww(k) = (s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7))
-       block(g)%ca4_ww(k) = (s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7))
-       block(g)%ca5_ww(k) = (s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2))
-       block(g)%ca6_ww(k) = (s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6))
+       block(g)%ca1_ww(k) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
+       block(g)%ca2_ww(k) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
+       block(g)%ca3_ww(k) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
+       block(g)%ca4_ww(k) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
+       block(g)%ca5_ww(k) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
+       block(g)%ca6_ww(k) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
 
        ak = compute_ak(theta)
 
@@ -161,12 +161,12 @@ contains
        f = compute_f(theta)
        s = compute_s(theta(2), f)
 
-       block(g)%ca1_uv(i) = (s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1))
-       block(g)%ca2_uv(i) = (s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3))
-       block(g)%ca3_uv(i) = (s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7))
-       block(g)%ca4_uv(i) = (s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7))
-       block(g)%ca5_uv(i) = (s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2))
-       block(g)%ca6_uv(i) = (s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6))
+       block(g)%ca1_uv(i) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
+       block(g)%ca2_uv(i) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
+       block(g)%ca3_uv(i) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
+       block(g)%ca4_uv(i) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
+       block(g)%ca5_uv(i) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
+       block(g)%ca6_uv(i) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
 
        block(g)%ca1_uw(i) = block(g)%ca1_uv(i)
        block(g)%ca2_uw(i) = block(g)%ca2_uv(i)
@@ -210,12 +210,12 @@ contains
        f = compute_f(theta)
        s = compute_s(theta(2), f)
 
-       block(g)%ca1_vu(j) = (s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1))
-       block(g)%ca2_vu(j) = (s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3))
-       block(g)%ca3_vu(j) = (s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7))
-       block(g)%ca4_vu(j) = (s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7))
-       block(g)%ca5_vu(j) = (s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2))
-       block(g)%ca6_vu(j) = (s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6))
+       block(g)%ca1_vu(j) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
+       block(g)%ca2_vu(j) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
+       block(g)%ca3_vu(j) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
+       block(g)%ca4_vu(j) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
+       block(g)%ca5_vu(j) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
+       block(g)%ca6_vu(j) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
 
        block(g)%ca1_vw(j)=block(g)%ca1_vu(j)
        block(g)%ca2_vw(j)=block(g)%ca2_vu(j)
@@ -259,12 +259,12 @@ contains
        f = compute_f(theta)
        s = compute_s(theta(2), f)
 
-       block(g)%ca1_wu(k) = (s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1))
-       block(g)%ca2_wu(k) = (s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3))
-       block(g)%ca3_wu(k) = (s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7))
-       block(g)%ca4_wu(k) = (s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7))
-       block(g)%ca5_wu(k) = (s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2))
-       block(g)%ca6_wu(k) = (s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6))
+       block(g)%ca1_wu(k) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
+       block(g)%ca2_wu(k) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
+       block(g)%ca3_wu(k) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
+       block(g)%ca4_wu(k) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
+       block(g)%ca5_wu(k) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
+       block(g)%ca6_wu(k) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
 
        block(g)%ca1_wv(k)=block(g)%ca1_wu(k)
        block(g)%ca2_wv(k)=block(g)%ca2_wu(k)
@@ -1226,7 +1226,7 @@ ENDIF
        s(6, 1) = -1.0_dp
        s(6, 2) = f(8)
        s(6, 3) = f(8)
-       s(6, 4) = -1.0
+       s(6, 4) = -1.0_dp
        s(6, 5) = (f(5)+f(8))
        s(6, 6) = (f(8)-f(6))
        s(6, 7) = (f(7)+f(8))
@@ -1273,5 +1273,5 @@ ENDIF
        ak(5) = ((1.0_dp+theta(1))**2.0_dp)*(theta(3)+theta(3)**2.0_dp)*theta(2)
        ak(6) = (theta(1)**2.0_dp)*theta(2)*(theta(3)+theta(3)**2.0_dp)
        ak(7) = (1.0_dp+theta(1))*(theta(3)+theta(3)**2.0_dp)*theta(2)
-end function compute_ak
+    end function compute_ak
 end module biocfd_navier_stokes
