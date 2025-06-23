@@ -121,7 +121,7 @@ MODULE global
        INTEGER (int64) :: move_check, move_amty, move_amtx,move_amtz,blk_mv_tag
        REAL (dp) :: xshift_move,yshift_move,zshift_move
        REAL (dp) :: u_prev,u_curr,v_prev,v_curr,w_prev,w_curr,Total_VP_FY,Total_VP_FX
-       REAL (dp) :: rhof, rhop, dp, accn_g, volp, massp,Total_FY,accnp_Y,ymove,ypos
+       REAL (dp) :: rhof, rhop, accn_g, volp, massp,Total_FY,accnp_Y,ymove,ypos
        REAL (dp) :: Total_FX,accnp_X,xmove,xpos, zmove,zpos
        REAL (dp) :: Total_V_Fy, Total_P_Fy, Total_V_Fx,Total_P_Fx
        REAL (dp) :: inity_cent, initx_cent, nxty_cent,nxtx_cent
