@@ -887,11 +887,13 @@ contains
        ddzr=0.5_dp*(block(g)%deltaz(k)+block(g)%deltaz(k+1))
 
        duutdx=block(g)%u(i,j,k)*(block(g)%ca_uu(1, i)*block(g)%u(i+2,j,k)+&
-            block(g)%ca_uu(2, i)*block(g)%u(i+1,j,k) &
-   +block(g)%ca_uu(3, i)*block(g)%u(i,j,k)+block(g)%ca_uu(4, i)*block(g)%u(i-1,j,k)+block(g)%ca_uu(5, i)*&
+              block(g)%ca_uu(2, i)*block(g)%u(i+1,j,k) &
+             +block(g)%ca_uu(3, i)*block(g)%u(i,j,k)+block(g)%ca_uu(4, i)&
+             *block(g)%u(i-1,j,k)+block(g)%ca_uu(5, i)*&
       block(g)%u(i-2,j,k))/(block(g)%ca_uu(6, i)*block(g)%deltax(i+1))+dabs(block(g)%u(i,j,k))* &
       (block(g)%ck_uu(1, i)*block(g)%u(i+2,j,k)+block(g)%ck_uu(2, i)*block(g)%u(i+1,j,k) &
-  +block(g)%ck_uu(3, i)*block(g)%u(i,j,k)+block(g)%ck_uu(4, i)*block(g)%u(i-1,j,k)+block(g)%ck_uu(5, i)*&
+             +block(g)%ck_uu(3, i)*block(g)%u(i,j,k)+block(g)%ck_uu(4, i)&
+             *block(g)%u(i-1,j,k)+block(g)%ck_uu(5, i)*&
       block(g)%u(i-2,j,k))/(2.0_dp*block(g)%ck_uu(6, i)*block(g)%deltax(i))
 
        dvutdy=v_in_um*(block(g)%ca_vu(1, j)*block(g)%u(i,j+2,k)+&
@@ -970,11 +972,14 @@ contains
        ! ca_uw not ca_uv... ca_uw == ca_uv, however, I think for
        ! completeness it would make more sense to use e.g. ca_uv
        ! (which isn't used anywhere except assignment)
-     duvtdx=u_in_vm*(block(g)%ca_uw(1, i)*block(g)%v(i+2,j,k)+block(g)%ca_uw(2, i)*block(g)%v(i+1,j,k) &
-  +block(g)%ca_uw(3, i)*block(g)%v(i,j,k)+block(g)%ca_uw(4, i)*block(g)%v(i-1,j,k)+block(g)%ca_uw(5, i)* &
+     duvtdx=u_in_vm*(block(g)%ca_uw(1, i)*block(g)%v(i+2,j,k)&
+           +block(g)%ca_uw(2, i)*block(g)%v(i+1,j,k) &
+           +block(g)%ca_uw(3, i)*block(g)%v(i,j,k)+block(g)%ca_uw(4, i)&
+           *block(g)%v(i-1,j,k)+block(g)%ca_uw(5, i)* &
       block(g)%v(i-2,j,k))/(block(g)%ca_uw(6, i)*ddxr)+dabs(u_in_vm)* &
       (block(g)%ck_uw(1, i)*block(g)%v(i+2,j,k)+block(g)%ck_uw(2, i)*block(g)%v(i+1,j,k) &
-  +block(g)%ck_uw(3, i)*block(g)%v(i,j,k)+block(g)%ck_uw(4, i)*block(g)%v(i-1,j,k)+block(g)%ck_uw(5, i)* &
+      +block(g)%ck_uw(3, i)*block(g)%v(i,j,k)+block(g)%ck_uw(4, i)*block(g)%v(i-1,j,k)&
+      +block(g)%ck_uw(5, i)* &
       block(g)%v(i-2,j,k))/(2.0_dp*block(g)%ck_uw(6, i)*ddx)
 
      dvvtdy=block(g)%v(i,j,k)*(block(g)%ca_vv(1, j)*block(g)%v(i,j+2,k)+&
@@ -989,8 +994,10 @@ contains
 
        ! See TODO about mismatch of variables... this is dwv but is
        ! using e.g. ca_wu rather than wv
-     dwvtdz=w_in_vm*(block(g)%ca_wu(1, k)*block(g)%v(i,j,k+2)+block(g)%ca_wu(2, k)*block(g)%v(i,j,k+1) &
-  +block(g)%ca_wu(3, k)*block(g)%v(i,j,k)+block(g)%ca_wu(4, k)*block(g)%v(i,j,k-1)+block(g)%ca_wu(5, k)* &
+     dwvtdz=w_in_vm*(block(g)%ca_wu(1, k)*block(g)%v(i,j,k+2)+block(g)%ca_wu(2, k)&
+           *block(g)%v(i,j,k+1) &
+           +block(g)%ca_wu(3, k)*block(g)%v(i,j,k)+block(g)%ca_wu(4, k)&
+           *block(g)%v(i,j,k-1)+block(g)%ca_wu(5, k)* &
       block(g)%v(i,j,k-2))/(block(g)%ca_wu(6, k)*ddzr)+dabs(w_in_vm)* &
       (block(g)%ck_wu(1, k)*block(g)%v(i,j,k+2)+block(g)%ck_wu(2, k)*block(g)%v(i,j,k+1) &
       +block(g)%ck_wu(3, k)*block(g)%v(i,j,k)+block(g)%ck_wu(4, k)*block(g)%v(i,j,k-1)+&
