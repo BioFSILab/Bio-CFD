@@ -5,25 +5,21 @@ MODULE global
        IMPLICIT NONE
        CHARACTER (LEN = 128) :: line
        CHARACTER (LEN = 3)   :: char_f
-       INTEGER               :: istart, id1, st_flag
+       INTEGER               :: istart
        INTEGER (int64)   :: itamax, pcItaMax,amgxita,      &
-                                ita, nIterPcor, nc, ita1, ital,ita2,    &
-                                sumIterPc,itaSola, totIterPc, inor,blk_start, coarse_flcnt_check
-       REAL (dp)        :: lx, ly, dt_order,  &
+                                ita, nIterPcor, ita1,ita2,    &
+                                inor,blk_start, coarse_flcnt_check
+       REAL (dp)        ::      dt_order,  &
                                 omega,omega1,omega2,omega3,omega4,  &
-                                deltx2, delty2,  deltz2, dxmin, &
+                                dxmin, &
                                 freq, &
-                                u0, v0, w0, p0,Uavg,  &
-                                eps1, epsi, epsDiv, re, rev, divmax,   &
-                                fx, fy,  alpha, pct, pct1, &
+                                u0, v0, w0, &
+                                epsi, re, rev, &
+                                alpha, &
                                 xfact,deltat, coupTime,totime, totalTime, dfinish, dstart, &
-                                solverTime, pi , msTime, mindx, al, uc
+                                solverTime, pi , msTime, al, uc
 
-       REAL (dp)       :: p_new1, p_new2, p_final, u_new, v_new, w_new
-       REAL (dp)       :: alpha_m, theta_m, alpha_m1, theta_m1, mu_f, rho_f, l_c, u_tip, lwing, disp
-       !!!variables for Orlanski multiple outlet
-       REAL (dp)       :: y11, y12, z11, z12, y21, y22, z21, z22, uc11, uc22
-
+       REAL (dp)       :: alpha_m, theta_m, alpha_m1, theta_m1, mu_f, rho_f, l_c, u_tip, disp
 
         INTEGER (int64) ::nblocks, intflines
 
