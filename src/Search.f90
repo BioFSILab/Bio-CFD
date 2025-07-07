@@ -728,8 +728,7 @@ module biocfd_search
         INTEGER(int64) ::  n, g, m, i, j, k, i1, j1, k1, nn, &
                                nel2Pnt, nel2Cen, sumNodeID
         INTEGER            :: flcnt, sdcnt, ibcnt
-        REAL(dp)      :: n1x, n1y, n1z, n2x, n2y, n2z, minDis, minDis1, dis_cen, dis_pnt, &
-                              n2dotn, cent_x, cent_y, cent_z
+        REAL(dp)      :: minDis, minDis1, dis_cen, dis_pnt, n2dotn
 
        DO g=blk_start,nblocks
         if( block(g)%blk_mv_tag ==0)then
