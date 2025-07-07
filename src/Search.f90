@@ -746,21 +746,14 @@ module biocfd_search
                minDis  = 1e14_dp
                minDis1 = 1e14_dp
 
-               n1x = block(g)%xp(i)
-               n1y = block(g)%yp(j)
-               n1z = block(g)%zp(k)
-
-               n2x = block(g)%x1(i)
-               n2y = block(g)%y1(j)
-               n2z = block(g)%z1(k)
-
                !$acc loop seq
                DO m = 1, block(g)%ibElems
-               cent_x = block(g)%xcent(m)
-               cent_y = block(g)%ycent(m)
-               cent_z = block(g)%zcent(m)
-                  dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
-                  dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
+                  dis_cen  = (block(g)%yp(j)-block(g)%ycent(m))**2 &
+                           + (block(g)%xp(i)-block(g)%xcent(m))**2  &
+                           + (block(g)%zp(k)-block(g)%zcent(m))**2
+                  dis_pnt  = (block(g)%y1(j)-block(g)%ycent(m))**2 &
+                           + (block(g)%x1(i)-block(g)%xcent(m))**2  &
+                           + (block(g)%z1(k)-block(g)%zcent(m))**2
                   IF (dis_cen<minDis) THEN
                      minDis    = dis_cen
                      nel2Cen   = m
@@ -779,9 +772,9 @@ module biocfd_search
                         block(g)%cell(i,j,k) = 2
                ENDIF
 
-                           n2dotn  = (n2x - block(g)%xcent(nel2Pnt))*block(g)%cosAlpha(nel2Pnt) + &
-                              (n2y - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
-                              (n2z - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
+               n2dotn  = (block(g)%x1(i) - block(g)%xcent(nel2Pnt)) * block(g)%cosAlpha(nel2Pnt) + &
+                         (block(g)%y1(j) - block(g)%ycent(nel2Pnt)) * block(g)%cosBeta(nel2Pnt)  + &
+                         (block(g)%z1(k) - block(g)%zcent(nel2Pnt)) * block(g)%cosGamma(nel2Pnt)
 
                IF (n2dotn>=-1e-16_dp) THEN
                   block(g)%nodeIdTag(i,j,k) = 0
