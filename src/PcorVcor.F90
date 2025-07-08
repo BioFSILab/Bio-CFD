@@ -73,7 +73,8 @@ module biocfd_pcor_vcor
      CALL cpu_time(dfinish)
         coupTime=coupTime + dfinish -dstart
 
-        !$omp parallel num_threads(omp_threads)
+        !$omp parallel num_threads(omp_threads) default(none) &
+        !$omp& private(nblocks, dStart, dfinish, amgxita, mstime, g)
 
 #ifdef _OPENACC
         call acc_set_device_num(mod(omp_get_thread_num(), acc_devices), acc_device_nvidia)
