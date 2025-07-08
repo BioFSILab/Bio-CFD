@@ -90,7 +90,6 @@ module biocfd_pcor_vcor
         END DO
          CALL velocityBC      !correct velocity at boundaries
 
-        !$omp parallel do private( n,i,j,k,er_dudt,er_dvdt,er_dwdt, err_ds,g) num_threads(3)
          DO g=1,nblocks
          err_ds=0.
         !$acc parallel loop gang vector firstprivate (deltat)   &
@@ -110,7 +109,6 @@ module biocfd_pcor_vcor
 
 
          ENDDO
-        !$omp end parallel do
 
 
 
@@ -143,7 +141,6 @@ module biocfd_pcor_vcor
          CLOSE(111)
 
          DO g=1,nblocks
-        !$omp parallel do collapse(3) private (i,j,k)  num_threads(48)
         !$acc parallel loop gang vector default(present) collapse (3)
          DO k = 1, block(g)%nz+2
          DO j = 1, block(g)%ny+2
@@ -155,7 +152,6 @@ module biocfd_pcor_vcor
          END DO
          END DO
         !$acc end parallel loop
-        !$omp end parallel do
          END DO
         CALL fineUpdate_bd
         CALL coarseUpdate
@@ -168,7 +164,6 @@ module biocfd_pcor_vcor
          gg=g
          nx_var=block(g)%nx
          ny_var=block(g)%ny
-        !$omp parallel do private (i,j,k,counter)  num_threads(48)
         !$acc parallel loop gang vector private (i, j, k,counter)   &
         !$acc default(present)
          DO n = 1, block(gg)%fluidCellCount
@@ -183,8 +178,6 @@ module biocfd_pcor_vcor
 
          END DO
         !$acc end parallel loop
-        !$omp end parallel do
-
       END SUBROUTINE computeDiv
 
       SUBROUTINE correctPressure(g)
@@ -192,7 +185,6 @@ module biocfd_pcor_vcor
          INTEGER(int64) :: n, i, j, k,gg
          INTEGER(int64),INTENT(IN) ::g
         gg=g
-        !$omp parallel do private (i,j,k)  num_threads(48)
         !$acc parallel loop gang vector private (i, j, k)   &
         !$acc default(present)
          DO n = 1, block(gg)%fluidCellCount
@@ -201,7 +193,6 @@ module biocfd_pcor_vcor
             k = block(gg)%fluidIndexPtr(n, 3)
             block(gg)%p(i,j,k) = block(gg)%p(i,j,k) + block(gg)%pc(i,j,k)
         END DO
-        !$omp end parallel do
         !$acc end parallel loop
       END SUBROUTINE correctPressure
 
@@ -211,7 +202,6 @@ module biocfd_pcor_vcor
          INTEGER(int64),INTENT(IN) ::g
          gg=g
 
-        !$omp parallel do private (i,j,k) firstprivate(deltat) num_threads(48)
         !$acc parallel loop gang vector private (i, j, k) firstprivate (deltat) &
         !$acc default(present)
          DO 30 n = 1, block(gg)%fluidCellCount
@@ -230,7 +220,6 @@ module biocfd_pcor_vcor
                (block(gg)%pc(i,j,k+1)-block(gg)%pc(i,j,k))
  30      CONTINUE
          !$acc end parallel loop
-        !$omp end parallel do
       END SUBROUTINE correctVelocity
 
       SUBROUTINE REDBLACKSOR_linear(g)
@@ -263,7 +252,6 @@ module biocfd_pcor_vcor
         var=0.
 
         !$acc parallel loop gang vector default(present) firstprivate(deltat, omega) private (i, j, k)
-        !$omp parallel do private (i,j,k,n) num_threads(48)
          DO 10 n = 1, block(gg)%redCellCount
             i = block(gg)%redCellIndexPtr(n, 1)
             j = block(gg)%redCellIndexPtr(n, 2)
@@ -280,11 +268,9 @@ module biocfd_pcor_vcor
             block(gg)%pc(i,j,k) = (1._dp-omega)*block(gg)%pco(i,j,k) +omega*block(gg)%pc(i,j,k)
 
  10      CONTINUE
-        !$omp end parallel do
         !$acc end parallel loop
 
         !$acc parallel loop gang vector default(present) firstprivate(deltat, omega) private (i, j, k)
-        !$omp parallel do private (i,j,k,n) num_threads(48)
          DO 20 n = 1, block(gg)%blackCellCount
              i = block(gg)%blackCellIndexPtr(n, 1)
              j = block(gg)%blackCellIndexPtr(n, 2)
@@ -301,14 +287,11 @@ module biocfd_pcor_vcor
             block(gg)%pc(i,j,k) = (1._dp-omega)*block(gg)%pco(i,j,k) +omega*block(gg)%pc(i,j,k)
 
  20      CONTINUE
-        !$omp end parallel do
         !$acc end parallel loop
-
 
        if(mod(block(gg)%nIterPcor,5_int64) ==0)then
        derr4=0.
         !$acc parallel loop gang vector reduction(max:derr4) default(present) private (i, j, k, var)
-        !$omp parallel do private (i,j,k,n,var) reduction(max:derr4) num_threads(48)
          DO 30 n = 1, block(gg)%fluidCellCount
              i = block(gg)%fluidIndexPtr(n, 1)
              j = block(gg)%fluidIndexPtr(n, 2)
@@ -316,11 +299,9 @@ module biocfd_pcor_vcor
             var = abs(block(gg)%pc(i,j,k)-block(gg)%pco(i,j,k))
             derr4=dmax1(derr4,var)
  30      CONTINUE
-        !$omp end parallel do
         !$acc end parallel loop
         end if
         !$acc parallel loop gang vector collapse(3) default(present) private (i, j, k)
-        !$omp parallel do collapse (3) private (i,j,k) num_threads(48)
         DO k = 1, block(gg)%nz+2
         DO j = 1, block(gg)%ny+2
         DO i = 1, block(gg)%nx+2
@@ -329,7 +310,6 @@ module biocfd_pcor_vcor
         END DO
         END DO
         END DO
-        !$omp end parallel do
         !$acc end parallel loop
 
          block(g)%derr2=derr4
