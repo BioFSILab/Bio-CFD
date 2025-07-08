@@ -1,6 +1,7 @@
 module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   ! allow(use-all) - TODO: Aim to fix this in the future
+  use omp_lib
   use global
   use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_bd, fineUpdate_pc_bd
   use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
@@ -20,6 +21,9 @@ module biocfd_pcor_vcor
         INTEGER(int64) :: max_nIterPcor, max_nit
         CHARACTER(len=160) :: filename1
 
+        ! For controlling OpenMP
+        integer :: omp_threads
+
           max_derrStdst=0._dp
           max_derr1=0._dp
           max_derr2=0._dp
@@ -31,6 +35,7 @@ module biocfd_pcor_vcor
           er_dvdt=0.
           er_dwdt=0.
 
+          omp_threads = min(omp_get_max_threads(), size(block))
 
         DO g=1,nblocks
         !$acc parallel loop gang vector collapse (3) default(present)
@@ -57,9 +62,14 @@ module biocfd_pcor_vcor
 
      CALL cpu_time(dfinish)
         coupTime=coupTime + dfinish -dstart
+
+        !$omp parallel num_threads(omp_threads)
+        !$omp do
         DO g=1,nblocks
                CALL computeDiv(g)    !divergence vector
         END DO
+        !$omp end do
+        !$omp do
         DO g=2,nblocks
          CALL cpu_time(dStart)
          amgxita=0
@@ -67,27 +77,36 @@ module biocfd_pcor_vcor
         CALL cpu_time(dfinish)
          msTime = msTime + dfinish-dstart
         end do
+        !$omp end do
+
+        !$omp single
         CALL coarseUpdate_pc
         g=1
         CALL cpu_time(dStart)
         CALL REDBLACKSOR_linear(g)
-
         CALL cpu_time(dfinish)
         call fineUpdate_pc_bd
+        !$omp end single
+        !$omp do
         DO g=2,nblocks
          CALL cpu_time(dStart)
          amgxita=0
          CALL REDBLACKSOR_linear(g)
-        CALL cpu_time(dfinish)
+         CALL cpu_time(dfinish)
          msTime = msTime + dfinish-dstart
         end do
+        !$omp end do
+        !$omp single
           CALL coarseUpdate_pc
+        !$omp end single
 
+       !$omp do
        DO g=1,nblocks
                CALL correctPressure(g)  !pressure correction
                CALL correctVelocity(g)  !velocity correction
-
         END DO
+        !$omp end do
+        !$omp end parallel
          CALL velocityBC      !correct velocity at boundaries
 
          DO g=1,nblocks
