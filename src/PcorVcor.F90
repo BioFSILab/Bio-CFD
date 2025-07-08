@@ -2,6 +2,9 @@ module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   ! allow(use-all) - TODO: Aim to fix this in the future
   use omp_lib
+#ifdef _OPENACC
+  use openacc
+#endif
   use global
   use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_bd, fineUpdate_pc_bd
   use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
@@ -23,6 +26,8 @@ module biocfd_pcor_vcor
 
         ! For controlling OpenMP
         integer :: omp_threads
+        ! For controlling OpenACC
+        integer :: acc_devices
 
           max_derrStdst=0._dp
           max_derr1=0._dp
@@ -36,6 +41,11 @@ module biocfd_pcor_vcor
           er_dwdt=0.
 
           omp_threads = min(omp_get_max_threads(), size(block))
+#ifdef _OPENACC
+         ! Hard coding nvidia devices for now
+         acc_devices = acc_get_num_devices(acc_device_nvidia)
+#endif
+
 
         DO g=1,nblocks
         !$acc parallel loop gang vector collapse (3) default(present)
@@ -64,6 +74,11 @@ module biocfd_pcor_vcor
         coupTime=coupTime + dfinish -dstart
 
         !$omp parallel num_threads(omp_threads)
+
+#ifdef _OPENACC
+        call acc_set_device_num(mod(omp_get_thread_num(), acc_devices), acc_device_nvidia)
+#endif
+
         !$omp do
         DO g=1,nblocks
                CALL computeDiv(g)    !divergence vector

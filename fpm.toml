@@ -5,11 +5,11 @@ version = "0.1.0"
 auto-executables = true
 auto-tests = true
 auto-examples = true
-external-modules = ["hdf5"]
+external-modules = ["hdf5", "openacc"]
 
 [preprocess]
-cpp.suffixes = ["f90"]
 cpp.macros = ["USE_HDF5=0"]
+
 
 [install]
 library = false
