@@ -314,9 +314,22 @@ module biocfd_search
         n2dotn = 0
 
  !$acc parallel loop collapse(3) default(present)
+        ! There are some areas of the code where OpenMP and OpenACC
+        ! are used together. In this particular case we don't want the
+        ! OpenMP declarations if we are compiling with OpenACC.
+        !
+        ! WARNING: Do not indent the preprocessor macros, they must
+        ! start at the first column.
+        !
+        ! WARNING 2: The extension of this file has been made
+        ! uppercase "f90" -> "F90", this seems to be a convention
+        ! across compilers, but I can't guarantee it will work for all
+        ! compilers
+#ifndef _OPENACC
         !$omp parallel do default(none) private(minDis, minDis1) &
         !$omp& private(dis_cen, dis_pnt, nel2Cen, nel2Pnt, n2dotn) &
         !$omp& shared(g, block)
+#endif
         DO k = block(g)%k_startSearch, block(g)%k_endSearch
         DO j = block(g)%j_startSearch, block(g)%j_endSearch
         DO i = block(g)%i_startSearch, block(g)%i_endSearch
@@ -368,7 +381,9 @@ module biocfd_search
          END DO
          END DO
          END DO
+#ifndef _OPENACC
          !$omp end parallel do
+#endif
 !$acc end parallel loop
 
 !$acc parallel loop collapse(3) default(present)
