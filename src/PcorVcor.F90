@@ -74,17 +74,17 @@ module biocfd_pcor_vcor
         coupTime=coupTime + dfinish -dstart
 
         !$omp parallel num_threads(omp_threads) default(none) &
+        !$omp& private(dStart, dfinish, amgxita, mstime, g) &
 #ifdef _OPENACC
-        !$omp& private(nblocks, dStart, dfinish, amgxita, mstime, g) &
-        !$omp& shared(acc_devices, acc_device_nvidia)
+        !$omp& shared(nblocks, acc_devices, acc_device_nvidia)
         call acc_set_device_num(mod(omp_get_thread_num(), acc_devices), acc_device_nvidia)
 #else
-       !$omp& private(nblocks, dStart, dfinish, amgxita, mstime, g)
+        !$omp& shared(nblocks)
 #endif
 
         !$omp do
         DO g=1,nblocks
-               CALL computeDiv(g)    !divergence vector
+           CALL computeDiv(g)    !divergence vector
         END DO
         !$omp end do
         !$omp do
