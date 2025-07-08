@@ -76,16 +76,15 @@ module biocfd_pcor_vcor
         !$omp parallel num_threads(omp_threads) default(none) &
 #ifdef _OPENACC
         !$omp& private(nblocks, dStart, dfinish, amgxita, mstime, g) &
-        !$omp& shared(acc_devices, acc_device_nvidia, block)
+        !$omp& shared(acc_devices, acc_device_nvidia)
         call acc_set_device_num(mod(omp_get_thread_num(), acc_devices), acc_device_nvidia)
 #else
-       !$omp& private(nblocks, dStart, dfinish, amgxita, mstime, g) &
-       !$omp& shared(block)
+       !$omp& private(nblocks, dStart, dfinish, amgxita, mstime, g)
 #endif
 
         !$omp do
         DO g=1,nblocks
-               CALL computeDiv(block(g))    !divergence vector
+               CALL computeDiv(g)    !divergence vector
         END DO
         !$omp end do
         !$omp do
@@ -195,22 +194,24 @@ module biocfd_pcor_vcor
         CALL coarseUpdate
       END SUBROUTINE poissonSolver
 
-      SUBROUTINE computeDiv(blk)
+      SUBROUTINE computeDiv(g)
 
-         type(Blocks), intent(inout) :: blk
-         integer :: n, i, j, k
-
-        !$acc parallel loop gang vector private (i, j, k)   &
+         INTEGER :: n, i, j, k,gg, counter, nx_var, ny_var
+         INTEGER(int64),INTENT(IN) ::g
+         gg=g
+         nx_var=block(g)%nx
+         ny_var=block(g)%ny
+        !$acc parallel loop gang vector private (i, j, k,counter)   &
         !$acc default(present)
-         DO n = 1, blk%fluidCellCount
-           i = blk%fluidIndexPtr(n, 1)
-           j = blk%fluidIndexPtr(n, 2)
-           k = blk%fluidIndexPtr(n, 3)
-
-           blk%b(i,j,k) = &
-             (blk%ut(i,j,k) - blk%ut(i-1,j,k)) / blk%deltax(i) +  &
-             (blk%vt(i,j,k) - blk%vt(i,j-1,k)) / blk%deltay(j) +  &
-             (blk%wt(i,j,k) - blk%wt(i,j,k-1)) / blk%deltaz(k)
+         DO n = 1, block(gg)%fluidCellCount
+           i = block(gg)%fluidIndexPtr(n, 1)
+           j = block(gg)%fluidIndexPtr(n, 2)
+           k = block(gg)%fluidIndexPtr(n, 3)
+           counter =i-1  + nx_var*(j-2)  + nx_var*ny_var*(k-2)
+           block(gg)%b(i,j,k) = &
+             (block(gg)%ut(i,j,k) - block(gg)%ut(i-1,j,k))/block(gg)%deltax(i) +  &
+             (block(gg)%vt(i,j,k) - block(gg)%vt(i,j-1,k))/block(gg)%deltay(j) +  &
+             (block(gg)%wt(i,j,k) - block(gg)%wt(i,j,k-1))/block(gg)%deltaz(k)
 
          END DO
         !$acc end parallel loop
