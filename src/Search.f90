@@ -969,13 +969,14 @@ block(g)%fluidCellCount = flcnt
         cent_x = block(g)%xcent(m)
         cent_y = block(g)%ycent(m)
         cent_z = block(g)%zcent(m)
-              dis   = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2 + (n1z-cent_z)**2 )
-              dis1  = dsqrt( (n1y-cent_y)**2 + (n2x-cent_x)**2 + (n1z-cent_z)**2 )
-              dis2  = dsqrt( (n1y-cent_y)**2 + (n3x-cent_x)**2 + (n1z-cent_z)**2 )
-              dis3  = dsqrt( (n2y-cent_y)**2 + (n1x-cent_x)**2 + (n1z-cent_z)**2 )
-              dis4  = dsqrt( (n3y-cent_y)**2 + (n1x-cent_x)**2 + (n1z-cent_z)**2 )
-              dis5  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2 + (n2z-cent_z)**2 )
-              dis6  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2 + (n3z-cent_z)**2 )
+        ! No need to take sqrt because we just use for distance comparison
+              dis   =  (n1y-cent_y)**2 + (n1x-cent_x)**2 + (n1z-cent_z)**2
+              dis1  =  (n1y-cent_y)**2 + (n2x-cent_x)**2 + (n1z-cent_z)**2
+              dis2  =  (n1y-cent_y)**2 + (n3x-cent_x)**2 + (n1z-cent_z)**2
+              dis3  =  (n2y-cent_y)**2 + (n1x-cent_x)**2 + (n1z-cent_z)**2
+              dis4  =  (n3y-cent_y)**2 + (n1x-cent_x)**2 + (n1z-cent_z)**2
+              dis5  =  (n1y-cent_y)**2 + (n1x-cent_x)**2 + (n2z-cent_z)**2
+              dis6  =  (n1y-cent_y)**2 + (n1x-cent_x)**2 + (n3z-cent_z)**2
               IF (dis<minDis) THEN
                  minDis   = dis
                  nel2p    = m
