@@ -728,19 +728,30 @@ module biocfd_search
                                nel2Pnt, nel2Cen, sumNodeID
         INTEGER            :: flcnt, sdcnt, ibcnt
         REAL(dp)      :: minDis, minDis1, dis_cen, dis_pnt, n2dotn
+        integer :: iprime, jprime, kprime
 
        DO g=blk_start,nblocks
         if( block(g)%blk_mv_tag ==0)then
-!$acc parallel loop gang vector default(present)
+
+       ! Set the intercepted indicies cell value to 0, we do this in a
+       ! seperate loop so that we can nicely GPU-ise the computation
+       !$acc parallel loop gang vector default(present) private(i1, j1, k1)
+       DO nn = 1, block(g)%ibCellCount
+         i1 = block(g)%interceptedIndexPtr(nn, 1)
+         j1 = block(g)%interceptedIndexPtr(nn, 2)
+         k1 = block(g)%interceptedIndexPtr(nn, 3)
+         block(g)%cell(i1,j1,k1) = 0
+       END DO
+
+!$acc parallel loop gang vector default(present) collapse(4) private(i1, j1, k1, iprime, jprime, kprime)
         DO nn = 1, block(g)%ibCellCount
-        i1 = block(g)%interceptedIndexPtr(nn, 1)
-        j1 = block(g)%interceptedIndexPtr(nn, 2)
-        k1 = block(g)%interceptedIndexPtr(nn, 3)
-           block(g)%cell(i1,j1,k1) = 0
-           !$acc loop collapse(3) seq
-           DO k = k1-1, k1+1
-           DO j = j1-1, j1+1
-           DO i = i1-1, i1+1
+           DO kprime = -1,+1
+           DO jprime = -1,+1
+           DO iprime = -1,+1
+
+               i1 = block(g)%interceptedIndexPtr(nn, 1) + iprime
+               j1 = block(g)%interceptedIndexPtr(nn, 2) + jprime
+               k1 = block(g)%interceptedIndexPtr(nn, 3) + kprime
 
                minDis  = 1e14_dp
                minDis1 = 1e14_dp
