@@ -735,23 +735,24 @@ module biocfd_search
 
        ! Set the intercepted indicies cell value to 0, we do this in a
        ! seperate loop so that we can nicely GPU-ise the computation
-       !$acc parallel loop gang vector default(present) private(i1, j1, k1)
+       !$acc parallel loop default(present) private(i1, j1, k1)
        DO nn = 1, block(g)%ibCellCount
          i1 = block(g)%interceptedIndexPtr(nn, 1)
          j1 = block(g)%interceptedIndexPtr(nn, 2)
          k1 = block(g)%interceptedIndexPtr(nn, 3)
          block(g)%cell(i1,j1,k1) = 0
-       END DO
+        END DO
+        !$acc end parallel loop
 
-!$acc parallel loop gang vector default(present) collapse(4) private(i1, j1, k1, iprime, jprime, kprime)
+!$acc parallel loop default(present) collapse(4) private(i, j, k)
         DO nn = 1, block(g)%ibCellCount
            DO kprime = -1,+1
            DO jprime = -1,+1
            DO iprime = -1,+1
 
-               i1 = block(g)%interceptedIndexPtr(nn, 1) + iprime
-               j1 = block(g)%interceptedIndexPtr(nn, 2) + jprime
-               k1 = block(g)%interceptedIndexPtr(nn, 3) + kprime
+               i = block(g)%interceptedIndexPtr(nn, 1) + iprime
+               j = block(g)%interceptedIndexPtr(nn, 2) + jprime
+               k = block(g)%interceptedIndexPtr(nn, 3) + kprime
 
                minDis  = 1e14_dp
                minDis1 = 1e14_dp
