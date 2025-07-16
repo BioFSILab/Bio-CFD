@@ -748,6 +748,7 @@ module biocfd_search
 
                !$acc loop seq
                DO m = 1, block(g)%ibElems
+                  ! No need to take sqrt because we just use for distance comparison
                   dis_cen  = (block(g)%xp(i)-block(g)%xcent(m))**2 &
                            + (block(g)%yp(j)-block(g)%ycent(m))**2 &
                            + (block(g)%zp(k)-block(g)%zcent(m))**2
