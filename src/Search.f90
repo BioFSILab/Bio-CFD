@@ -748,11 +748,11 @@ module biocfd_search
 
                !$acc loop seq
                DO m = 1, block(g)%ibElems
-                  dis_cen  = (block(g)%yp(j)-block(g)%ycent(m))**2 &
-                           + (block(g)%xp(i)-block(g)%xcent(m))**2  &
+                  dis_cen  = (block(g)%xp(i)-block(g)%xcent(m))**2 &
+                           + (block(g)%yp(j)-block(g)%ycent(m))**2 &
                            + (block(g)%zp(k)-block(g)%zcent(m))**2
-                  dis_pnt  = (block(g)%y1(j)-block(g)%ycent(m))**2 &
-                           + (block(g)%x1(i)-block(g)%xcent(m))**2  &
+                  dis_pnt  = (block(g)%x1(i)-block(g)%xcent(m))**2 &
+                           + (block(g)%y1(j)-block(g)%ycent(m))**2 &
                            + (block(g)%z1(k)-block(g)%zcent(m))**2
                   IF (dis_cen<minDis) THEN
                      minDis    = dis_cen
@@ -971,13 +971,13 @@ block(g)%fluidCellCount = flcnt
         cent_y = block(g)%ycent(m)
         cent_z = block(g)%zcent(m)
         ! No need to take sqrt because we just use for distance comparison
-              dis   =  (n1y-cent_y)**2 + (n1x-cent_x)**2 + (n1z-cent_z)**2
-              dis1  =  (n1y-cent_y)**2 + (n2x-cent_x)**2 + (n1z-cent_z)**2
-              dis2  =  (n1y-cent_y)**2 + (n3x-cent_x)**2 + (n1z-cent_z)**2
-              dis3  =  (n2y-cent_y)**2 + (n1x-cent_x)**2 + (n1z-cent_z)**2
-              dis4  =  (n3y-cent_y)**2 + (n1x-cent_x)**2 + (n1z-cent_z)**2
-              dis5  =  (n1y-cent_y)**2 + (n1x-cent_x)**2 + (n2z-cent_z)**2
-              dis6  =  (n1y-cent_y)**2 + (n1x-cent_x)**2 + (n3z-cent_z)**2
+              dis   =  (n1x-cent_x)**2 + (n1y-cent_y)**2 + (n1z-cent_z)**2
+              dis1  =  (n2x-cent_x)**2 + (n1y-cent_y)**2 + (n1z-cent_z)**2
+              dis2  =  (n3x-cent_x)**2 + (n1y-cent_y)**2 + (n1z-cent_z)**2
+              dis3  =  (n1x-cent_x)**2 + (n2y-cent_y)**2 + (n1z-cent_z)**2
+              dis4  =  (n1x-cent_x)**2 + (n3y-cent_y)**2 + (n1z-cent_z)**2
+              dis5  =  (n1x-cent_x)**2 + (n1y-cent_y)**2 + (n2z-cent_z)**2
+              dis6  =  (n1x-cent_x)**2 + (n1y-cent_y)**2 + (n3z-cent_z)**2
               IF (dis<minDis) THEN
                  minDis   = dis
                  nel2p    = m
