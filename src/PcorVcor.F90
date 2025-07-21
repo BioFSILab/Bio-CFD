@@ -85,15 +85,9 @@ module biocfd_pcor_vcor
         !$omp do
         DO g=1,nblocks
            CALL computeDiv(g)    !divergence vector
-        END DO
-        !$omp end do
-        !$omp do
-        DO g=2,nblocks
-         CALL cpu_time(dStart)
-         amgxita=0
-         CALL REDBLACKSOR_linear(g)
-        CALL cpu_time(dfinish)
-         msTime = msTime + dfinish-dstart
+           ! Do not compute Red/Black here for block 1
+           if (g == 1) cycle
+           CALL REDBLACKSOR_linear(g)
         end do
         !$omp end do
 
