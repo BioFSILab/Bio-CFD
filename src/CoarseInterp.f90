@@ -36,10 +36,10 @@ subroutine coarseUpdate
               loc_z = (intfr(g)%pz_interface_det(2,k) + intfr(g)%pz_interface_det(3,k)-1) / 2
 
               block(a_blk_no)%p(tar_x, tar_y, tar_z) = trilinear_interpolation( &
-                   block(a_blk_no)%xp(tar_x), block(a_blk_no)%yp(tar_y), block(a_blk_no)%zp(tar_z), &
-                   loc_x, loc_y, loc_z, &
-                   block(b_blk_no)%xp, block(b_blk_no)%yp, block(b_blk_no)%zp, &
-                   0, block(b_blk_no)%p)
+                  block(a_blk_no)%xp(tar_x), block(a_blk_no)%yp(tar_y), block(a_blk_no)%zp(tar_z), &
+                  loc_x, loc_y, loc_z, &
+                  block(b_blk_no)%xp, block(b_blk_no)%yp, block(b_blk_no)%zp, &
+                  0, block(b_blk_no)%p)
 
             enddo
           enddo
@@ -62,10 +62,10 @@ subroutine coarseUpdate
                 loc_z=(intfr(g)%uz_interface_det(2,k)+intfr(g)%uz_interface_det(3,k)-1)/2
 
                 block(a_blk_no)%u(tar_x-1,tar_y,tar_z) = trilinear_interpolation( &
-                     block(a_blk_no)%xu(tar_x), block(a_blk_no)%yu(tar_y), block(a_blk_no)%zu(tar_z), &
-                     loc_x, loc_y, loc_z, &
-                     block(b_blk_no)%xu, block(b_blk_no)%yu, block(b_blk_no)%zu, &
-                     1, block(b_blk_no)%u)
+                  block(a_blk_no)%xu(tar_x), block(a_blk_no)%yu(tar_y), block(a_blk_no)%zu(tar_z), &
+                  loc_x, loc_y, loc_z, &
+                  block(b_blk_no)%xu, block(b_blk_no)%yu, block(b_blk_no)%zu, &
+                  1, block(b_blk_no)%u)
 
         enddo
         enddo
@@ -88,10 +88,10 @@ subroutine coarseUpdate
                 loc_y=(intfr(g)%vy_interface_det(3,j))
 
                 block(a_blk_no)%v(tar_x,tar_y-1,tar_z) = trilinear_interpolation( &
-                     block(a_blk_no)%xv(tar_x), block(a_blk_no)%yv(tar_y), block(a_blk_no)%zv(tar_z), &
-                     loc_x, loc_y, loc_z, &
-                     block(b_blk_no)%xv, block(b_blk_no)%yv, block(b_blk_no)%zv, &
-                     2, block(b_blk_no)%v)
+                  block(a_blk_no)%xv(tar_x), block(a_blk_no)%yv(tar_y), block(a_blk_no)%zv(tar_z), &
+                  loc_x, loc_y, loc_z, &
+                  block(b_blk_no)%xv, block(b_blk_no)%yv, block(b_blk_no)%zv, &
+                  2, block(b_blk_no)%v)
 
         enddo
         enddo
@@ -114,10 +114,10 @@ subroutine coarseUpdate
                 loc_z=(intfr(g)%wz_interface_det(3,k))
 
                 block(a_blk_no)%w(tar_x,tar_y,tar_z-1) = trilinear_interpolation( &
-                     block(a_blk_no)%xw(tar_x), block(a_blk_no)%yw(tar_y), block(a_blk_no)%zw(tar_z), &
-                     loc_x, loc_y, loc_z, &
-                     block(b_blk_no)%xw, block(b_blk_no)%yw, block(b_blk_no)%zw, &
-                     3, block(b_blk_no)%w)
+                  block(a_blk_no)%xw(tar_x), block(a_blk_no)%yw(tar_y), block(a_blk_no)%zw(tar_z), &
+                  loc_x, loc_y, loc_z, &
+                  block(b_blk_no)%xw, block(b_blk_no)%yw, block(b_blk_no)%zw, &
+                  3, block(b_blk_no)%w)
 
         enddo
         enddo
@@ -159,10 +159,10 @@ subroutine coarseUpdate
                 loc_z=(intfr(g)%uz_interface_det(2,k)+intfr(g)%uz_interface_det(3,k)-1)/2
 
                 block(a_blk_no)%ut(tar_x-1,tar_y,tar_z) = trilinear_interpolation( &
-                     block(a_blk_no)%xu(tar_x), block(a_blk_no)%yu(tar_y), block(a_blk_no)%zu(tar_z), &
-                     loc_x, loc_y, loc_z, &
-                     block(b_blk_no)%xu, block(b_blk_no)%yu, block(b_blk_no)%zu, &
-                     1, block(b_blk_no)%ut)
+                  block(a_blk_no)%xu(tar_x), block(a_blk_no)%yu(tar_y), block(a_blk_no)%zu(tar_z), &
+                  loc_x, loc_y, loc_z, &
+                  block(b_blk_no)%xu, block(b_blk_no)%yu, block(b_blk_no)%zu, &
+                  1, block(b_blk_no)%ut)
 
         enddo
         enddo
@@ -185,10 +185,10 @@ subroutine coarseUpdate
                 loc_y=(intfr(g)%vy_interface_det(3,j))
 
                 block(a_blk_no)%vt(tar_x, tar_y-1, tar_z) = trilinear_interpolation( &
-                     block(a_blk_no)%xv(tar_x), block(a_blk_no)%yv(tar_y), block(a_blk_no)%zv(tar_z), &
-                     loc_x, loc_y, loc_z, &
-                     block(b_blk_no)%xv, block(b_blk_no)%yv, block(b_blk_no)%zv, &
-                     2, block(b_blk_no)%vt)
+                  block(a_blk_no)%xv(tar_x), block(a_blk_no)%yv(tar_y), block(a_blk_no)%zv(tar_z), &
+                  loc_x, loc_y, loc_z, &
+                  block(b_blk_no)%xv, block(b_blk_no)%yv, block(b_blk_no)%zv, &
+                  2, block(b_blk_no)%vt)
 
         enddo
         enddo
@@ -290,10 +290,10 @@ subroutine coarseUpdate
                 loc_z=(intfr(g)%pz_interface_det(2,k)+intfr(g)%pz_interface_det(3,k)-1)/2
 
                 bl_interp_ans = trilinear_interpolation( &
-                     block(a_blk_no)%xp(tar_x), block(a_blk_no)%yp(tar_y), block(a_blk_no)%zp(tar_z), &
-                     loc_x, loc_y, loc_z, &
-                     block(b_blk_no)%xp, block(b_blk_no)%yp, block(b_blk_no)%zp, &
-                     0, block(b_blk_no)%pc)
+                  block(a_blk_no)%xp(tar_x), block(a_blk_no)%yp(tar_y), block(a_blk_no)%zp(tar_z), &
+                  loc_x, loc_y, loc_z, &
+                  block(b_blk_no)%xp, block(b_blk_no)%yp, block(b_blk_no)%zp, &
+                  0, block(b_blk_no)%pc)
 
                 block(a_blk_no)%pc(tar_x, tar_y, tar_z) = bl_interp_ans
                 block(a_blk_no)%pco(tar_x, tar_y, tar_z) = bl_interp_ans
