@@ -10,14 +10,6 @@ module biocfd_coarse_update
 
   contains
 subroutine coarseUpdate
-        REAL (dp) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,&
-                         bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
-        REAL (dp) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
-        REAL (dp) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, &
-                         bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
-        REAL (dp) :: bl_interp_ans1, bl_interp_ans2
-        REAL (dp) :: bl_interp_ans
-
         INTEGER :: i,j,k,g, tar_x, tar_y, tar_z, loc_x, loc_y, loc_z, a_blk_no,b_blk_no
         INTEGER :: st_idx, en_idx
         INTEGER :: st_idy, en_idy
