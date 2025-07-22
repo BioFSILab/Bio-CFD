@@ -292,7 +292,7 @@ contains
             END DO
             END DO
             END DO
-            filename1="test_"//trim(dummy_2)//".h5"
+            filename1="output_"//trim(dummy_2)//".h5"
             call hdf5_write_real(filename=filename1,&
                                  array_input_3d=u1,key='u1',group=dummy_1)
             call hdf5_write_real(filename=filename1,&
