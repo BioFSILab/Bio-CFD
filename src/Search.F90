@@ -798,7 +798,7 @@ block(g)%fluidCellCount = flcnt
         INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k, g
         INTEGER (int64) :: cell_val
         integer :: red_count, black_count
-        integer :: idx
+        integer (int64):: idx
 
         print*, "cellCount started"
 
