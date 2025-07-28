@@ -2,10 +2,6 @@ module biocfd_search
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64, int32
   ! allow(use-all) - TODO: Aim to fix this in the future
   use global
-  use omp_lib
-#ifdef _OPENACC
-  use openacc
-#endif
   use biocfd_fine_interp, only: fineUpdate_mv
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
   implicit NONE
@@ -747,6 +743,7 @@ module biocfd_search
 
        DO g=blk_start,nblocks
         if( block(g)%blk_mv_tag ==0)then
+
        ! Set the intercepted indicies cell value to 0, we do this in a
        ! seperate loop so that we can nicely GPU-ise the computation
        !$acc parallel loop default(present) private(i1, j1, k1)
