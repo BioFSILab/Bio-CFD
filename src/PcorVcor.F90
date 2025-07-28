@@ -4,7 +4,7 @@ module biocfd_pcor_vcor
   use global
   use omp_lib, only: omp_get_max_threads, omp_get_thread_num
 #ifdef _OPENACC
-  use openacc, only: acc_device_nvidia, acc_get_num_devices, acc_set_device_num
+  use openacc, only: acc_device_default, acc_get_num_devices, acc_set_device_num
 #endif
   use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_bd, fineUpdate_pc_bd
   use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
@@ -42,8 +42,13 @@ module biocfd_pcor_vcor
 
           omp_threads = min(omp_get_max_threads(), size(block))
 #ifdef _OPENACC
-         ! Hard coding nvidia devices for now
-         acc_devices = acc_get_num_devices(acc_device_nvidia)
+         ! Not checked, but apparently in nvfortran the default
+         ! resolves to the same as `acc_device_nvidia` (see
+         ! https://docs.nvidia.com/hpc-sdk/compilers/openacc-gs/index.html#defaults)
+         ! For gfortran this can be set at runtime with an environment
+         ! variable, ACC_DEVICE_TYPE. It may or may not pick up a
+         ! compatible GPU if it can find it.
+         acc_devices = acc_get_num_devices(acc_device_default)
 #endif
 
 
@@ -77,8 +82,8 @@ module biocfd_pcor_vcor
         !$omp& private(dStart, dfinish, amgxita, mstime, g) &
 #ifdef _OPENACC
         !$omp& shared(nblocks, acc_devices)
-        ! No need to mark `acc_device_nvidia` because it is a compile time constant (parameter)
-        call acc_set_device_num(mod(omp_get_thread_num(), acc_devices), acc_device_nvidia)
+        ! No need to mark `acc_device_default` because it is a compile time constant (parameter)
+        call acc_set_device_num(mod(omp_get_thread_num(), acc_devices), acc_device_default)
 #else
         !$omp& shared(nblocks)
 #endif
