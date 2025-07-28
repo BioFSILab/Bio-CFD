@@ -811,18 +811,16 @@ SUBROUTINE pressureForcingGhost
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, &
                          aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
-                         p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, &
-                         p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1, p_z1_x2, p_z2_x2, &
-                         h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, ac_y, ac_z, at_y, at_z
+                         dpdn_e, ac_y, ac_z, at_y, at_z
+       real(dp) :: derivatives(3)
 
         DO g=blk_start, nblocks
       dpdn = 0._dp
  !$acc parallel loop gang vector                                                                    &
  !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
- !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
- !$acc           p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
+ !$acc           dpdn_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
  !$acc           i_z1,ac_z,ac_y,at_y,at_z)         &
- !$acc default(present)
+ !$acc default(present) private(derivatives)
       DO n = 1, block(g)%TSCellCount
 
         i = block(g)%TSIndexPtr(n, 1)
@@ -884,74 +882,14 @@ SUBROUTINE pressureForcingGhost
          DO kl = k-7, k+7
             if(pos1_z>=block(g)%zp(kl).and.pos1_z<block(g)%zp(kl+1)) i_z1 = kl
          END DO
-         !interpolation along x  @ z1 plane
-         p_x1_z1 = block(g)%p(i_x1, i_y1, i_z1)   + (block(g)%p(i_x1+1, i_y1, i_z1)   &
-                   - block(g)%p(i_x1, i_y1, i_z1))  &
-                   * (pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1) - block(g)%xp(i_x1))
-         p_x2_z1 = block(g)%p(i_x1, i_y1+1, i_z1) + (block(g)%p(i_x1+1, i_y1+1, i_z1) &
-                   - block(g)%p(i_x1, i_y1+1, i_z1)) &
-                   * (pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1) - block(g)%xp(i_x1))
 
-         !interpolation along x  @ z2 plane
-         p_x1_z2 = block(g)%p(i_x1, i_y1, i_z1+1)   + (block(g)%p(i_x1+1, i_y1, i_z1+1)   &
-                   - block(g)%p(i_x1, i_y1, i_z1+1))  &
-                   * (pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1) - block(g)%xp(i_x1))
-         p_x2_z2 = block(g)%p(i_x1, i_y1+1, i_z1+1) + (block(g)%p(i_x1+1, i_y1+1, i_z1+1) &
-                   - block(g)%p(i_x1, i_y1+1, i_z1+1)) &
-                   * (pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1) - block(g)%xp(i_x1))
+         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
+                                           block(g)%xp, block(g)%yp, block(g)%zp, &
+                                           block(g)%p, p_pos1, derivatives)
 
-         !This will be used for dpdz calculation point 1
-         p_z1 = p_x1_z1 + (p_x2_z1 - p_x1_z1) &
-                * (pos1_y - block(g)%yp(i_y1))/(block(g)%yp(i_y1+1)-block(g)%yp(i_y1))
-         p_z2 = p_x1_z2 + (p_x2_z2 - p_x1_z2) &
-                * (pos1_y - block(g)%yp(i_y1))/(block(g)%yp(i_y1+1)-block(g)%yp(i_y1))
-
-         !This will be used for dpdy calculation at point 1
-         p_y1 = p_x1_z1 + (p_x1_z2 - p_x1_z1) &
-                * (pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1)-block(g)%zp(i_z1))
-         p_y2 = p_x2_z1 + (p_x2_z2 - p_x2_z1) &
-                * (pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1)-block(g)%zp(i_z1))
-
-         !interpolation along z @ x1 plane
-         p_z1_x1 = block(g)%p(i_x1, i_y1, i_z1)   + (block(g)%p(i_x1, i_y1, i_z1+1) &
-                   - block(g)%p(i_x1, i_y1, i_z1)) &
-                   * (pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1) - block(g)%zp(i_z1))
-         p_z2_x1 = block(g)%p(i_x1, i_y1+1, i_z1)   + (block(g)%p(i_x1, i_y1+1, i_z1+1) &
-                   - block(g)%p(i_x1, i_y1+1, i_z1)) &
-                   * (pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1) - block(g)%zp(i_z1))
-
-         !interpolation along z @ x2 plane
-         p_z1_x2 = block(g)%p(i_x1+1, i_y1, i_z1)   + (block(g)%p(i_x1+1, i_y1, i_z1+1) &
-                   - block(g)%p(i_x1+1, i_y1, i_z1)) &
-                   * (pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1) - block(g)%zp(i_z1))
-         p_z2_x2 = block(g)%p(i_x1+1, i_y1+1, i_z1)   + (block(g)%p(i_x1+1, i_y1+1, i_z1+1) &
-                   - block(g)%p(i_x1+1, i_y1+1, i_z1)) &
-                   * (pos1_z - block(g)%zp(i_z1))/(block(g)%zp(i_z1+1) - block(g)%zp(i_z1))
-
-         !This will be used for dpdx calculation at point 1
-         p_x1 = p_z1_x1 + (p_z2_x1 - p_z1_x1) &
-                * (pos1_y - block(g)%yp(i_y1))/(block(g)%yp(i_y1+1)-block(g)%yp(i_y1))
-         p_x2 = p_z1_x2 + (p_z2_x2 - p_z1_x2) &
-                * (pos1_y - block(g)%yp(i_y1))/(block(g)%yp(i_y1+1)-block(g)%yp(i_y1))
-
-         p_pos1 = p_x1 + (p_x2 - p_x1) &
-                  * (pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1)-block(g)%xp(i_x1))
-
-         h2 = dabs(block(g)%xp(i_x1+1) - pos1_x)
-         h1 = dabs(block(g)%xp(i_x1)   - pos1_x)
-         dpdx_e = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
-
-         h2 = dabs(block(g)%yp(i_y1+1) - pos1_y)
-         h1 = dabs(block(g)%yp(i_y1)   - pos1_y)
-         dpdy_e = (h1**2*p_y2 - h2**2*p_y1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
-
-         h2 = dabs(block(g)%zp(i_z1+1) - pos1_z)
-         h1 = dabs(block(g)%zp(i_z1)   - pos1_z)
-         dpdz_e = (h1**2*p_z2 - h2**2*p_z1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
-
-         dpdn_e = -dpdx_e*block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n))) &
-                  - dpdy_e*block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n))) &
-                  - dpdz_e*block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(n)))
+         dpdn_e =  -1 * (derivatives(1) * block(g)%cosAlpha(block(g)%nelp(block(g)%index_ts(n))) &
+                        + derivatives(2) * block(g)%cosBeta(block(g)%nelp(block(g)%index_ts(n))) &
+                        + derivatives(3) * block(g)%cosGamma(block(g)%nelp(block(g)%index_ts(n))))
 
          n1 = pt1 + sur2nodeDis
 
