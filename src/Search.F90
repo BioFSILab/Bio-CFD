@@ -883,16 +883,18 @@ blk%fluidCellCount = flcnt
 
         INTEGER(int64) :: i, j, k, g, factor, a_blk_no, b_blk_no
 
-
-        block(1)%cell_n=0
-        block(1)%cell=0
-        block(1)%cell_pr=0
+        !$acc parallel present(block)
+        block(1)%cell_n = 0
+        block(1)%cell = 0
+        block(1)%cell_pr = 0
+        !$acc end parallel
 
         DO g=1, size(intfr)
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
            factor=intfr(g)%b_msh/intfr(g)%a_msh
 
+        !$acc parallel loop collapse(3) default(present)
          DO k = 2, block(a_blk_no)%nz +1
          DO j = 2, block(a_blk_no)%ny +1
          DO i = 2, block(a_blk_no)%nx +1
@@ -924,6 +926,7 @@ blk%fluidCellCount = flcnt
         ENDDO
         ENDDO
         ENDDO
+        !$acc end parallel loop
         ENDDO
 
 
