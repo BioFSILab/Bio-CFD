@@ -26,14 +26,11 @@ module biocfd_pcor_vcor
         INTEGER(int64) :: max_nIterPcor, max_nit
         CHARACTER(len=160) :: filename1
 
-#ifdef _OPENMP
         ! For controlling OpenMP
         integer :: omp_threads
-#endif
-#ifdef _OPENACC
+        integer :: omp_thread_num
         ! For controlling OpenACC
         integer :: acc_devices
-#endif
 
           max_derrStdst=0._dp
           max_derr1=0._dp
@@ -45,6 +42,12 @@ module biocfd_pcor_vcor
           er_dudt=0.
           er_dvdt=0.
           er_dwdt=0.
+
+          ! Dummy values for omp/acc variables
+          omp_threads = 1
+          omp_thread_num = 0
+          acc_devices = 0
+
 #ifdef _OPENMP
           omp_threads = min(omp_get_max_threads(), size(block))
 #endif
@@ -87,12 +90,15 @@ module biocfd_pcor_vcor
 
         !$omp parallel num_threads(omp_threads) default(none) &
         !$omp& private(dStart, dfinish, amgxita, mstime, g) &
+        !$omp& shared(nblocks, acc_devices) firstprivate(omp_thread_num)
+
+#ifdef _OPENMP
+        omp_thread_num = omp_get_thread_num()
+#endif
+
 #ifdef _OPENACC
-        !$omp& shared(nblocks, acc_devices)
-        ! No need to mark `acc_device_default` because it is a compile time constant (parameter)
-        call acc_set_device_num(mod(omp_get_thread_num(), acc_devices), acc_device_default)
+        call acc_set_device_num(mod(omp_thread_num, acc_devices), acc_device_default)
 #else
-        !$omp& shared(nblocks)
 #endif
 
         !$omp do
