@@ -2,7 +2,9 @@ module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   ! allow(use-all) - TODO: Aim to fix this in the future
   use global
+#ifdef _OPENMP
   use omp_lib, only: omp_get_max_threads, omp_get_thread_num
+#endif
 #ifdef _OPENACC
   use openacc, only: acc_device_default, acc_get_num_devices, acc_set_device_num
 #endif
@@ -24,10 +26,14 @@ module biocfd_pcor_vcor
         INTEGER(int64) :: max_nIterPcor, max_nit
         CHARACTER(len=160) :: filename1
 
+#ifdef _OPENMP
         ! For controlling OpenMP
         integer :: omp_threads
+#endif
+#ifdef _OPENACC
         ! For controlling OpenACC
         integer :: acc_devices
+#endif
 
           max_derrStdst=0._dp
           max_derr1=0._dp
@@ -39,8 +45,9 @@ module biocfd_pcor_vcor
           er_dudt=0.
           er_dvdt=0.
           er_dwdt=0.
-
+#ifdef _OPENMP
           omp_threads = min(omp_get_max_threads(), size(block))
+#endif
 #ifdef _OPENACC
          ! Not checked, but apparently in nvfortran the default
          ! resolves to the same as `acc_device_nvidia` (see
