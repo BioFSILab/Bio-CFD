@@ -70,7 +70,6 @@ module biocfd_pcor_vcor
            block(g)%b(i,j,k)  = 0.
            block(g)%pc(i,j,k) = 0.
            block(g)%pco(i,j,k)= 0.
-
         END DO
         END DO
         END DO
