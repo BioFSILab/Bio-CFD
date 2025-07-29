@@ -1,6 +1,8 @@
 module biocfd_fine_interp_bound
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, intfr, intflines
+  use biocfd_interpolation, only: bilinear_interpolation, linear_interpolation
+
   implicit none
 
   private
@@ -18,13 +20,8 @@ SUBROUTINE fineUpdate_bd
       end subroutine fineUpdate_bd
 
         SUBROUTINE fineUpdate_pc_bd
-        REAL (dp) :: bl_intp_valx,bl_intp_valy,bl_intp_x1,bl_intp_x2,bl_intp_y1,bl_intp_y2,&
-             bl_intp_f1,bl_intp_f2,bl_intp_f3,bl_intp_f4
-        REAL (dp) :: bl_intp_valz,bl_intp_z1,bl_intp_z2
-        REAL (dp) :: bl_intp_deno, bl_intp_num, bl_intp_xtx, bl_intp_xxo, bl_intp_yty, &
-             bl_intp_yyo, bl_intp_first_term, bl_intp_second_term
-        REAL (dp) :: bl_interp_ans, bl_interp_ans1, bl_interp_ans2
 
+        REAL (dp) :: bl_interp_ans
         INTEGER(int64) :: i,j,k, varx1,varx2, vary1, vary2, tar_x, tar_y, loc_x, &
              loc_y,g, a_blk_no, b_blk_no
         INTEGER(int64) :: varz1,varz2, tar_z, loc_z
@@ -66,56 +63,31 @@ SUBROUTINE fineUpdate_bd
         loc_y=intfr(g)%py_interface_det(1,j)
         loc_z=intfr(g)%pz_interface_det(1,k)
 
+        !$acc loop collapse(3) seq
         DO tar_z=varz1,varz2
-        DO tar_y=vary1,vary2
-        DO tar_x=varx1,varx2
+          DO tar_y=vary1,vary2
+            DO tar_x=varx1,varx2
 
-                bl_intp_valx=block(b_blk_no)%xp(tar_x)
-                bl_intp_valy=block(b_blk_no)%yp(tar_y)
-                bl_intp_valz=block(b_blk_no)%zp(tar_z)
-                bl_intp_x1=block(a_blk_no)%xp(loc_x-1)
-                bl_intp_x2=block(a_blk_no)%xp(loc_x+1)
-                bl_intp_y1=block(a_blk_no)%yp(loc_y-1)
-                bl_intp_y2=block(a_blk_no)%yp(loc_y+1)
-                bl_intp_z1=block(a_blk_no)%zp(loc_z-1)
-                bl_intp_z2=block(a_blk_no)%zp(loc_z+1)
-                bl_intp_f1=block(a_blk_no)%pc(loc_x-1,loc_y-1,loc_z-1)
-                bl_intp_f2=block(a_blk_no)%pc(loc_x+1,loc_y-1,loc_z-1)
-                bl_intp_f3=block(a_blk_no)%pc(loc_x+1,loc_y+1,loc_z-1)
-                bl_intp_f4=block(a_blk_no)%pc(loc_x-1,loc_y+1,loc_z-1)
+                bl_interp_ans = trilinear_interpolation(&
+                block(b_blk_no)%xp(tar_x), block(b_blk_no)%yp(tar_y), block(b_blk_no)%zp(tar_z), &
+                loc_x, loc_y, loc_z, block(a_blk_no)%xp, block(a_blk_no)%yp, block(a_blk_no)%zp, &
+                0, block(a_blk_no)%pc &
+                )
 
-                bl_intp_deno= (bl_intp_x2-bl_intp_x1) * (bl_intp_y2-bl_intp_y1)
-                bl_intp_xtx= (bl_intp_x2 -bl_intp_valx)
-                bl_intp_xxo=(bl_intp_valx-bl_intp_x1)
-                bl_intp_yty=(bl_intp_y2-bl_intp_valy)
-                bl_intp_yyo=(bl_intp_valy-bl_intp_y1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
+                block(b_blk_no)%pc(tar_x, tar_y, tar_z) = bl_interp_ans
+                block(b_blk_no)%pco(tar_x, tar_y, tar_z) = bl_interp_ans
 
-                bl_interp_ans1=(bl_intp_num/bl_intp_deno)
-                bl_intp_f1=block(a_blk_no)%pc(loc_x-1,loc_y-1,loc_z+1)
-                bl_intp_f2=block(a_blk_no)%pc(loc_x+1,loc_y-1,loc_z+1)
-                bl_intp_f3=block(a_blk_no)%pc(loc_x+1,loc_y+1,loc_z+1)
-                bl_intp_f4=block(a_blk_no)%pc(loc_x-1,loc_y+1,loc_z+1)
-                bl_intp_first_term=(bl_intp_f1*bl_intp_xtx + bl_intp_f2*bl_intp_xxo)*bl_intp_yty
-                bl_intp_second_term=(bl_intp_f4*bl_intp_xtx + bl_intp_f3*bl_intp_xxo)*bl_intp_yyo
-                bl_intp_num= bl_intp_first_term + bl_intp_second_term
-                bl_interp_ans2=(bl_intp_num/bl_intp_deno)
-                bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*((bl_interp_ans2 - &
-                     bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
-                block(b_blk_no)%pc(tar_x,tar_y,tar_z)=bl_interp_ans
-                block(b_blk_no)%pco(tar_x,tar_y,tar_z)=bl_interp_ans
-                ENDDO
-                ENDDO
-                ENDDO
+            ENDDO
+          ENDDO
+        ENDDO
 
         ENDDO
         ENDDO
         ENDDO
+        !$acc end parallel loop
+
 
      end do  ! axes loop
-
         ENDDO
 
 
@@ -723,4 +695,63 @@ SUBROUTINE fineUpdate_bd
         end do  ! axes
 
         end subroutine fineUpdate_bd_mv
+
+      !> Perform trilinear interpolation. Implemented as two bilinear
+      !> intepolations followed by a linear interpolation of the
+      !> results. See
+      !> https://en.wikipedia.org/wiki/Trilinear_interpolation.
+      !>
+      !> WARNING: that this lives in this module and not in the
+      !> Interpolation module as it contains some specific logic for
+      !> this module, namely the grid indices
+      pure function trilinear_interpolation(x, y, z, i, j, k, xgrid, ygrid, zgrid, offset, var) &
+           result(out)
+
+        !> The target position of the trilinear interpolation
+        real(dp), intent(in) :: x, y, z
+        !> Indices used to determine the grid locations
+        integer(int64), intent(in) :: i, j, k
+        !> The grids
+        real(dp), intent(in), dimension(:) :: xgrid, ygrid, zgrid
+        !> The offset value changes depending on whether we are computing p, u, v, or w
+        !> p=0, u=1, v=2, w=3
+        integer, intent(in) :: offset
+        !> The variable that is to be interpolated
+        real(dp), intent(in), dimension(:, :, :) :: var
+
+        !> The interpolated result
+        real(dp) :: out
+        ! Intermediate results used in the calculation
+        real(dp) :: z1, z2
+
+        ! Indices used to determine the variable indices after offsets
+        integer :: vi, vj, vk
+
+        vi = i
+        vj = j
+        vk = k
+
+        ! Set the indices appropiately
+        if (offset == 0) then
+           ! Leave everything as is
+        else if (offset == 1) then
+           vi = i - 1
+        else if (offset == 2) then
+           vj = j - 1
+        else if (offset == 3) then
+           vk = k - 1
+        else
+           ! Anything else is an error, but how to handle it?
+        end if
+
+        z1 = bilinear_interpolation(x, y, xgrid(i-1), xgrid(i+1), ygrid(j-1), ygrid(j+1), &
+                                   [var(vi-1, vj-1, vk-1), var(vi+1, vj-1, vk-1), &
+                                   var(vi-1, vj+1, vk-1), var(vi+1, vj+1, vk-1)])
+
+        z2 = bilinear_interpolation(x, y, xgrid(i-1), xgrid(i+1), ygrid(j-1), ygrid(j+1), &
+                                   [var(vi-1, vj-1, vk+1), var(vi+1, vj-1, vk+1), &
+                                   var(vi-1, vj+1, vk+1), var(vi+1, vj+1, vk+1)])
+
+        out = linear_interpolation(z, zgrid(k-1), zgrid(k+1), z1, z2)
+      end function trilinear_interpolation
 end module biocfd_fine_interp_bound
