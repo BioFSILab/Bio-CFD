@@ -70,10 +70,6 @@ module biocfd_search
         bdy=15*dxmin
         angt  =  2._dp*pi*bdfr
 
-        ac_x_al=0.
-        ac_y_al=0.
-        at_x_al=0.
-        at_y_al=0.
         ac_x=0.
         ac_y=0.
         ac_z=0.
