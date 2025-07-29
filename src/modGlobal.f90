@@ -112,7 +112,7 @@ MODULE global
 
        end type Blocks
        !at_x unused, but every other variable used below
-       REAL(dp) :: ac_x_al, ac_y_al, at_x_al, at_y_al, ac_x, ac_y, ac_z, at_x, at_y ,at_z
+       REAL(dp) :: ac_x, ac_y, ac_z, at_x, at_y, at_z
 
         type Interfaces
 
