@@ -97,7 +97,6 @@ module biocfd_pcor_vcor
 
 #ifdef _OPENACC
         call acc_set_device_num(mod(omp_thread_num, acc_devices), acc_device_default)
-#else
 #endif
 
         !$omp do
