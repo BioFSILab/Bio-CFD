@@ -233,22 +233,22 @@ contains
 
     if (.not. dataset_exists) then
       ! Create dataset if it doesn't exist already
-      call h5dcreate_f(group_id,key,H5T_NATIVE_INTEGER,dspace_id,dset_id,error)
+      call h5dcreate_f(group_id,key,H5T_STD_I64LE,dspace_id,dset_id,error)
     end if
 
     if (present(array_input_1d)) then
       ! Write to dataset
-      call h5dwrite_f(dset_id,H5T_NATIVE_INTEGER,array_input_1d,data_dims,error)
+      call h5dwrite_f(dset_id,H5T_STD_I64LE,array_input_1d,data_dims,error)
     end if
 
     if (present(array_input_2d)) then
       ! Write to dataset
-      call h5dwrite_f(dset_id,H5T_NATIVE_INTEGER,array_input_2d,data_dims,error)
+      call h5dwrite_f(dset_id,H5T_STD_I64LE,array_input_2d,data_dims,error)
     end if
 
     if (present(array_input_3d)) then
       ! Write to dataset
-       call h5dwrite_f(dset_id,H5T_NATIVE_INTEGER,array_input_3d,data_dims,error)
+       call h5dwrite_f(dset_id,H5T_STD_I64LE,array_input_3d,data_dims,error)
     end if
 
     ! Close dataset
