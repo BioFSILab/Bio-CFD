@@ -1,3 +1,4 @@
+#if USE_HDF5 == 1
 module biocfd_hdf5_io
   use, intrinsic :: iso_fortran_env, only: dp => real64, int8,int16,int32,int64
   ! allow(use-all) - TODO: Aim to fix this in the future
@@ -263,3 +264,4 @@ contains
 
   end subroutine hdf5_write_int
 end module biocfd_hdf5_io
+#endif
