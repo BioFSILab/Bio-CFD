@@ -104,7 +104,6 @@ MODULE global
        INTEGER (int64) :: cpy_z_start, cpy_z_end
        REAL (dp) :: theta, thetaDot, thetaDDot, piv_x,piv_y, piv_z
        REAL (dp) :: alphaDot, alphaDDot, thetaDot1, thetaDDot1, thetaDot2, thetaDDot2
-       REAL (dp), ALLOCATABLE, DIMENSION (:) :: xp_dum, yp_dum, zp_dum
 
 
        end type Blocks

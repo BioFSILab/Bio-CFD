@@ -1391,9 +1391,6 @@ block(g)%fluidCellCount = flcnt
         ENDDO
         ENDDO
         ENDDO
-        block(b_blk_no)%xp_dum=block(b_blk_no)%xp
-        block(b_blk_no)%yp_dum=block(b_blk_no)%yp
-        block(b_blk_no)%zp_dum=block(b_blk_no)%zp
         endif
 
         ENDDO

@@ -167,10 +167,7 @@ module biocfd_read_input
                      block(i)%zw(block(i)%nz+3),&
                      block(i)%xp(block(i)%nx+2), &
                      block(i)%yp(block(i)%ny+2), &
-                     block(i)%zp(block(i)%nz+2),&
-                     block(i)%xp_dum(block(i)%nx+2), &
-                     block(i)%yp_dum(block(i)%ny+2), &
-                     block(i)%zp_dum(block(i)%nz+2))
+                     block(i)%zp(block(i)%nz+2))
 
           block(i)%cintp=3
             END DO
