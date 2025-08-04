@@ -6,6 +6,7 @@ auto-executables = true
 auto-tests = true
 auto-examples = true
 external-modules = ["hdf5"]
+link = ["hdf5", "hdf5_fortran"]
 
 [preprocess]
 cpp.suffixes = ["f90"]
