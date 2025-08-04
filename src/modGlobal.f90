@@ -59,9 +59,6 @@ MODULE global
                                                       ufl,vfl,wfl,  &
                                                       resi_u, resi_v, resi_w
 
-        REAL(sp) , ALLOCATABLE, DIMENSION (:, :, :) :: xp1, yp1, zp1
-        REAL(sp) , ALLOCATABLE, DIMENSION (:, :, :) :: xpn1, ypn1, zpn1
-
         INTEGER (int64), ALLOCATABLE, DIMENSION (:, :) :: fluidIndexPtr, redCellIndexPtr, &
                                                           blackCellIndexPtr, nodeId
         INTEGER(int64) :: ibCellCount, solidCellCount, fluidCellCount, redCellCount, &
