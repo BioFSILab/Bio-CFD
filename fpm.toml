@@ -6,12 +6,10 @@ auto-executables = true
 auto-tests = true
 auto-examples = true
 external-modules = ["hdf5"]
-link = ["hdf5", "hdf5_fortran"]
 
 [preprocess]
-cpp.suffixes = ["F90", "f90"]
-cpp.directories = ["src/"]
-cpp.macros = ["USE_HDF5=0"]
+cpp.suffixes = ["f90"]
+cpp.macros = ["USE_HDF5=1"]
 
 [install]
 library = false
