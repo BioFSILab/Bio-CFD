@@ -11,7 +11,7 @@ module biocfd_read_input
   contains
 
       SUBROUTINE readInput
-       INTEGER (int64) :: i, j , k , g, nx_var, ny_var, nz_var
+       INTEGER (int64) :: i, g, nx_var, ny_var, nz_var
         CHARACTER(len=160)  :: filename1
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
        !     not dependent on diff for checking code changes don't break code
