@@ -1459,31 +1459,6 @@ block(g)%fluidCellCount = flcnt
            block(g)%zv(i) = block(g)%zu(i)
            block(g)%zp(i) = block(g)%zu(i)
         END DO
-        DO k=1,block(g)%nz+1
-        DO j=1,block(g)%ny+1
-        DO i=1,block(g)%nx+1
-
-        block(g)%xpn1(i,j,k)=block(g)%x1(i)
-        block(g)%ypn1(i,j,k)=block(g)%y1(j)
-        block(g)%zpn1(i,j,k)=block(g)%z1(k)
-
-
-        END DO
-        END DO
-        END DO
-
-        DO k=2,block(g)%nz+1
-        DO j=2,block(g)%ny+1
-        DO i=2,block(g)%nx+1
-
-        block(g)%xp1(i,j,k)=block(g)%xp(i)
-        block(g)%yp1(i,j,k)=block(g)%yp(j)
-        block(g)%zp1(i,j,k)=block(g)%zp(k)
-
-
-        END DO
-        END DO
-        END DO
 
         ENDIF
 

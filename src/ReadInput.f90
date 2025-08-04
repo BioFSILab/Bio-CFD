@@ -172,12 +172,6 @@ module biocfd_read_input
                      block(i)%yp_dum(block(i)%ny+2), &
                      block(i)%zp_dum(block(i)%nz+2))
 
-          ALLOCATE ( block(i)%xp1(nx_var+2,ny_var+2,nz_var+2) )
-          ALLOCATE ( block(i)%yp1(nx_var+2,ny_var+2,nz_var+2) )
-          ALLOCATE ( block(i)%zp1(nx_var+2,ny_var+2,nz_var+2) )
-          ALLOCATE ( block(i)%xpn1(nx_var+2,ny_var+2,nz_var+2) )
-          ALLOCATE ( block(i)%ypn1(nx_var+2,ny_var+2,nz_var+2) )
-          ALLOCATE ( block(i)%zpn1(nx_var+2,ny_var+2,nz_var+2) )
           block(i)%cintp=3
             END DO
 
@@ -308,36 +302,6 @@ module biocfd_read_input
             block(g)%zp(i) = block(g)%zu(i)
           END DO
         ENDDO
-        DO g=1,nblocks
-
-        DO k=1,block(g)%nz+1
-        DO j=1,block(g)%ny+1
-        DO i=1,block(g)%nx+1
-
-        block(g)%xpn1(i,j,k)=block(g)%x1(i)
-        block(g)%ypn1(i,j,k)=block(g)%y1(j)
-        block(g)%zpn1(i,j,k)=block(g)%z1(k)
-
-
-        END DO
-        END DO
-        END DO
-        END DO
-
-        DO g=1,nblocks
-        DO k=2,block(g)%nz+1
-        DO j=2,block(g)%ny+1
-        DO i=2,block(g)%nx+1
-
-        block(g)%xp1(i,j,k)=block(g)%xp(i)
-        block(g)%yp1(i,j,k)=block(g)%yp(j)
-        block(g)%zp1(i,j,k)=block(g)%zp(k)
-
-
-        END DO
-        END DO
-        END DO
-        END DO
 
       END SUBROUTINE readInput
 
