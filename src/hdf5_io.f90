@@ -1,3 +1,6 @@
+! FPM resolves which modules need to be compiled before any
+! preprocessing so we need this guard here to make sure this file is
+! effectively empty
 #if USE_HDF5 == 1
 module biocfd_hdf5_io
   use, intrinsic :: iso_fortran_env, only: dp => real64, int8,int16,int32,int64
