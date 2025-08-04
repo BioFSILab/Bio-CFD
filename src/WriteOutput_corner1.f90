@@ -2,7 +2,9 @@ module biocfd_write_output_corner1
   use, intrinsic :: iso_fortran_env, only: dp => real64, int8,int16,int32,int64
   ! allow(use-all) - TODO: Aim to fix this in the future
   use global
+#if USE_HDF5 == 1
   use biocfd_hdf5_io, only: hdf5_write_real, hdf5_write_int
+#endif
   implicit none
 
   private

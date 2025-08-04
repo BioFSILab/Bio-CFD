@@ -2,22 +2,17 @@ module biocfd_hdf5_io
   use, intrinsic :: iso_fortran_env, only: dp => real64, int8,int16,int32,int64
   ! allow(use-all) - TODO: Aim to fix this in the future
   use global
-#if USE_HDF5 == 1
   use hdf5, only: hsize_t, hid_t, h5open_f, h5fopen_f, h5fcreate_f, h5lexists_f, &
        h5gcreate_f, h5gopen_f, h5screate_f, h5screate_simple_f, h5dcreate_f, &
        h5dwrite_f, h5dclose_f, h5sclose_f, h5gclose_f, h5fclose_f, h5close_f, &
        h5F_acc_rdwr_f, H5S_SCALAR_F, H5T_STD_I64LE, h5f_acc_excl_f, h5t_native_double
-#endif
   implicit none
 
   private
 
-#if USE_HDF5 == 1
   public :: hdf5_write_real, hdf5_write_int
-#endif
 contains
 
-#if USE_HDF5 == 1
   subroutine hdf5_write_real(filename,scalar_input,&
                              array_input_1d,array_input_2d,array_input_3d,key,group)
 
@@ -267,5 +262,4 @@ contains
     call h5close_f(error)
 
   end subroutine hdf5_write_int
-#endif
 end module biocfd_hdf5_io
