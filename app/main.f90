@@ -58,7 +58,6 @@
         CALL coefficientMatrix
         CALL non_uni_coeff
         totime = totime + deltat
-        st_flag=0
         CALL write_output
         coarse_flcnt_check=0
         print*, 'adam'

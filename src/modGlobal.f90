@@ -5,25 +5,21 @@ MODULE global
        IMPLICIT NONE
        CHARACTER (LEN = 128) :: line
        CHARACTER (LEN = 3)   :: char_f
-       INTEGER               :: istart, id1, st_flag
+       INTEGER               :: istart
        INTEGER (int64)   :: itamax, pcItaMax,amgxita,      &
-                                ita, nIterPcor, nc, ita1, ital,ita2,    &
-                                sumIterPc,itaSola, totIterPc, inor,blk_start, coarse_flcnt_check
-       REAL (dp)        :: lx, ly, dt_order,  &
+                                ita, nIterPcor, ita1,ita2,    &
+                                inor,blk_start, coarse_flcnt_check
+       REAL (dp)        ::      dt_order,  &
                                 omega,omega1,omega2,omega3,omega4,  &
-                                deltx2, delty2,  deltz2, dxmin, &
+                                dxmin, &
                                 freq, &
-                                u0, v0, w0, p0,Uavg,  &
-                                eps1, epsi, epsDiv, re, rev, divmax,   &
-                                fx, fy,  alpha, pct, pct1, &
+                                u0, v0, w0, &
+                                epsi, re, rev, &
+                                alpha, &
                                 xfact,deltat, coupTime,totime, totalTime, dfinish, dstart, &
-                                solverTime, pi , msTime, mindx, al, uc
+                                solverTime, pi , msTime, al, uc
 
-       REAL (dp)       :: p_new1, p_new2, p_final, u_new, v_new, w_new
-       REAL (dp)       :: alpha_m, theta_m, alpha_m1, theta_m1, mu_f, rho_f, l_c, u_tip, lwing, disp
-       !!!variables for Orlanski multiple outlet
-       REAL (dp)       :: y11, y12, z11, z12, y21, y22, z21, z22, uc11, uc22
-
+       REAL (dp)       :: alpha_m, theta_m, alpha_m1, theta_m1, mu_f, rho_f, l_c, u_tip, disp
 
         INTEGER (int64) ::nblocks, intflines
 
@@ -63,9 +59,6 @@ MODULE global
                                                       ufl,vfl,wfl,  &
                                                       resi_u, resi_v, resi_w
 
-        REAL(sp) , ALLOCATABLE, DIMENSION (:, :, :) :: xp1, yp1, zp1
-        REAL(sp) , ALLOCATABLE, DIMENSION (:, :, :) :: xpn1, ypn1, zpn1
-
         INTEGER (int64), ALLOCATABLE, DIMENSION (:, :) :: fluidIndexPtr, redCellIndexPtr, &
                                                           blackCellIndexPtr, nodeId
         INTEGER(int64) :: ibCellCount, solidCellCount, fluidCellCount, redCellCount, &
@@ -90,45 +83,32 @@ MODULE global
                                                 v2_ghost, v2t_ghost, w2_ghost, &
                                                 w2t_ghost, u1_ghost, u1t_ghost, &
                                                 v1_ghost, v1t_ghost, w1_ghost, w1t_ghost
-       INTEGER (int64):: ibElemCnt, ibElemCntSt
-       INTEGER (int64), ALLOCATABLE, DIMENSION (:,:) :: Elemcell, ucell, vcell, wcell, pcell
-       REAL (dp), ALLOCATABLE, DIMENSION (:) :: areaElem
-       REAL (dp), ALLOCATABLE, DIMENSION (:,:) :: stressElem
-       REAL(dp) :: modStressNode, modSIGNWSS
 
-       REAL (dp) :: u_init, u_final, v_init, v_final, w_init, w_final, &
-                    Total_Force_X, Total_Force_Y, Total_Force_Z
+       REAL (dp) :: u_init, u_final, v_init, v_final, w_init, w_final
 
-       INTEGER (int64), ALLOCATABLE, DIMENSION (:) :: ibNodeId, ibSurfId,ibElP1, ibElP2, ibElP3, &
-                                                      index_ts
-       REAL (dp), ALLOCATABLE, DIMENSION (:) :: xnode, ynode,  znode, xnode1, ynode1, znode1, bcSurf
+       INTEGER (int64), ALLOCATABLE, DIMENSION (:) ::  ibSurfId,ibElP1, ibElP2, ibElP3
+       INTEGER (int64), ALLOCATABLE, DIMENSION (:) :: ibNodeId,index_ts
+       !xnode1 not used
+       REAL (dp), ALLOCATABLE, DIMENSION (:) :: xnode, ynode,  znode, ynode1, znode1
+       REAL (dp), ALLOCATABLE, DIMENSION (:) :: xnode1
        INTEGER (int64) :: ibElems, ibNodes
-       INTEGER (int64) :: tp_pt,bt_pt,lt_pt,rt_pt
        INTEGER (int64) :: move_check, move_amty, move_amtx,move_amtz,blk_mv_tag
-       REAL (dp) :: xshift_move,yshift_move,zshift_move
-       REAL (dp) :: u_prev,u_curr,v_prev,v_curr,w_prev,w_curr,Total_VP_FY,Total_VP_FX
-       REAL (dp) :: rhof, rhop, accn_g, volp, massp,Total_FY,accnp_Y,ymove,ypos
-       REAL (dp) :: Total_FX,accnp_X,xmove,xpos, zmove,zpos
-       REAL (dp) :: Total_V_Fy, Total_P_Fy, Total_V_Fx,Total_P_Fx
+       REAL(dp) :: ymove,ypos,u_prev,u_curr,v_prev,v_curr,w_prev,w_curr,total_vp_fx,total_vp_fy
+       !zpos not used
+       REAL (dp) :: xmove,xpos, zmove,zpos
        REAL (dp) :: inity_cent, initx_cent, nxty_cent,nxtx_cent
        REAL (dp) :: initz_cent,nxtz_cent
        INTEGER (int64) :: cpy_x_start_mv, cpy_x_end_mv, cpy_y_start_mv, cpy_y_end_mv
        INTEGER (int64) :: cpy_z_start_mv, cpy_z_end_mv
        INTEGER (int64) :: cpy_x_start, cpy_x_end, cpy_y_start, cpy_y_end
        INTEGER (int64) :: cpy_z_start, cpy_z_end
-       REAL (dp) :: theta, thetaDot, thetaDDot, piv_x,piv_y, piv_z, theta_i, thetaDot_i, &
-                    theta2, theta2Dot, theta2DDot, piv2_x, piv2_y, piv2_z,theta2_i, theta2Dot_i, &
-                    alphaDot, alphaDDot,ac_x_al, ac_y_al, at_x_al, at_y_al, &
-                    aoa, thetaDot1, thetaDDot1, thetaDot2, thetaDDot2
-       REAL (dp), ALLOCATABLE, DIMENSION (:) :: xp_dum, yp_dum, zp_dum
+       REAL (dp) :: theta, thetaDot, thetaDDot, piv_x,piv_y, piv_z
+       REAL (dp) :: alphaDot, alphaDDot, thetaDot1, thetaDDot1, thetaDot2, thetaDDot2
 
 
        end type Blocks
-       REAL(dp), ALLOCATABLE, DIMENSION (:) :: INSTWSS, SUMWSS, SQSUMWSS
-       REAL(dp), ALLOCATABLE, DIMENSION (:,:) :: SIGNWSS
-       REAL(dp), ALLOCATABLE, DIMENSION(:):: TAWSS, OSI, RRT,WSSRMS
-       REAL(dp), ALLOCATABLE, DIMENSION(:,:):: Afnode, stressNode, Anode
-       REAL(dp) :: ac_x_al, ac_y_al, at_x_al, at_y_al, ac_x, ac_y, ac_z, at_x, at_y ,at_z
+       !at_x unused, but every other variable used below
+       REAL(dp) :: ac_x, ac_y, ac_z, at_x, at_y, at_z
 
         type Interfaces
 
@@ -146,36 +126,12 @@ MODULE global
         INTEGER(int64) :: counterxu,counteryu,counterxp,counteryp,counterxv,counteryv
         INTEGER(int64) :: counterxw,counteryw
         INTEGER(int64) :: counterzu,counterzp,counterzv, counterzw
-        INTEGER(int64) :: cpx_start, cpy_start,cpx_end, cpy_end
-        INTEGER(int64) :: cux_start, cuy_start,cux_end, cuy_end
-        INTEGER(int64) :: cvx_start, cvy_start,cvx_end, cvy_end
-        INTEGER(int64) :: ccellx_start, ccelly_start,ccellx_end, ccelly_end
-        INTEGER(int64) :: fvx_start, fvy_start
-        INTEGER(int64) :: fpx_start, fpy_start
-        INTEGER(int64) :: fux_start, fuy_start
-        INTEGER(int64) :: fcellx_start, fcelly_start
         end type Interfaces
 
         type(Blocks),allocatable ::block(:)
         type(Interfaces),allocatable ::intfr(:)
 
-
-      REAL (dp) :: d_fine_x1, d_fine_y1, d_coarse_x1, d_coarse_y1, d_val_x1, d_val_y1, &
-                   d_fine_frac, d_coarse_frac
-      REAL (dp) :: l_intp_valx, l_intp_x1,l_intp_x2,l_intp_y1, l_intp_y2, l_intp_valy
-
-
-       INTEGER(int64)  :: nfl_blk
-       INTEGER(int64),ALLOCATABLE,DIMENSION(:) :: fl_blk
-
-       ! ibm variables
-       INTEGER  :: bcType
-       REAL (dp)    :: aoa, piv_pt, var_surf, aoa1
-       REAL (dp)    :: phase_angle, aoa2, a0y, ang_theta, alpha_t, theta_t
+       REAL (dp)    :: phase_angle,a0y,aoa,piv_pt, aoa1,aoa2,ang_theta, alpha_t, theta_t
        INTEGER (int64)   :: surGeoPoints
-
-        !amgx
-        INTEGER (int32) :: nnz_max,nu_max
-        type(c_ptr)::cptr_crs,cptr_data,cptr_col,cptr_row,cptr_rhs,cptr_sol,cptr_nit, cptr_nit1
-        INTEGER(int32) ::init_stat,dest_stat,solve_stat,amgx_checker
 END MODULE global
+
