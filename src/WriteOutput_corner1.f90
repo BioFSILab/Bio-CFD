@@ -25,6 +25,7 @@ contains
        character (len=11) :: dummy_1
        character (len=5) ::dummy_2
 
+         IF((mod(ita,200_int64) ==0 .or. ita <= 2 ))then
          do g=1,nblocks
             write(dummy_1,'(A6,I5.5)') 'block_',g
             write(dummy_2,'(I5.5)') ita
