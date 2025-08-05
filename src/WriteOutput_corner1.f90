@@ -72,6 +72,7 @@ contains
                                 array_input_3d=block(g)%cell_pr,key='cell_pr',group=dummy_1)
             deallocate(u1,v1,w1)
          end do
+        ENDIF
        END SUBROUTINE write_output_hdf5
 #else
       SUBROUTINE write_output_ascii
