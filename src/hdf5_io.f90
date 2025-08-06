@@ -4,8 +4,6 @@
 #if USE_HDF5 == 1
 module biocfd_hdf5_io
   use, intrinsic :: iso_fortran_env, only: dp => real64, int8,int16,int32,int64
-  ! allow(use-all) - TODO: Aim to fix this in the future
-  use global
   use hdf5, only: hsize_t, hid_t, h5open_f, h5fopen_f, h5fcreate_f, h5lexists_f, &
        h5gcreate_f, h5gopen_f, h5screate_f, h5screate_simple_f, h5dcreate_f, &
        h5dwrite_f, h5dclose_f, h5sclose_f, h5gclose_f, h5fclose_f, h5close_f, &
