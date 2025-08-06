@@ -5,6 +5,7 @@ module biocfd_pcor_vcor
   use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_bd, fineUpdate_pc_bd
   use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
   use biocfd_boundary_conditions, only : velocityBC
+  use biocfd_blocks, only : block
   implicit none
   private
 

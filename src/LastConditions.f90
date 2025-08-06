@@ -2,6 +2,7 @@ module biocfd_last_conditions
   use iso_fortran_env, only : dp => real64
   ! allow(use-all) - TODO: Aim to fix this in the future
   use global
+  use biocfd_blocks, only : block
   implicit none
   private
 
