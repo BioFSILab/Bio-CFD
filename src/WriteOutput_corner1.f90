@@ -29,15 +29,15 @@ contains
          do g=1,nblocks
             write(dummy_1,'(A6,I5.5)') 'block_',g
             write(dummy_2,'(I5.5)') ita
-            allocate(u1(2:block(g)%nz+1,2:block(g)%ny+1,2:block(g)%nx+1),&
-                     v1(2:block(g)%nz+1,2:block(g)%ny+1,2:block(g)%nx+1),&
-                     w1(2:block(g)%nz+1,2:block(g)%ny+1,2:block(g)%nx+1))
+            allocate(u1(2:block(g)%nx+1,2:block(g)%ny+1,2:block(g)%nz+1),&
+                     v1(2:block(g)%nx+1,2:block(g)%ny+1,2:block(g)%nz+1),&
+                     w1(2:block(g)%nx+1,2:block(g)%ny+1,2:block(g)%nz+1))
             DO k = 2, block(g)%nz+1
             DO j = 2, block(g)%ny+1
             DO i = 2, block(g)%nx+1
-               u1(k,j,i) = 0.5_dp*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))
-               v1(k,j,i) = 0.5_dp*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
-               w1(k,j,i) = 0.5_dp*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
+               u1(i,j,k) = 0.5_dp*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))
+               v1(i,j,k) = 0.5_dp*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
+               w1(i,j,k) = 0.5_dp*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
             END DO
             END DO
             END DO
