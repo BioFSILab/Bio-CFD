@@ -55,7 +55,11 @@ jobs:
       - uses: fortran-lang/setup-fpm@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-  
+
+      - run: |
+          # Install hdf5 dependency
+          sudo apt install libhdf5-dev
+
       - run: |
           # Build and test code using FPM
           fpm test
