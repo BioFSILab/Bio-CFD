@@ -81,7 +81,7 @@
         CALL body_plot
         DO g=blk_start, nblocks
            DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent,block(g)%cosAlpha, &
-                block(g)%cosBeta, block(g)%cosGamma,block(g)%alpha3,block(g)%beta3, block(g)%gamma3)
+                block(g)%cosBeta, block(g)%cosGamma)
             block(g)%blk_mv_tag=0.
         END DO
         print *,10
