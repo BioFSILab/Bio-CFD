@@ -245,9 +245,7 @@ module biocfd_search
         ALLOCATE (block(g)%xcent(block(g)%ibElems), block(g)%ycent(block(g)%ibElems), &
                   block(g)%zcent(block(g)%ibElems), &
                   block(g)%cosAlpha(block(g)%ibElems), block(g)%cosBeta(block(g)%ibElems), &
-                  block(g)%cosGamma(block(g)%ibElems), &
-                  block(g)%alpha3(block(g)%ibElems), block(g)%beta3(block(g)%ibElems), &
-                  block(g)%gamma3(block(g)%ibElems))
+                  block(g)%cosGamma(block(g)%ibElems))
 
         !compute centroid and direction cosines
        !$acc parallel loop gang vector default(present) private (var_xcent, var_ycent, var_zcent,p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL)  firstprivate (inor)
@@ -276,10 +274,6 @@ module biocfd_search
            block(g)%cosAlpha(n) = (p2y-p1y)*(p3z-p1z)-(p3y-p1y)*(p2z-p1z)
            block(g)%cosBeta(n)  = (p2z-p1z)*(p3x-p1x)-(p3z-p1z)*(p2x-p1x)
            block(g)%cosGamma(n) = (p2x-p1x)*(p3y-p1y)-(p3x-p1x)*(p2y-p1y)
-
-           block(g)%alpha3(n) = block(g)%cosAlpha(n)
-           block(g)%beta3(n)  = block(g)%cosBeta(n)
-           block(g)%gamma3(n) = block(g)%cosGamma(n)
 
            lenEL = dsqrt(block(g)%cosAlpha(n)**2 + block(g)%cosBeta(n)**2 + block(g)%cosGamma(n)**2)   !length of element
 
