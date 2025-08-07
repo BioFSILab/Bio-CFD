@@ -1,7 +1,9 @@
 module biocfd_search
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64, int32
-  ! allow(use-all) - TODO: Aim to fix this in the future
-  use global
+  use global, only: block, nblocks, blk_start, xfact, totime, theta_t, &
+       theta_m, piv_pt, pi, phase_angle, ita, dxmin, deltat, aoa2, aoa1, aoa, &
+       ang_theta, alpha_t, alpha_m, ac_z, ac_y, ac_x, a0y, re, freq, inor, char_f, &
+       intflines, coarse_flcnt_check, intfr
   use biocfd_fine_interp, only: fineUpdate_mv
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
   implicit NONE
