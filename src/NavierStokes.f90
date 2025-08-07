@@ -1,6 +1,6 @@
 module biocfd_navier_stokes
   use, intrinsic :: iso_fortran_env, only: dp => real64
-  use global, only : block, al, alpha, deltat, nblocks, re
+  use global, only : block, al, alpha, deltat, nblocks, re, rev
   implicit none
   private
 
