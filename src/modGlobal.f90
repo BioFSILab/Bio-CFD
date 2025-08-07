@@ -2,6 +2,7 @@
 MODULE global
        use, intrinsic :: iso_fortran_env, only: dp => real64, sp => real32, int32, int64
        use iso_c_binding,only :c_int,c_double,c_loc,c_ptr
+       use biocfd_blocks,only : Blocks
        IMPLICIT NONE
        CHARACTER (LEN = 128) :: line
        CHARACTER (LEN = 3)   :: char_f
