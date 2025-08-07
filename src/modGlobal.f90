@@ -26,7 +26,6 @@ MODULE global
        !at_x unused, but every other variable used below
        REAL(dp) :: ac_x, ac_y, ac_z, at_x, at_y, at_z
 
-       type(Blocks),allocatable :: block(:)
         type Interfaces
 
         INTEGER(int64), ALLOCATABLE, DIMENSION (:,:) :: px_interface_det, ux_interface_det, &
@@ -45,6 +44,7 @@ MODULE global
         INTEGER(int64) :: counterzu,counterzp,counterzv, counterzw
         end type Interfaces
 
+        type(Blocks),allocatable ::block(:)
         type(Interfaces),allocatable ::intfr(:)
 
        REAL (dp)    :: phase_angle,a0y,aoa,piv_pt, aoa1,aoa2,ang_theta, alpha_t, theta_t
