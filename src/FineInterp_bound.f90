@@ -1,7 +1,6 @@
 module biocfd_fine_interp_bound
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  ! allow(use-all) - TODO: Aim to fix this in the future
-  use global
+  use global, only : block, intfr, intflines
   implicit none
 
   private

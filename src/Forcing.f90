@@ -1,7 +1,6 @@
 module biocfd_forcing
   use, intrinsic :: iso_fortran_env, only: dp => real64
-  ! allow(use-all) - TODO: Aim to fix this in the future
-  use global
+  use global, only : block, blk_start, nblocks, ac_y, ac_z, at_y, at_z
   use biocfd_interpolation, only: linear_interpolation, bilinear_interpolation
   implicit none
 
