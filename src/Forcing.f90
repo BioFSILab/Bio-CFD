@@ -3,7 +3,6 @@ module biocfd_forcing
   ! allow(use-all) - TODO: Aim to fix this in the future
   use global
   use biocfd_interpolation, only: linear_interpolation, bilinear_interpolation
-  use biocfd_blocks, only : block
   implicit none
 
   private

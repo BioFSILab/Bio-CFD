@@ -1,10 +1,9 @@
 MODULE biocfd_blocks
        use, intrinsic :: iso_fortran_env, only: dp => real64, int32, int64
-       use iso_c_binding,only :c_int,c_double,c_loc,c_ptr
        IMPLICIT NONE
        private
 
-       public :: block
+       public :: Blocks
 
         type Blocks
            REAL(dp) ::  dx,dy, dz,ypth1, ypth2, xpth1, xpth2, xchg,ychg, yt, ydot, yddot,&
@@ -90,6 +89,6 @@ MODULE biocfd_blocks
 
 
     end type Blocks
-    type(Blocks),allocatable :: block(:)
+
 END MODULE biocfd_blocks
 

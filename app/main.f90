@@ -25,7 +25,6 @@
 #endif
         use biocfd_forcing, only: pressureForcing1, pressureforcingfield, pressureforcingghost, &
              velocityforcing1, velocityforcingfield, velocityforcingghost
-        use biocfd_blocks, only : block
         IMPLICIT NONE
 
         INTEGER (int64) :: g

@@ -3,9 +3,7 @@ module biocfd_allocate_arrays
     !  the program. Note that not all of the arrays are allocated
     !  here, several are allocated in other subroutines
     use, intrinsic :: iso_fortran_env, only: int64
-    ! allow(use-all) - TODO: Aim to fix this in the future
-    use global
-    use biocfd_blocks, only : block
+    use global, only : block
     implicit none
     private
 

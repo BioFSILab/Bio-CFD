@@ -2,7 +2,6 @@ module biocfd_read_input
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   ! allow(use-all) - TODO: Aim to fix this in the future
   use global
-  use biocfd_blocks, only : block
   implicit none
 
   private
@@ -28,7 +27,7 @@ module biocfd_read_input
                    surGeoPoints,a0y, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
                    istart, dt_order, inor, dxmin
         CLOSE(60)
-        allocate(block(nblocks))
+        allocate(Blocks :: block(nblocks))
         allocate(Interfaces :: intfr(intflines))
         allocate(xstart_temp(nblocks),xend_temp(nblocks),&
         ystart_temp(nblocks),yend_temp(nblocks),&
