@@ -1,7 +1,9 @@
 module biocfd_search
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64, int32
-  ! allow(use-all) - TODO: Aim to fix this in the future
-  use global
+  use global, only: block, nblocks, blk_start, xfact, totime, theta_t, &
+       theta_m, piv_pt, pi, phase_angle, ita, dxmin, deltat, aoa2, aoa1, aoa, &
+       ang_theta, alpha_t, alpha_m, ac_z, ac_y, ac_x, a0y, re, freq, inor, char_f, &
+       intflines, coarse_flcnt_check, intfr
   use biocfd_fine_interp, only: fineUpdate_mv
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
   implicit NONE
@@ -70,10 +72,6 @@ module biocfd_search
         bdy=15*dxmin
         angt  =  2._dp*pi*bdfr
 
-        ac_x_al=0.
-        ac_y_al=0.
-        at_x_al=0.
-        at_y_al=0.
         ac_x=0.
         ac_y=0.
         ac_z=0.
@@ -248,9 +246,7 @@ module biocfd_search
         ALLOCATE (block(g)%xcent(block(g)%ibElems), block(g)%ycent(block(g)%ibElems), &
                   block(g)%zcent(block(g)%ibElems), &
                   block(g)%cosAlpha(block(g)%ibElems), block(g)%cosBeta(block(g)%ibElems), &
-                  block(g)%cosGamma(block(g)%ibElems), &
-                  block(g)%alpha3(block(g)%ibElems), block(g)%beta3(block(g)%ibElems), &
-                  block(g)%gamma3(block(g)%ibElems))
+                  block(g)%cosGamma(block(g)%ibElems))
 
         !compute centroid and direction cosines
        !$acc parallel loop gang vector default(present) private (var_xcent, var_ycent, var_zcent,p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL)  firstprivate (inor)
@@ -279,10 +275,6 @@ module biocfd_search
            block(g)%cosAlpha(n) = (p2y-p1y)*(p3z-p1z)-(p3y-p1y)*(p2z-p1z)
            block(g)%cosBeta(n)  = (p2z-p1z)*(p3x-p1x)-(p3z-p1z)*(p2x-p1x)
            block(g)%cosGamma(n) = (p2x-p1x)*(p3y-p1y)-(p3x-p1x)*(p2y-p1y)
-
-           block(g)%alpha3(n) = block(g)%cosAlpha(n)
-           block(g)%beta3(n)  = block(g)%cosBeta(n)
-           block(g)%gamma3(n) = block(g)%cosGamma(n)
 
            lenEL = dsqrt(block(g)%cosAlpha(n)**2 + block(g)%cosBeta(n)**2 + block(g)%cosGamma(n)**2)   !length of element
 
@@ -728,19 +720,33 @@ module biocfd_search
                                nel2Pnt, nel2Cen, sumNodeID
         INTEGER            :: flcnt, sdcnt, ibcnt
         REAL(dp)      :: minDis, minDis1, dis_cen, dis_pnt, n2dotn
+        integer :: iprime, jprime, kprime
 
        DO g=blk_start,nblocks
         if( block(g)%blk_mv_tag ==0)then
-!$acc parallel loop gang vector default(present)
+
+       ! Set the intercepted indicies cell value to 0, we do this in a
+       ! seperate loop so that we can nicely GPU-ise the computation
+       !$acc parallel loop default(present) private(i1, j1, k1)
+       DO nn = 1, block(g)%ibCellCount
+         i1 = block(g)%interceptedIndexPtr(nn, 1)
+         j1 = block(g)%interceptedIndexPtr(nn, 2)
+         k1 = block(g)%interceptedIndexPtr(nn, 3)
+         block(g)%cell(i1,j1,k1) = 0
+        END DO
+        !$acc end parallel loop
+
+        !$acc parallel loop default(present) collapse(4) private(i, j, k) &
+        !$acc private(minDis, minDis1, dis_cen, dis_pnt, nel2Cen, nel2Pnt) &
+        !$acc private(n2dotn) firstprivate(g)
         DO nn = 1, block(g)%ibCellCount
-        i1 = block(g)%interceptedIndexPtr(nn, 1)
-        j1 = block(g)%interceptedIndexPtr(nn, 2)
-        k1 = block(g)%interceptedIndexPtr(nn, 3)
-           block(g)%cell(i1,j1,k1) = 0
-           !$acc loop collapse(3) seq
-           DO k = k1-1, k1+1
-           DO j = j1-1, j1+1
-           DO i = i1-1, i1+1
+           DO kprime = -1,+1
+           DO jprime = -1,+1
+           DO iprime = -1,+1
+
+               i = block(g)%interceptedIndexPtr(nn, 1) + iprime
+               j = block(g)%interceptedIndexPtr(nn, 2) + jprime
+               k = block(g)%interceptedIndexPtr(nn, 3) + kprime
 
                minDis  = 1e14_dp
                minDis1 = 1e14_dp
@@ -1381,9 +1387,6 @@ block(g)%fluidCellCount = flcnt
         ENDDO
         ENDDO
         ENDDO
-        block(b_blk_no)%xp_dum=block(b_blk_no)%xp
-        block(b_blk_no)%yp_dum=block(b_blk_no)%yp
-        block(b_blk_no)%zp_dum=block(b_blk_no)%zp
         endif
 
         ENDDO
@@ -1448,31 +1451,6 @@ block(g)%fluidCellCount = flcnt
            block(g)%zu(i) = 0.5_dp*(block(g)%z1(i)+block(g)%z1(i+1))
            block(g)%zv(i) = block(g)%zu(i)
            block(g)%zp(i) = block(g)%zu(i)
-        END DO
-        DO k=1,block(g)%nz+1
-        DO j=1,block(g)%ny+1
-        DO i=1,block(g)%nx+1
-
-        block(g)%xpn1(i,j,k)=block(g)%x1(i)
-        block(g)%ypn1(i,j,k)=block(g)%y1(j)
-        block(g)%zpn1(i,j,k)=block(g)%z1(k)
-
-
-        END DO
-        END DO
-        END DO
-
-        DO k=2,block(g)%nz+1
-        DO j=2,block(g)%ny+1
-        DO i=2,block(g)%nx+1
-
-        block(g)%xp1(i,j,k)=block(g)%xp(i)
-        block(g)%yp1(i,j,k)=block(g)%yp(j)
-        block(g)%zp1(i,j,k)=block(g)%zp(k)
-
-
-        END DO
-        END DO
         END DO
 
         ENDIF

@@ -1,8 +1,8 @@
 module biocfd_coarse_update
   use, intrinsic :: iso_fortran_env, only: dp => real64
-  ! allow(use-all) - TODO: Aim to fix this in the future
-  use global
+  use global, only : block, intfr, intflines
   use biocfd_interpolation, only: bilinear_interpolation, linear_interpolation
+
   implicit none
   private
 

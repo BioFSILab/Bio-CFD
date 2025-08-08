@@ -1,9 +1,18 @@
 name = "Bio-CFD"
+# To use HDF5 uncomment the dependencies.hdf5 line below and set
+# USE_HDF5=1
+# dependencies.hdf5 = "*"
 version = "0.1.0"
 [build]
 auto-executables = true
 auto-tests = true
 auto-examples = true
+external-modules = ["hdf5"]
+
+[preprocess]
+cpp.suffixes = ["f90"]
+cpp.macros = ["USE_HDF5=0"]
+
 [install]
 library = false
 

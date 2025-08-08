@@ -1,15 +1,81 @@
 module biocfd_write_output_corner1
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  ! allow(use-all) - TODO: Aim to fix this in the future
-  use global
+  use global, only : block, ita, totime, re, nblocks, char_f, &
+       totime, ita1
+#if USE_HDF5 == 1
+  use biocfd_hdf5_io, only: hdf5_write_real, hdf5_write_int
+#endif
   implicit none
 
   private
 
-  public :: writeOutput1, body_plot, writeresult
+#if USE_HDF5 == 1
+  public :: write_output_hdf5, body_plot, writeresult
+#else
+  public :: write_output_ascii, body_plot, writeresult
+#endif
 
 contains
-      SUBROUTINE writeOutput1
+
+#if USE_HDF5 == 1
+      SUBROUTINE write_output_hdf5
+       CHARACTER(len=150)  :: filename1
+       INTEGER  :: k, i, j, g
+       REAL (dp), allocatable :: u1(:,:,:), v1(:,:,:), w1(:,:,:)
+       character (len=11) :: dummy_1
+       character (len=5) ::dummy_2
+
+         IF((mod(ita,200_int64) ==0 .or. ita <= 2 ))then
+         do g=1,nblocks
+            write(dummy_1,'(A6,I5.5)') 'block_',g
+            write(dummy_2,'(I5.5)') ita
+            allocate(u1(2:block(g)%nx+1,2:block(g)%ny+1,2:block(g)%nz+1),&
+                     v1(2:block(g)%nx+1,2:block(g)%ny+1,2:block(g)%nz+1),&
+                     w1(2:block(g)%nx+1,2:block(g)%ny+1,2:block(g)%nz+1))
+            DO k = 2, block(g)%nz+1
+            DO j = 2, block(g)%ny+1
+            DO i = 2, block(g)%nx+1
+               u1(i,j,k) = 0.5_dp*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))
+               v1(i,j,k) = 0.5_dp*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
+               w1(i,j,k) = 0.5_dp*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
+            END DO
+            END DO
+            END DO
+            filename1="out/output_"//trim(dummy_2)//".h5"
+            call hdf5_write_real(filename=filename1,&
+                                 array_input_3d=u1,key='u1',group=dummy_1)
+            call hdf5_write_real(filename=filename1,&
+                                 array_input_3d=v1,key='v1',group=dummy_1)
+            call hdf5_write_real(filename=filename1,&
+                                 array_input_3d=w1,key='w1',group=dummy_1)
+            call hdf5_write_real(filename=filename1,&
+                                 array_input_1d=block(g)%xp,key='xp',group=dummy_1)
+            call hdf5_write_real(filename=filename1,&
+                                 array_input_1d=block(g)%yp,key='yp',group=dummy_1)
+            call hdf5_write_real(filename=filename1,&
+                                 array_input_1d=block(g)%zp,key='zp',group=dummy_1)
+            call hdf5_write_int(filename=filename1,&
+                                scalar_input=block(g)%nx,key='zonei',group=dummy_1)
+            call hdf5_write_int(filename=filename1,&
+                                scalar_input=block(g)%nx,key='zonej',group=dummy_1)
+            call hdf5_write_int(filename=filename1,&
+                                scalar_input=block(g)%nz,key='zonek',group=dummy_1)
+            call hdf5_write_real(filename=filename1,&
+                                 array_input_3d=block(g)%p,key='p',group=dummy_1)
+            call hdf5_write_real(filename=filename1,&
+                                 scalar_input=totime,key='totime',group=dummy_1)
+            call hdf5_write_int(filename=filename1,&
+                                array_input_3d=block(g)%cell,key='cell',group=dummy_1)
+            call hdf5_write_int(filename=filename1,&
+                                array_input_3d=block(g)%cell_n,key='cell_n',group=dummy_1)
+            call hdf5_write_int(filename=filename1,&
+                                array_input_3d=block(g)%cell_pr,key='cell_pr',group=dummy_1)
+            deallocate(u1,v1,w1)
+         end do
+        ENDIF
+       END SUBROUTINE write_output_hdf5
+#else
+      SUBROUTINE write_output_ascii
        CHARACTER(len=150)  :: filename1
        INTEGER  :: k, i, j, g
        REAL (dp) :: u1, v1, w1
@@ -39,11 +105,11 @@ contains
         end do
         !$acc wait
          ENDIF
-      END SUBROUTINE writeOutput1
-
+      END SUBROUTINE write_output_ascii
+#endif
       SUBROUTINE writeResult
         INTEGER::  i, j, k,g
-       CHARACTER(len=70)  :: filename1
+        CHARACTER(len=70)  :: filename1
         IF(mod(ita,500_int64)==0)THEN
            Do g=1,nblocks
            WRITE(filename1,22)char_f,g,re,block(2)%dx

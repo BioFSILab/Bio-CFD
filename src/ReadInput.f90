@@ -1,7 +1,11 @@
 module biocfd_read_input
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  ! allow(use-all) - TODO: Aim to fix this in the future
-  use global
+  use global, only : block, w0, v0, uc, u_tip, u0, totime, theta_m1, theta_m, &
+       surgeopoints, rho_f, rev, re, piv_pt, pi, phase_angle, pcitamax, omega4, &
+       omega3, omega2, omega1, nblocks, mu_f, l_c, itamax, ita1, ita, istart, &
+       intflines, inor, freq, epsi, dxmin, dt_order, disp, deltat, char_f, &
+       blk_start, aoa, alpha_m1, alpha_m, alpha, a0y, line, intfr, Interfaces
+  use biocfd_blocks,only : Blocks
   implicit none
 
   private
@@ -11,7 +15,7 @@ module biocfd_read_input
   contains
 
       SUBROUTINE readInput
-       INTEGER (int64) :: i, j , k , g, nx_var, ny_var, nz_var
+       INTEGER (int64) :: i, g, nx_var, ny_var, nz_var
         CHARACTER(len=160)  :: filename1
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
        !     not dependent on diff for checking code changes don't break code
@@ -167,17 +171,8 @@ module biocfd_read_input
                      block(i)%zw(block(i)%nz+3),&
                      block(i)%xp(block(i)%nx+2), &
                      block(i)%yp(block(i)%ny+2), &
-                     block(i)%zp(block(i)%nz+2),&
-                     block(i)%xp_dum(block(i)%nx+2), &
-                     block(i)%yp_dum(block(i)%ny+2), &
-                     block(i)%zp_dum(block(i)%nz+2))
+                     block(i)%zp(block(i)%nz+2))
 
-          ALLOCATE ( block(i)%xp1(nx_var+2,ny_var+2,nz_var+2) )
-          ALLOCATE ( block(i)%yp1(nx_var+2,ny_var+2,nz_var+2) )
-          ALLOCATE ( block(i)%zp1(nx_var+2,ny_var+2,nz_var+2) )
-          ALLOCATE ( block(i)%xpn1(nx_var+2,ny_var+2,nz_var+2) )
-          ALLOCATE ( block(i)%ypn1(nx_var+2,ny_var+2,nz_var+2) )
-          ALLOCATE ( block(i)%zpn1(nx_var+2,ny_var+2,nz_var+2) )
           block(i)%cintp=3
             END DO
 
@@ -308,36 +303,6 @@ module biocfd_read_input
             block(g)%zp(i) = block(g)%zu(i)
           END DO
         ENDDO
-        DO g=1,nblocks
-
-        DO k=1,block(g)%nz+1
-        DO j=1,block(g)%ny+1
-        DO i=1,block(g)%nx+1
-
-        block(g)%xpn1(i,j,k)=block(g)%x1(i)
-        block(g)%ypn1(i,j,k)=block(g)%y1(j)
-        block(g)%zpn1(i,j,k)=block(g)%z1(k)
-
-
-        END DO
-        END DO
-        END DO
-        END DO
-
-        DO g=1,nblocks
-        DO k=2,block(g)%nz+1
-        DO j=2,block(g)%ny+1
-        DO i=2,block(g)%nx+1
-
-        block(g)%xp1(i,j,k)=block(g)%xp(i)
-        block(g)%yp1(i,j,k)=block(g)%yp(j)
-        block(g)%zp1(i,j,k)=block(g)%zp(k)
-
-
-        END DO
-        END DO
-        END DO
-        END DO
 
       END SUBROUTINE readInput
 
