@@ -104,8 +104,8 @@ module biocfd_pcor_vcor
         DO g=1,nblocks
            CALL computeDiv(g)    !divergence vector
            ! Do not compute Red/Black here for block 1
-           if (g == 1) cycle
-           CALL REDBLACKSOR_linear(g)
+           if (g /= 1)  CALL REDBLACKSOR_linear(g)
+
         end do
         !$omp end do
 
