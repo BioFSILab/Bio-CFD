@@ -1,7 +1,8 @@
 module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  ! allow(use-all) - TODO: Aim to fix this in the future
-  use global
+  use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, pcitamax, &
+       amgxita, couptime, dfinish, dstart, ita, mstime, nblocks, solvertime, totaltime, &
+       totime
 #ifdef _OPENMP
   use omp_lib, only: omp_get_max_threads, omp_get_thread_num
 #endif
