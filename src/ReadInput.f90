@@ -23,14 +23,17 @@ module biocfd_read_input
        REAL(dp),ALLOCATABLE,DIMENSION(:) :: xstart_temp,xend_temp,&
        ystart_temp,yend_temp,zstart_temp,zend_temp
 
-        OPEN(60, FILE = 'inputdata', FORM = 'formatted')
-        READ(60,*) nblocks, intflines,  &
+       NAMELIST /input_data/ nblocks, intflines,  &
                    itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
                    re,rho_f, mu_f, l_c, &
                    u0, v0,  w0,  &
                    surGeoPoints,a0y, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
                    istart, dt_order, inor, dxmin
-        CLOSE(60)
+
+  OPEN(UNIT=10, FILE='input_data.nml', FORM='formatted')
+  READ(10, NML=input_data)
+  CLOSE(10)
+
         allocate(Blocks :: block(nblocks))
         allocate(Interfaces :: intfr(intflines))
         allocate(xstart_temp(nblocks),xend_temp(nblocks),&
