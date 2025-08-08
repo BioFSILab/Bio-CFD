@@ -71,11 +71,11 @@ SUBROUTINE fineUpdate_bd
           DO tar_y=vary1,vary2
             DO tar_x=varx1,varx2
 
-                bl_interp_ans = trilinear_interpolation(&
-                block(b_blk_no)%xp(tar_x), block(b_blk_no)%yp(tar_y), block(b_blk_no)%zp(tar_z), &
-                loc_x, loc_y, loc_z, block(a_blk_no)%xp, block(a_blk_no)%yp, block(a_blk_no)%zp, &
-                0, block(a_blk_no)%pc &
-                )
+               bl_interp_ans = trilinear_interpolation(&
+                 block(b_blk_no)%xp(tar_x), block(b_blk_no)%yp(tar_y), block(b_blk_no)%zp(tar_z), &
+                 loc_x, loc_y, loc_z, block(a_blk_no)%xp, block(a_blk_no)%yp, block(a_blk_no)%zp, &
+                 0, block(a_blk_no)%pc &
+               )
 
                 block(b_blk_no)%pc(tar_x, tar_y, tar_z) = bl_interp_ans
                 block(b_blk_no)%pco(tar_x, tar_y, tar_z) = bl_interp_ans
@@ -391,7 +391,7 @@ SUBROUTINE fineUpdate_bd
         DO tar_y=vary1,vary2
         DO tar_x=varx1,varx2
 
-               block(b_blk_no)%u(tar_x-1,tar_y,tar_z) = trilinear_interpolation(&
+          block(b_blk_no)%u(tar_x-1,tar_y,tar_z) = trilinear_interpolation(&
                block(b_blk_no)%xu(tar_x), block(b_blk_no)%yu(tar_y), block(b_blk_no)%zu(tar_z), &
                loc_x, loc_y, loc_z, block(a_blk_no)%xu, block(a_blk_no)%yu, block(a_blk_no)%zu, &
                1, block(a_blk_no)%u &
@@ -446,7 +446,7 @@ SUBROUTINE fineUpdate_bd
         DO tar_y=vary1,vary2
         DO tar_x=varx1,varx2
 
-                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z) = trilinear_interpolation(&
+          block(b_blk_no)%v(tar_x,tar_y-1,tar_z) = trilinear_interpolation(&
                block(b_blk_no)%xv(tar_x), block(b_blk_no)%yv(tar_y), block(b_blk_no)%zv(tar_z), &
                loc_x, loc_y, loc_z, block(a_blk_no)%xv, block(a_blk_no)%yv, block(a_blk_no)%zv, &
                2, block(a_blk_no)%v &
