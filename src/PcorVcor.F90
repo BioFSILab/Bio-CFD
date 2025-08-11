@@ -24,7 +24,7 @@ module biocfd_pcor_vcor
         INTEGER(int64) :: i, j,k, n, g
         REAL (dp)    :: max_derr1, max_derr2, max_div, max_derrStdSt
         REAL (dp)    :: er_dudt, er_dvdt, er_dwdt, err_ds
-        INTEGER(int64) :: max_nIterPcor, max_nit
+        INTEGER(int64) :: max_nIterPcor
         CHARACTER(len=160) :: filename1
 
         ! For controlling OpenMP
@@ -38,7 +38,6 @@ module biocfd_pcor_vcor
           max_derr2=0._dp
           max_nIterPcor=0
           max_div=0._dp
-          max_nit=0._dp
           err_ds=0._dp
           er_dudt=0.
           er_dvdt=0.
@@ -175,9 +174,6 @@ module biocfd_pcor_vcor
                  max_nIterPcor=block(i)%nIterPcor
               end if
               totalTime=totime + totalTime
-              if ( block(i)%nit >max_nit)then
-                 max_nit=block(i)%nit
-              end if
           end do
 
             WRITE(filename1,1)

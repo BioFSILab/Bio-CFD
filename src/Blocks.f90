@@ -38,8 +38,6 @@ MODULE biocfd_blocks
         INTEGER(int64) :: ibCellCount, solidCellCount, fluidCellCount, redCellCount, &
                           blackCellCount, TSCellCount
 
-        INTEGER (int32)   :: nit
-
        INTEGER (int64), ALLOCATABLE, DIMENSION (:, :) :: TSIndexPtr, interceptedIndexPtr, &
                                                          solidIndexPtr, fluidInterceptedIndexPtr
 
