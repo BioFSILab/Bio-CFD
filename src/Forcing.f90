@@ -1,6 +1,6 @@
 module biocfd_forcing
   use, intrinsic :: iso_fortran_env, only: dp => real64
-  use global, only : block, blk_start, nblocks, ac_y, ac_z, at_y, at_z, ac_x
+  use global, only : block, blk_start, nblocks, at_y, at_z
   use biocfd_interpolation, only: linear_interpolation, bilinear_interpolation
   implicit none
 
@@ -14,8 +14,7 @@ SUBROUTINE pressureForcing1
 
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1, g
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
-                   dpdn_e
-
+                   dpdn_e, ac_y, ac_z
       real(dp) :: derivatives(3)
       dpdn = 0._dp
         DO g=blk_start,nblocks
@@ -24,7 +23,7 @@ SUBROUTINE pressureForcing1
  !$acc parallel loop gang vector                                                                                          &
  !$acc private (n, n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           dpdn_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
- !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z)         &
+ !$acc           i_z1,ac_z,ac_y,at_y,at_z)         &
  !$acc default(present)  &
  !$acc private(derivatives)
       DO n = 1, block(g)%ibCellCount
@@ -814,7 +813,7 @@ SUBROUTINE pressureForcingGhost
                          aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
                          p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, &
                          p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1, p_z1_x2, p_z2_x2, &
-                         h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e
+                         h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, ac_y, ac_z
 
         DO g=blk_start, nblocks
       dpdn = 0._dp
@@ -822,7 +821,7 @@ SUBROUTINE pressureForcingGhost
  !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
  !$acc           p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
- !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z)         &
+ !$acc           i_z1,ac_z,ac_y,at_y,at_z)         &
  !$acc default(present)
       DO n = 1, block(g)%TSCellCount
 
@@ -1699,7 +1698,7 @@ SUBROUTINE pressureForcingField
                          aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
                          p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, &
                          p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1, p_z1_x2, p_z2_x2, &
-                         h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e
+                         h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, ac_y, ac_z
 
        DO g=blk_start,nblocks
       dpdn = 0._dp
@@ -1707,7 +1706,7 @@ SUBROUTINE pressureForcingField
  !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
  !$acc           p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
- !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z)         &
+ !$acc           i_z1,ac_z,ac_y,at_y,at_z)         &
  !$acc default(present)
       DO n = 1, block(g)%ibCellCount
          IF (block(g)%ibSurfId(block(g)%nelp(n))==50) THEN

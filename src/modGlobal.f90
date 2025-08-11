@@ -24,8 +24,7 @@ MODULE global
 
         INTEGER (int64) ::nblocks, intflines
 
-       !at_x unused, but every other variable used below
-       REAL(dp) :: ac_x, ac_y, ac_z, at_x, at_y, at_z
+       REAL(dp) :: at_x, at_y, at_z
 
         type Interfaces
 
