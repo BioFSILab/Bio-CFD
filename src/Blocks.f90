@@ -39,9 +39,6 @@ MODULE biocfd_blocks
                           blackCellCount, TSCellCount
 
         INTEGER (int32)   :: nit
-        REAL (dp), ALLOCATABLE, DIMENSION (:) :: sol
-        INTEGER (int32) :: crs_data(4)
-         integer(int32) :: diag(7)
 
        INTEGER (int64), ALLOCATABLE, DIMENSION (:, :) :: TSIndexPtr, interceptedIndexPtr, &
                                                          solidIndexPtr, fluidInterceptedIndexPtr
