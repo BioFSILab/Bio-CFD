@@ -32,7 +32,6 @@ MODULE biocfd_blocks
                                                       v, vt, v_dum, &
                                                       w, wt, w_dum, &
                                                       p, p_dum, pc, pco, &
-                                                      uv_sum,vw_sum,uw_sum, &
                                                       uv_avg,vw_avg,uw_avg, &
                                                       uflu_avg,vflu_avg,wflu_avg,pflu_avg, &
                                                       uflu_rms,vflu_rms,wflu_rms,pflu_rms, &
