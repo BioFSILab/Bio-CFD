@@ -14,10 +14,6 @@ module biocfd_last_conditions
         WRITE(*,*) 'Enter lastcondtitions'
 
         DO g=1,nblocks
-        block(g)%u_sum = 0._dp
-        block(g)%v_sum = 0._dp
-        block(g)%w_sum = 0._dp
-        block(g)% p_sum = 0._dp
         block(g)% u_avg = 0._dp
         block(g)%v_avg = 0._dp
         block(g)%w_avg = 0._dp

@@ -29,10 +29,6 @@ module biocfd_allocate_arrays
                 block(i)%w(nx+2, ny+2, nz+2), &
                 block(i)%wt(nx+2, ny+2, nz+2),  &
                 block(i)%p(nx+2, ny+2, nz+2), &
-                block(i)%u_sum(nx+2, ny+2, nz+2), &
-                block(i)%v_sum(nx+2, ny+2, nz+2), &
-                block(i)%w_sum(nx+2, ny+2, nz+2), &
-                block(i)%p_sum(nx+2, ny+2, nz+2), &
                 block(i)%u_avg(nx+2, ny+2, nz+2), &
                 block(i)%v_avg(nx+2, ny+2, nz+2), &
                 block(i)%w_avg(nx+2, ny+2, nz+2), &
@@ -55,8 +51,6 @@ module biocfd_allocate_arrays
             ALLOCATE(block(i)%cell_n(nx+2,ny+2,nz+2))
             ALLOCATE(block(i)%Acx(nx,3), block(i)%Acy(ny,3), block(i)%Acz(nz,3))
             ALLOCATE(block(i)%pc(nx+2,ny+2, nz+2), block(i)%pco(nx+2,ny+2, nz+2))
-            ALLOCATE(block(i)%Ac(nx*ny*nz,7))
-            ALLOCATE(block(i)%An(nx*ny*nz,7))
 
             ALLOCATE(&
                 block(i)%uv_sum(nx+2, ny+2, nz+2), &
