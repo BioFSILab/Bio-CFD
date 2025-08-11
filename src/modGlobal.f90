@@ -24,8 +24,6 @@ MODULE global
 
         INTEGER (int64) ::nblocks, intflines
 
-       REAL(dp) :: at_x, at_y, at_z
-
         type Interfaces
 
         INTEGER(int64), ALLOCATABLE, DIMENSION (:,:) :: px_interface_det, ux_interface_det, &
