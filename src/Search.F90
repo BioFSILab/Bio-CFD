@@ -75,12 +75,7 @@ module biocfd_search
         ac_x=0.
         ac_y=0.
         ac_z=0.
-        block(g)%u_init = 0.
-        block(g)%u_final = 0.
-        block(g)%v_init = 0.
-        block(g)%v_final = 0.
-        block(g)%w_init = 0.
-        block(g)%w_final = 0.
+
         block(g)%xmove = 0.
         block(g)%ymove = 0.
         block(g)%zmove = 0.

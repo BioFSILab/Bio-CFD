@@ -52,8 +52,6 @@ MODULE biocfd_blocks
                                                 w2t_ghost, u1_ghost, u1t_ghost, &
                                                 v1_ghost, v1t_ghost, w1_ghost, w1t_ghost
 
-       REAL (dp) :: u_init, u_final, v_init, v_final, w_init, w_final
-
        INTEGER (int64), ALLOCATABLE, DIMENSION (:) ::  ibSurfId,ibElP1, ibElP2, ibElP3
        INTEGER (int64), ALLOCATABLE, DIMENSION (:) :: ibNodeId,index_ts
        REAL (dp), ALLOCATABLE, DIMENSION (:) :: xnode, ynode,  znode, xnode1, ynode1, znode1
