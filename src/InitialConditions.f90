@@ -34,10 +34,6 @@ module biocfd_initial_conditions
         block(i)%uv_avg = 0._dp
         block(i)%vw_avg = 0._dp
         block(i)%uw_avg = 0._dp
-        block(i)%u_avg = 0._dp
-        block(i)%v_avg = 0._dp
-        block(i)%w_avg = 0._dp
-        block(i)%p_avg = 0._dp
         block(i)%ufl = 0._dp
         block(i)%vfl = 0._dp
         block(i)%wfl = 0._dp

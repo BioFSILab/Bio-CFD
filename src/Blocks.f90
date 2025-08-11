@@ -28,10 +28,10 @@ MODULE biocfd_blocks
 
 
        REAL (dp), ALLOCATABLE, DIMENSION (:, :)    :: Acx, Acy, Acz
-       REAL (dp), ALLOCATABLE, DIMENSION (:, :, :) :: b, u, u_dum, ut, u_avg,   &
-                                                      v, vt, v_dum, v_avg,      &
-                                                      w, wt, w_dum, w_avg,      &
-                                                      p, p_dum, p_avg, pc, pco, &
+       REAL (dp), ALLOCATABLE, DIMENSION (:, :, :) :: b, u, u_dum, ut, &
+                                                      v, vt, v_dum, &
+                                                      w, wt, w_dum, &
+                                                      p, p_dum, pc, pco, &
                                                       uv_sum,vw_sum,uw_sum, &
                                                       uv_avg,vw_avg,uw_avg, &
                                                       uflu_avg,vflu_avg,wflu_avg,pflu_avg, &
