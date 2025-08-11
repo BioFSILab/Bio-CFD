@@ -51,11 +51,6 @@ module biocfd_allocate_arrays
                 block(i)%uw_avg(nx+2, ny+2, nz+2))
 
             ALLOCATE(&
-                block(i)%u2_avg(nx+2, ny+2, nz+2), &
-                block(i)%v2_avg(nx+2, ny+2, nz+2), &
-                block(i)%w2_avg(nx+2, ny+2, nz+2), &
-                block(i)%p2_avg(nx+2, ny+2, nz+2))
-            ALLOCATE(&
                 block(i)%ufl(nx+2, ny+2, nz+2), &
                 block(i)%vfl(nx+2, ny+2, nz+2), &
                 block(i)%wfl(nx+2, ny+2, nz+2))
