@@ -37,7 +37,7 @@ MODULE biocfd_blocks
                                                           blackCellIndexPtr, nodeId
         INTEGER(int64) :: ibCellCount, solidCellCount, fluidCellCount, redCellCount, &
                           blackCellCount, TSCellCount
-        REAL (dp), ALLOCATABLE, DIMENSION (:) ::dataval
+
         INTEGER (int32)   :: nnz,nu, nit, nit1
         INTEGER (int32), ALLOCATABLE, DIMENSION (:) :: row_ptr,col
         REAL (dp), ALLOCATABLE, DIMENSION (:) :: sol
