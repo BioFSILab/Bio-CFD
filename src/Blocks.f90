@@ -32,7 +32,6 @@ MODULE biocfd_blocks
                                                       v, vt, v_dum, &
                                                       w, wt, w_dum, &
                                                       p, p_dum, pc, pco, &
-                                                      uv_avg,vw_avg,uw_avg, &
                                                       ufl,vfl,wfl
 
         INTEGER (int64), ALLOCATABLE, DIMENSION (:, :) :: fluidIndexPtr, redCellIndexPtr, &
