@@ -45,12 +45,6 @@ module biocfd_allocate_arrays
             ALLOCATE(block(i)%Acx(nx,3), block(i)%Acy(ny,3), block(i)%Acz(nz,3))
             ALLOCATE(block(i)%pc(nx+2,ny+2, nz+2), block(i)%pco(nx+2,ny+2, nz+2))
 
-            ALLOCATE(&
-                block(i)%ufl(nx+2, ny+2, nz+2), &
-                block(i)%vfl(nx+2, ny+2, nz+2), &
-                block(i)%wfl(nx+2, ny+2, nz+2))
-
-
         END DO
 
       END SUBROUTINE allocateArrays

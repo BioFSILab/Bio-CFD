@@ -31,8 +31,7 @@ MODULE biocfd_blocks
        REAL (dp), ALLOCATABLE, DIMENSION (:, :, :) :: b, u, u_dum, ut, &
                                                       v, vt, v_dum, &
                                                       w, wt, w_dum, &
-                                                      p, p_dum, pc, pco, &
-                                                      ufl,vfl,wfl
+                                                      p, p_dum, pc, pco
 
         INTEGER (int64), ALLOCATABLE, DIMENSION (:, :) :: fluidIndexPtr, redCellIndexPtr, &
                                                           blackCellIndexPtr, nodeId

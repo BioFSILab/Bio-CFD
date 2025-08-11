@@ -20,9 +20,6 @@ module biocfd_initial_conditions
         block(i)%w = 0._dp
         block(i)%wt = 0._dp
         block(i)%p = 0._dp
-        block(i)%ufl = 0._dp
-        block(i)%vfl = 0._dp
-        block(i)%wfl = 0._dp
         block(i)%cell_pr=0
         end do
         ! SUMWSS = 0._dp            !SUMWSS global real array(nsurf)
