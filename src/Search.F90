@@ -111,14 +111,6 @@ module biocfd_search
        block(g)%xt         =  block(g)%xshift- (ita*dxmin*xfact)
        block(g)%xdot       =  -(dxmin*xfact)/deltat
        block(g)%xddot      =  0.
-        block(g)%u_prev = 0._dp
-        block(g)%u_curr = 0._dp
-        block(g)%v_prev = 0._dp
-        block(g)%v_curr = 0._dp
-        block(g)%w_prev = 0._dp
-        block(g)%w_curr = 0._dp
-        block(g)%Total_VP_FY = 0._dp
-        block(g)%Total_VP_FX = 0._dp
         block(g)%inity_cent=block(g)%yshift
         block(g)%nxty_cent=block(g)%yshift
         block(g)%initx_cent=block(g)%xshift

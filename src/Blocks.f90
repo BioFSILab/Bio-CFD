@@ -59,7 +59,7 @@ MODULE biocfd_blocks
        REAL (dp), ALLOCATABLE, DIMENSION (:) :: xnode, ynode,  znode, xnode1, ynode1, znode1
        INTEGER (int64) :: ibElems, ibNodes
        INTEGER (int64) :: move_check, move_amty, move_amtx,move_amtz,blk_mv_tag
-       REAL(dp) :: ymove,ypos,u_prev,u_curr,v_prev,v_curr,w_prev,w_curr,total_vp_fx,total_vp_fy
+       REAL(dp) :: ymove,ypos
        !zpos not used
        REAL (dp) :: xmove,xpos, zmove,zpos
        REAL (dp) :: inity_cent, initx_cent, nxty_cent,nxtx_cent
