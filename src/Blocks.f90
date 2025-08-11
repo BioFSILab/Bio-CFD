@@ -38,7 +38,7 @@ MODULE biocfd_blocks
         INTEGER(int64) :: ibCellCount, solidCellCount, fluidCellCount, redCellCount, &
                           blackCellCount, TSCellCount
 
-        INTEGER (int32)   :: nnz,nu, nit, nit1
+        INTEGER (int32)   :: nit
         INTEGER (int32), ALLOCATABLE, DIMENSION (:) :: row_ptr,col
         REAL (dp), ALLOCATABLE, DIMENSION (:) :: sol
         INTEGER (int32) :: crs_data(4)
