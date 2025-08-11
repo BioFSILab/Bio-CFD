@@ -28,18 +28,7 @@ module biocfd_allocate_arrays
                 block(i)%vt(nx+2, ny+2, nz+2), &
                 block(i)%w(nx+2, ny+2, nz+2), &
                 block(i)%wt(nx+2, ny+2, nz+2),  &
-                block(i)%p(nx+2, ny+2, nz+2), &
-                block(i)%u_sum(nx+2, ny+2, nz+2), &
-                block(i)%v_sum(nx+2, ny+2, nz+2), &
-                block(i)%w_sum(nx+2, ny+2, nz+2), &
-                block(i)%p_sum(nx+2, ny+2, nz+2), &
-                block(i)%u_avg(nx+2, ny+2, nz+2), &
-                block(i)%v_avg(nx+2, ny+2, nz+2), &
-                block(i)%w_avg(nx+2, ny+2, nz+2), &
-                block(i)%p_avg(nx+2, ny+2, nz+2), &
-                block(i)%resi_u(nx+2, ny+2, nz+2), &
-                block(i)%resi_v(nx+2, ny+2, nz+2), &
-                block(i)%resi_w(nx+2, ny+2, nz+2))
+                block(i)%p(nx+2, ny+2, nz+2))
 
             ALLOCATE(&
                 block(i)%u_dum(nx+2, ny+2, nz+2), &
@@ -55,44 +44,6 @@ module biocfd_allocate_arrays
             ALLOCATE(block(i)%cell_n(nx+2,ny+2,nz+2))
             ALLOCATE(block(i)%Acx(nx,3), block(i)%Acy(ny,3), block(i)%Acz(nz,3))
             ALLOCATE(block(i)%pc(nx+2,ny+2, nz+2), block(i)%pco(nx+2,ny+2, nz+2))
-            ALLOCATE(block(i)%Ac(nx*ny*nz,7))
-            ALLOCATE(block(i)%An(nx*ny*nz,7))
-
-            ALLOCATE(&
-                block(i)%uv_sum(nx+2, ny+2, nz+2), &
-                block(i)%vw_sum(nx+2, ny+2, nz+2), &
-                block(i)%uw_sum(nx+2, ny+2, nz+2))
-
-            ALLOCATE(&
-                block(i)%uv_avg(nx+2, ny+2, nz+2), &
-                block(i)%vw_avg(nx+2, ny+2, nz+2), &
-                block(i)%uw_avg(nx+2, ny+2, nz+2))
-
-            ALLOCATE(&
-                block(i)%uflu_avg(nx+2, ny+2, nz+2), &
-                block(i)%vflu_avg(nx+2, ny+2, nz+2), &
-                block(i)%wflu_avg(nx+2, ny+2, nz+2), &
-                block(i)%pflu_avg(nx+2, ny+2, nz+2))
-            ALLOCATE(&
-                block(i)%uflu_rms(nx+2, ny+2, nz+2), &
-                block(i)%vflu_rms(nx+2, ny+2, nz+2), &
-                block(i)%wflu_rms(nx+2, ny+2, nz+2), &
-                block(i)%pflu_rms(nx+2, ny+2, nz+2))
-            ALLOCATE(&
-                block(i)%u2_sum(nx+2, ny+2, nz+2), &
-                block(i)%v2_sum(nx+2, ny+2, nz+2), &
-                block(i)%w2_sum(nx+2, ny+2, nz+2), &
-                block(i)%p2_sum(nx+2, ny+2, nz+2))
-            ALLOCATE(&
-                block(i)%u2_avg(nx+2, ny+2, nz+2), &
-                block(i)%v2_avg(nx+2, ny+2, nz+2), &
-                block(i)%w2_avg(nx+2, ny+2, nz+2), &
-                block(i)%p2_avg(nx+2, ny+2, nz+2))
-            ALLOCATE(&
-                block(i)%ufl(nx+2, ny+2, nz+2), &
-                block(i)%vfl(nx+2, ny+2, nz+2), &
-                block(i)%wfl(nx+2, ny+2, nz+2))
-
 
         END DO
 

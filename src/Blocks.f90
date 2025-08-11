@@ -27,30 +27,16 @@ MODULE biocfd_blocks
                                                  ca_vw, ck_vw, ca_wu, ck_wu, ca_wv, ck_wv
 
 
-       REAL (dp), ALLOCATABLE, DIMENSION (:, :)    :: A, An,Ac, Acx, Acy, Acz
-       REAL (dp), ALLOCATABLE, DIMENSION (:, :, :) :: b, u, u_dum, ut, u_sum, u_avg,   &
-                                                      v, vt, v_dum, v_sum, v_avg,      &
-                                                      w, wt, w_dum, w_sum, w_avg,      &
-                                                      p, p_sum,p_dum, p_avg, pc, pco, &
-                                                      uv_sum,vw_sum,uw_sum, &
-                                                      uv_avg,vw_avg,uw_avg, &
-                                                      uflu_avg,vflu_avg,wflu_avg,pflu_avg, &
-                                                      uflu_rms,vflu_rms,wflu_rms,pflu_rms, &
-                                                      u2_sum,v2_sum,w2_sum,p2_sum,  &
-                                                      u2_avg,v2_avg,w2_avg,p2_avg,  &
-                                                      ufl,vfl,wfl,  &
-                                                      resi_u, resi_v, resi_w
+       REAL (dp), ALLOCATABLE, DIMENSION (:, :)    :: Acx, Acy, Acz
+       REAL (dp), ALLOCATABLE, DIMENSION (:, :, :) :: b, u, u_dum, ut, &
+                                                      v, vt, v_dum, &
+                                                      w, wt, w_dum, &
+                                                      p, p_dum, pc, pco
 
         INTEGER (int64), ALLOCATABLE, DIMENSION (:, :) :: fluidIndexPtr, redCellIndexPtr, &
                                                           blackCellIndexPtr, nodeId
         INTEGER(int64) :: ibCellCount, solidCellCount, fluidCellCount, redCellCount, &
                           blackCellCount, TSCellCount
-        REAL (dp), ALLOCATABLE, DIMENSION (:) ::dataval
-        INTEGER (int32)   :: nnz,nu, nit, nit1
-        INTEGER (int32), ALLOCATABLE, DIMENSION (:) :: row_ptr,col
-        REAL (dp), ALLOCATABLE, DIMENSION (:) :: sol
-        INTEGER (int32) :: crs_data(4)
-         integer(int32) :: diag(7)
 
        INTEGER (int64), ALLOCATABLE, DIMENSION (:, :) :: TSIndexPtr, interceptedIndexPtr, &
                                                          solidIndexPtr, fluidInterceptedIndexPtr
@@ -66,16 +52,12 @@ MODULE biocfd_blocks
                                                 w2t_ghost, u1_ghost, u1t_ghost, &
                                                 v1_ghost, v1t_ghost, w1_ghost, w1t_ghost
 
-       REAL (dp) :: u_init, u_final, v_init, v_final, w_init, w_final
-
        INTEGER (int64), ALLOCATABLE, DIMENSION (:) ::  ibSurfId,ibElP1, ibElP2, ibElP3
        INTEGER (int64), ALLOCATABLE, DIMENSION (:) :: ibNodeId,index_ts
-       !xnode1 not used
-       REAL (dp), ALLOCATABLE, DIMENSION (:) :: xnode, ynode,  znode, ynode1, znode1
-       REAL (dp), ALLOCATABLE, DIMENSION (:) :: xnode1
+       REAL (dp), ALLOCATABLE, DIMENSION (:) :: xnode, ynode,  znode, xnode1, ynode1, znode1
        INTEGER (int64) :: ibElems, ibNodes
        INTEGER (int64) :: move_check, move_amty, move_amtx,move_amtz,blk_mv_tag
-       REAL(dp) :: ymove,ypos,u_prev,u_curr,v_prev,v_curr,w_prev,w_curr,total_vp_fx,total_vp_fy
+       REAL(dp) :: ymove,ypos
        !zpos not used
        REAL (dp) :: xmove,xpos, zmove,zpos
        REAL (dp) :: inity_cent, initx_cent, nxty_cent,nxtx_cent
