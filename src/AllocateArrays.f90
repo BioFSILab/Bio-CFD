@@ -28,11 +28,8 @@ module biocfd_allocate_arrays
                 block(i)%vt(nx+2, ny+2, nz+2), &
                 block(i)%w(nx+2, ny+2, nz+2), &
                 block(i)%wt(nx+2, ny+2, nz+2),  &
-                block(i)%p(nx+2, ny+2, nz+2), &
-                block(i)%resi_u(nx+2, ny+2, nz+2), &
-                block(i)%resi_v(nx+2, ny+2, nz+2), &
-                block(i)%resi_w(nx+2, ny+2, nz+2))
-
+                block(i)%p(nx+2, ny+2, nz+2))
+             
             ALLOCATE(&
                 block(i)%u_dum(nx+2, ny+2, nz+2), &
                 block(i)%v_dum(nx+2, ny+2, nz+2), &

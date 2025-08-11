@@ -38,8 +38,7 @@ MODULE biocfd_blocks
                                                       uflu_rms,vflu_rms,wflu_rms,pflu_rms, &
                                                       u2_sum,v2_sum,w2_sum,p2_sum,  &
                                                       u2_avg,v2_avg,w2_avg,p2_avg,  &
-                                                      ufl,vfl,wfl,  &
-                                                      resi_u, resi_v, resi_w
+                                                      ufl,vfl,wfl
 
         INTEGER (int64), ALLOCATABLE, DIMENSION (:, :) :: fluidIndexPtr, redCellIndexPtr, &
                                                           blackCellIndexPtr, nodeId

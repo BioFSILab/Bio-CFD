@@ -943,7 +943,6 @@ contains
        residu=(-duudx-dvudy-dwudz+xtt2)
         block(g)%ut(i,j,k)=block(g)%u(i,j,k)+deltat*(residu+dpdx)
 
-       block(g)%resi_u(i,j,k)=residu
 !c*********************** V - Momentum *********************************
        uv_e=block(g)%u(i,j+1,k)+(dye/(dy2ye))*(block(g)%u(i,j,k)-block(g)%u(i,j+1,k))
        uv_w=block(g)%u(i-1,j+1,k)+(dye/(dy2ye))*(block(g)%u(i-1,j,k)-block(g)%u(i-1,j+1,k))
@@ -1032,7 +1031,6 @@ contains
 
        block(g)%vt(i,j,k)=block(g)%v(i,j,k)+deltat*(residv+dpdy)
 
-       block(g)%resi_v(i,j,k)=residv
 !c*********************** W - Momentum **********************************
        uw_e=block(g)%u(i,j,k+1)+(dzt/(dz2zt))*(block(g)%u(i,j,k)-block(g)%u(i,j,k+1))
        uw_w=block(g)%u(i-1,j,k+1)+(dzt/(dz2zt))*(block(g)%u(i-1,j,k)-block(g)%u(i-1,j,k+1))
@@ -1118,7 +1116,6 @@ contains
 
        block(g)%wt(i,j,k)=block(g)%w(i,j,k)+deltat*(residw+dpdz)
 
-       block(g)%resi_w(i,j,k)=residw
 !c***********************************************************************
 
 IF (block(g)%cell2(i+1, j, k)==2) THEN

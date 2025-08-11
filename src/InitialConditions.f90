@@ -37,9 +37,6 @@ module biocfd_initial_conditions
         block(i)%ufl = 0._dp
         block(i)%vfl = 0._dp
         block(i)%wfl = 0._dp
-        block(i)%resi_u = 0._dp
-        block(i)%resi_v = 0._dp
-        block(i)%resi_w = 0._dp
         block(i)%cell_pr=0
         block(i)%uflu_avg = 0._dp
         block(i)%vflu_avg = 0._dp

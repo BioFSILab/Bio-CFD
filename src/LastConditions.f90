@@ -13,11 +13,6 @@ module biocfd_last_conditions
         CHARACTER(len=150) :: filename3
         WRITE(*,*) 'Enter lastcondtitions'
 
-        DO g=1,nblocks
-        block(g)%resi_u = 0._dp
-        block(g)% resi_v = 0._dp
-        block(g)% resi_w = 0._dp
-        END DO
         ! SUMWSS = 0._dp            !SUMWSS global real array(nsurf)
         ! SIGNWSS = 0._dp           !SIGNWSS global real array(nsurf)
         ita = 0
