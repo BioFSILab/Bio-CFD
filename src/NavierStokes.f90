@@ -1,5 +1,5 @@
 module biocfd_navier_stokes
-  use, intrinsic :: iso_fortran_env, only: dp => real64
+  use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, al, alpha, deltat, nblocks, re, rev
   implicit none
   private
@@ -287,6 +287,7 @@ contains
                        duwdx,dvwdy,dwwdz,d2wdx2,d2wdy2,d2wdz2,xtt2,residu,ytt2,residv,&
                           ztt2,residw, temp_u1dotn, temp_u2dotn, temp_v1dotn, temp_v2dotn, &
                           temp_w1dotn, temp_w2dotn, temp_pdotn
+         logical :: do_third_order_upwinding
      al = 1.
 
         DO g=1,nblocks
@@ -870,15 +871,20 @@ contains
            w_in_um=0.5_dp*(wu_n+wu_s)
 
 !cccccccccccccc---Third Order Upwinding ----ccccccccccccccccccccccccccccc
-       if(i>2.and.i<nx_var.and.j>2.and.j<ny_var+1.and. &
-      k>2.and.k<nz_var+1.and.block(g)%cell(i+1,j,k)/=2.and.     &
-      block(g)%cell(i-1,j,k)/=2.and.block(g)%cell(i,j+1,k)/=2.and.       &
-      block(g)%cell(i,j-1,k)/=2.and.block(g)%cell(i,j,k+1)/=2.and.       &
-      block(g)%cell(i,j,k-1)/=2.and.block(g)%cell2(i+2,j,k)/=2.and. &
-      block(g)%cell2(i,j+2,k)/=2.and.block(g)%cell2(i,j,k+2)/=2.and. &
-      block(g)%cell2(i-2,j,k)/=2.and.block(g)%cell2(i,j-2,k)/=2.and. &
-      block(g)%cell2(i,j,k-2)/=2) THEN
 
+           do_third_order_upwinding = .false.
+
+           if(i>2 .and. i<nx_var .and. j>2 .and. j<ny_var+1 .and. k>2 .and. k<nz_var+1) then
+              if (check_adjacent_cell(block(g)%cell, i, j, k, 1)) then
+                 if (check_adjacent_cell(block(g)%cell2, i, j, k, 2)) then
+                    do_third_order_upwinding = .true.
+                 end if
+              end if
+           end if
+
+
+
+       if (do_third_order_upwinding) then
 
            ddy=0.5_dp*(block(g)%deltay(j)+block(g)%deltay(j-1))
        ddye=0.5_dp*(block(g)%deltay(j)+block(g)%deltay(j+1))
@@ -953,14 +959,19 @@ contains
        w_in_vm=0.5_dp*(wv_n+wv_s)
 
 !cccccccccccccc---Third Order Upwinding ----cccccccccccccccccccccccccccc
-     if(i>2.and.i<nx_var+1.and.j>2.and.j<ny_var.and. &
-      k>2.and.k<nz_var+1.and.block(g)%cell(i+1,j,k)/=2.and.  &
-      block(g)%cell(i-1,j,k)/=2.and.block(g)%cell(i,j+1,k)/=2.and. &
-      block(g)%cell(i,j-1,k)/=2.and.block(g)%cell(i,j,k+1)/=2.and. &
-      block(g)%cell(i,j,k-1)/=2.and.block(g)%cell2(i+2,j,k)/=2.and. &
-      block(g)%cell2(i,j+2,k)/=2.and.block(g)%cell2(i,j,k+2)/=2.and. &
-      block(g)%cell2(i-2,j,k)/=2.and.block(g)%cell2(i,j-2,k)/=2.and. &
-      block(g)%cell2(i,j,k-2)/=2) THEN
+
+       do_third_order_upwinding = .false.
+
+       if(i>2 .and. i<nx_var+1 .and. j>2 .and. j<ny_var .and. k>2 .and. k<nz_var+1) then
+          if (check_adjacent_cell(block(g)%cell, i, j, k, 1)) then
+             if (check_adjacent_cell(block(g)%cell2, i, j, k, 2)) then
+                do_third_order_upwinding = .true.
+             end if
+          end if
+       end if
+
+       if (do_third_order_upwinding) then
+
        ddx=0.5_dp*(block(g)%deltax(i)+block(g)%deltax(i-1))
        ddxr=0.5_dp*(block(g)%deltax(i)+block(g)%deltax(i+1))
        ddz=0.5_dp*(block(g)%deltaz(k)+block(g)%deltaz(k-1))
@@ -1041,14 +1052,17 @@ contains
        v_in_wm=0.5_dp*(vw_n+vw_s)
 
 !cccccccccccccc---Third Order Upwinding ----ccccccccccccccccccccccccccccc
-     if(i>2.and.i<nx_var+1.and.j>2.and.j<ny_var+1.and. &
-      k>2.and.k<nz_var.and.block(g)%cell(i+1,j,k)/=2.and. &
-      block(g)%cell(i-1,j,k)/=2.and.block(g)%cell(i,j+1,k)/=2.and. &
-      block(g)%cell(i,j-1,k)/=2.and.block(g)%cell(i,j,k+1)/=2.and. &
-      block(g)%cell(i,j,k-1)/=2.and.block(g)%cell2(i+2,j,k)/=2.and. &
-      block(g)%cell2(i,j+2,k)/=2.and.block(g)%cell2(i,j,k+2)/=2.and. &
-      block(g)%cell2(i-2,j,k)/=2.and.block(g)%cell2(i,j-2,k)/=2.and. &
-      block(g)%cell2(i,j,k-2)/=2) THEN
+       do_third_order_upwinding = .false.
+
+       if(i>2 .and. i<nx_var+1 .and. j>2 .and. j<ny_var+1 .and. k>2 .and. k<nz_var) then
+          if (check_adjacent_cell(block(g)%cell, i, j, k, 1)) then
+             if (check_adjacent_cell(block(g)%cell2, i, j, k, 2)) then
+                do_third_order_upwinding = .true.
+             end if
+          end if
+       end if
+
+       if (do_third_order_upwinding) then
 
        ddx=0.5_dp*(block(g)%deltax(i)+block(g)%deltax(i-1))
        ddxr=0.5_dp*(block(g)%deltax(i)+block(g)%deltax(i+1))
@@ -1257,4 +1271,30 @@ ENDIF
        ak(6) = (theta(1)**2.0_dp)*theta(2)*(theta(3)+theta(3)**2.0_dp)
        ak(7) = (1.0_dp+theta(1))*(theta(3)+theta(3)**2.0_dp)*theta(2)
     end function compute_ak
+
+    !> Check whether adjacent cells in a taxicab geometry
+    !> (https://en.wikipedia.org/wiki/Taxicab_geometry), are equal to
+    !> two. The step size can be set.  Returns false if any of the
+    !> checked cell values equals 2 and true otherwise.
+    pure function check_adjacent_cell(cell, i, j, k, step) result(out)
+      !> The cell array to be checked
+      integer(int64), intent(in) :: cell(:, :, :)
+      !> The indices of the central value we are testing
+      integer(int64), intent(in) :: i, j, k
+      !> The step size in the x, y, and z directions to check
+      integer, intent(in) :: step
+      !> Will return false if any of the adjacent cells checked equals
+      !> 2 and true otherwise
+      logical :: out
+
+      out = .false.
+      if (cell(i - step, j, k) == 2) return
+      if (cell(i + step, j, k) == 2) return
+      if (cell(i, j - step, k) == 2) return
+      if (cell(i, j + step, k) == 2) return
+      if (cell(i, j, k - step) == 2) return
+      if (cell(i, j, k + step) == 2) return
+
+      out = .true.
+    end function check_adjacent_cell
 end module biocfd_navier_stokes
