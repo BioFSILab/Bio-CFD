@@ -24,12 +24,26 @@ contains
     type(error_type), allocatable, intent(out) :: error
 
     integer(int64) :: expected
+    integer :: ibnodes
 
     ! Setup the required block variables
     blk_start = 1
     nblocks = 1
+    ibnodes = 6
     allocate(block(nblocks))
-    block(1)%ibnodes = 6
+    block(1)%ibnodes = ibnodes
+
+    ! Although not required by fortran>=2003 Lfortran requires arrays
+    ! to be allocated before they are assigned to see
+    ! https://github.com/lfortran/lfortran/issues/2946
+    allocate(&
+         block(1)%ibNodeId(ibnodes), &
+         block(1)%xnode(ibnodes), &
+         block(1)%ynode(ibnodes), &
+         block(1)%znode(ibnodes) &
+    )
+    
+      
     block(1)%ibNodeId = [51, 51, 51, 51, 51, 51]
     block(1)%xnode = [0, -7, -4, 1, -10, 8]
     block(1)%ynode = [0, -7, -4, 1, -10, 8]
