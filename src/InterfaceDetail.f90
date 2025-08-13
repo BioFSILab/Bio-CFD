@@ -181,11 +181,8 @@ SUBROUTINE interfaceDetail
           !> of the interface_details array (dim=2), which seems like
           !> a potential source of bugs.
           integer(int64), intent(inout) :: interface_counter
-          ! TN: I don't understand why this works, need to read up on
-          ! it. It is not clear to me whether this will work for all
-          ! of our compilers, online discussion is not clear about
-          ! whether this is really part of the standard
-          integer, intent(in), optional, value :: in_starter
+          !> Either 2 or 3.
+          integer, intent(in), optional :: in_starter
 
           ! TODO: Probably no need for these to be int64 (starter is
           ! either 2 or 3)
@@ -196,9 +193,6 @@ SUBROUTINE interfaceDetail
           ! In most of the examples this subroutine was derived from,
           ! starter starts at 2, however, in some cases it is 3... not
           ! sure why.
-          !
-          ! TODO: We aren't really sure why we can't directly use
-          ! starter but this satisfies the compiler and the linter
           if (.not. present(in_starter)) then
             starter = 2
           else
