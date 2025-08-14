@@ -42,8 +42,7 @@ contains
          block(1)%ynode(ibnodes), &
          block(1)%znode(ibnodes) &
     )
-    
-      
+
     block(1)%ibNodeId = [51, 51, 51, 51, 51, 51]
     block(1)%xnode = [0, -7, -4, 1, -10, 8]
     block(1)%ynode = [0, -7, -4, 1, -10, 8]
