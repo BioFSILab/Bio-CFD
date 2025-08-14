@@ -312,7 +312,8 @@ contains
 !$acc           temp_v2dotn,temp_v1dotn, &
 !$acc           temp_w2dotn,temp_w1dotn, temp_pdotn) &
 !$acc default(present)   &
-!$acc firstprivate(nx_var, ny_var, nz_var, rev, deltat, al)
+!$acc firstprivate(nx_var, ny_var, nz_var, rev, deltat, al) &
+!$acc private(do_third_order_upwinding)
      DO n = 1, block(g)%fluidCellCount
 
       i = block(g)%fluidIndexPtr(n, 1)
