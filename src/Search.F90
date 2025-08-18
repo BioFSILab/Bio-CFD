@@ -848,85 +848,85 @@ block(g)%fluidCellCount = flcnt
        ENDDO
      END SUBROUTINE selectiveRetagging_th
 
-     SUBROUTINE cellCount_solid
+     SUBROUTINE cellCount_solid(blk, g)
 
-        INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k, g
+        type(Blocks), intent(inout) :: blk
+        integer(int64), intent(in) :: g
+        INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k
 
         print*, "cellCount started"
 
-
-         DO g=blk_start,nblocks
          iPt  = 0
          iPt1 = 0
          iPt2 = 0
 
-         ALLOCATE(block(g)%interceptedIndexPtr(block(g)%ibCellCount,3), &
-                  block(g)%fluidIndexPtr(block(g)%fluidCellCount, 3), &
-                  block(g)%solidIndexPtr(block(g)%solidCellCount, 3))
+         ALLOCATE(blk%interceptedIndexPtr(blk%ibCellCount,3), &
+                  blk%fluidIndexPtr(blk%fluidCellCount, 3), &
+                  blk%solidIndexPtr(blk%solidCellCount, 3))
 
-         DO k = 2, block(g)%nz+1
-         DO j = 2, block(g)%ny+1
-         DO i = 2, block(g)%nx+1
+         DO k = 2, blk%nz+1
+         DO j = 2, blk%ny+1
+         DO i = 2, blk%nx+1
 
-               IF (block(g)%cell(i,j,k)==0) THEN
+               IF (blk%cell(i,j,k)==0) THEN
                   iPt1 = iPt1 + 1
-                  block(g)%fluidIndexPtr(iPt1, 1) = i
-                  block(g)%fluidIndexPtr(iPt1, 2) = j
-                  block(g)%fluidIndexPtr(iPt1, 3) = k
-               ELSEIF (block(g)%cell(i,j,k)==1) THEN
+                  blk%fluidIndexPtr(iPt1, 1) = i
+                  blk%fluidIndexPtr(iPt1, 2) = j
+                  blk%fluidIndexPtr(iPt1, 3) = k
+               ELSEIF (blk%cell(i,j,k)==1) THEN
                   iPt2 = iPt2 + 1
-                  block(g)%solidIndexPtr(iPt2, 1) = i
-                  block(g)%solidIndexPtr(iPt2, 2) = j
-                  block(g)%solidIndexPtr(iPt2, 3) = k
-               ELSEIF (block(g)%cell(i,j,k)==2) THEN
+                  blk%solidIndexPtr(iPt2, 1) = i
+                  blk%solidIndexPtr(iPt2, 2) = j
+                  blk%solidIndexPtr(iPt2, 3) = k
+               ELSEIF (blk%cell(i,j,k)==2) THEN
                   iPt = iPt + 1
-                  block(g)%interceptedIndexPtr(iPt, 1) = i
-                  block(g)%interceptedIndexPtr(iPt, 2) = j
-                  block(g)%interceptedIndexPtr(iPt, 3) = k
+                  blk%interceptedIndexPtr(iPt, 1) = i
+                  blk%interceptedIndexPtr(iPt, 2) = j
+                  blk%interceptedIndexPtr(iPt, 3) = k
                ENDIF
          END DO
          END DO
          END DO
-         block(g)%redCellCount = 0
-         block(g)%blackCellCount  = 0
+         blk%redCellCount = 0
+         blk%blackCellCount  = 0
 
-         DO n = 1, block(g)%fluidCellCount
-            i = block(g)%fluidIndexPtr(n, 1)
-            j = block(g)%fluidIndexPtr(n, 2)
-            k = block(g)%fluidIndexPtr(n, 3)
+         DO n = 1, blk%fluidCellCount
+            i = blk%fluidIndexPtr(n, 1)
+            j = blk%fluidIndexPtr(n, 2)
+            k = blk%fluidIndexPtr(n, 3)
 
             IF (mod(i+j+k,2_int64)==1) THEN
-               block(g)%redCellCount = block(g)%redCellCount + 1
+               blk%redCellCount = blk%redCellCount + 1
             ELSE
-               block(g)%blackCellCount = block(g)%blackCellCount + 1
+               blk%blackCellCount = blk%blackCellCount + 1
             ENDIF
          ENDDO
-         ALLOCATE (block(g)%redCellIndexPtr(block(g)%redCellCount,3), &
-                   block(g)%blackCellIndexPtr(block(g)%blackCellCount,3))
+         ALLOCATE (blk%redCellIndexPtr(blk%redCellCount,3), &
+                   blk%blackCellIndexPtr(blk%blackCellCount,3))
          ipt1 = 0
          iPt = 0
-         DO n = 1, block(g)%fluidCellCount
-            i = block(g)%fluidIndexPtr(n, 1)
-            j = block(g)%fluidIndexPtr(n, 2)
-            k = block(g)%fluidIndexPtr(n, 3)
+         DO n = 1, blk%fluidCellCount
+            i = blk%fluidIndexPtr(n, 1)
+            j = blk%fluidIndexPtr(n, 2)
+            k = blk%fluidIndexPtr(n, 3)
 
             IF (mod(i+j+k,2_int64)==1) THEN
                iPt = iPt + 1
-               block(g)%redCellIndexPtr(iPt, 1) = i
-               block(g)%redCellIndexPtr(iPt, 2) = j
-               block(g)%redCellIndexPtr(iPt, 3) = k
+               blk%redCellIndexPtr(iPt, 1) = i
+               blk%redCellIndexPtr(iPt, 2) = j
+               blk%redCellIndexPtr(iPt, 3) = k
 
             ELSE
                iPt1 = iPt1 + 1
-               block(g)%blackCellIndexPtr(iPt1, 1) = i
-               block(g)%blackCellIndexPtr(iPt1, 2) = j
-               block(g)%blackCellIndexPtr(iPt1, 3) = k
+               blk%blackCellIndexPtr(iPt1, 1) = i
+               blk%blackCellIndexPtr(iPt1, 2) = j
+               blk%blackCellIndexPtr(iPt1, 3) = k
 
             ENDIF
          ENDDO
 
-            print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
-        END DO
+         print*,g, blk%fluidCellCount, blk%redCellCount, blk%blackCellCount
+
      END SUBROUTINE cellCount_solid
 
      SUBROUTINE computeNormDistance

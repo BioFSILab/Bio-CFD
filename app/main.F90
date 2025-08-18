@@ -54,10 +54,12 @@
         solverTime=0.
         coupTime=0.
         do g=blk_start, size(block)
-          CALL tagging_th(block(g), g)
+          call tagging_th(block(g), g)
         end do
         print*,'11'
-        CALL cellCount_solid
+        do g=blk_start, size(block)
+          call cellCount_solid(block(g), g)
+        end do
         print*,'12'
         CALL fine_block_cell
         print*,'13'
