@@ -34,7 +34,9 @@
         do g=blk_start, size(block)
           call readSurfaceMeshGmsh(block(g))
         end do
-        CALL allocateArrays
+        do g=1, size(block)
+          call allocateArrays(block(g))
+        end do
         CALL findDistnode
         CALL shiftSurfaceNodesInitial
         CALL computeSurfaceNorm

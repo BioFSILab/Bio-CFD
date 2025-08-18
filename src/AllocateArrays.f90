@@ -4,6 +4,7 @@ module biocfd_allocate_arrays
     !  here, several are allocated in other subroutines
     use, intrinsic :: iso_fortran_env, only: int64
     use global, only : block
+    use biocfd_blocks, only : Blocks
     implicit none
     private
 
@@ -11,41 +12,38 @@ module biocfd_allocate_arrays
 
     contains
 
-    SUBROUTINE allocateArrays
+    SUBROUTINE allocateArrays(blk)
 
-        integer(int64) :: i
+        type(Blocks), intent(inout) :: blk
         integer(int64) :: nx, ny, nz
 
-        DO i=1, size(block)
-            nx = block(i)%nx
-            ny = block(i)%ny
-            nz = block(i)%nz
+            nx = blk%nx
+            ny = blk%ny
+            nz = blk%nz
 
             ALLOCATE(&
-                block(i)%u(nx+2, ny+2, nz+2), &
-                block(i)%ut(nx+2, ny+2, nz+2), &
-                block(i)%v(nx+2, ny+2, nz+2), &
-                block(i)%vt(nx+2, ny+2, nz+2), &
-                block(i)%w(nx+2, ny+2, nz+2), &
-                block(i)%wt(nx+2, ny+2, nz+2),  &
-                block(i)%p(nx+2, ny+2, nz+2))
+                blk%u(nx+2, ny+2, nz+2), &
+                blk%ut(nx+2, ny+2, nz+2), &
+                blk%v(nx+2, ny+2, nz+2), &
+                blk%vt(nx+2, ny+2, nz+2), &
+                blk%w(nx+2, ny+2, nz+2), &
+                blk%wt(nx+2, ny+2, nz+2),  &
+                blk%p(nx+2, ny+2, nz+2))
 
             ALLOCATE(&
-                block(i)%u_dum(nx+2, ny+2, nz+2), &
-                block(i)%v_dum(nx+2, ny+2, nz+2), &
-                block(i)%w_dum(nx+2, ny+2, nz+2), &
-                block(i)%p_dum(nx+2, ny+2, nz+2))
+                blk%u_dum(nx+2, ny+2, nz+2), &
+                blk%v_dum(nx+2, ny+2, nz+2), &
+                blk%w_dum(nx+2, ny+2, nz+2), &
+                blk%p_dum(nx+2, ny+2, nz+2))
 
-            ALLOCATE(block(i)%cell(nx+2,ny+2,nz+2))
-            ALLOCATE(block(i)%cell2(nx+3,ny+3,nz+3))
-            ALLOCATE(block(i)%cell_pr(nx+3,ny+3,nz+3))
-            ALLOCATE(block(i)%nodeIdTag(nx+3,ny+3,nz+3))
-            ALLOCATE(block(i)%b(nx+2,ny+2,nz+2))
-            ALLOCATE(block(i)%cell_n(nx+2,ny+2,nz+2))
-            ALLOCATE(block(i)%Acx(nx,3), block(i)%Acy(ny,3), block(i)%Acz(nz,3))
-            ALLOCATE(block(i)%pc(nx+2,ny+2, nz+2), block(i)%pco(nx+2,ny+2, nz+2))
-
-        END DO
+            ALLOCATE(blk%cell(nx+2,ny+2,nz+2))
+            ALLOCATE(blk%cell2(nx+3,ny+3,nz+3))
+            ALLOCATE(blk%cell_pr(nx+3,ny+3,nz+3))
+            ALLOCATE(blk%nodeIdTag(nx+3,ny+3,nz+3))
+            ALLOCATE(blk%b(nx+2,ny+2,nz+2))
+            ALLOCATE(blk%cell_n(nx+2,ny+2,nz+2))
+            ALLOCATE(blk%Acx(nx,3), blk%Acy(ny,3), blk%Acz(nz,3))
+            ALLOCATE(blk%pc(nx+2,ny+2, nz+2), blk%pco(nx+2,ny+2, nz+2))
 
       END SUBROUTINE allocateArrays
 end module biocfd_allocate_arrays
