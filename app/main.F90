@@ -61,9 +61,11 @@
           call cellCount_solid(block(g), g)
         end do
         print*,'12'
+        ! This uses interfaces so is problematic
         CALL fine_block_cell
         print*,'13'
-        CALL cellCount_solid_coarse
+        ! This is only called for the coarse block
+        call cellCount_solid_coarse(block(1))
         print*,'14'
         IF (iStart==0) CALL initialConditions
         IF (iStart==1) CALL lastConditions
@@ -126,8 +128,9 @@
              block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, &
              block(g)%w1_ghost,block(g)% w1t_ghost)
        END DO
-
-            CALL cellCount_solid
+       do g=blk_start, size(block)
+         call cellCount_solid(block(g), g)
+       end do
         DO g=blk_start, nblocks
             call solidCellBC_move(g)
              call updateVelocity_newv(g)
