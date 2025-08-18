@@ -74,10 +74,12 @@
         print*,'14'
         IF (iStart==0) CALL initialConditions
         IF (iStart==1) CALL lastConditions
-        do g=blk_start, nblocks
+        do g=blk_start, size(block)
           call computeNormDistance(block(g))
         end do
-        CALL findTScells
+        do g=blk_start, size(block)
+          call findTScells(block(g))
+        end do
         CALL coefficientMatrix
         CALL non_uni_coeff
         totime = totime + deltat
@@ -146,7 +148,9 @@
         do g=blk_start, size(block)
            call computeNormDistance(block(g))
         end do
-        CALL findTScells
+        do g=blk_start, size(block)
+          CALL findTScells(block(g))
+        end do
         CALL cpu_time(dStart1)
         CALL velocityForcingField
         CALL pressureForcingField
