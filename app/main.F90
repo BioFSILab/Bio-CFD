@@ -37,7 +37,9 @@
         do g=1, size(block)
           call allocateArrays(block(g))
         end do
-        CALL findDistnode
+        do g=blk_start, size(block)
+          call findDistnode(block(g))
+        end do
         CALL shiftSurfaceNodesInitial
         CALL computeSurfaceNorm
         CALL interfaceDetail
