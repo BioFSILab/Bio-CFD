@@ -43,7 +43,9 @@
         do g=blk_start, size(block)
           call shiftSurfaceNodesInitial(block(g))
         end do
-        CALL computeSurfaceNorm
+        do g=blk_start, size(block)
+          call computeSurfaceNorm(block(g))
+        end do
         CALL interfaceDetail
         totalTime=0.
         totime = 0.
