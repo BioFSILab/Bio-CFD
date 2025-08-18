@@ -29,8 +29,11 @@
 
         INTEGER (int64) :: g
         real(dp) :: dstart1, dfinish1
+        ! These two subroutines are going to be run on every node
         CALL readInput
         CALL readBlockInterface
+        ! (until here)
+
         do g=blk_start, size(block)
           call readSurfaceMeshGmsh(block(g))
         end do
@@ -46,6 +49,8 @@
         do g=blk_start, size(block)
           call computeSurfaceNorm(block(g))
         end do
+        ! I think that this has to be run on every node too (for now),
+        ! can be moved up to after readBlockInterface (maybe?)
         CALL interfaceDetail
         totalTime=0.
         totime = 0.
@@ -69,7 +74,9 @@
         print*,'14'
         IF (iStart==0) CALL initialConditions
         IF (iStart==1) CALL lastConditions
-        CALL computeNormDistance
+        do g=blk_start, nblocks
+          call computeNormDistance(block(g))
+        end do
         CALL findTScells
         CALL coefficientMatrix
         CALL non_uni_coeff
@@ -136,7 +143,9 @@
              call updateVelocity_newv(g)
             block(g)%move_check=0.
         ENDDO
-           CALL computeNormDistance
+        do g=blk_start, size(block)
+           call computeNormDistance(block(g))
+        end do
         CALL findTScells
         CALL cpu_time(dStart1)
         CALL velocityForcingField
