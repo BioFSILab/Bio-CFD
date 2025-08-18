@@ -34,7 +34,10 @@
         INTEGER (int64) :: g
         real(dp) :: dstart1, dfinish1
 
-        integer :: rank, num_proc, ierror, start_block
+        integer :: rank, num_proc, start_block
+#ifdef BIOCFD_MPI
+        integer :: ierror
+#endif
 
         ! These variables are used to control MPI execution
         rank = 0
@@ -114,20 +117,25 @@
         coarse_flcnt_check=0
         print*, rank, 'adam'
 
-#ifdef BIOCFD_MPI
-        call MPI_Finalize(ierror)
-#endif
-        stop
         DO
         ita = ita + 1
         ita2 = ita2 + 1
         totime = totime + deltat
-        CALL nsMomentum2order
-        CALL velocityBC
-        CALL solidCellBC
-        !$acc wait
-        CALL velocityForcing1
-        CALL velocityBC
+        do g=start_block, size(block), num_proc
+          CALL nsMomentum2order(block(g))
+        if (g == 1) call velocityBC(block(1))
+        if (g /= 1) then
+          call solidCellBC(block(g))
+          !$acc wait
+          call velocityForcing1(block(g))
+        end if
+        if (g == 1) call velocityBC(block(1))
+        end do
+
+#ifdef BIOCFD_MPI
+        call MPI_Finalize(ierror)
+#endif
+        stop
         CALL poissonSolver
         print *,7
         CALL pressureForcing1

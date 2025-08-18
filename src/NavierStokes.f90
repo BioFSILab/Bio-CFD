@@ -246,10 +246,11 @@ contains
 
        END SUBROUTINE non_uni_coeff
 
-      subroutine nsMomentum2order
+      subroutine nsMomentum2order(blk)
 !c***********************************************************************
 !c     navier-stokes equations for constant properties
 !c***********************************************************************
+       type(Blocks), intent(inout) :: blk
       INTEGER (dp) :: i, j, k, g, n ,nx_var,ny_var,nz_var, n1, nn, i11, j11, k11, &
            index_ip1, index_im1, index_jp1, index_jm1, index_kp1, index_km1
          REAL (dp) :: dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14, &
@@ -267,7 +268,6 @@ contains
                           temp_w1dotn, temp_w2dotn, temp_pdotn
      al = 1.
 
-        DO g=1,nblocks
         nx_var=block(g)%nx
         ny_var=block(g)%ny
         nz_var=block(g)%nz
@@ -1149,7 +1149,6 @@ ENDIF
      !$acc end parallel loop
         !$acc wait
 
-       ENDDO
       end subroutine nsMomentum2order
 
 

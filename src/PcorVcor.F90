@@ -136,7 +136,10 @@ module biocfd_pcor_vcor
         END DO
         !$omp end do
         !$omp end parallel
-         CALL velocityBC      !correct velocity at boundaries
+
+        do g=1,nblocks
+         CALL velocityBC(block(g))      !correct velocity at boundaries
+        end do
 
          DO g=1,nblocks
          err_ds=0.

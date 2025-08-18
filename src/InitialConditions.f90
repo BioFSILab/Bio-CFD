@@ -13,7 +13,7 @@ module biocfd_initial_conditions
         type(Blocks), intent(inout) :: blk
        INTEGER::  i, j, k, n
         WRITE(*,*) 'Enter initialcondtitions'
-       !cell variables      
+       !cell variables
         blk%u = uc
         blk%ut = uc
         blk%v = 0._dp
