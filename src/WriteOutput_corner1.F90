@@ -25,7 +25,6 @@ contains
        character (len=11) :: dummy_1
        character (len=5) ::dummy_2
 
-         IF((mod(ita,200_int64) ==0 .or. ita <= 2 ))then
          do g=1,nblocks
             write(dummy_1,'(A6,I5.5)') 'block_',g
             write(dummy_2,'(I5.5)') ita
@@ -72,15 +71,12 @@ contains
                                 array_input_3d=block(g)%cell_pr,key='cell_pr',group=dummy_1)
             deallocate(u1,v1,w1)
          end do
-        ENDIF
        END SUBROUTINE write_output_hdf5
 #else
       SUBROUTINE write_output_ascii
        CHARACTER(len=150)  :: filename1
        INTEGER  :: k, i, j, g
        REAL (dp) :: u1, v1, w1
-
-         IF((mod(ita,200_int64) ==0 .or. ita <= 2 ))then
 
            Do g=1,nblocks
        WRITE(filename1,1)char_f,ita,g,re,block(2)%dx,nblocks
@@ -104,7 +100,7 @@ contains
             CLOSE(786)
         end do
         !$acc wait
-         ENDIF
+
       END SUBROUTINE write_output_ascii
 #endif
       SUBROUTINE writeResult

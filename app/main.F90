@@ -87,7 +87,9 @@
           call non_uni_coeff(block(g))
         end do
         totime = totime + deltat
-        CALL write_output
+        if ((mod(ita,200_int64) ==0 .or. ita <= 2 )) then
+          call write_output
+        end if
         coarse_flcnt_check=0
         print*, 'adam'
         DO
@@ -103,7 +105,9 @@
         CALL poissonSolver
         print *,7
         CALL pressureForcing1
-        CALL write_output
+        if ((mod(ita,200_int64) ==0 .or. ita <= 2 )) then
+          CALL write_output
+        end if
         !$acc wait
         CALL writeResult
         !$acc wait
