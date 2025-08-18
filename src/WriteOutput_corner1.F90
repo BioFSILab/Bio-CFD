@@ -2,6 +2,7 @@ module biocfd_write_output_corner1
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, ita, totime, re, nblocks, char_f, &
        totime, ita1
+  use biocfd_blocks, only : Blocks
 #if USE_HDF5 == 1
   use biocfd_hdf5_io, only: hdf5_write_real, hdf5_write_int
 #endif
@@ -73,12 +74,13 @@ contains
          end do
        END SUBROUTINE write_output_hdf5
 #else
-      SUBROUTINE write_output_ascii
+      SUBROUTINE write_output_ascii(blk)
+
+        type(Blocks), intent(in) :: blk
        CHARACTER(len=150)  :: filename1
        INTEGER  :: k, i, j, g
        REAL (dp) :: u1, v1, w1
 
-           Do g=1,nblocks
        WRITE(filename1,1)char_f,ita,g,re,block(2)%dx,nblocks
 1     FORMAT('out/',A3,'_butter_fielddata.',i9.9,'.',i3.3,'.',f7.1,'.',f8.6,'.',i3.3,".dat")
            OPEN(UNIT = 786, FILE = filename1, STATUS = 'unknown')
@@ -98,7 +100,6 @@ contains
             END DO
             END DO
             CLOSE(786)
-        end do
         !$acc wait
 
       END SUBROUTINE write_output_ascii

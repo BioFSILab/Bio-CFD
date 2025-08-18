@@ -88,7 +88,10 @@
         end do
         totime = totime + deltat
         if ((mod(ita,200_int64) ==0 .or. ita <= 2 )) then
-          call write_output
+          do g=1, size(block)
+               ! TN: TODO: This will not work for HDF5 output!!!
+            call write_output(block(g))
+          end do
         end if
         coarse_flcnt_check=0
         print*, 'adam'
@@ -106,7 +109,10 @@
         print *,7
         CALL pressureForcing1
         if ((mod(ita,200_int64) ==0 .or. ita <= 2 )) then
-          CALL write_output
+          do g=1, size(block)
+               ! TN: TODO: This will not work for HDF5 output!!!
+            CALL write_output(block(g))
+          end do
         end if
         !$acc wait
         CALL writeResult
