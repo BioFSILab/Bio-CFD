@@ -74,11 +74,12 @@ contains
          end do
        END SUBROUTINE write_output_hdf5
 #else
-      SUBROUTINE write_output_ascii(blk)
+      SUBROUTINE write_output_ascii(blk, g)
 
         type(Blocks), intent(in) :: blk
+        integer(int64), intent(in) :: g
        CHARACTER(len=150)  :: filename1
-       INTEGER  :: k, i, j, g
+       INTEGER  :: k, i, j
        REAL (dp) :: u1, v1, w1
 
        WRITE(filename1,1)char_f,ita,g,re,block(2)%dx,nblocks

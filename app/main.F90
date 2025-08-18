@@ -25,76 +25,98 @@
 #endif
         use biocfd_forcing, only: pressureForcing1, pressureforcingfield, pressureforcingghost, &
              velocityforcing1, velocityforcingfield, velocityforcingghost
+
+#ifdef BIOCFD_MPI
+        use mpi_f08
+#endif
         IMPLICIT NONE
 
         INTEGER (int64) :: g
         real(dp) :: dstart1, dfinish1
+
+        integer :: rank, num_proc, ierror, start_block
+
+        ! These variables are used to control MPI execution
+        rank = 0
+        num_proc = 1
+
         ! These two subroutines are going to be run on every node
         CALL readInput
         CALL readBlockInterface
         CALL interfaceDetail
         ! (until here)
 
-        do g=blk_start, size(block)
-          call readSurfaceMeshGmsh(block(g))
+#ifdef BIOCFD_MPI
+        call MPI_Init(ierror)
+
+        call MPI_Comm_size(MPI_COMM_WORLD, num_proc, ierror)
+        call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierror)
+#endif
+
+        start_block = rank + 1
+
+        do g=start_block, size(block), num_proc
+          if (g /= 1) call readSurfaceMeshGmsh(block(g))
         end do
-        do g=1, size(block)
+         do g=start_block, size(block), num_proc
           call allocateArrays(block(g))
         end do
-        do g=blk_start, size(block)
-          call findDistnode(block(g))
+         do g=start_block, size(block), num_proc
+          if (g /= 1) then
+            call findDistnode(block(g))
+            call shiftSurfaceNodesInitial(block(g))
+            call computeSurfaceNorm(block(g))
+          end if
         end do
-        do g=blk_start, size(block)
-          call shiftSurfaceNodesInitial(block(g))
-        end do
-        do g=blk_start, size(block)
-          call computeSurfaceNorm(block(g))
-        end do       
         totalTime=0.
         totime = 0.
         ita1 = 0
         ita2 = 0
         solverTime=0.
         coupTime=0.
-        do g=blk_start, size(block)
-          call tagging_th(block(g), g)
-        end do
-        print*,'11'
-        do g=blk_start, size(block)
-          call cellCount_solid(block(g), g)
+         do g=start_block, size(block), num_proc
+          if (g /= 1) then
+            call tagging_th(block(g), g)
+            print*,'11'
+            call cellCount_solid(block(g), g)
+          end if
         end do
         print*,'12'
         ! This should only be called once (for the coarse block)
-        CALL fine_block_cell
-        print*,'13'
-        ! This is only called for the coarse block
-        call cellCount_solid_coarse(block(1))
+         do g=start_block, size(block), num_proc
+          if (g == 1) then
+            CALL fine_block_cell
+            print*,'13'
+            ! This is only called for the coarse block
+            call cellCount_solid_coarse(block(1))
+          end if
+        end do
         print*,'14'
-        do g=1, size(block)
+         do g=start_block, size(block), num_proc
           IF (iStart==0) CALL initialConditions(block(g))
           IF (iStart==1) CALL lastConditions(block(g))
         end do
-        do g=blk_start, size(block)
-          call computeNormDistance(block(g))
-        end do
-        do g=blk_start, size(block)
-          call findTScells(block(g))
-        end do
-        DO g=1, size(block)
+         do g=start_block, size(block), num_proc
+          if (g /= 1) then
+            call computeNormDistance(block(g))
+            call findTScells(block(g))
+          end if
           CALL coefficientMatrix(block(g), g)
-        end do
-        DO g=1, size(block)
           call non_uni_coeff(block(g))
         end do
         totime = totime + deltat
         if ((mod(ita,200_int64) ==0 .or. ita <= 2 )) then
-          do g=1, size(block)
+           do g=start_block, size(block), num_proc
                ! TN: TODO: This will not work for HDF5 output!!!
-            call write_output(block(g))
+            call write_output(block(g), g)
           end do
         end if
         coarse_flcnt_check=0
-        print*, 'adam'
+        print*, rank, 'adam'
+
+#ifdef BIOCFD_MPI
+        call MPI_Finalize(ierror)
+#endif
         stop
         DO
         ita = ita + 1
@@ -112,7 +134,7 @@
         if ((mod(ita,200_int64) ==0 .or. ita <= 2 )) then
           do g=1, size(block)
                ! TN: TODO: This will not work for HDF5 output!!!
-            CALL write_output(block(g))
+            CALL write_output(block(g), g)
           end do
         end if
         !$acc wait
