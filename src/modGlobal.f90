@@ -18,7 +18,7 @@ MODULE global
                                 epsi, re, rev, &
                                 alpha, &
                                 xfact,deltat, coupTime,totime, totalTime, dfinish, dstart, &
-                                solverTime, pi , msTime, al, uc
+                                pi , msTime, al, uc
 
        REAL (dp)       :: alpha_m, theta_m, alpha_m1, theta_m1, mu_f, rho_f, l_c, u_tip, disp
 

@@ -1,7 +1,7 @@
 module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, pcitamax, &
-       amgxita, couptime, dfinish, dstart, ita, mstime, nblocks, solvertime, totaltime, &
+       amgxita, couptime, dfinish, dstart, ita, mstime, nblocks, totaltime, &
        totime
 #ifdef _OPENMP
   use omp_lib, only: omp_get_max_threads, omp_get_thread_num
@@ -79,7 +79,6 @@ module biocfd_pcor_vcor
         block(g)%derrStdSt=0._dp
         end do
 
-        solverTime=0.
      CALL cpu_time(dStart)
         CALL fineUpdate_newv_bd
         CALL coarseUpdate_newv
@@ -179,7 +178,8 @@ module biocfd_pcor_vcor
             WRITE(filename1,1)
  1          FORMAT('sphere_iter.dat')
          OPEN(111,FILE=filename1,POSITION='APPEND',STATUS='unknown')
-         WRITE(111,126)   ita, block(1)%nIterPcor, block(2)%nIterPcor, omega1, omega2, solverTime
+         ! Final 0. was solverTime, but this was never written to so was always 0.
+         WRITE(111,126)   ita, block(1)%nIterPcor, block(2)%nIterPcor, omega1, omega2, 0.
          WRITE(*,16) ita, max_nIterPcor, max_derr2, max_derrStdSt, totalTime
  126      FORMAT(' ',I8, 2I10, 2F6.2,F14.9)
  16      FORMAT(' ',I8, I10, 4E15.6)
