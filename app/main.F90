@@ -83,7 +83,9 @@
         DO g=1, size(block)
           CALL coefficientMatrix(block(g), g)
         end do
-        CALL non_uni_coeff
+        DO g=1, size(block)
+          call non_uni_coeff(block(g))
+        end do
         totime = totime + deltat
         CALL write_output
         coarse_flcnt_check=0

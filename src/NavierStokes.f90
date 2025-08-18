@@ -1,6 +1,7 @@
 module biocfd_navier_stokes
   use, intrinsic :: iso_fortran_env, only: dp => real64
   use global, only : block, al, alpha, deltat, nblocks, re, rev
+  use biocfd_blocks, only : Blocks
   implicit none
   private
 
@@ -8,8 +9,10 @@ module biocfd_navier_stokes
 
 contains
 
-       SUBROUTINE non_uni_coeff
-       INTEGER  (dp) :: i, j, k, g, nx_var, ny_var, nz_var
+       SUBROUTINE non_uni_coeff(blk)
+
+       type(Blocks), intent(inout) :: blk
+       INTEGER  (dp) :: i, j, k
        REAL (dp)   :: tmp_dx1, tmp_dx2, tmp_dx3, tmp_dx4, tmp_dy1, tmp_dy2, tmp_dy3,         &
                       tmp_dy4, tmp_dz1, tmp_dz2, tmp_dz3, tmp_dz4
 
@@ -21,230 +24,223 @@ contains
        real(dp) :: s(5:10, 1:7)
        real(dp) :: ak(7)
 
+        allocate(blk%ca_uu(6, blk%nx+2), blk%ck_uu(6, blk%nx+2))
+        allocate(blk%ca_vv(6, blk%ny+2), blk%ck_vv(6, blk%ny+2))
+        allocate(blk%ca_ww(6, blk%nz+2), blk%ck_ww(6, blk%nz+2))
+        allocate(blk%ca_uv(6, blk%nx+2), blk%ck_uv(6, blk%nx+2))
+        allocate(blk%ca_uw(6, blk%nx+2), blk%ck_uw(6, blk%nx+2))
+        allocate(blk%ca_vu(6, blk%ny+2), blk%ck_vu(6, blk%ny+2))
+        allocate(blk%ca_vw(6, blk%ny+2), blk%ck_vw(6, blk%ny+2))
+        allocate(blk%ca_wu(6, blk%nz+2), blk%ck_wu(6, blk%nz+2))
+        allocate(blk%ca_wv(6, blk%nz+2), blk%ck_wv(6, blk%nz+2))
 
-        DO g=1,nblocks
-        nx_var=block(g)%nx
-        ny_var=block(g)%ny
-        nz_var=block(g)%nz
-
-        allocate(block(g)%ca_uu(6, nx_var+2), block(g)%ck_uu(6, nx_var+2))
-        allocate(block(g)%ca_vv(6, ny_var+2), block(g)%ck_vv(6, ny_var+2))
-        allocate(block(g)%ca_ww(6, nz_var+2), block(g)%ck_ww(6, nz_var+2))
-        allocate(block(g)%ca_uv(6, nx_var+2), block(g)%ck_uv(6, nx_var+2))
-        allocate(block(g)%ca_uw(6, nx_var+2), block(g)%ck_uw(6, nx_var+2))
-        allocate(block(g)%ca_vu(6, ny_var+2), block(g)%ck_vu(6, ny_var+2))
-        allocate(block(g)%ca_vw(6, ny_var+2), block(g)%ck_vw(6, ny_var+2))
-        allocate(block(g)%ca_wu(6, nz_var+2), block(g)%ck_wu(6, nz_var+2))
-        allocate(block(g)%ca_wv(6, nz_var+2), block(g)%ck_wv(6, nz_var+2))
-
-       do i=2, block(g)%nx
-       theta = block(g)%deltax(i:i+2) / block(g)%deltax(i-1:i+1)
+       do i=2, blk%nx
+       theta = blk%deltax(i:i+2) / blk%deltax(i-1:i+1)
        f = compute_f(theta)
        s = compute_s(theta(2), f)
 
-       block(g)%ca_uu(1, i) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
-       block(g)%ca_uu(2, i) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
-       block(g)%ca_uu(3, i) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
-       block(g)%ca_uu(4, i) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
-       block(g)%ca_uu(5, i) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
-       block(g)%ca_uu(6, i) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
+       blk%ca_uu(1, i) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
+       blk%ca_uu(2, i) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
+       blk%ca_uu(3, i) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
+       blk%ca_uu(4, i) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
+       blk%ca_uu(5, i) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
+       blk%ca_uu(6, i) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
 
        ak = compute_ak(theta)
 
-       block(g)%ck_uu(1, i) = ak(3)
-       block(g)%ck_uu(2, i) = -ak(4)
-       block(g)%ck_uu(3, i) = ak(1) + ak(2)
-       block(g)%ck_uu(4, i) = -ak(5)
-       block(g)%ck_uu(5, i) = ak(6)
-       block(g)%ck_uu(6, i) = ak(7)
+       blk%ck_uu(1, i) = ak(3)
+       blk%ck_uu(2, i) = -ak(4)
+       blk%ck_uu(3, i) = ak(1) + ak(2)
+       blk%ck_uu(4, i) = -ak(5)
+       blk%ck_uu(5, i) = ak(6)
+       blk%ck_uu(6, i) = ak(7)
        enddo
 
-       do j=2, block(g)%ny
+       do j=2, blk%ny
 
-       theta = block(g)%deltay(j:j+2) / block(g)%deltay(j-1:j+1)
+       theta = blk%deltay(j:j+2) / blk%deltay(j-1:j+1)
 
        f = compute_f(theta)
        s = compute_s(theta(2), f)
 
-       block(g)%ca_vv(1, j) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
-       block(g)%ca_vv(2, j) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
-       block(g)%ca_vv(3, j) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
-       block(g)%ca_vv(4, j) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
-       block(g)%ca_vv(5, j) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
-       block(g)%ca_vv(6, j) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
+       blk%ca_vv(1, j) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
+       blk%ca_vv(2, j) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
+       blk%ca_vv(3, j) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
+       blk%ca_vv(4, j) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
+       blk%ca_vv(5, j) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
+       blk%ca_vv(6, j) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
 
        ak = compute_ak(theta)
 
-       block(g)%ck_vv(1, j) = ak(3)
-       block(g)%ck_vv(2, j) = -ak(4)
-       block(g)%ck_vv(3, j) = ak(1) + ak(2)
-       block(g)%ck_vv(4, j) = -ak(5)
-       block(g)%ck_vv(5, j) = ak(6)
-       block(g)%ck_vv(6, j) = ak(7)
+       blk%ck_vv(1, j) = ak(3)
+       blk%ck_vv(2, j) = -ak(4)
+       blk%ck_vv(3, j) = ak(1) + ak(2)
+       blk%ck_vv(4, j) = -ak(5)
+       blk%ck_vv(5, j) = ak(6)
+       blk%ck_vv(6, j) = ak(7)
        enddo
 
-       do k=2, block(g)%nz
+       do k=2, blk%nz
 
-       theta = block(g)%deltaz(k:k+2) / block(g)%deltaz(k-1:k+1)
+       theta = blk%deltaz(k:k+2) / blk%deltaz(k-1:k+1)
 
        f = compute_f(theta)
        s = compute_s(theta(2), f)
 
-       block(g)%ca_ww(1, k) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
-       block(g)%ca_ww(2, k) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
-       block(g)%ca_ww(3, k) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
-       block(g)%ca_ww(4, k) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
-       block(g)%ca_ww(5, k) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
-       block(g)%ca_ww(6, k) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
+       blk%ca_ww(1, k) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
+       blk%ca_ww(2, k) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
+       blk%ca_ww(3, k) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
+       blk%ca_ww(4, k) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
+       blk%ca_ww(5, k) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
+       blk%ca_ww(6, k) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
 
        ak = compute_ak(theta)
 
-       block(g)%ck_ww(1, k) = ak(3)
-       block(g)%ck_ww(2, k) = -ak(4)
-       block(g)%ck_ww(3, k) = ak(1) + ak(2)
-       block(g)%ck_ww(4, k) = -ak(5)
-       block(g)%ck_ww(5, k) = ak(6)
-       block(g)%ck_ww(6, k) = ak(7)
+       blk%ck_ww(1, k) = ak(3)
+       blk%ck_ww(2, k) = -ak(4)
+       blk%ck_ww(3, k) = ak(1) + ak(2)
+       blk%ck_ww(4, k) = -ak(5)
+       blk%ck_ww(5, k) = ak(6)
+       blk%ck_ww(6, k) = ak(7)
        enddo
 
-       do i=2, block(g)%nx
+       do i=2, blk%nx
        if(i==2)then
-       tmp_dx1=block(g)%deltax(i-1)
+       tmp_dx1=blk%deltax(i-1)
        else
-       tmp_dx1=0.5_dp*(block(g)%deltax(i-1)+block(g)%deltax(i-2))
+       tmp_dx1=0.5_dp*(blk%deltax(i-1)+blk%deltax(i-2))
        endif
-       tmp_dx2=0.5_dp*(block(g)%deltax(i)+block(g)%deltax(i-1))
-       tmp_dx3=0.5_dp*(block(g)%deltax(i)+block(g)%deltax(i+1))
-       tmp_dx4=0.5_dp*(block(g)%deltax(i+1)+block(g)%deltax(i+2))
+       tmp_dx2=0.5_dp*(blk%deltax(i)+blk%deltax(i-1))
+       tmp_dx3=0.5_dp*(blk%deltax(i)+blk%deltax(i+1))
+       tmp_dx4=0.5_dp*(blk%deltax(i+1)+blk%deltax(i+2))
 
        theta = [tmp_dx2/tmp_dx1, tmp_dx3/tmp_dx2, tmp_dx4/tmp_dx3]
 
        f = compute_f(theta)
        s = compute_s(theta(2), f)
 
-       block(g)%ca_uv(1, i) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
-       block(g)%ca_uv(2, i) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
-       block(g)%ca_uv(3, i) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
-       block(g)%ca_uv(4, i) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
-       block(g)%ca_uv(5, i) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
-       block(g)%ca_uv(6, i) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
+       blk%ca_uv(1, i) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
+       blk%ca_uv(2, i) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
+       blk%ca_uv(3, i) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
+       blk%ca_uv(4, i) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
+       blk%ca_uv(5, i) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
+       blk%ca_uv(6, i) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
 
-       block(g)%ca_uw(1, i) = block(g)%ca_uv(1, i)
-       block(g)%ca_uw(2, i) = block(g)%ca_uv(2, i)
-       block(g)%ca_uw(3, i) = block(g)%ca_uv(3, i)
-       block(g)%ca_uw(4, i) = block(g)%ca_uv(4, i)
-       block(g)%ca_uw(5, i) = block(g)%ca_uv(5, i)
-       block(g)%ca_uw(6, i) = block(g)%ca_uv(6, i)
+       blk%ca_uw(1, i) = blk%ca_uv(1, i)
+       blk%ca_uw(2, i) = blk%ca_uv(2, i)
+       blk%ca_uw(3, i) = blk%ca_uv(3, i)
+       blk%ca_uw(4, i) = blk%ca_uv(4, i)
+       blk%ca_uw(5, i) = blk%ca_uv(5, i)
+       blk%ca_uw(6, i) = blk%ca_uv(6, i)
 
        ak = compute_ak(theta)
 
-       block(g)%ck_uv(1, i) = ak(3)
-       block(g)%ck_uv(2, i) = -ak(4)
-       block(g)%ck_uv(3, i) = ak(1)+ak(2)
-       block(g)%ck_uv(4, i) = -ak(5)
-       block(g)%ck_uv(5, i) = ak(6)
-       block(g)%ck_uv(6, i) = ak(7)
+       blk%ck_uv(1, i) = ak(3)
+       blk%ck_uv(2, i) = -ak(4)
+       blk%ck_uv(3, i) = ak(1)+ak(2)
+       blk%ck_uv(4, i) = -ak(5)
+       blk%ck_uv(5, i) = ak(6)
+       blk%ck_uv(6, i) = ak(7)
 
-       block(g)%ck_uw(1, i)=block(g)%ck_uv(1, i)
-       block(g)%ck_uw(2, i)=block(g)%ck_uv(2, i)
-       block(g)%ck_uw(3, i)=block(g)%ck_uv(3, i)
-       block(g)%ck_uw(4, i)=block(g)%ck_uv(4, i)
-       block(g)%ck_uw(5, i)=block(g)%ck_uv(5, i)
-       block(g)%ck_uw(6, i)=block(g)%ck_uv(6, i)
+       blk%ck_uw(1, i)=blk%ck_uv(1, i)
+       blk%ck_uw(2, i)=blk%ck_uv(2, i)
+       blk%ck_uw(3, i)=blk%ck_uv(3, i)
+       blk%ck_uw(4, i)=blk%ck_uv(4, i)
+       blk%ck_uw(5, i)=blk%ck_uv(5, i)
+       blk%ck_uw(6, i)=blk%ck_uv(6, i)
        enddo
 
-       do j=2, block(g)%ny
+       do j=2, blk%ny
        if(j==2)then
-       tmp_dy1=block(g)%deltay(j-1)
+       tmp_dy1=blk%deltay(j-1)
        else
-       tmp_dy1=0.5_dp*(block(g)%deltay(j-1)+block(g)%deltay(j-2))
+       tmp_dy1=0.5_dp*(blk%deltay(j-1)+blk%deltay(j-2))
        endif
-       tmp_dy2=0.5_dp*(block(g)%deltay(j)+block(g)%deltay(j-1))
-       tmp_dy3=0.5_dp*(block(g)%deltay(j)+block(g)%deltay(j+1))
-       tmp_dy4=0.5_dp*(block(g)%deltay(j+1)+block(g)%deltay(j+2))
+       tmp_dy2=0.5_dp*(blk%deltay(j)+blk%deltay(j-1))
+       tmp_dy3=0.5_dp*(blk%deltay(j)+blk%deltay(j+1))
+       tmp_dy4=0.5_dp*(blk%deltay(j+1)+blk%deltay(j+2))
 
        theta= [tmp_dy2/tmp_dy1, tmp_dy3/tmp_dy2, tmp_dy4/tmp_dy3]
 
        f = compute_f(theta)
        s = compute_s(theta(2), f)
 
-       block(g)%ca_vu(1, j) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
-       block(g)%ca_vu(2, j) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
-       block(g)%ca_vu(3, j) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
-       block(g)%ca_vu(4, j) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
-       block(g)%ca_vu(5, j) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
-       block(g)%ca_vu(6, j) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
+       blk%ca_vu(1, j) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
+       blk%ca_vu(2, j) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
+       blk%ca_vu(3, j) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
+       blk%ca_vu(4, j) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
+       blk%ca_vu(5, j) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
+       blk%ca_vu(6, j) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
 
-       block(g)%ca_vw(1, j)=block(g)%ca_vu(1, j)
-       block(g)%ca_vw(2, j)=block(g)%ca_vu(2, j)
-       block(g)%ca_vw(3, j)=block(g)%ca_vu(3, j)
-       block(g)%ca_vw(4, j)=block(g)%ca_vu(4, j)
-       block(g)%ca_vw(5, j)=block(g)%ca_vu(5, j)
-       block(g)%ca_vw(6, j)=block(g)%ca_vu(6, j)
+       blk%ca_vw(1, j)=blk%ca_vu(1, j)
+       blk%ca_vw(2, j)=blk%ca_vu(2, j)
+       blk%ca_vw(3, j)=blk%ca_vu(3, j)
+       blk%ca_vw(4, j)=blk%ca_vu(4, j)
+       blk%ca_vw(5, j)=blk%ca_vu(5, j)
+       blk%ca_vw(6, j)=blk%ca_vu(6, j)
 
        ak = compute_ak(theta)
 
-       block(g)%ck_vu(1, j) = ak(3)
-       block(g)%ck_vu(2, j) = -ak(4)
-       block(g)%ck_vu(3, j) = ak(1) + ak(2)
-       block(g)%ck_vu(4, j) = -ak(5)
-       block(g)%ck_vu(5, j) = ak(6)
-       block(g)%ck_vu(6, j) = ak(7)
+       blk%ck_vu(1, j) = ak(3)
+       blk%ck_vu(2, j) = -ak(4)
+       blk%ck_vu(3, j) = ak(1) + ak(2)
+       blk%ck_vu(4, j) = -ak(5)
+       blk%ck_vu(5, j) = ak(6)
+       blk%ck_vu(6, j) = ak(7)
 
-       block(g)%ck_vw(1, j)=block(g)%ck_vu(1, j)
-       block(g)%ck_vw(2, j)=block(g)%ck_vu(2, j)
-       block(g)%ck_vw(3, j)=block(g)%ck_vu(3, j)
-       block(g)%ck_vw(4, j)=block(g)%ck_vu(4, j)
-       block(g)%ck_vw(5, j)=block(g)%ck_vu(5, j)
-       block(g)%ck_vw(6, j)=block(g)%ck_vu(6, j)
+       blk%ck_vw(1, j)=blk%ck_vu(1, j)
+       blk%ck_vw(2, j)=blk%ck_vu(2, j)
+       blk%ck_vw(3, j)=blk%ck_vu(3, j)
+       blk%ck_vw(4, j)=blk%ck_vu(4, j)
+       blk%ck_vw(5, j)=blk%ck_vu(5, j)
+       blk%ck_vw(6, j)=blk%ck_vu(6, j)
        enddo
 
-       do k=2, block(g)%nz
+       do k=2, blk%nz
        if(k==2)then
-       tmp_dz1=block(g)%deltaz(k-1)
+       tmp_dz1=blk%deltaz(k-1)
        else
-       tmp_dz1=0.5_dp*(block(g)%deltaz(k-1)+block(g)%deltaz(k-2))
+       tmp_dz1=0.5_dp*(blk%deltaz(k-1)+blk%deltaz(k-2))
        endif
-       tmp_dz2=0.5_dp*(block(g)%deltaz(k)+block(g)%deltaz(k-1))
-       tmp_dz3=0.5_dp*(block(g)%deltaz(k)+block(g)%deltaz(k+1))
-       tmp_dz4=0.5_dp*(block(g)%deltaz(k+1)+block(g)%deltaz(k+2))
+       tmp_dz2=0.5_dp*(blk%deltaz(k)+blk%deltaz(k-1))
+       tmp_dz3=0.5_dp*(blk%deltaz(k)+blk%deltaz(k+1))
+       tmp_dz4=0.5_dp*(blk%deltaz(k+1)+blk%deltaz(k+2))
 
        theta = [tmp_dz2/tmp_dz1, tmp_dz3/tmp_dz2, tmp_dz4/tmp_dz3]
 
        f = compute_f(theta)
        s = compute_s(theta(2), f)
 
-       block(g)%ca_wu(1, k) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
-       block(g)%ca_wu(2, k) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
-       block(g)%ca_wu(3, k) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
-       block(g)%ca_wu(4, k) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
-       block(g)%ca_wu(5, k) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
-       block(g)%ca_wu(6, k) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
+       blk%ca_wu(1, k) = s(9, 7) * s(10, 1) - s(10, 7) * s(9, 1)
+       blk%ca_wu(2, k) = s(9, 7) * s(10, 2) + s(10, 7) * s(9, 3)
+       blk%ca_wu(3, k) = s(9, 5) * s(10, 7) - s(10, 5) * s(9, 7)
+       blk%ca_wu(4, k) = s(9, 4) * s(10, 7) + s(10, 4) * s(9, 7)
+       blk%ca_wu(5, k) = s(9, 7) * s(10, 3) - s(10, 7) * s(9, 2)
+       blk%ca_wu(6, k) = s(9, 7) * s(10, 6) - s(10, 7) * s(9, 6)
 
-       block(g)%ca_wv(1, k)=block(g)%ca_wu(1, k)
-       block(g)%ca_wv(2, k)=block(g)%ca_wu(2, k)
-       block(g)%ca_wv(3, k)=block(g)%ca_wu(3, k)
-       block(g)%ca_wv(4, k)=block(g)%ca_wu(4, k)
-       block(g)%ca_wv(5, k)=block(g)%ca_wu(5, k)
-       block(g)%ca_wv(6, k)=block(g)%ca_wu(6, k)
+       blk%ca_wv(1, k)=blk%ca_wu(1, k)
+       blk%ca_wv(2, k)=blk%ca_wu(2, k)
+       blk%ca_wv(3, k)=blk%ca_wu(3, k)
+       blk%ca_wv(4, k)=blk%ca_wu(4, k)
+       blk%ca_wv(5, k)=blk%ca_wu(5, k)
+       blk%ca_wv(6, k)=blk%ca_wu(6, k)
 
        ak = compute_ak(theta)
 
-       block(g)%ck_wu(1, k) = ak(3)
-       block(g)%ck_wu(2, k) = -ak(4)
-       block(g)%ck_wu(3, k) = ak(1) + ak(2)
-       block(g)%ck_wu(4, k) = -ak(5)
-       block(g)%ck_wu(5, k) = ak(6)
-       block(g)%ck_wu(6, k) = ak(7)
+       blk%ck_wu(1, k) = ak(3)
+       blk%ck_wu(2, k) = -ak(4)
+       blk%ck_wu(3, k) = ak(1) + ak(2)
+       blk%ck_wu(4, k) = -ak(5)
+       blk%ck_wu(5, k) = ak(6)
+       blk%ck_wu(6, k) = ak(7)
 
-       block(g)%ck_wv(1, k)=block(g)%ck_wu(1, k)
-       block(g)%ck_wv(2, k)=block(g)%ck_wu(2, k)
-       block(g)%ck_wv(3, k)=block(g)%ck_wu(3, k)
-       block(g)%ck_wv(4, k)=block(g)%ck_wu(4, k)
-       block(g)%ck_wv(5, k)=block(g)%ck_wu(5, k)
-       block(g)%ck_wv(6, k)=block(g)%ck_wu(6, k)
+       blk%ck_wv(1, k)=blk%ck_wu(1, k)
+       blk%ck_wv(2, k)=blk%ck_wu(2, k)
+       blk%ck_wv(3, k)=blk%ck_wu(3, k)
+       blk%ck_wv(4, k)=blk%ck_wu(4, k)
+       blk%ck_wv(5, k)=blk%ck_wu(5, k)
+       blk%ck_wv(6, k)=blk%ck_wu(6, k)
        enddo
-        END DO
 
        write(*,*)'leaving non_uni_coeff'
 
