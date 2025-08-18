@@ -32,6 +32,7 @@
         ! These two subroutines are going to be run on every node
         CALL readInput
         CALL readBlockInterface
+        CALL interfaceDetail
         ! (until here)
 
         do g=blk_start, size(block)
@@ -48,10 +49,7 @@
         end do
         do g=blk_start, size(block)
           call computeSurfaceNorm(block(g))
-        end do
-        ! I think that this has to be run on every node too (for now),
-        ! can be moved up to after readBlockInterface (maybe?)
-        CALL interfaceDetail
+        end do       
         totalTime=0.
         totime = 0.
         ita1 = 0
@@ -66,14 +64,16 @@
           call cellCount_solid(block(g), g)
         end do
         print*,'12'
-        ! This uses interfaces so is problematic
+        ! This should only be called once (for the coarse block)
         CALL fine_block_cell
         print*,'13'
         ! This is only called for the coarse block
         call cellCount_solid_coarse(block(1))
         print*,'14'
-        IF (iStart==0) CALL initialConditions
-        IF (iStart==1) CALL lastConditions
+        do g=1, size(block)
+          IF (iStart==0) CALL initialConditions(block(g))
+          IF (iStart==1) CALL lastConditions(block(g))
+        end do
         do g=blk_start, size(block)
           call computeNormDistance(block(g))
         end do
@@ -95,6 +95,7 @@
         end if
         coarse_flcnt_check=0
         print*, 'adam'
+        stop
         DO
         ita = ita + 1
         ita2 = ita2 + 1

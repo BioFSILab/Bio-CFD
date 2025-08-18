@@ -1,14 +1,16 @@
 module biocfd_last_conditions
   use iso_fortran_env, only : dp => real64
   use global, only : block, ita, ita1, ita2, nblocks, re, totime
+  use biocfd_blocks, only : Blocks
   implicit none
   private
 
   public :: lastConditions
 
   contains
-      SUBROUTINE lastConditions
+      SUBROUTINE lastConditions(blk)
 
+        type(Blocks), intent(inout) :: blk
        INTEGER::  i, j, k, g
         CHARACTER(len=150) :: filename3
         WRITE(*,*) 'Enter lastcondtitions'
@@ -19,32 +21,26 @@ module biocfd_last_conditions
         ita1 = 0
         ita2 = 0
 
-
-        DO g=1,nblocks
        WRITE(filename3,3) g, re
   3     FORMAT('out/aorta_chkpt.',i3.3,'.',f6.1,".dat")
        OPEN (1, FILE=filename3, FORM='formatted')
-       DO k = 1, block(g)%nz+2
-       DO j = 1, block(g)%ny+2
-       DO i = 1, block(g)%nx+2
-         READ(1,*) block(g)%u(i,j,k), block(g)%v(i,j,k), block(g)%w(i,j,k), block(g)%p(i,j,k), &
+       DO k = 1, blk%nz+2
+       DO j = 1, blk%ny+2
+       DO i = 1, blk%nx+2
+         READ(1,*) blk%u(i,j,k), blk%v(i,j,k), blk%w(i,j,k), blk%p(i,j,k), &
                    totime, ita, ita1
       END DO
       END DO
       END DO
        CLOSE(1)
-        END DO
 
+       DO k = 1, blk%nz+2
+       DO j = 1, blk%ny+2
+       DO i = 1, blk%nx+2
+           blk%ut(i,j,k) =  blk%u(i,j,k)
+           blk%vt(i,j,k) =  blk%v(i,j,k)
+           blk%wt(i,j,k) =  blk%w(i,j,k)
 
-       DO g=1,nblocks
-       DO k = 1, block(g)%nz+2
-       DO j = 1, block(g)%ny+2
-       DO i = 1, block(g)%nx+2
-           block(g)%ut(i,j,k) =  block(g)%u(i,j,k)
-           block(g)%vt(i,j,k) =  block(g)%v(i,j,k)
-           block(g)%wt(i,j,k) =  block(g)%w(i,j,k)
-
-        END DO
         END DO
         END DO
         END DO
