@@ -308,7 +308,7 @@ module biocfd_read_input
 
     SUBROUTINE readSurfaceMeshGmsh(blk)
         type(Blocks), intent(inout) :: blk
-        INTEGER(int64) :: n, i1, i2, i3, i5, g
+        INTEGER(int64) :: n, i1, i2, i3, i5
         CHARACTER (LEN = 72) :: cLine
 
 
