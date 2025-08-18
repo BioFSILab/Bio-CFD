@@ -80,7 +80,9 @@
         do g=blk_start, size(block)
           call findTScells(block(g))
         end do
-        CALL coefficientMatrix
+        DO g=1, size(block)
+          CALL coefficientMatrix(block(g), g)
+        end do
         CALL non_uni_coeff
         totime = totime + deltat
         CALL write_output
