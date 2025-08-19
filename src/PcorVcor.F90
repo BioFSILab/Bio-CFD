@@ -12,6 +12,9 @@ module biocfd_pcor_vcor
   use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_bd, fineUpdate_pc_bd
   use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
   use biocfd_boundary_conditions, only : velocityBC
+#ifdef BIOCFD_MPI
+        use mpi_f08
+#endif
   implicit none
   private
 
@@ -33,6 +36,11 @@ module biocfd_pcor_vcor
         ! For controlling OpenACC
         integer :: acc_devices
 
+        integer :: rank, num_proc, start_block
+#ifdef BIOCFD_MPI
+        integer :: ierror
+#endif
+
           max_derrStdst=0._dp
           max_derr1=0._dp
           max_derr2=0._dp
@@ -48,6 +56,10 @@ module biocfd_pcor_vcor
           omp_thread_num = 0
           acc_devices = 0
 
+          ! These variables are used to control MPI execution
+          rank = 0
+          num_proc = 1
+
 #ifdef _OPENMP
           omp_threads = min(omp_get_max_threads(), size(block))
 #endif
@@ -60,9 +72,13 @@ module biocfd_pcor_vcor
          ! compatible GPU if it can find it.
          acc_devices = acc_get_num_devices(acc_device_default)
 #endif
+#ifdef BIOCFD_MPI
+         call MPI_Comm_size(MPI_COMM_WORLD, num_proc, ierror)
+         call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierror)
+#endif
+        start_block = rank + 1
 
-
-        DO g=1,nblocks
+        do g=start_block, size(block), num_proc
         !$acc parallel loop gang vector collapse (3) default(present)
         DO k = 1, block(g)%nz+2
         DO j = 1, block(g)%ny+2
@@ -79,9 +95,16 @@ module biocfd_pcor_vcor
         block(g)%derrStdSt=0._dp
         end do
 
+
         solverTime=0.
-     CALL cpu_time(dStart)
+        CALL cpu_time(dStart)
+        ! This is the first place we require MPI communication
         CALL fineUpdate_newv_bd
+#ifdef BIOCFD_MPI
+        call MPI_Barrier(MPI_COMM_WORLD, ierror)
+        call MPI_Finalize(ierror)
+        stop
+#endif
         CALL coarseUpdate_newv
 
      CALL cpu_time(dfinish)

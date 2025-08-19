@@ -1,6 +1,6 @@
 
       PROGRAM main
-        use, intrinsic :: iso_fortran_env, only: int64, dp => real64
+        use, intrinsic :: iso_fortran_env, only: int64, dp => real64, error_unit
         USE global, only: block, blk_start, coarse_flcnt_check, couptime, deltat, istart, &
              ita, ita1, ita2, itamax, nblocks, solvertime, totaltime, totime
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
@@ -54,6 +54,16 @@
 
         call MPI_Comm_size(MPI_COMM_WORLD, num_proc, ierror)
         call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierror)
+
+        if (num_proc > size(block)) then
+          if (rank == 0) then
+            write(error_unit, *) "You have launched the program with more processes than blocks."
+            write(error_unit, *) "This will lead to wasted resources."
+            write(error_unit, *) "Please resubmit the job with the number of processors <= ", size(block)
+          end if
+          call MPI_Finalize()
+          stop 1
+        end if
 #endif
 
         start_block = rank + 1
@@ -61,11 +71,16 @@
         do g=start_block, size(block), num_proc
           if (g /= 1) call readSurfaceMeshGmsh(block(g))
         end do
-         do g=start_block, size(block), num_proc
-          call allocateArrays(block(g))
-        end do
-         do g=start_block, size(block), num_proc
+        ! Always allocate the arrays for block(1) - the coarse block,
+        ! as will be needed later for interpolation TODO: Work out
+        ! whether or not we are really going to need all of these
+        ! arrays
+        !
+        ! We need to allocate block(1) for every rank
+        call allocateArrays(block(1))
+        do g=start_block, size(block), num_proc
           if (g /= 1) then
+            call allocateArrays(block(g))
             call findDistnode(block(g))
             call shiftSurfaceNodesInitial(block(g))
             call computeSurfaceNorm(block(g))
@@ -134,13 +149,12 @@
         if (g == 1) call velocityBC(block(1))
       end do
 
+        CALL poissonSolver
 #ifdef BIOCFD_MPI
         call MPI_Barrier(MPI_COMM_WORLD, ierror)
         call MPI_Finalize(ierror)
 #endif
         stop
-
-        CALL poissonSolver
         print *,7
         CALL pressureForcing1
         if ((mod(ita,200_int64) ==0 .or. ita <= 2 )) then
