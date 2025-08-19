@@ -11,16 +11,15 @@ module biocfd_forcing
   public :: velocityforcing1, velocityforcingfield, velocityforcingghost
 
   contains
-SUBROUTINE pressureForcing1
+SUBROUTINE pressureForcing1(blk)
 
+       type(Blocks), intent(inout) :: blk
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1, g
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
                    dpdn_e
 
       real(dp) :: derivatives(3)
       dpdn = 0._dp
-        DO g=blk_start,nblocks
-
 
  !$acc parallel loop gang vector                                                                                          &
  !$acc private (n, n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
@@ -98,7 +97,6 @@ SUBROUTINE pressureForcing1
          block(g)%p(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
       ENDDO
  !$acc end parallel loop
-      ENDDO
 
 END SUBROUTINE pressureForcing1
 

@@ -151,19 +151,22 @@
       end do
 
         CALL poissonSolver
+        print *,7
+        do g=start_block, size(block), num_proc
+          if (g /= 1) CALL pressureForcing1(block(g))
+        end do
+        print *, "Rank = ", rank, " - got to file writing"
+        if ((mod(ita,200_int64) ==0 .or. ita <= 2 )) then
+          do g=start_block, size(block), num_proc
+               ! TN: TODO: This will not work for HDF5 output!!!
+            CALL write_output(block(g), g)
+          end do
+        end if
 #ifdef BIOCFD_MPI
         call MPI_Barrier(MPI_COMM_WORLD, ierror)
         call MPI_Finalize(ierror)
         stop
 #endif
-        print *,7
-        CALL pressureForcing1
-        if ((mod(ita,200_int64) ==0 .or. ita <= 2 )) then
-          do g=1, size(block)
-               ! TN: TODO: This will not work for HDF5 output!!!
-            CALL write_output(block(g), g)
-          end do
-        end if
         !$acc wait
         CALL writeResult
         !$acc wait
