@@ -154,8 +154,8 @@
 #ifdef BIOCFD_MPI
         call MPI_Barrier(MPI_COMM_WORLD, ierror)
         call MPI_Finalize(ierror)
-#endif
         stop
+#endif
         print *,7
         CALL pressureForcing1
         if ((mod(ita,200_int64) ==0 .or. ita <= 2 )) then

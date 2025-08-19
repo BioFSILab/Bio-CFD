@@ -23,6 +23,15 @@ module biocfd_fine_interp
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
 
+#ifdef BIOCFD_MPI
+           if (.not. allocated(block(b_blk_no)%p)) then
+               ! If this array isn't allocated we aren't on the right
+               ! rank to deal with this so keep going until we find
+               ! one that is on this rank
+               return
+           end if
+#endif
+
         DO k=2,intfr(g)%counterzp-1
         DO j=2,intfr(g)%counteryp-1
         DO i=2,intfr(g)%counterxp-1

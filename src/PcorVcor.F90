@@ -146,40 +146,34 @@ module biocfd_pcor_vcor
         CALL cpu_time(dfinish)
         call fineUpdate_pc_bd
         !$omp end single
-#ifdef BIOCFD_MPI       
-        !$omp end parallel
-        call MPI_Barrier(MPI_COMM_WORLD, ierror)
-        call MPI_Finalize(ierror)
-        stop
-#endif
+
         !$omp do
-        DO g=2,nblocks
+        do g=start_block, size(block), num_proc
          CALL cpu_time(dStart)
          amgxita=0
-         CALL REDBLACKSOR_linear(g)
+         if (g /= 1) CALL REDBLACKSOR_linear(g)
          CALL cpu_time(dfinish)
          msTime = msTime + dfinish-dstart
         end do
         !$omp end do
+
         !$omp single
           CALL coarseUpdate_pc
         !$omp end single
 
        !$omp do
-       DO g=1,nblocks
+       do g=start_block, size(block), num_proc
                CALL correctPressure(g)  !pressure correction
                CALL correctVelocity(g)  !velocity correction
         END DO
         !$omp end do
-#ifndef BIOCFD_MPI
         !$omp end parallel
-#endif
 
-        do g=1,nblocks
+        do g=start_block, size(block), num_proc
          CALL velocityBC(block(g))      !correct velocity at boundaries
         end do
 
-         DO g=1,nblocks
+         do g=start_block, size(block), num_proc
          err_ds=0.
         !$acc parallel loop gang vector firstprivate (deltat)   &
         !$acc private (i, j, k, er_dudt, er_dvdt, er_dwdt)               &
@@ -195,13 +189,9 @@ module biocfd_pcor_vcor
          ENDDO
          !$acc end parallel loop
            block(g)%derrStdSt = err_ds
+          end do
 
-
-         ENDDO
-
-
-
-        DO i=1,nblocks
+        do g=start_block, size(block), num_proc
                if ( block(i)%derr2 >max_derr2)then
                   max_derr2=block(i)%derr2
                end if
@@ -217,6 +207,8 @@ module biocfd_pcor_vcor
               totalTime=totime + totalTime
           end do
 
+#ifndef BIOCFD_MPI
+          ! Not going to do this if we are using MPI - I'm not sure how useful it is anyway
             WRITE(filename1,1)
  1          FORMAT('sphere_iter.dat')
          OPEN(111,FILE=filename1,POSITION='APPEND',STATUS='unknown')
@@ -225,8 +217,10 @@ module biocfd_pcor_vcor
  126      FORMAT(' ',I8, 2I10, 2F6.2,F14.9)
  16      FORMAT(' ',I8, I10, 4E15.6)
          CLOSE(111)
+#endif
 
-         DO g=1,nblocks
+
+         do g=start_block, size(block), num_proc
         !$acc parallel loop gang vector default(present) collapse (3)
          DO k = 1, block(g)%nz+2
          DO j = 1, block(g)%ny+2
@@ -239,6 +233,7 @@ module biocfd_pcor_vcor
          END DO
         !$acc end parallel loop
          END DO
+
         CALL fineUpdate_bd
         CALL coarseUpdate
       END SUBROUTINE poissonSolver

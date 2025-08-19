@@ -15,6 +15,16 @@ module biocfd_fine_interp_bound
 SUBROUTINE fineUpdate_bd
         INTEGER(int64) :: g
 
+#ifdef BIOCFD_MPI
+          ! If we are using MPI then at this stage we need to make
+          ! sure that block(1) is up-to-date on all ranks. We assume
+          ! that all interfaces are from block(1) to another block
+          call MPI_Bcast(block(1)%p, size(block(1)%p), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%u, size(block(1)%u), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%v, size(block(1)%v), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%w, size(block(1)%w), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+#endif
+
         DO g=1,intflines
            call fineUpdate_bd_mv(g)
         ENDDO
@@ -317,6 +327,8 @@ SUBROUTINE fineUpdate_bd
 
         end subroutine fineUpdate_newv_bd
 
+        !> WARNING: Need to make sure that we correctly update
+        !> block(1) arrays before calling this if we are using MPI
         SUBROUTINE fineUpdate_bd_mv(g)
 
         INTEGER(int64) :: i,j,k, varx1,varx2, vary1, vary2, tar_x, tar_y, loc_x, &
@@ -328,6 +340,15 @@ SUBROUTINE fineUpdate_bd
 
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
+
+#ifdef BIOCFD_MPI
+           if (.not. allocated(block(b_blk_no)%p)) then
+               ! If this array isn't allocated we aren't on the right
+               ! rank to deal with this so keep going until we find
+               ! one that is on this rank
+               return
+           end if
+#endif
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ppppppp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

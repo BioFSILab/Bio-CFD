@@ -7,6 +7,9 @@ module biocfd_search
   use biocfd_fine_interp, only: fineUpdate_mv
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
   use biocfd_blocks, only : Blocks
+#ifdef BIOCFD_MPI
+   use mpi_f08
+#endif
   implicit NONE
 
   private
@@ -588,6 +591,15 @@ module biocfd_search
         Print*, 'solid cells=', block(g)%solidCellCount
         endif
         ENDDO
+#ifdef BIOCFD_MPI
+          ! If we are using MPI then at this stage we need to make
+          ! sure that block(1) is up-to-date on all ranks. We assume
+          ! that all interfaces are from block(1) to another block
+          call MPI_Bcast(block(1)%p, size(block(1)%p), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%u, size(block(1)%u), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%v, size(block(1)%v), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%w, size(block(1)%w), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+#endif
         DO g=1,intflines
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
