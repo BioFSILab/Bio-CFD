@@ -36,6 +36,8 @@
 
         integer :: rank, num_proc, start_block
 #ifdef BIOCFD_MPI
+        ! For MPI threading considerations
+        integer :: required, provided
         integer :: ierror
 #endif
 
@@ -50,7 +52,13 @@
         ! (until here)
 
 #ifdef BIOCFD_MPI
-        call MPI_Init(ierror)
+        required = MPI_THREAD_SERIALIZED
+        call MPI_Init_Thread(required, provided, ierror)
+
+        if (provided < required) then
+          write(error_unit, *) "MPI does not provide the required threading support. Aborting!"
+          call MPI_Abort(MPI_COMM_WORLD, 1, ierror)
+        end if
 
         call MPI_Comm_size(MPI_COMM_WORLD, num_proc, ierror)
         call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierror)

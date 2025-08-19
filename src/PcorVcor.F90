@@ -170,7 +170,7 @@ module biocfd_pcor_vcor
         !$omp end parallel
 
         do g=start_block, size(block), num_proc
-         CALL velocityBC(block(g))      !correct velocity at boundaries
+          if (g == 1) CALL velocityBC(block(g))      !correct velocity at boundaries
         end do
 
          do g=start_block, size(block), num_proc
