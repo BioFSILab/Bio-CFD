@@ -100,19 +100,25 @@ module biocfd_pcor_vcor
         CALL cpu_time(dStart)
         ! This is the first place we require MPI communication
         CALL fineUpdate_newv_bd
-#ifdef BIOCFD_MPI
-        call MPI_Barrier(MPI_COMM_WORLD, ierror)
-        call MPI_Finalize(ierror)
-        stop
-#endif
         CALL coarseUpdate_newv
 
-     CALL cpu_time(dfinish)
+        CALL cpu_time(dfinish)
         coupTime=coupTime + dfinish -dstart
+
+#if defined(BIOCFD_MPI) && defined(_OPENMP)
+        ! If we are using MPI and OpenMP then the number of threads is a little different
+        omp_threads = 0
+        ! Count the number of blocks on this rank
+        do g=start_block, size(block), num_proc
+          omp_threads = omp_threads + 1
+        end do
+        ! Then omp_threads is the minimum of that or the maximum number of allowed threads
+        omp_threads = min(omp_get_max_threads(), omp_threads)
+#endif
 
         !$omp parallel num_threads(omp_threads) default(none) &
         !$omp& private(dStart, dfinish, amgxita, mstime, g) &
-        !$omp& shared(nblocks, acc_devices) firstprivate(omp_thread_num)
+        !$omp& shared(nblocks, acc_devices, start_block, num_proc, block, rank) firstprivate(omp_thread_num)
 
 #ifdef _OPENMP
         omp_thread_num = omp_get_thread_num()
@@ -123,22 +129,37 @@ module biocfd_pcor_vcor
 #endif
 
         !$omp do
-        DO g=1,nblocks
+        do g=start_block, size(block), num_proc
            CALL computeDiv(g)    !divergence vector
            ! Do not compute Red/Black here for block 1
            if (g /= 1)  CALL REDBLACKSOR_linear(g)
-
         end do
         !$omp end do
 
         !$omp single
         CALL coarseUpdate_pc
+
         g=1
         CALL cpu_time(dStart)
+#ifdef BIOCFD_MPI
+        if (rank == 0) then
+#endif
         CALL REDBLACKSOR_linear(g)
+#ifdef BIOCFD_MPI
+        end if
+#endif
         CALL cpu_time(dfinish)
-        call fineUpdate_pc_bd
+#ifdef BIOCFD_MPI
         !$omp end single
+        !$omp end parallel
+        call MPI_Barrier(MPI_COMM_WORLD, ierror)
+        call MPI_Finalize(ierror)
+        stop
+#endif
+        call fineUpdate_pc_bd
+#ifndef BIOCFD_MPI
+        !$omp end single
+#endif
         !$omp do
         DO g=2,nblocks
          CALL cpu_time(dStart)
@@ -158,7 +179,9 @@ module biocfd_pcor_vcor
                CALL correctVelocity(g)  !velocity correction
         END DO
         !$omp end do
+#ifndef BIOCFD_MPI
         !$omp end parallel
+#endif
 
         do g=1,nblocks
          CALL velocityBC(block(g))      !correct velocity at boundaries
@@ -298,6 +321,8 @@ module biocfd_pcor_vcor
          INTEGER(int64) :: n, i, j, k, gg, nx_var, ny_var,nz_var,nxy
          REAL (dp) :: errSum,var,derr4
          INTEGER(int64),INTENT(IN) ::g
+
+         print *, "In red-black solver for block = ", g
 
          gg=g
             if (gg == 1)then

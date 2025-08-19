@@ -130,7 +130,7 @@
           end do
         end if
         coarse_flcnt_check=0
-        print*, rank, 'adam'
+        print*, 'adam'
 
         DO
         ita = ita + 1
@@ -138,6 +138,7 @@
         totime = totime + deltat
 
         do g=start_block, size(block), num_proc
+          print *, "Rank = ", rank, "g = ", g
           CALL nsMomentum2order(block(g))
           if (g == 1) call velocityBC(block(1))
           if (g /= 1) then

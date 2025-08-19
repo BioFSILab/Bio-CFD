@@ -338,10 +338,41 @@ subroutine coarseUpdate
         INTEGER :: st_idy, en_idy
         INTEGER :: st_idz, en_idz
 
+#ifdef BIOCFD_MPI
+        integer :: rank, num_proc, ierror, token
+        call MPI_Comm_size(MPI_COMM_WORLD, num_proc, ierror)
+        call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierror)
+
+        ! See comment in coarseUpdate_newv
+        !
+        ! We don't wait for anything if we are on rank 0 and just get
+        ! started
+        if (rank /= 0) then
+          ! This essentially acts as a barrier in that rank n wont
+          ! start until rank n-1 has finished. Assumes that a_blk number is always 1
+          call MPI_Recv(block(1)%pc, size(block(1)%pc), MPI_DOUBLE_PRECISION, rank-1, 0, &
+                        MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierror)
+          ! TN: We could consider just doing the copy locally on each rank here
+          call MPI_Recv(block(1)%pco, size(block(1)%pco), MPI_DOUBLE_PRECISION, rank-1, 0, &
+                        MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierror)
+        end if
+
+#endif
+
 
         DO g=1,intflines
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
+
+#ifdef BIOCFD_MPI
+        if (.not. allocated(block(b_blk_no)%pc)) then
+            ! If this array isn't allocated we aren't on the right
+            ! rank to deal with this so keep going until we find
+            ! one that is on this rank
+            cycle
+        end if
+#endif
+
         st_idx=block(b_blk_no)%cintp
         en_idx=intfr(g)%counterxp-block(b_blk_no)%cintp
         st_idy=block(b_blk_no)%cintp
@@ -373,6 +404,25 @@ subroutine coarseUpdate
         enddo
         enddo
         ENDDO
+
+#ifdef BIOCFD_MPI
+        ! See comment in coarseUpdate_newv
+        if (rank /= (num_proc-1)) then
+          call MPI_Send(block(1)%pc, size(block(1)%pc), MPI_DOUBLE_PRECISION, rank+1, 0, &
+                        MPI_COMM_WORLD, ierror)
+          call MPI_Send(block(1)%pco, size(block(1)%pco), MPI_DOUBLE_PRECISION, rank+1, 0, &
+                        MPI_COMM_WORLD, ierror)
+        end if
+
+        ! This will block everything until the last rank is done
+        call MPI_Bcast(block(1)%pc, size(block(1)%pc), MPI_DOUBLE_PRECISION, num_proc-1, &
+                       MPI_COMM_WORLD)
+        call MPI_Bcast(block(1)%pco, size(block(1)%pco), MPI_DOUBLE_PRECISION, num_proc-1, &
+                       MPI_COMM_WORLD)
+        ! Now block(1) pc and pco should be the same on all ranks
+        print *, "Rank = ", rank, "block(1)%pc(1, 1, 1) = ", block(1)%pc(1, 1, 1)
+        print *, "Rank = ", rank, "block(1)%pco(1, 1, 1) = ", block(1)%pco(1, 1, 1)
+#endif
       end subroutine coarseUpdate_pc
 
       !> Perform trilinear interpolation. Implemented as two bilinear
