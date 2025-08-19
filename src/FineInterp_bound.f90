@@ -125,7 +125,6 @@ SUBROUTINE fineUpdate_bd
                ! one that is on this rank
                cycle
            end if
-           print *, "Rank = ", rank, "interpolating from block ", a_blk_no, " -> block ", b_blk_no
 #endif
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!uuuuuuu!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
