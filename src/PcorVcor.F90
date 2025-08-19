@@ -141,24 +141,16 @@ module biocfd_pcor_vcor
 
         g=1
         CALL cpu_time(dStart)
-#ifdef BIOCFD_MPI
-        if (rank == 0) then
-#endif
-        CALL REDBLACKSOR_linear(g)
-#ifdef BIOCFD_MPI
-        end if
-#endif
+        ! Rank is set to 0 when not using MPI so this *should be* safe
+        if (rank == 0) CALL REDBLACKSOR_linear(g)
         CALL cpu_time(dfinish)
-#ifdef BIOCFD_MPI
+        call fineUpdate_pc_bd
         !$omp end single
+#ifdef BIOCFD_MPI       
         !$omp end parallel
         call MPI_Barrier(MPI_COMM_WORLD, ierror)
         call MPI_Finalize(ierror)
         stop
-#endif
-        call fineUpdate_pc_bd
-#ifndef BIOCFD_MPI
-        !$omp end single
 #endif
         !$omp do
         DO g=2,nblocks
