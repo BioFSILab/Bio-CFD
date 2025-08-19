@@ -121,21 +121,25 @@
         ita = ita + 1
         ita2 = ita2 + 1
         totime = totime + deltat
+
         do g=start_block, size(block), num_proc
           CALL nsMomentum2order(block(g))
+          if (g == 1) call velocityBC(block(1))
+          if (g /= 1) then
+            call solidCellBC(block(g))
+            !$acc wait
+            call velocityForcing1(block(g))
+          end if
+        ! I'm not sure we need two calls of velocityBC one after another?
         if (g == 1) call velocityBC(block(1))
-        if (g /= 1) then
-          call solidCellBC(block(g))
-          !$acc wait
-          call velocityForcing1(block(g))
-        end if
-        if (g == 1) call velocityBC(block(1))
-        end do
+      end do
 
 #ifdef BIOCFD_MPI
+        call MPI_Barrier(MPI_COMM_WORLD, ierror)
         call MPI_Finalize(ierror)
 #endif
         stop
+
         CALL poissonSolver
         print *,7
         CALL pressureForcing1
