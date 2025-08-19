@@ -107,11 +107,12 @@ SUBROUTINE fineUpdate_bd
         integer :: axis, steps(3)
 
 #ifdef BIOCFD_MPI
+          ! If we are using MPI then at this stage we need to make
+          ! sure that block(1) is up-to-date on all ranks
           call MPI_Bcast(block(1)%ut, size(block(1)%ut), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
           call MPI_Bcast(block(1)%vt, size(block(1)%vt), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
           call MPI_Bcast(block(1)%wt, size(block(1)%wt), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
 #endif
-
 
         DO g=1,intflines
            a_blk_no=intfr(g)%a_blk
