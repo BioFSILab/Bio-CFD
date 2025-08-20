@@ -14,7 +14,7 @@ module biocfd_forcing
 SUBROUTINE pressureForcing1(blk)
 
        type(Blocks), intent(inout) :: blk
-      INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1, g
+      INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
                    dpdn_e
 
@@ -27,66 +27,66 @@ SUBROUTINE pressureForcing1(blk)
  !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z)         &
  !$acc default(present)  &
  !$acc private(derivatives)
-      DO n = 1, block(g)%ibCellCount
-         IF (block(g)%ibSurfId(block(g)%nelp(n))==50) THEN
+      DO n = 1, blk%ibCellCount
+         IF (blk%ibSurfId(blk%nelp(n))==50) THEN
             !dpdn = 0.
-            ac_z = 0.  !-block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
-            ac_y = 0.  !-block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
-            at_z = 0.  ! block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
+            ac_z = 0.  !-blk%thetaDot**2*(blk%zcent(blk%nelp(blk%index_ts(n))) - blk%piv_z)
+            ac_y = 0.  !-blk%thetaDot**2*(blk%ycent(blk%nelp(blk%index_ts(n))) - blk%piv_y)
+            at_z = 0.  ! blk%thetaDDot*(blk%ycent(blk%nelp(blk%index_ts(n))) - blk%piv_y)
             at_y = 0.  !
-        ELSEIF (block(g)%ibSurfId(block(g)%nelp(n))==51) THEN
-            block(g)%thetaDot  = block(g)%thetaDot1
-            block(g)%thetaDDot = block(g)%thetaDDot1
-            ac_z = -block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(n)) - block(g)%piv_z)
-            ac_y = -block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
-            at_z =  block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
-            at_y = -block(g)%thetaDDot*(block(g)%zcent(block(g)%nelp(n)) - block(g)%piv_z)
-        ELSEIF (block(g)%ibSurfId(block(g)%nelp(n))==52) THEN
-            block(g)%thetaDot  = block(g)%thetaDot2
-            block(g)%thetaDDot = block(g)%thetaDDot2
-            ac_z = -block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(n)) - block(g)%piv_z)
-            ac_y = -block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
-            at_z =  block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(n)) - block(g)%piv_y)
-            at_y = -block(g)%thetaDDot*(block(g)%zcent(block(g)%nelp(n)) - block(g)%piv_z)
+        ELSEIF (blk%ibSurfId(blk%nelp(n))==51) THEN
+            blk%thetaDot  = blk%thetaDot1
+            blk%thetaDDot = blk%thetaDDot1
+            ac_z = -blk%thetaDot**2*(blk%zcent(blk%nelp(n)) - blk%piv_z)
+            ac_y = -blk%thetaDot**2*(blk%ycent(blk%nelp(n)) - blk%piv_y)
+            at_z =  blk%thetaDDot*(blk%ycent(blk%nelp(n)) - blk%piv_y)
+            at_y = -blk%thetaDDot*(blk%zcent(blk%nelp(n)) - blk%piv_z)
+        ELSEIF (blk%ibSurfId(blk%nelp(n))==52) THEN
+            blk%thetaDot  = blk%thetaDot2
+            blk%thetaDDot = blk%thetaDDot2
+            ac_z = -blk%thetaDot**2*(blk%zcent(blk%nelp(n)) - blk%piv_z)
+            ac_y = -blk%thetaDot**2*(blk%ycent(blk%nelp(n)) - blk%piv_y)
+            at_z =  blk%thetaDDot*(blk%ycent(blk%nelp(n)) - blk%piv_y)
+            at_y = -blk%thetaDDot*(blk%zcent(blk%nelp(n)) - blk%piv_z)
         ENDIF
-         dpdn = -((ac_z + at_z)*block(g)%cosGamma(block(g)%nelp(n)) + (ac_y + at_y) * &
-                  block(g)%cosBeta(block(g)%nelp(n)))-block(g)%yddot * &
-                     block(g)%cosBeta(block(g)%nelp(n))
+         dpdn = -((ac_z + at_z)*blk%cosGamma(blk%nelp(n)) + (ac_y + at_y) * &
+                  blk%cosBeta(blk%nelp(n)))-blk%yddot * &
+                     blk%cosBeta(blk%nelp(n))
 
-         i = block(g)%interceptedIndexPtr(n, 1)
-         j = block(g)%interceptedIndexPtr(n, 2)
-         k = block(g)%interceptedIndexPtr(n, 3)
+         i = blk%interceptedIndexPtr(n, 1)
+         j = blk%interceptedIndexPtr(n, 2)
+         k = blk%interceptedIndexPtr(n, 3)
 
-         sur2nodeDis = block(g)%pNormDis(n)
+         sur2nodeDis = blk%pNormDis(n)
 
-         pt1 = 1.5_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xp(i) + pt1*block(g)%cosAlpha(block(g)%nelp(n))
-         pos1_y = block(g)%yp(j) + pt1*block(g)%cosBeta(block(g)%nelp(n))
-         pos1_z = block(g)%zp(k) + pt1*block(g)%cosGamma(block(g)%nelp(n))
+         pos1_x = blk%xp(i) + pt1*blk%cosAlpha(blk%nelp(n))
+         pos1_y = blk%yp(j) + pt1*blk%cosBeta(blk%nelp(n))
+         pos1_z = blk%zp(k) + pt1*blk%cosGamma(blk%nelp(n))
 
           !$acc loop seq
-         DO il = 1, block(g)%nx+1
-            if(pos1_x>=block(g)%xp(il).and.pos1_x<block(g)%xp(il+1)) i_x1 = il
+         DO il = 1, blk%nx+1
+            if(pos1_x>=blk%xp(il).and.pos1_x<blk%xp(il+1)) i_x1 = il
          END DO
           !$acc loop seq
-         DO jl = 1, block(g)%ny+1
-            if(pos1_y>=block(g)%yp(jl).and.pos1_y<block(g)%yp(jl+1)) i_y1 = jl
+         DO jl = 1, blk%ny+1
+            if(pos1_y>=blk%yp(jl).and.pos1_y<blk%yp(jl+1)) i_y1 = jl
          END DO
           !$acc loop seq
-         DO kl = 1, block(g)%nz+1
-            if(pos1_z>=block(g)%zp(kl).and.pos1_z<block(g)%zp(kl+1)) i_z1 = kl
+         DO kl = 1, blk%nz+1
+            if(pos1_z>=blk%zp(kl).and.pos1_z<blk%zp(kl+1)) i_z1 = kl
          END DO
 
         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-                                           block(g)%xp, block(g)%yp, block(g)%zp, &
-                                           block(g)%p, p_pos1, derivatives)
+                                           blk%xp, blk%yp, blk%zp, &
+                                           blk%p, p_pos1, derivatives)
 
-        dpdn_e = derivatives(1) * block(g)%cosAlpha(block(g)%nelp(n)) &
-               + derivatives(2) * block(g)%cosBeta(block(g)%nelp(n)) &
-               + derivatives(3) * block(g)%cosGamma(block(g)%nelp(n))
+        dpdn_e = derivatives(1) * blk%cosAlpha(blk%nelp(n)) &
+               + derivatives(2) * blk%cosBeta(blk%nelp(n)) &
+               + derivatives(3) * blk%cosGamma(blk%nelp(n))
 
          n1 = pt1 + sur2nodeDis
 
@@ -94,7 +94,7 @@ SUBROUTINE pressureForcing1(blk)
          aval = (dpdn_e - dpdn)/(2*n1)
          cvaL = p_pos1 - (dpdn_e + dpdn)*n1*0.5_dp
 
-         block(g)%p(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
+         blk%p(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
       ENDDO
  !$acc end parallel loop
 
