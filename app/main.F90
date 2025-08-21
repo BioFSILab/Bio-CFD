@@ -252,18 +252,21 @@
          end if
        end do
 
-#ifdef BIOCFD_MPI
-        call MPI_Barrier(MPI_COMM_WORLD, ierror)
-        call MPI_Finalize(ierror)
-        stop
-#endif
-
-        CALL velocityForcingField
-        CALL pressureForcingField
-        CALL velocityForcingGhost
-        CALL pressureForcingGhost
+      do g=start_block, size(block), num_proc
+        if (g /= 1) then
+          call velocityForcingField(block(g))
+          call pressureForcingField(block(g))
+          call velocityForcingGhost(block(g))
+          call pressureForcingGhost(block(g))
+        end if
+      end do
         IF(ita>=itamax) EXIT
         END DO
+
+#ifdef BIOCFD_MPI
+        ! call MPI_Barrier(MPI_COMM_WORLD, ierror)
+        call MPI_Finalize(ierror)
+#endif
       END PROGRAM main
 
 
