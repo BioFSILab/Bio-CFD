@@ -12,6 +12,7 @@ module biocfd_pcor_vcor
   use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_bd, fineUpdate_pc_bd
   use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
   use biocfd_boundary_conditions, only : velocityBC
+  use biocfd_blocks, only : Blocks
 #ifdef BIOCFD_MPI
         use mpi_f08
 #endif
@@ -399,23 +400,23 @@ module biocfd_pcor_vcor
          IF (derr4>=epsi .and. block(g)%nIterPcor <= pcItaMax) GOTO 3
       END SUBROUTINE REDBLACKSOR_linear
 
-      SUBROUTINE updateVelocity_newv(g)
+      SUBROUTINE updateVelocity_newv(blk)
 
+        type(Blocks), intent(inout) :: blk
         INTEGER ::  i, j, k
-         INTEGER (int64), INTENT(IN) :: g
-        if (block(g)%move_check == 1) then
+
+        if (blk%move_check /= 1) return
         !$acc parallel loop gang vector collapse(2) default(present)
-        DO k = 1, block(g)%nz+2
-        DO j = 1, block(g)%ny+2
-        DO i = 1, block(g)%nx+2
-           block(g)%ut(i,j,k) = block(g)%u(i,j,k)
-           block(g)%vt(i,j,k) = block(g)%v(i,j,k)
-           block(g)%wt(i,j,k) = block(g)%w(i,j,k)
+        DO k = 1, blk%nz+2
+        DO j = 1, blk%ny+2
+        DO i = 1, blk%nx+2
+           blk%ut(i,j,k) = blk%u(i,j,k)
+           blk%vt(i,j,k) = blk%v(i,j,k)
+           blk%wt(i,j,k) = blk%w(i,j,k)
        END DO
        END DO
        END DO
        !$acc end parallel loop
-        endif
 
       END SUBROUTINE updateVelocity_newv
 end module biocfd_pcor_vcor

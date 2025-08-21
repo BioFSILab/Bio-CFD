@@ -196,54 +196,68 @@
           ! interface where the block is g==1, but I doubt whether
           ! that is deliberate or not
           call change_block_interface(block(g), g)
-          if (g == 1) call fine_block_cell         
+          if (g == 1) call fine_block_cell
           if (g == 1) CALL cellCount_solid_coarse_mv
         end do
         ! cellCount_solid_coarse_mv may or may not set
         ! coarse_flcnt_check to 0. If it does then we have to
         ! broadcast it everwhere...
         call MPI_Bcast(coarse_flcnt_check, 1, MPI_INTEGER8, 0, MPI_COMM_WORLD)
-               
+
           print*,1
           do g=start_block, size(block), num_proc
             if (g /= 1) CALL computeSurfaceNorm(block(g))
           end do
            print*,2
+
+#ifdef BIOCFD_MPI
+          ! If we are using MPI then at this stage we need to make
+          ! sure that block(1) is up-to-date on all ranks. We assume
+          ! that all interfaces are from block(1) to another block
+          ! This is because at the end of tagging_th_move there are
+          ! fineUpdates which will need block(1) to be up to date
+          call MPI_Bcast(block(1)%p, size(block(1)%p), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%u, size(block(1)%u), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%v, size(block(1)%v), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%w, size(block(1)%w), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+#endif
+
+        do g=start_block, size(block), num_proc
+          if (g /= 1) then
+            call tagging_th_move(block(g), g)
+            call selectiveRetagging_th(block(g))
+            block(g)%blk_mv_tag=0.
+            DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,&
+                 block(g)% pNormDis,block(g)% nelp,block(g)% nelu1,block(g)% nelu2,&
+                 block(g)% nelv1,block(g)% nelv2,block(g)% nelw1,block(g)% nelw2,&
+                 block(g)% u1NormDis,block(g)% u2NormDis ,block(g)% v1NormDis,&
+                 block(g)% v2NormDis,block(g)% w1NormDis,block(g)% w2NormDis,&
+                 block(g)% solidIndexPtr)
+            DEALLOCATE( block(g)%fluidIndexPtr,block(g)% redCellIndexPtr, block(g)%blackCellIndexPtr)
+            DEALLOCATE(block(g)%p_ghost,block(g)% pt_ghost,block(g)% u2_ghost,block(g)% u2t_ghost,&
+                 block(g)% v2_ghost,block(g)% v2t_ghost,block(g)% w2_ghost, block(g)%w2t_ghost,&
+                 block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, &
+                 block(g)%w1_ghost,block(g)% w1t_ghost)
+          end if
+       END DO
+
+       do g=start_block, size(block), num_proc
+         if (g /= 1) then
+           call cellCount_solid(block(g), g)
+           call solidCellBC_move(block(g))
+           call updateVelocity_newv(block(g))
+           block(g)%move_check=0.
+           call computeNormDistance(block(g))
+           CALL findTScells(block(g))
+         end if
+       end do
+
 #ifdef BIOCFD_MPI
         call MPI_Barrier(MPI_COMM_WORLD, ierror)
         call MPI_Finalize(ierror)
         stop
-#endif   
-           CALL tagging_th_move
-           CALL selectiveRetagging_th
-        DO g=blk_start, nblocks
-            block(g)%blk_mv_tag=0.
-              DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,&
-                   block(g)% pNormDis,block(g)% nelp,block(g)% nelu1,block(g)% nelu2,&
-                   block(g)% nelv1,block(g)% nelv2,block(g)% nelw1,block(g)% nelw2,&
-                   block(g)% u1NormDis,block(g)% u2NormDis ,block(g)% v1NormDis,&
-                   block(g)% v2NormDis,block(g)% w1NormDis,block(g)% w2NormDis,&
-                   block(g)% solidIndexPtr)
-        DEALLOCATE( block(g)%fluidIndexPtr,block(g)% redCellIndexPtr, block(g)%blackCellIndexPtr)
-        DEALLOCATE(block(g)%p_ghost,block(g)% pt_ghost,block(g)% u2_ghost,block(g)% u2t_ghost,&
-             block(g)% v2_ghost,block(g)% v2t_ghost,block(g)% w2_ghost, block(g)%w2t_ghost,&
-             block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, &
-             block(g)%w1_ghost,block(g)% w1t_ghost)
-       END DO
-       do g=blk_start, size(block)
-         call cellCount_solid(block(g), g)
-       end do
-        DO g=blk_start, nblocks
-            call solidCellBC_move(g)
-             call updateVelocity_newv(g)
-            block(g)%move_check=0.
-        ENDDO
-        do g=blk_start, size(block)
-           call computeNormDistance(block(g))
-        end do
-        do g=blk_start, size(block)
-          CALL findTScells(block(g))
-        end do
+#endif
+
         CALL velocityForcingField
         CALL pressureForcingField
         CALL velocityForcingGhost
