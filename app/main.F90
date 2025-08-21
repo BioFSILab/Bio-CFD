@@ -170,23 +170,29 @@
             CALL write_output(block(g), g)
           end do
         end if
-#ifdef BIOCFD_MPI
-        call MPI_Barrier(MPI_COMM_WORLD, ierror)
-        call MPI_Finalize(ierror)
-        stop
-#endif
+#ifndef BIOCFD_MPI
+        ! TODO: Make sure these run in MPI mode
         !$acc wait
         CALL writeResult
         !$acc wait
         CALL body_plot
-        DO g=blk_start, nblocks
+#endif
+        do g=start_block, size(block), num_proc
+          if (g == 1) cycle
            DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent,block(g)%cosAlpha, &
                 block(g)%cosBeta, block(g)%cosGamma)
             block(g)%blk_mv_tag=0.
         END DO
         print *,10
-            CALL computeSurfaceVariables
-           CALL block_move_check
+        do g=start_block, size(block), num_proc
+            if (g /= 1) call computeSurfaceVariables(block(g), g)
+        end do
+        CALL block_move_check
+#ifdef BIOCFD_MPI
+        call MPI_Barrier(MPI_COMM_WORLD, ierror)
+        call MPI_Finalize(ierror)
+        stop
+#endif
            CALL change_block_coords
            CALL change_block_interface
           CALL fine_block_cell
@@ -226,14 +232,10 @@
         do g=blk_start, size(block)
           CALL findTScells(block(g))
         end do
-        CALL cpu_time(dStart1)
         CALL velocityForcingField
         CALL pressureForcingField
-        CALL cpu_time(dFinish1)
-        CALL cpu_time(dStart1)
         CALL velocityForcingGhost
         CALL pressureForcingGhost
-        CALL cpu_time(dFinish1)
         IF(ita>=itamax) EXIT
         END DO
       END PROGRAM main
