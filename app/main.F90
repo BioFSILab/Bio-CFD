@@ -187,21 +187,33 @@
         do g=start_block, size(block), num_proc
             if (g /= 1) call computeSurfaceVariables(block(g), g)
         end do
+        ! TODO: block_move_check iterates over interfaces but we can
+        ! probably iterate over blocks instead
         CALL block_move_check
+        do g=start_block, size(block), num_proc
+          if (g /= 1) call change_block_coords(block(g), g)
+          ! TODO: There isn't anything stopping there being an
+          ! interface where the block is g==1, but I doubt whether
+          ! that is deliberate or not
+          call change_block_interface(block(g), g)
+          if (g == 1) call fine_block_cell         
+          if (g == 1) CALL cellCount_solid_coarse_mv
+        end do
+        ! cellCount_solid_coarse_mv may or may not set
+        ! coarse_flcnt_check to 0. If it does then we have to
+        ! broadcast it everwhere...
+        call MPI_Bcast(coarse_flcnt_check, 1, MPI_INTEGER8, 0, MPI_COMM_WORLD)
+               
+          print*,1
+          do g=start_block, size(block), num_proc
+            if (g /= 1) CALL computeSurfaceNorm(block(g))
+          end do
+           print*,2
 #ifdef BIOCFD_MPI
         call MPI_Barrier(MPI_COMM_WORLD, ierror)
         call MPI_Finalize(ierror)
         stop
-#endif
-           CALL change_block_coords
-           CALL change_block_interface
-          CALL fine_block_cell
-          CALL cellCount_solid_coarse_mv
-           print*,1
-          do g=blk_start, size(block)
-            CALL computeSurfaceNorm(block(g))
-          end do
-           print*,2
+#endif   
            CALL tagging_th_move
            CALL selectiveRetagging_th
         DO g=blk_start, nblocks
