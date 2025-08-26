@@ -204,10 +204,10 @@ subroutine coarseUpdate
                 loc_z=(intfr(g)%wz_interface_det(3,k))
 
                 block(a_blk_no)%wt(tar_x, tar_y, tar_z-1) = trilinear_interpolation( &
-                     block(a_blk_no)%xw(tar_x), block(a_blk_no)%yw(tar_y), block(a_blk_no)%zw(tar_z), &
-                     loc_x, loc_y, loc_z, &
-                     block(b_blk_no)%xw, block(b_blk_no)%yw, block(b_blk_no)%zw, &
-                     3, block(b_blk_no)%wt)
+                  block(a_blk_no)%xw(tar_x), block(a_blk_no)%yw(tar_y), block(a_blk_no)%zw(tar_z), &
+                  loc_x, loc_y, loc_z, &
+                  block(b_blk_no)%xw, block(b_blk_no)%yw, block(b_blk_no)%zw, &
+                  3, block(b_blk_no)%wt)
 
         enddo
         enddo
