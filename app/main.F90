@@ -1,8 +1,8 @@
 
       PROGRAM main
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
-        USE global, only: block, blk_start, coarse_flcnt_check, couptime, deltat, istart, &
-             ita, ita1, ita2, itamax, nblocks, solvertime, totaltime, totime
+        USE global, only: block, blk_start, coarse_flcnt_check, deltat, istart, &
+             ita, ita1, ita2, itamax, nblocks, totaltime, totime
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
@@ -41,8 +41,6 @@
         totime = 0.
         ita1 = 0
         ita2 = 0
-        solverTime=0.
-        coupTime=0.
         CALL tagging_th
         print*,'11'
         CALL cellCount_solid
