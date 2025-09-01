@@ -37,10 +37,6 @@ contains
         allocate(block(g)%ca_wu(6, nz_var+2), block(g)%ck_wu(6, nz_var+2))
         allocate(block(g)%ca_wv(6, nz_var+2), block(g)%ck_wv(6, nz_var+2))
 
-       END DO
-
-        DO g=1,nblocks
-
        do i=2, block(g)%nx
        theta = block(g)%deltax(i:i+2) / block(g)%deltax(i-1:i+1)
        f = compute_f(theta)
@@ -62,8 +58,6 @@ contains
        block(g)%ck_uu(5, i) = ak(6)
        block(g)%ck_uu(6, i) = ak(7)
        enddo
-        ENDDO
-        DO g=1,nblocks
 
        do j=2, block(g)%ny
 
@@ -88,9 +82,6 @@ contains
        block(g)%ck_vv(5, j) = ak(6)
        block(g)%ck_vv(6, j) = ak(7)
        enddo
-        ENDDO
-
-        DO g=1,nblocks
 
        do k=2, block(g)%nz
 
@@ -115,9 +106,6 @@ contains
        block(g)%ck_ww(5, k) = ak(6)
        block(g)%ck_ww(6, k) = ak(7)
        enddo
-        END DO
-
-        DO g=1,nblocks
 
        do i=2, block(g)%nx
        if(i==2)then
@@ -164,9 +152,6 @@ contains
        block(g)%ck_uw(5, i)=block(g)%ck_uv(5, i)
        block(g)%ck_uw(6, i)=block(g)%ck_uv(6, i)
        enddo
-        END DO
-
-        DO g=1,nblocks
 
        do j=2, block(g)%ny
        if(j==2)then
@@ -213,9 +198,6 @@ contains
        block(g)%ck_vw(5, j)=block(g)%ck_vu(5, j)
        block(g)%ck_vw(6, j)=block(g)%ck_vu(6, j)
        enddo
-        ENDDO
-
-        DO g=1,nblocks
 
        do k=2, block(g)%nz
        if(k==2)then
