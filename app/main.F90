@@ -32,7 +32,9 @@
         CALL readInput
         CALL readBlockInterface
         CALL readSurfaceMeshGmsh
-        CALL allocateArrays
+        do g=1, size(block)
+          CALL allocateArrays(block(g))
+        end do
         CALL findDistnode
         CALL shiftSurfaceNodesInitial
         CALL computeSurfaceNorm
