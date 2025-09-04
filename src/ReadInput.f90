@@ -15,7 +15,7 @@ module biocfd_read_input
   contains
 
       SUBROUTINE readInput
-       INTEGER (int64) :: i, g, nx_var, ny_var, nz_var
+       INTEGER (int64) :: i, g, nx_var, ny_var, nz_var,io
         CHARACTER(len=160)  :: filename1
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
        !     not dependent on diff for checking code changes don't break code
@@ -23,14 +23,17 @@ module biocfd_read_input
        REAL(dp),ALLOCATABLE,DIMENSION(:) :: xstart_temp,xend_temp,&
        ystart_temp,yend_temp,zstart_temp,zend_temp
 
-        OPEN(60, FILE = 'inputdata', FORM = 'formatted')
-        READ(60,*) nblocks, intflines,  &
+       NAMELIST /input_data/ nblocks, intflines,  &
                    itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
                    re,rho_f, mu_f, l_c, &
                    u0, v0,  w0,  &
                    surGeoPoints,a0y, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
                    istart, dt_order, inor, dxmin
-        CLOSE(60)
+
+  open(newunit=io, file="input_data.nml", status="old", action="read")
+  read(io, NML=input_data)
+  close(io)
+
         allocate(Blocks :: block(nblocks))
         allocate(Interfaces :: intfr(intflines))
         allocate(xstart_temp(nblocks),xend_temp(nblocks),&

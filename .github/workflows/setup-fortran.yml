@@ -39,7 +39,8 @@ jobs:
           # Compile with OpenACC since there are some directives
           - {compiler: gcc, version: 14, FPM_FFLAGS: "-fopenacc", tag: "-openacc"}
           - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS: "-acc=multicore", tag: "-openacc"}
-          - {compiler: lfortran, version: '0.55.0'}
+          # Cannot currently support lfortran due to it not supporting namelists (issue number 1999 lfortran)
+          # - {compiler: lfortran, version: '0.55.0'}
     steps:
       - uses: actions/checkout@v4
         with:
