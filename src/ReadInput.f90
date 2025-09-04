@@ -15,7 +15,7 @@ module biocfd_read_input
   contains
 
       SUBROUTINE readInput
-       INTEGER (int64) :: i, g, nx_var, ny_var, nz_var,io
+       INTEGER (int64) :: i, g,io
         CHARACTER(len=160)  :: filename1
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
        !     not dependent on diff for checking code changes don't break code
@@ -153,9 +153,6 @@ module biocfd_read_input
         print*,'after allocation'
 
          DO i=1,nblocks
-             nx_var=block(i)%nx
-             ny_var=block(i)%ny
-             nz_var=block(i)%nz
 
             ALLOCATE(block(i)%x1(block(i)%nx+3), &
                      block(i)%y1(block(i)%ny+3), &
