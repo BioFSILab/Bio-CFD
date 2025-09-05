@@ -38,7 +38,7 @@ MODULE biocfd_blocks
                           blackCellCount, TSCellCount
 
        INTEGER (int64), ALLOCATABLE, DIMENSION (:, :) :: TSIndexPtr, interceptedIndexPtr, &
-                                                         solidIndexPtr, fluidInterceptedIndexPtr
+                                                         solidIndexPtr
 
 
        INTEGER (int64), ALLOCATABLE, DIMENSION (:) :: nelp, nelu1, nelu2, nelv1, nelv2, nelw1, nelw2
