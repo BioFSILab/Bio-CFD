@@ -66,7 +66,7 @@ MODULE biocfd_blocks
        INTEGER (int64) :: cpy_x_start, cpy_x_end, cpy_y_start, cpy_y_end
        INTEGER (int64) :: cpy_z_start, cpy_z_end
        REAL (dp) :: theta, thetaDot, thetaDDot, piv_x,piv_y, piv_z
-       REAL (dp) :: alphaDot, alphaDDot, thetaDot1, thetaDDot1, thetaDot2, thetaDDot2
+       REAL (dp) :: alphaDot, thetaDot1, thetaDDot1, thetaDot2, thetaDDot2
 
 
     end type Blocks
