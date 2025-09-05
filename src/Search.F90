@@ -95,7 +95,6 @@ module biocfd_search
         block(g)%thetaDot1  = 0.
         block(g)% thetaDot2  = 0.
         block(g)% alphaDot  = 0.
-        block(g)%alphaDDot  = 0.  !-ang_theta*ang_theta*a0*sin(2._dp*pi*freq*totime + phase_angle)
         block(g)% thetaDDot1 = 0.
         block(g)%thetaDDot2 = 0.
         block(g)% thetaDDot  = 0.  !-ang_theta*ang_theta*a0*sin(2._dp*pi*freq*totime + phase_angle)
