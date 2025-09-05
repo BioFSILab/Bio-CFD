@@ -25,6 +25,7 @@ subroutine coarseUpdate
         st_idz=block(b_blk_no)%cintp
         en_idz=intfr(g)%counterzp-block(b_blk_no)%cintp
 
+        !$acc parallel loop collapse(3) private(tar_x, tar_y, tar_z, loc_x, loc_y, loc_z)
         do k=st_idz,en_idz
           do j=st_idy,en_idy
             do i=st_idx, en_idx
@@ -51,6 +52,7 @@ subroutine coarseUpdate
         en_idy=intfr(g)%counteryu-block(b_blk_no)%cintp
         st_idz=block(b_blk_no)%cintp
         en_idz=intfr(g)%counterzu-block(b_blk_no)%cintp
+       !$acc parallel loop collapse(3) private(tar_x, tar_y, tar_z, loc_x, loc_y, loc_z)
        do k=st_idz,en_idz
        do j=st_idy,en_idy
        do i=st_idx, en_idx
@@ -77,6 +79,7 @@ subroutine coarseUpdate
         en_idy=intfr(g)%counteryv-block(b_blk_no)%cintp
         st_idz=block(b_blk_no)%cintp
         en_idz=intfr(g)%counterzv-block(b_blk_no)%cintp
+       !$acc parallel loop collapse(3) private(tar_x, tar_y, tar_z, loc_x, loc_y, loc_z)
        do k=st_idz,en_idz
        do j=st_idy,en_idy
        do i=st_idx, en_idx
@@ -103,6 +106,7 @@ subroutine coarseUpdate
         en_idy=intfr(g)%counteryw-block(b_blk_no)%cintp
         st_idz=block(b_blk_no)%cintp
         en_idz=intfr(g)%counterzw-block(b_blk_no)%cintp
+       !$acc parallel loop collapse(3) private(tar_x, tar_y, tar_z, loc_x, loc_y, loc_z)
        do k=st_idz,en_idz
        do j=st_idy,en_idy
        do i=st_idx, en_idx
@@ -141,6 +145,7 @@ subroutine coarseUpdate
         en_idy=intfr(g)%counteryu-block(b_blk_no)%cintp
         st_idz=block(b_blk_no)%cintp
         en_idz=intfr(g)%counterzu-block(b_blk_no)%cintp
+       !$acc parallel loop collapse(3) private(tar_x, tar_y, tar_z, loc_x, loc_y, loc_z)
        do k=st_idz,en_idz
        do j=st_idy,en_idy
        do i=st_idx, en_idx
@@ -167,6 +172,7 @@ subroutine coarseUpdate
         en_idy=intfr(g)%counteryv-block(b_blk_no)%cintp
         st_idz=block(b_blk_no)%cintp
         en_idz=intfr(g)%counterzv-block(b_blk_no)%cintp
+       !$acc parallel loop collapse(3) private(tar_x, tar_y, tar_z, loc_x, loc_y, loc_z)
        do k=st_idz,en_idz
        do j=st_idy,en_idy
        do i=st_idx, en_idx
@@ -193,6 +199,7 @@ subroutine coarseUpdate
         en_idy=intfr(g)%counteryw-block(b_blk_no)%cintp
         st_idz=block(b_blk_no)%cintp
         en_idz=intfr(g)%counterzw-block(b_blk_no)%cintp
+       !$acc parallel loop collapse(3) private(tar_x, tar_y, tar_z, loc_x, loc_y, loc_z)
        do k=st_idz,en_idz
        do j=st_idy,en_idy
        do i=st_idx, en_idx
@@ -233,6 +240,7 @@ subroutine coarseUpdate
         en_idy=intfr(g)%counteryp-block(b_blk_no)%cintp
         st_idz=block(b_blk_no)%cintp
         en_idz=intfr(g)%counterzp-block(b_blk_no)%cintp
+       !$acc parallel loop collapse(3) private(tar_x, tar_y, tar_z, loc_x, loc_y, loc_z)
        do k=st_idz,en_idz
        do j=st_idy,en_idy
        do i=st_idx, en_idx
