@@ -6,8 +6,8 @@ MODULE biocfd_blocks
        public :: Blocks
 
         type Blocks
-           REAL(dp) ::  dx,dy, dz,ypth1, ypth2, xpth1, xpth2, xchg,ychg, yt, ydot, yddot,&
-                bfreq, yamp, xt, xdot, xddot
+           REAL(dp) ::  dx,dy, dz, ypth2, xpth1, xpth2, xchg,ychg, yt, ydot, yddot,&
+                bfreq, yamp, xt, xdot
         REAL(dp) :: derr1,derr2,derrStdSt,a0
         REAL(dp) :: xshift, yshift, zshift, gx_shift, gy_shift,gz_shift
         INTEGER (int64):: nx, ny, nz

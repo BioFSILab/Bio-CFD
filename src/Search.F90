@@ -84,7 +84,6 @@ module biocfd_search
          angt  =  2._dp*pi*block(g)%bfreq
          block(g)%xpth1=block(g)%xshift-(ita*dxmin*xfact)
         block(g)%xpth2=block(g)%xshift-(ita*dxmin*xfact)
-        block(g)%ypth1=(block(g)%yamp)*sin(angt*block(g)%xshift)
         block(g)%ypth2=(block(g)%yamp)*sin(angt*block(g)%xshift)
         block(g)%piv_x = block(g)%xshift
         block(g)%piv_y = block(g)%yshift
@@ -105,7 +104,6 @@ module biocfd_search
        block(g)%yddot      =  -angt*angt*bdy*sin(2*pi*bdfr*totime)
        block(g)%xt         =  block(g)%xshift- (ita*dxmin*xfact)
        block(g)%xdot       =  -(dxmin*xfact)/deltat
-       block(g)%xddot      =  0.
         block(g)%inity_cent=block(g)%yshift
         block(g)%nxty_cent=block(g)%yshift
         block(g)%initx_cent=block(g)%xshift
@@ -159,7 +157,6 @@ module biocfd_search
         block(g)%xpth2=block(g)%xshift-(ita*dxmin*xfact)
         block(g)%ypth2=(block(g)%yamp)*sin(angt*block(g)%xpth2)
         block(g)%xchg=block(g)%xpth2-block(g)%xpth1
-        block(g)%ypth1=block(g)%ypth2
         block(g)%xpth1=block(g)%xpth2
         PRINT*, "angles =", aoa1*180._dp/pi, aoa2*180._dp/pi
         block(g)%thetaDot1 = ang_theta*block(g)%a0*cos(2._dp*pi*freq*(totime+deltat) + phase_angle)
@@ -174,7 +171,6 @@ module biocfd_search
 
        block(g)%xt         = block(g)%xpth2
        block(g)%xdot       = -(dxmin*xfact)/deltat
-       block(g)%xddot      = 0.
 
            block(g)%ychg=block(g)%yt - bdy*sin(angt*(totime-deltat) )
         block(g)%ymove = block(g)%yt
