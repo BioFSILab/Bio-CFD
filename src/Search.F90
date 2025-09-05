@@ -1053,7 +1053,6 @@ block(g)%fluidCellCount = flcnt
         END DO
         !$acc end parallel loop
 
-        ! DEALLOCATE (block(g)%minElemcell)
          END DO
          print*, 'computeNormDistance done'
 

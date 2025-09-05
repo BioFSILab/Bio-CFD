@@ -17,7 +17,6 @@ MODULE biocfd_blocks
                                      j_startSearch, j_endSearch, &
                                      i_startSearch, i_endSearch
        INTEGER (int64), ALLOCATABLE, DIMENSION (:,:,:) :: cell, cell2, cell_n, cell_pr,nodeIdTag
-       INTEGER (int64), ALLOCATABLE, DIMENSION (:,:,:) :: minElemcell
 
        REAL (dp), ALLOCATABLE, DIMENSION (:) :: deltax, deltay, deltaz, x1, y1, z1, &
             xu, yu, zu, xv, yv, zv, xw, yw, zw, xp, yp, zp
