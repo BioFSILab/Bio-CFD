@@ -6,6 +6,7 @@ module biocfd_search
        intflines, coarse_flcnt_check, intfr
   use biocfd_fine_interp, only: fineUpdate_mv
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
+  use biocfd_blocks, only: Blocks
   implicit NONE
 
   private
