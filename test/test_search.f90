@@ -20,7 +20,6 @@ contains
   subroutine test_find_dist_node(error)
     use biocfd_blocks, only : Blocks
     use biocfd_search, only : findDistnode
-    use global, only : block, blk_start, nblocks
     !> Error handling
     type(error_type), allocatable, intent(out) :: error
 

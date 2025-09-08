@@ -21,7 +21,7 @@ module biocfd_search
     SUBROUTINE findDistnode(blk)
       type(Blocks), intent(inout) :: blk
         REAL(dp)      ::  dist, dist1, dist2
-        INTEGER(int64) ::  i, g
+        INTEGER(int64) ::  i
 
         dist=0.
         dist1=999999.
