@@ -17,33 +17,31 @@ module biocfd_search
   public :: fine_block_cell, selectiveretagging_th
 
   contains
-        SUBROUTINE findDistnode
+    SUBROUTINE findDistnode(blk)
+      type(Blocks), intent(inout) :: blk
         REAL(dp)      ::  dist, dist1, dist2
         INTEGER(int64) ::  i, g
 
-
-        DO g=blk_start,nblocks
         dist=0.
         dist1=999999.
         dist2=0.
-        DO i = 1, block(g)%ibnodes
-        IF (block(g)%ibNodeId(i)==51) THEN
-                if (abs(block(g)%znode(i)) > dist)then
-                        dist=block(g)%znode(i)
-                        block(g)%mk=i
+        DO i = 1, blk%ibnodes
+        IF (blk%ibNodeId(i)==51) THEN
+                if (abs(blk%znode(i)) > dist)then
+                        dist=blk%znode(i)
+                        blk%mk=i
                 endif
         ENDIF
-        IF (block(g)%ibNodeId(i)==51) THEN
-                if (abs(block(g)%xnode(i)) < dist1)then
-                        dist1=block(g)%xnode(i)
-                        block(g)%mkx1=i
+        IF (blk%ibNodeId(i)==51) THEN
+                if (abs(blk%xnode(i)) < dist1)then
+                        dist1=blk%xnode(i)
+                        blk%mkx1=i
                 endif
-                if (abs(block(g)%xnode(i)) > dist2)then
-                        dist2=block(g)%xnode(i)
-                        block(g)%mkx2=i
+                if (abs(blk%xnode(i)) > dist2)then
+                        dist2=blk%xnode(i)
+                        blk%mkx2=i
                 endif
         ENDIF
-        ENDDO
         ENDDO
         end subroutine findDistnode
 
