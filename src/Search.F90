@@ -277,7 +277,7 @@ module biocfd_search
 
      SUBROUTINE tagging_th
 
-        INTEGER(int64) :: g, n, m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
+        INTEGER(int64) :: g, m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
         REAL(dp)      :: minDis1, minDis, &
                          n2dotn, dis_cen, dis_pnt
 
