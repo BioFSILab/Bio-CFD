@@ -41,3 +41,6 @@ inputdata
 
 # msh files
 *.msh
+
+# hdf5 files
+*.h5

@@ -1,15 +1,24 @@
 name = "Bio-CFD"
+# To use HDF5 uncomment the dependencies.hdf5 line below and set
+# USE_HDF5=1
+# dependencies.hdf5 = "*"
 version = "0.1.0"
 [build]
 auto-executables = true
 auto-tests = true
 auto-examples = true
+external-modules = ["hdf5", "openacc"]
+
+[preprocess]
+cpp.macros = ["USE_HDF5=0"]
+
+
 [install]
 library = false
 
 [dev-dependencies]
 test-drive.git = "https://github.com/fortran-lang/test-drive"
-test-drive.tag = "v0.4.0"
+test-drive.tag = "v0.5.0"
 
 [extra.fortitude.check]
 select = ["ALL"]

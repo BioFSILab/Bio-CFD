@@ -1,7 +1,6 @@
 module biocfd_initial_conditions
   use iso_fortran_env, only : dp => real64
-  ! allow(use-all) - TODO: Attempt to fix this in the future
-  use global
+  use global, only : block, ita, ita1, nblocks, totime, uc
   implicit none
   private
 
@@ -21,43 +20,7 @@ module biocfd_initial_conditions
         block(i)%w = 0._dp
         block(i)%wt = 0._dp
         block(i)%p = 0._dp
-        block(i)%u2_sum = 0._dp
-        block(i)%v2_sum = 0._dp
-        block(i)%w2_sum = 0._dp
-        block(i)%p2_sum = 0._dp
-        block(i)%u2_avg = 0._dp
-        block(i)%v2_avg = 0._dp
-        block(i)%w2_avg = 0._dp
-        block(i)%p2_avg = 0._dp
-        block(i)%u_sum = 0._dp
-        block(i)%v_sum = 0._dp
-        block(i)%w_sum = 0._dp
-        block(i)%p_sum = 0._dp
-        block(i)%uv_sum = 0._dp
-        block(i)%vw_sum = 0._dp
-        block(i)%uw_sum = 0._dp
-        block(i)%uv_avg = 0._dp
-        block(i)%vw_avg = 0._dp
-        block(i)%uw_avg = 0._dp
-        block(i)%u_avg = 0._dp
-        block(i)%v_avg = 0._dp
-        block(i)%w_avg = 0._dp
-        block(i)%p_avg = 0._dp
-        block(i)%ufl = 0._dp
-        block(i)%vfl = 0._dp
-        block(i)%wfl = 0._dp
-        block(i)%resi_u = 0._dp
-        block(i)%resi_v = 0._dp
-        block(i)%resi_w = 0._dp
         block(i)%cell_pr=0
-        block(i)%uflu_avg = 0._dp
-        block(i)%vflu_avg = 0._dp
-        block(i)%wflu_avg = 0._dp
-        block(i)%pflu_avg = 0._dp
-        block(i)%uflu_rms = 0._dp
-        block(i)%vflu_rms = 0._dp
-        block(i)%wflu_rms = 0._dp
-        block(i)%pflu_rms = 0._dp
         end do
         ! SUMWSS = 0._dp            !SUMWSS global real array(nsurf)
         ! SIGNWSS = 0._dp           !SIGNWSS global real array(nsurf)

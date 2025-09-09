@@ -1,7 +1,6 @@
 module biocfd_last_conditions
   use iso_fortran_env, only : dp => real64
-  ! allow(use-all) - TODO: Aim to fix this in the future
-  use global
+  use global, only : block, ita, ita1, ita2, nblocks, re, totime
   implicit none
   private
 
@@ -14,19 +13,6 @@ module biocfd_last_conditions
         CHARACTER(len=150) :: filename3
         WRITE(*,*) 'Enter lastcondtitions'
 
-        DO g=1,nblocks
-        block(g)%u_sum = 0._dp
-        block(g)%v_sum = 0._dp
-        block(g)%w_sum = 0._dp
-        block(g)% p_sum = 0._dp
-        block(g)% u_avg = 0._dp
-        block(g)%v_avg = 0._dp
-        block(g)%w_avg = 0._dp
-        block(g)% p_avg = 0._dp
-        block(g)%resi_u = 0._dp
-        block(g)% resi_v = 0._dp
-        block(g)% resi_w = 0._dp
-        END DO
         ! SUMWSS = 0._dp            !SUMWSS global real array(nsurf)
         ! SIGNWSS = 0._dp           !SIGNWSS global real array(nsurf)
         ita = 0

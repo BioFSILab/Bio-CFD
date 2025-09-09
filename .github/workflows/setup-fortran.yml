@@ -39,10 +39,8 @@ jobs:
           # Compile with OpenACC since there are some directives
           - {compiler: gcc, version: 14, FPM_FFLAGS: "-fopenacc", tag: "-openacc"}
           - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS: "-acc=multicore", tag: "-openacc"}
-          # lfortran can't compile the code at the moment, we will
-          # keep an eye on the progress of the project in the hope
-          # that we can add this back in the future
-          # - {compiler: lfortran, version: '0.49.0'}
+          # Cannot currently support lfortran due to it not supporting namelists (issue number 1999 lfortran)
+          # - {compiler: lfortran, version: '0.55.0'}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -55,7 +53,11 @@ jobs:
       - uses: fortran-lang/setup-fpm@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-  
+
+      - run: |
+          # Install hdf5 dependency
+          sudo apt install libhdf5-dev
+
       - run: |
           # Build and test code using FPM
           fpm test

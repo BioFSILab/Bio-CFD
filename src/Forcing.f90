@@ -1,7 +1,6 @@
 module biocfd_forcing
   use, intrinsic :: iso_fortran_env, only: dp => real64
-  ! allow(use-all) - TODO: Aim to fix this in the future
-  use global
+  use global, only : block, blk_start, nblocks, ac_y, ac_z, at_y, at_z, ac_x
   use biocfd_interpolation, only: linear_interpolation, bilinear_interpolation
   implicit none
 
@@ -25,7 +24,7 @@ SUBROUTINE pressureForcing1
  !$acc parallel loop gang vector                                                                                          &
  !$acc private (n, n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           dpdn_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
- !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z,ac_x_al,ac_y_al,at_x_al,at_y_al)         &
+ !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z)         &
  !$acc default(present)  &
  !$acc private(derivatives)
       DO n = 1, block(g)%ibCellCount
@@ -35,10 +34,6 @@ SUBROUTINE pressureForcing1
             ac_y = 0.  !-block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_z = 0.  ! block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_y = 0.  !
-            ac_x_al = 0.
-            ac_y_al = 0.
-            at_x_al = 0.
-            at_y_al = 0.
         ELSEIF (block(g)%ibSurfId(block(g)%nelp(n))==51) THEN
             block(g)%thetaDot  = block(g)%thetaDot1
             block(g)%thetaDDot = block(g)%thetaDDot1
@@ -827,7 +822,7 @@ SUBROUTINE pressureForcingGhost
  !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
  !$acc           p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
- !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z,ac_x_al,ac_y_al,at_x_al,at_y_al)         &
+ !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z)         &
  !$acc default(present)
       DO n = 1, block(g)%TSCellCount
 
@@ -839,10 +834,6 @@ SUBROUTINE pressureForcingGhost
             ac_y = 0.  !-block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_z = 0.  ! block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_y = 0.  !-block(g)%thetaDDot*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
-            ac_x_al = 0.
-            ac_y_al = 0.
-            at_x_al = 0.
-            at_y_al = 0.
         ELSEIF (block(g)%ibSurfId(block(g)%nelp(block(g)%index_ts(n)))==51) THEN
             block(g)%thetaDot  = block(g)%thetaDot1
             block(g)%thetaDDot = block(g)%thetaDDot1
@@ -1716,7 +1707,7 @@ SUBROUTINE pressureForcingField
  !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           p_x1, p_x2, p_y1, p_y2, p_z1, p_z2, p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,                &
  !$acc           p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
- !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z,ac_x_al,ac_y_al,at_x_al,at_y_al)         &
+ !$acc           i_z1,ac_z,ac_y,ac_x,at_y,at_z)         &
  !$acc default(present)
       DO n = 1, block(g)%ibCellCount
          IF (block(g)%ibSurfId(block(g)%nelp(n))==50) THEN
@@ -1724,10 +1715,6 @@ SUBROUTINE pressureForcingField
             ac_y = 0.  !-block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_z = 0.  ! block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_y = 0.  !
-            ac_x_al = 0.
-            ac_y_al = 0.
-            at_x_al = 0.
-            at_y_al = 0.
         ELSEIF (block(g)%ibSurfId(block(g)%nelp(n))==51) THEN
             block(g)%thetaDot  = block(g)%thetaDot1
             block(g)%thetaDDot = block(g)%thetaDDot1

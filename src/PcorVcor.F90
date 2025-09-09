@@ -1,7 +1,14 @@
 module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  ! allow(use-all) - TODO: Aim to fix this in the future
-  use global
+  use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, pcitamax, &
+       amgxita, dfinish, dstart, ita, nblocks, totaltime, &
+       totime
+#ifdef _OPENMP
+  use omp_lib, only: omp_get_max_threads, omp_get_thread_num
+#endif
+#ifdef _OPENACC
+  use openacc, only: acc_device_default, acc_get_num_devices, acc_set_device_num
+#endif
   use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_bd, fineUpdate_pc_bd
   use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
   use biocfd_boundary_conditions, only : velocityBC
@@ -17,19 +24,42 @@ module biocfd_pcor_vcor
         INTEGER(int64) :: i, j,k, n, g
         REAL (dp)    :: max_derr1, max_derr2, max_div, max_derrStdSt
         REAL (dp)    :: er_dudt, er_dvdt, er_dwdt, err_ds
-        INTEGER(int64) :: max_nIterPcor, max_nit
+        INTEGER(int64) :: max_nIterPcor
         CHARACTER(len=160) :: filename1
+
+        ! For controlling OpenMP
+        integer :: omp_threads
+        integer :: omp_thread_num
+        ! For controlling OpenACC
+        integer :: acc_devices
 
           max_derrStdst=0._dp
           max_derr1=0._dp
           max_derr2=0._dp
           max_nIterPcor=0
           max_div=0._dp
-          max_nit=0._dp
           err_ds=0._dp
           er_dudt=0.
           er_dvdt=0.
           er_dwdt=0.
+
+          ! Dummy values for omp/acc variables
+          omp_threads = 1
+          omp_thread_num = 0
+          acc_devices = 0
+
+#ifdef _OPENMP
+          omp_threads = min(omp_get_max_threads(), size(block))
+#endif
+#ifdef _OPENACC
+         ! Not checked, but apparently in nvfortran the default
+         ! resolves to the same as `acc_device_nvidia` (see
+         ! https://docs.nvidia.com/hpc-sdk/compilers/openacc-gs/index.html#defaults)
+         ! For gfortran this can be set at runtime with an environment
+         ! variable, ACC_DEVICE_TYPE. It may or may not pick up a
+         ! compatible GPU if it can find it.
+         acc_devices = acc_get_num_devices(acc_device_default)
+#endif
 
 
         DO g=1,nblocks
@@ -40,7 +70,6 @@ module biocfd_pcor_vcor
            block(g)%b(i,j,k)  = 0.
            block(g)%pc(i,j,k) = 0.
            block(g)%pco(i,j,k)= 0.
-
         END DO
         END DO
         END DO
@@ -50,47 +79,62 @@ module biocfd_pcor_vcor
         block(g)%derrStdSt=0._dp
         end do
 
-        solverTime=0.
      CALL cpu_time(dStart)
         CALL fineUpdate_newv_bd
         CALL coarseUpdate_newv
 
      CALL cpu_time(dfinish)
-        coupTime=coupTime + dfinish -dstart
+
+        !$omp parallel num_threads(omp_threads) default(none) &
+        !$omp& private(dStart, dfinish, amgxita, g) &
+        !$omp& shared(nblocks, acc_devices) firstprivate(omp_thread_num)
+
+#ifdef _OPENMP
+        omp_thread_num = omp_get_thread_num()
+#endif
+
+#ifdef _OPENACC
+        call acc_set_device_num(mod(omp_thread_num, acc_devices), acc_device_default)
+#endif
+
+        !$omp do
         DO g=1,nblocks
-               CALL computeDiv(g)    !divergence vector
-        END DO
-        DO g=2,nblocks
-         CALL cpu_time(dStart)
-         amgxita=0
-         CALL REDBLACKSOR_linear(g)
-        CALL cpu_time(dfinish)
-         msTime = msTime + dfinish-dstart
+           CALL computeDiv(g)    !divergence vector
+           ! Do not compute Red/Black here for block 1
+           if (g /= 1)  CALL REDBLACKSOR_linear(g)
+
         end do
+        !$omp end do
+
+        !$omp single
         CALL coarseUpdate_pc
         g=1
         CALL cpu_time(dStart)
         CALL REDBLACKSOR_linear(g)
-
         CALL cpu_time(dfinish)
         call fineUpdate_pc_bd
+        !$omp end single
+        !$omp do
         DO g=2,nblocks
          CALL cpu_time(dStart)
          amgxita=0
          CALL REDBLACKSOR_linear(g)
-        CALL cpu_time(dfinish)
-         msTime = msTime + dfinish-dstart
+         CALL cpu_time(dfinish)
         end do
+        !$omp end do
+        !$omp single
           CALL coarseUpdate_pc
+        !$omp end single
 
+       !$omp do
        DO g=1,nblocks
                CALL correctPressure(g)  !pressure correction
                CALL correctVelocity(g)  !velocity correction
-
         END DO
+        !$omp end do
+        !$omp end parallel
          CALL velocityBC      !correct velocity at boundaries
 
-        !$omp parallel do private( n,i,j,k,er_dudt,er_dvdt,er_dwdt, err_ds,g) num_threads(3)
          DO g=1,nblocks
          err_ds=0.
         !$acc parallel loop gang vector firstprivate (deltat)   &
@@ -110,7 +154,6 @@ module biocfd_pcor_vcor
 
 
          ENDDO
-        !$omp end parallel do
 
 
 
@@ -128,22 +171,19 @@ module biocfd_pcor_vcor
                  max_nIterPcor=block(i)%nIterPcor
               end if
               totalTime=totime + totalTime
-              if ( block(i)%nit >max_nit)then
-                 max_nit=block(i)%nit
-              end if
           end do
 
             WRITE(filename1,1)
  1          FORMAT('sphere_iter.dat')
          OPEN(111,FILE=filename1,POSITION='APPEND',STATUS='unknown')
-         WRITE(111,126)   ita, block(1)%nIterPcor, block(2)%nIterPcor, omega1, omega2, solverTime
+         ! Final 0. was solverTime, but this was never written to so was always 0.
+         WRITE(111,126)   ita, block(1)%nIterPcor, block(2)%nIterPcor, omega1, omega2, 0._dp
          WRITE(*,16) ita, max_nIterPcor, max_derr2, max_derrStdSt, totalTime
  126      FORMAT(' ',I8, 2I10, 2F6.2,F14.9)
  16      FORMAT(' ',I8, I10, 4E15.6)
          CLOSE(111)
 
          DO g=1,nblocks
-        !$omp parallel do collapse(3) private (i,j,k)  num_threads(48)
         !$acc parallel loop gang vector default(present) collapse (3)
          DO k = 1, block(g)%nz+2
          DO j = 1, block(g)%ny+2
@@ -155,7 +195,6 @@ module biocfd_pcor_vcor
          END DO
          END DO
         !$acc end parallel loop
-        !$omp end parallel do
          END DO
         CALL fineUpdate_bd
         CALL coarseUpdate
@@ -168,7 +207,6 @@ module biocfd_pcor_vcor
          gg=g
          nx_var=block(g)%nx
          ny_var=block(g)%ny
-        !$omp parallel do private (i,j,k,counter)  num_threads(48)
         !$acc parallel loop gang vector private (i, j, k,counter)   &
         !$acc default(present)
          DO n = 1, block(gg)%fluidCellCount
@@ -183,8 +221,6 @@ module biocfd_pcor_vcor
 
          END DO
         !$acc end parallel loop
-        !$omp end parallel do
-
       END SUBROUTINE computeDiv
 
       SUBROUTINE correctPressure(g)
@@ -192,7 +228,6 @@ module biocfd_pcor_vcor
          INTEGER(int64) :: n, i, j, k,gg
          INTEGER(int64),INTENT(IN) ::g
         gg=g
-        !$omp parallel do private (i,j,k)  num_threads(48)
         !$acc parallel loop gang vector private (i, j, k)   &
         !$acc default(present)
          DO n = 1, block(gg)%fluidCellCount
@@ -201,7 +236,6 @@ module biocfd_pcor_vcor
             k = block(gg)%fluidIndexPtr(n, 3)
             block(gg)%p(i,j,k) = block(gg)%p(i,j,k) + block(gg)%pc(i,j,k)
         END DO
-        !$omp end parallel do
         !$acc end parallel loop
       END SUBROUTINE correctPressure
 
@@ -211,7 +245,6 @@ module biocfd_pcor_vcor
          INTEGER(int64),INTENT(IN) ::g
          gg=g
 
-        !$omp parallel do private (i,j,k) firstprivate(deltat) num_threads(48)
         !$acc parallel loop gang vector private (i, j, k) firstprivate (deltat) &
         !$acc default(present)
          DO 30 n = 1, block(gg)%fluidCellCount
@@ -230,7 +263,6 @@ module biocfd_pcor_vcor
                (block(gg)%pc(i,j,k+1)-block(gg)%pc(i,j,k))
  30      CONTINUE
          !$acc end parallel loop
-        !$omp end parallel do
       END SUBROUTINE correctVelocity
 
       SUBROUTINE REDBLACKSOR_linear(g)
@@ -263,7 +295,6 @@ module biocfd_pcor_vcor
         var=0.
 
         !$acc parallel loop gang vector default(present) firstprivate(deltat, omega) private (i, j, k)
-        !$omp parallel do private (i,j,k,n) num_threads(48)
          DO 10 n = 1, block(gg)%redCellCount
             i = block(gg)%redCellIndexPtr(n, 1)
             j = block(gg)%redCellIndexPtr(n, 2)
@@ -280,11 +311,9 @@ module biocfd_pcor_vcor
             block(gg)%pc(i,j,k) = (1._dp-omega)*block(gg)%pco(i,j,k) +omega*block(gg)%pc(i,j,k)
 
  10      CONTINUE
-        !$omp end parallel do
         !$acc end parallel loop
 
         !$acc parallel loop gang vector default(present) firstprivate(deltat, omega) private (i, j, k)
-        !$omp parallel do private (i,j,k,n) num_threads(48)
          DO 20 n = 1, block(gg)%blackCellCount
              i = block(gg)%blackCellIndexPtr(n, 1)
              j = block(gg)%blackCellIndexPtr(n, 2)
@@ -301,14 +330,11 @@ module biocfd_pcor_vcor
             block(gg)%pc(i,j,k) = (1._dp-omega)*block(gg)%pco(i,j,k) +omega*block(gg)%pc(i,j,k)
 
  20      CONTINUE
-        !$omp end parallel do
         !$acc end parallel loop
-
 
        if(mod(block(gg)%nIterPcor,5_int64) ==0)then
        derr4=0.
         !$acc parallel loop gang vector reduction(max:derr4) default(present) private (i, j, k, var)
-        !$omp parallel do private (i,j,k,n,var) reduction(max:derr4) num_threads(48)
          DO 30 n = 1, block(gg)%fluidCellCount
              i = block(gg)%fluidIndexPtr(n, 1)
              j = block(gg)%fluidIndexPtr(n, 2)
@@ -316,11 +342,9 @@ module biocfd_pcor_vcor
             var = abs(block(gg)%pc(i,j,k)-block(gg)%pco(i,j,k))
             derr4=dmax1(derr4,var)
  30      CONTINUE
-        !$omp end parallel do
         !$acc end parallel loop
         end if
         !$acc parallel loop gang vector collapse(3) default(present) private (i, j, k)
-        !$omp parallel do collapse (3) private (i,j,k) num_threads(48)
         DO k = 1, block(gg)%nz+2
         DO j = 1, block(gg)%ny+2
         DO i = 1, block(gg)%nx+2
@@ -329,7 +353,6 @@ module biocfd_pcor_vcor
         END DO
         END DO
         END DO
-        !$omp end parallel do
         !$acc end parallel loop
 
          block(g)%derr2=derr4

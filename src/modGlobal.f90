@@ -2,6 +2,7 @@
 MODULE global
        use, intrinsic :: iso_fortran_env, only: dp => real64, sp => real32, int32, int64
        use iso_c_binding,only :c_int,c_double,c_loc,c_ptr
+       use biocfd_blocks,only : Blocks
        IMPLICIT NONE
        CHARACTER (LEN = 128) :: line
        CHARACTER (LEN = 3)   :: char_f
@@ -16,103 +17,15 @@ MODULE global
                                 u0, v0, w0, &
                                 epsi, re, rev, &
                                 alpha, &
-                                xfact,deltat, coupTime,totime, totalTime, dfinish, dstart, &
-                                solverTime, pi , msTime, al, uc
+                                xfact,deltat,totime, totalTime, dfinish, dstart, &
+                                pi, al, uc
 
        REAL (dp)       :: alpha_m, theta_m, alpha_m1, theta_m1, mu_f, rho_f, l_c, u_tip, disp
 
         INTEGER (int64) ::nblocks, intflines
 
-        type Blocks
-           REAL(dp) ::  dx,dy, dz,ypth1, ypth2, xpth1, xpth2, xchg,ychg, yt, ydot, yddot,&
-                bfreq, yamp, xt, xdot, xddot
-        REAL(dp) :: derr1,derr2,derrStdSt,a0
-        REAL(dp) :: xshift, yshift, zshift, gx_shift, gy_shift,gz_shift
-        INTEGER (int64):: nx, ny, nz
-        INTEGER (int64):: mk, mkx1, mkx2
-        INTEGER (int64):: nIterPcor, cintp, fineg
-        INTEGER (int64) ::  k_startSearch, k_endSearch, &
-                                     j_startSearch, j_endSearch, &
-                                     i_startSearch, i_endSearch
-       INTEGER (int64), ALLOCATABLE, DIMENSION (:,:,:) :: cell, cell2, cell_n, cell_pr,nodeIdTag
-       INTEGER (int64), ALLOCATABLE, DIMENSION (:,:,:) :: minElemcell
-
-       REAL (dp), ALLOCATABLE, DIMENSION (:) :: deltax, deltay, deltaz, x1, y1, z1, &
-            xu, yu, zu, xv, yv, zv, xw, yw, zw, xp, yp, zp
-
-       real(dp), allocatable, dimension(:, :) :: ca_uu, ck_uu, ca_vv, ck_vv, ca_ww, ck_ww, &
-                                                 ca_uv, ck_uv, ca_uw, ck_uw, ca_vu, ck_vu, &
-                                                 ca_vw, ck_vw, ca_wu, ck_wu, ca_wv, ck_wv
-
-
-       REAL (dp), ALLOCATABLE, DIMENSION (:, :)    :: A, An,Ac, Acx, Acy, Acz
-       REAL (dp), ALLOCATABLE, DIMENSION (:, :, :) :: b, u, u_dum, ut, u_sum, u_avg,   &
-                                                      v, vt, v_dum, v_sum, v_avg,      &
-                                                      w, wt, w_dum, w_sum, w_avg,      &
-                                                      p, p_sum,p_dum, p_avg, pc, pco, &
-                                                      uv_sum,vw_sum,uw_sum, &
-                                                      uv_avg,vw_avg,uw_avg, &
-                                                      uflu_avg,vflu_avg,wflu_avg,pflu_avg, &
-                                                      uflu_rms,vflu_rms,wflu_rms,pflu_rms, &
-                                                      u2_sum,v2_sum,w2_sum,p2_sum,  &
-                                                      u2_avg,v2_avg,w2_avg,p2_avg,  &
-                                                      ufl,vfl,wfl,  &
-                                                      resi_u, resi_v, resi_w
-
-        REAL(sp) , ALLOCATABLE, DIMENSION (:, :, :) :: xp1, yp1, zp1
-        REAL(sp) , ALLOCATABLE, DIMENSION (:, :, :) :: xpn1, ypn1, zpn1
-
-        INTEGER (int64), ALLOCATABLE, DIMENSION (:, :) :: fluidIndexPtr, redCellIndexPtr, &
-                                                          blackCellIndexPtr, nodeId
-        INTEGER(int64) :: ibCellCount, solidCellCount, fluidCellCount, redCellCount, &
-                          blackCellCount, TSCellCount
-        REAL (dp), ALLOCATABLE, DIMENSION (:) ::dataval
-        INTEGER (int32)   :: nnz,nu, nit, nit1
-        INTEGER (int32), ALLOCATABLE, DIMENSION (:) :: row_ptr,col
-        REAL (dp), ALLOCATABLE, DIMENSION (:) :: sol
-        INTEGER (int32) :: crs_data(4)
-         integer(int32) :: diag(7)
-
-       INTEGER (int64), ALLOCATABLE, DIMENSION (:, :) :: TSIndexPtr, interceptedIndexPtr, &
-                                                         solidIndexPtr, fluidInterceptedIndexPtr
-
-
-       INTEGER (int64), ALLOCATABLE, DIMENSION (:) :: nelp, nelu1, nelu2, nelv1, nelv2, nelw1, nelw2
-       REAL (dp), ALLOCATABLE, DIMENSION (:) :: xcent, ycent, zcent, &
-                                                cosAlpha, cosBeta, cosGamma, alpha3, beta3, &
-                                                gamma3, pNormDis, u1NormDis, u2NormDis , &
-                                                v1NormDis, v2NormDis, w1NormDis, w2NormDis, &
-                                                p_ghost, pt_ghost, u2_ghost, u2t_ghost, &
-                                                v2_ghost, v2t_ghost, w2_ghost, &
-                                                w2t_ghost, u1_ghost, u1t_ghost, &
-                                                v1_ghost, v1t_ghost, w1_ghost, w1t_ghost
-
-       REAL (dp) :: u_init, u_final, v_init, v_final, w_init, w_final
-
-       INTEGER (int64), ALLOCATABLE, DIMENSION (:) ::  ibSurfId,ibElP1, ibElP2, ibElP3
-       INTEGER (int64), ALLOCATABLE, DIMENSION (:) :: ibNodeId,index_ts
-       !xnode1 not used
-       REAL (dp), ALLOCATABLE, DIMENSION (:) :: xnode, ynode,  znode, ynode1, znode1
-       REAL (dp), ALLOCATABLE, DIMENSION (:) :: xnode1
-       INTEGER (int64) :: ibElems, ibNodes
-       INTEGER (int64) :: move_check, move_amty, move_amtx,move_amtz,blk_mv_tag
-       REAL(dp) :: ymove,ypos,u_prev,u_curr,v_prev,v_curr,w_prev,w_curr,total_vp_fx,total_vp_fy
-       !zpos not used
-       REAL (dp) :: xmove,xpos, zmove,zpos
-       REAL (dp) :: inity_cent, initx_cent, nxty_cent,nxtx_cent
-       REAL (dp) :: initz_cent,nxtz_cent
-       INTEGER (int64) :: cpy_x_start_mv, cpy_x_end_mv, cpy_y_start_mv, cpy_y_end_mv
-       INTEGER (int64) :: cpy_z_start_mv, cpy_z_end_mv
-       INTEGER (int64) :: cpy_x_start, cpy_x_end, cpy_y_start, cpy_y_end
-       INTEGER (int64) :: cpy_z_start, cpy_z_end
-       REAL (dp) :: theta, thetaDot, thetaDDot, piv_x,piv_y, piv_z
-       REAL (dp) :: alphaDot, alphaDDot, thetaDot1, thetaDDot1, thetaDot2, thetaDDot2
-       REAL (dp), ALLOCATABLE, DIMENSION (:) :: xp_dum, yp_dum, zp_dum
-
-
-       end type Blocks
        !at_x unused, but every other variable used below
-       REAL(dp) :: ac_x_al, ac_y_al, at_x_al, at_y_al, ac_x, ac_y, ac_z, at_x, at_y ,at_z
+       REAL(dp) :: ac_x, ac_y, ac_z, at_x, at_y, at_z
 
         type Interfaces
 

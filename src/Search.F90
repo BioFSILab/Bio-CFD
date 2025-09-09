@@ -1,7 +1,9 @@
 module biocfd_search
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64, int32
-  ! allow(use-all) - TODO: Aim to fix this in the future
-  use global
+  use global, only: block, nblocks, blk_start, xfact, totime, theta_t, &
+       theta_m, piv_pt, pi, phase_angle, ita, dxmin, deltat, aoa2, aoa1, aoa, &
+       ang_theta, alpha_t, alpha_m, ac_z, ac_y, ac_x, a0y, re, freq, inor, char_f, &
+       intflines, coarse_flcnt_check, intfr
   use biocfd_fine_interp, only: fineUpdate_mv
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
   implicit NONE
@@ -70,19 +72,10 @@ module biocfd_search
         bdy=15*dxmin
         angt  =  2._dp*pi*bdfr
 
-        ac_x_al=0.
-        ac_y_al=0.
-        at_x_al=0.
-        at_y_al=0.
         ac_x=0.
         ac_y=0.
         ac_z=0.
-        block(g)%u_init = 0.
-        block(g)%u_final = 0.
-        block(g)%v_init = 0.
-        block(g)%v_final = 0.
-        block(g)%w_init = 0.
-        block(g)%w_final = 0.
+
         block(g)%xmove = 0.
         block(g)%ymove = 0.
         block(g)%zmove = 0.
@@ -91,7 +84,6 @@ module biocfd_search
          angt  =  2._dp*pi*block(g)%bfreq
          block(g)%xpth1=block(g)%xshift-(ita*dxmin*xfact)
         block(g)%xpth2=block(g)%xshift-(ita*dxmin*xfact)
-        block(g)%ypth1=(block(g)%yamp)*sin(angt*block(g)%xshift)
         block(g)%ypth2=(block(g)%yamp)*sin(angt*block(g)%xshift)
         block(g)%piv_x = block(g)%xshift
         block(g)%piv_y = block(g)%yshift
@@ -103,7 +95,6 @@ module biocfd_search
         block(g)%thetaDot1  = 0.
         block(g)% thetaDot2  = 0.
         block(g)% alphaDot  = 0.
-        block(g)%alphaDDot  = 0.  !-ang_theta*ang_theta*a0*sin(2._dp*pi*freq*totime + phase_angle)
         block(g)% thetaDDot1 = 0.
         block(g)%thetaDDot2 = 0.
         block(g)% thetaDDot  = 0.  !-ang_theta*ang_theta*a0*sin(2._dp*pi*freq*totime + phase_angle)
@@ -112,15 +103,6 @@ module biocfd_search
        block(g)%yddot      =  -angt*angt*bdy*sin(2*pi*bdfr*totime)
        block(g)%xt         =  block(g)%xshift- (ita*dxmin*xfact)
        block(g)%xdot       =  -(dxmin*xfact)/deltat
-       block(g)%xddot      =  0.
-        block(g)%u_prev = 0._dp
-        block(g)%u_curr = 0._dp
-        block(g)%v_prev = 0._dp
-        block(g)%v_curr = 0._dp
-        block(g)%w_prev = 0._dp
-        block(g)%w_curr = 0._dp
-        block(g)%Total_VP_FY = 0._dp
-        block(g)%Total_VP_FX = 0._dp
         block(g)%inity_cent=block(g)%yshift
         block(g)%nxty_cent=block(g)%yshift
         block(g)%initx_cent=block(g)%xshift
@@ -174,7 +156,6 @@ module biocfd_search
         block(g)%xpth2=block(g)%xshift-(ita*dxmin*xfact)
         block(g)%ypth2=(block(g)%yamp)*sin(angt*block(g)%xpth2)
         block(g)%xchg=block(g)%xpth2-block(g)%xpth1
-        block(g)%ypth1=block(g)%ypth2
         block(g)%xpth1=block(g)%xpth2
         PRINT*, "angles =", aoa1*180._dp/pi, aoa2*180._dp/pi
         block(g)%thetaDot1 = ang_theta*block(g)%a0*cos(2._dp*pi*freq*(totime+deltat) + phase_angle)
@@ -189,7 +170,6 @@ module biocfd_search
 
        block(g)%xt         = block(g)%xpth2
        block(g)%xdot       = -(dxmin*xfact)/deltat
-       block(g)%xddot      = 0.
 
            block(g)%ychg=block(g)%yt - bdy*sin(angt*(totime-deltat) )
         block(g)%ymove = block(g)%yt
@@ -248,9 +228,7 @@ module biocfd_search
         ALLOCATE (block(g)%xcent(block(g)%ibElems), block(g)%ycent(block(g)%ibElems), &
                   block(g)%zcent(block(g)%ibElems), &
                   block(g)%cosAlpha(block(g)%ibElems), block(g)%cosBeta(block(g)%ibElems), &
-                  block(g)%cosGamma(block(g)%ibElems), &
-                  block(g)%alpha3(block(g)%ibElems), block(g)%beta3(block(g)%ibElems), &
-                  block(g)%gamma3(block(g)%ibElems))
+                  block(g)%cosGamma(block(g)%ibElems))
 
         !compute centroid and direction cosines
        !$acc parallel loop gang vector default(present) private (var_xcent, var_ycent, var_zcent,p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL)  firstprivate (inor)
@@ -279,10 +257,6 @@ module biocfd_search
            block(g)%cosAlpha(n) = (p2y-p1y)*(p3z-p1z)-(p3y-p1y)*(p2z-p1z)
            block(g)%cosBeta(n)  = (p2z-p1z)*(p3x-p1x)-(p3z-p1z)*(p2x-p1x)
            block(g)%cosGamma(n) = (p2x-p1x)*(p3y-p1y)-(p3x-p1x)*(p2y-p1y)
-
-           block(g)%alpha3(n) = block(g)%cosAlpha(n)
-           block(g)%beta3(n)  = block(g)%cosBeta(n)
-           block(g)%gamma3(n) = block(g)%cosGamma(n)
 
            lenEL = dsqrt(block(g)%cosAlpha(n)**2 + block(g)%cosBeta(n)**2 + block(g)%cosGamma(n)**2)   !length of element
 
@@ -318,9 +292,22 @@ module biocfd_search
         n2dotn = 0
 
  !$acc parallel loop collapse(3) default(present)
+        ! There are some areas of the code where OpenMP and OpenACC
+        ! are used together. In this particular case we don't want the
+        ! OpenMP declarations if we are compiling with OpenACC.
+        !
+        ! WARNING: Do not indent the preprocessor macros, they must
+        ! start at the first column.
+        !
+        ! WARNING 2: The extension of this file has been made
+        ! uppercase "f90" -> "F90", this seems to be a convention
+        ! across compilers, but I can't guarantee it will work for all
+        ! compilers
+#ifndef _OPENACC
         !$omp parallel do default(none) private(minDis, minDis1) &
         !$omp& private(dis_cen, dis_pnt, nel2Cen, nel2Pnt, n2dotn) &
         !$omp& shared(g, block)
+#endif
         DO k = block(g)%k_startSearch, block(g)%k_endSearch
         DO j = block(g)%j_startSearch, block(g)%j_endSearch
         DO i = block(g)%i_startSearch, block(g)%i_endSearch
@@ -372,7 +359,9 @@ module biocfd_search
          END DO
          END DO
          END DO
+#ifndef _OPENACC
          !$omp end parallel do
+#endif
 !$acc end parallel loop
 
 !$acc parallel loop collapse(3) default(present)
@@ -1071,7 +1060,6 @@ block(g)%fluidCellCount = flcnt
         END DO
         !$acc end parallel loop
 
-        ! DEALLOCATE (block(g)%minElemcell)
          END DO
          print*, 'computeNormDistance done'
 
@@ -1407,9 +1395,6 @@ block(g)%fluidCellCount = flcnt
         ENDDO
         ENDDO
         ENDDO
-        block(b_blk_no)%xp_dum=block(b_blk_no)%xp
-        block(b_blk_no)%yp_dum=block(b_blk_no)%yp
-        block(b_blk_no)%zp_dum=block(b_blk_no)%zp
         endif
 
         ENDDO
@@ -1474,31 +1459,6 @@ block(g)%fluidCellCount = flcnt
            block(g)%zu(i) = 0.5_dp*(block(g)%z1(i)+block(g)%z1(i+1))
            block(g)%zv(i) = block(g)%zu(i)
            block(g)%zp(i) = block(g)%zu(i)
-        END DO
-        DO k=1,block(g)%nz+1
-        DO j=1,block(g)%ny+1
-        DO i=1,block(g)%nx+1
-
-        block(g)%xpn1(i,j,k)=block(g)%x1(i)
-        block(g)%ypn1(i,j,k)=block(g)%y1(j)
-        block(g)%zpn1(i,j,k)=block(g)%z1(k)
-
-
-        END DO
-        END DO
-        END DO
-
-        DO k=2,block(g)%nz+1
-        DO j=2,block(g)%ny+1
-        DO i=2,block(g)%nx+1
-
-        block(g)%xp1(i,j,k)=block(g)%xp(i)
-        block(g)%yp1(i,j,k)=block(g)%yp(j)
-        block(g)%zp1(i,j,k)=block(g)%zp(k)
-
-
-        END DO
-        END DO
         END DO
 
         ENDIF

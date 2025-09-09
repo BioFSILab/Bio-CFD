@@ -1,8 +1,8 @@
 
       PROGRAM main
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
-        ! allow(use-all) - TODO: Aim to fix this in the future
-        USE global
+        USE global, only: block, blk_start, coarse_flcnt_check, deltat, istart, &
+             ita, ita1, ita2, itamax, nblocks, totaltime, totime
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
@@ -17,7 +17,12 @@
         use biocfd_last_conditions, only: lastConditions
         use biocfd_coefficient_matrix, only: coefficientMatrix
         use biocfd_navier_stokes, only: non_uni_coeff, nsmomentum2order
-        use biocfd_write_output_corner1, only: writeOutput1, body_plot, writeresult
+        use biocfd_write_output_corner1, only: body_plot, writeresult
+#if USE_HDF5 == 1
+        use biocfd_write_output_corner1, only: write_output => write_output_hdf5
+#else
+        use biocfd_write_output_corner1, only: write_output => write_output_ascii
+#endif
         use biocfd_forcing, only: pressureForcing1, pressureforcingfield, pressureforcingghost, &
              velocityforcing1, velocityforcingfield, velocityforcingghost
         IMPLICIT NONE
@@ -27,7 +32,9 @@
         CALL readInput
         CALL readBlockInterface
         CALL readSurfaceMeshGmsh
-        CALL allocateArrays
+        do g=1, size(block)
+          CALL allocateArrays(block(g))
+        end do
         CALL findDistnode
         CALL shiftSurfaceNodesInitial
         CALL computeSurfaceNorm
@@ -36,8 +43,6 @@
         totime = 0.
         ita1 = 0
         ita2 = 0
-        solverTime=0.
-        coupTime=0.
         CALL tagging_th
         print*,'11'
         CALL cellCount_solid
@@ -53,7 +58,7 @@
         CALL coefficientMatrix
         CALL non_uni_coeff
         totime = totime + deltat
-        CALL writeOutput1
+        CALL write_output
         coarse_flcnt_check=0
         print*, 'adam'
         DO
@@ -69,14 +74,14 @@
         CALL poissonSolver
         print *,7
         CALL pressureForcing1
-        CALL writeOutput1
+        CALL write_output
         !$acc wait
         CALL writeResult
         !$acc wait
         CALL body_plot
         DO g=blk_start, nblocks
            DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent,block(g)%cosAlpha, &
-                block(g)%cosBeta, block(g)%cosGamma,block(g)%alpha3,block(g)%beta3, block(g)%gamma3)
+                block(g)%cosBeta, block(g)%cosGamma)
             block(g)%blk_mv_tag=0.
         END DO
         print *,10
