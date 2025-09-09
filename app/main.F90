@@ -31,7 +31,9 @@
         real(dp) :: dstart1, dfinish1
         CALL readInput
         CALL readBlockInterface
-        CALL readSurfaceMeshGmsh
+        do g=blk_start, size(block)
+          CALL readSurfaceMeshGmsh(block(g))
+        end do
         do g=1, size(block)
           CALL allocateArrays(block(g))
         end do

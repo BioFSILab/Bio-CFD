@@ -306,67 +306,65 @@ module biocfd_read_input
 
       END SUBROUTINE readInput
 
-      SUBROUTINE readSurfaceMeshGmsh
+      SUBROUTINE readSurfaceMeshGmsh(blk)
+       type(Blocks), intent(inout) :: blk
        INTEGER(int64) :: n, i1, i2, i3, i5, g
        CHARACTER (LEN = 72) :: cLine
 
-
-       DO g=blk_start, nblocks
        OPEN(121, FILE ='geometries/butterflyMedium.msh', form = 'formatted')               !READ SURFACE MESH FILE
         DO n = 1, 4
            READ (121,*) cLine
         END DO
-        READ (121,*) block(g)%ibNodes  !nsurf=total no. of points in file
-        ALLOCATE(block(g)%ibNodeId(block(g)%ibNodes), block(g)%xnode(block(g)%ibNodes), &
-                 block(g)%ynode(block(g)%ibNodes), block(g)%znode(block(g)%ibNodes))
-        block(g)%ibNodeId = 50
-        DO n = 1, block(g)%ibNodes
-           READ (121,*) i1, block(g)%xnode(n), block(g)%ynode(n), block(g)%znode(n)
-           block(g)%xnode(n)=block(g)%xnode(n)*0.001_dp
-           block(g)%ynode(n)=block(g)%ynode(n)*0.001_dp
-           block(g)%znode(n)=block(g)%znode(n)*0.001_dp
+        READ (121,*) blk%ibNodes  !nsurf=total no. of points in file
+        ALLOCATE(blk%ibNodeId(blk%ibNodes), blk%xnode(blk%ibNodes), &
+                 blk%ynode(blk%ibNodes), blk%znode(blk%ibNodes))
+        blk%ibNodeId = 50
+        DO n = 1, blk%ibNodes
+           READ (121,*) i1, blk%xnode(n), blk%ynode(n), blk%znode(n)
+           blk%xnode(n)=blk%xnode(n)*0.001_dp
+           blk%ynode(n)=blk%ynode(n)*0.001_dp
+           blk%znode(n)=blk%znode(n)*0.001_dp
         END DO
         DO n = 1, 2
           READ (121,*) line
         END DO
-        READ (121,*) block(g)%ibElems   !no. of elements
+        READ (121,*) blk%ibElems   !no. of elements
         DO n = 1, surGeoPoints
           READ (121,*) cLine
         END DO
-        block(g)%ibElems = block(g)%ibElems-surGeoPoints
-        ALLOCATE(block(g)%ibSurfId(block(g)%ibElems), block(g)%ibElP1(block(g)%ibElems), &
-                 block(g)%ibElP2(block(g)%ibElems), block(g)%ibElP3(block(g)%ibElems))
-        block(g)%ibElP1 = 0
-        block(g)%ibElP2 = 0
-        block(g)%ibElP3 = 0
-        block(g)%ibSurfId = 0
-        DO n = 1, block(g)%ibElems
-        READ (121,*) i1, i2, i3, block(g)%ibSurfId(n), i5, &
-        block(g)%ibElP1(n), block(g)%ibElP2(n), block(g)%ibElP3(n)
+        blk%ibElems = blk%ibElems-surGeoPoints
+        ALLOCATE(blk%ibSurfId(blk%ibElems), blk%ibElP1(blk%ibElems), &
+                 blk%ibElP2(blk%ibElems), blk%ibElP3(blk%ibElems))
+        blk%ibElP1 = 0
+        blk%ibElP2 = 0
+        blk%ibElP3 = 0
+        blk%ibSurfId = 0
+        DO n = 1, blk%ibElems
+        READ (121,*) i1, i2, i3, blk%ibSurfId(n), i5, &
+        blk%ibElP1(n), blk%ibElP2(n), blk%ibElP3(n)
         END DO
-       DO n = 1, block(g)%ibElems
-       IF (block(g)%ibSurfId(n)==51) THEN
-           block(g)%ibNodeId(block(g)%ibELP1(n)) = 51
-           block(g)%ibNodeId(block(g)%ibELP2(n)) = 51
-           block(g)%ibNodeId(block(g)%ibELP3(n)) = 51
-           ELSEIF (block(g)%ibSurfId(n)==52) THEN
-           block(g)%ibNodeId(block(g)%ibELP1(n)) = 52
-           block(g)%ibNodeId(block(g)%ibELP2(n)) = 52
-           block(g)%ibNodeId(block(g)%ibELP3(n)) = 52
+       DO n = 1, blk%ibElems
+       IF (blk%ibSurfId(n)==51) THEN
+           blk%ibNodeId(blk%ibELP1(n)) = 51
+           blk%ibNodeId(blk%ibELP2(n)) = 51
+           blk%ibNodeId(blk%ibELP3(n)) = 51
+           ELSEIF (blk%ibSurfId(n)==52) THEN
+           blk%ibNodeId(blk%ibELP1(n)) = 52
+           blk%ibNodeId(blk%ibELP2(n)) = 52
+           blk%ibNodeId(blk%ibELP3(n)) = 52
           ENDIF
         ENDDO
-        DO n = 1, block(g)%ibElems
-        IF (block(g)%ibSurfId(n)==50) THEN
-            block(g)%ibNodeId(block(g)%ibELP1(n)) = 50
-            block(g)%ibNodeId(block(g)%ibELP2(n)) = 50
-            block(g)%ibNodeId(block(g)%ibELP3(n)) = 50
+        DO n = 1, blk%ibElems
+        IF (blk%ibSurfId(n)==50) THEN
+            blk%ibNodeId(blk%ibELP1(n)) = 50
+            blk%ibNodeId(blk%ibELP2(n)) = 50
+            blk%ibNodeId(blk%ibELP3(n)) = 50
           ENDIF
         ENDDO
 
        CLOSE(121)
        PRINT *, 'SURFACE MESH READING COMPLETE'
-       PRINT *, 'ibNodes =', block(g)%ibNodes, 'ibElems =', block(g)%ibElems
-       END DO
+       PRINT *, 'ibNodes =', blk%ibNodes, 'ibElems =', blk%ibElems
 
       END SUBROUTINE readSurfaceMeshGmsh
 
