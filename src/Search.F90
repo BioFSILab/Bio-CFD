@@ -646,18 +646,16 @@ module biocfd_search
         ALLOCATE(block(g)%TSIndexPtr(block(g)%TSCellCount,3))
 
         iPt1 = 0
-                 DO k = 0, block(g)%nz+3
-                 DO j = 0, block(g)%ny+3
-                 DO i = 0, block(g)%nx+3
-                    IF (block(g)%cell2(i,j,k)==2) THEN
-                       iPt1 = iPt1 + 1
-                       block(g)%TSIndexPtr(iPt1, 1) = i
-                           block(g)%TSIndexPtr(iPt1, 2) = j
-                               block(g)%TSIndexPtr(iPt1, 3) = k
-                    ENDIF
-                 END DO
-                 END DO
-                 END DO
+        DO k=1, block(g)%nz+3
+           DO j=1, block(g)%ny+3
+              DO i=1, block(g)%nx+3
+                 IF (block(g)%cell2(i,j,k)==2) THEN
+                    iPt1 = iPt1 + 1
+                    block(g)%TSIndexPtr(iPt1, :) = [i, j, k]
+                 ENDIF
+              END DO
+           END DO
+        END DO
 
         ALLOCATE(&
           block(g)%u2_ghost(block(g)%TSCellCount),  &
