@@ -272,7 +272,7 @@ module biocfd_search
 
      SUBROUTINE tagging_th
 
-        INTEGER(int64) :: g, n, m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
+        INTEGER(int64) :: g, m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
         REAL(dp)      :: minDis1, minDis, &
                          n2dotn, dis_cen, dis_pnt
 
@@ -408,52 +408,6 @@ module biocfd_search
          END DO
          END DO
          END DO
-      WRITE(filename1,22)char_f
- 22   FORMAT(A3,'_inter_cell.dat')
-      open(82,file=filename1,status='unknown')
-      write(82,*)'variables = "x", "y","z", "var"'
-    do k = 2,block(g)% nz+1
-       do j = 2, block(g)%ny+1
-       do i = 2, block(g)%nx+1
-    n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-       if(block(g)%cell(i,j,k)==2)then
-       write(82,*) block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), block(g)%cell(i,j,k)
-       endif
-       end do
-       end do
-    enddo
-      close(82)
-      WRITE(filename1,23)char_f
- 23   FORMAT(A3,'_fluid_cell.dat')
-      open(83,file=filename1,status='unknown')
-      write(83,*)'variables = "x", "y","z","var"'
-       do k = 2, block(g)%nz+1
-       do j = 2,block(g)% ny+1
-       do i = 2, block(g)%nx+1
-    n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-       if(block(g)%cell(i,j,k)==0)then
-       write(83,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 0
-       endif
-       end do
-       end do
-    enddo
-      close(83)
-
-      WRITE(filename1,24)char_f
- 24   FORMAT(A3,'_solid_cell.dat')
-      open(84,file=filename1,status='unknown')
-      write(84,*)'variables = "x", "y","z","var"'
-       do k = 2, block(g)%nz+1
-       do j = 2, block(g)%ny+1
-       do i = 2, block(g)%nx+1
-    n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-       if(block(g)%cell(i,j,k)==1)then
-       write(84,*)block(g)%xp(i),block(g)%yp(j), block(g)%zp(k), 1
-       endif
-       end do
-       end do
-    enddo
-      close(84)
 
          WRITE(filename1,2) g
  2       FORMAT('butter_cellcount_f.',i3.3,".dat")
