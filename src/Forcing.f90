@@ -80,7 +80,7 @@ SUBROUTINE pressureForcing1
          END DO
 
         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-                                           block(g)%xp, block(g)%yp, block(g)%zp, &
+                                           block(g)%xp, block(g)%yp, block(g)%zp, 0, &
                                            block(g)%p, p_pos1, derivatives)
 
         dpdn_e = derivatives(1) * block(g)%cosAlpha(block(g)%nelp(n)) &
@@ -115,6 +115,7 @@ SUBROUTINE velocityForcing1
                          v_x1_z2, v_x2_z2, v_z1_x1, v_z2_x1, v_z1_x2, &
                          v_z2_x2, w_x1_z1, w_x2_z1, w_x1_z2, w_x2_z2, &
                          w_z1_x1, w_z2_x1, w_z1_x2, w_z2_x2
+       real(dp) :: derivatives(3)
 
         DO g=blk_start, nblocks
  !$acc parallel loop gang vector         &
@@ -235,6 +236,14 @@ SUBROUTINE velocityForcing1
          dudn_e = dudx_e*block(g)%cosAlpha(block(g)%nelu2(n)) &
                   + dudy_e*block(g)%cosBeta(block(g)%nelu2(n)) &
                   + dudz_e*block(g)%cosGamma(block(g)%nelu2(n))
+
+         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
+                                            block(g)%xu, block(g)%yu, block(g)%zu, 1, &
+                                            block(g)%ut, u_pos1, derivatives)
+
+         dudn_e =  derivatives(1) * block(g)%cosAlpha(block(g)%nelu2(n)) &
+                 + derivatives(2) * block(g)%cosBeta(block(g)%nelu2(n)) &
+                 + derivatives(3) * block(g)%cosGamma(block(g)%nelu2(n))
 
          n1 = pt1 + sur2nodeDis
 
@@ -2431,11 +2440,15 @@ pure function compute_derivative(x, x2, x1, p_x, p_x2, p_x1) result(out)
   out = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_x)/(h1*h2*(h1+h2)+1e-16_dp)
 end function compute_derivative
 
-subroutine compute_value_and_derivatives(x, y, z, i, j, k, xgrid, ygrid, zgrid, var, &
-                                         val, derivatives)
+subroutine compute_value_and_derivatives(x, y, z, i, j, k, xgrid, ygrid, zgrid, offset_axis, &
+                                         var, val, derivatives)
   real(dp), intent(in) :: x, y, z
   integer, intent(in) :: i, j, k
   real(dp), intent(in), dimension(:) :: xgrid, ygrid, zgrid
+  !> An integer in the range 0-3 (inclusive) determining which axis to
+  !> offset A value of 0 corresponds to no offset, 1=x, 2=y, 3=z. This
+  !> is used for the calculations of p, u, v, and w.
+  integer, intent(in) :: offset_axis
   real(dp), intent(in), dimension(:, :, :) :: var
 
   real(dp), intent(out) :: val
@@ -2444,6 +2457,17 @@ subroutine compute_value_and_derivatives(x, y, z, i, j, k, xgrid, ygrid, zgrid, 
   ! Internal variables
   ! tmp to hold interpolated results, [[x1, x2], [y1, y2], [z1, z1]]
   real (dp) :: tmp(3, 2)
+
+   !> Indicies for the variable (which may be offset)
+  integer :: ii, jj, kk
+
+  ii = i
+  jj = j
+  kk = k
+
+  if (offset_axis == 1) ii = i - 1
+  if (offset_axis == 2) jj = j - 1
+  if (offset_axis == 3) kk = k - 1
 
   ! Compute bilinear interpolation on six faces of a cuboid.
   !
@@ -2460,24 +2484,24 @@ subroutine compute_value_and_derivatives(x, y, z, i, j, k, xgrid, ygrid, zgrid, 
   !
   ! p_x1 y -- z plane
   tmp(1, 1) = bilinear_interpolation(y, z, ygrid(j), ygrid(j+1), zgrid(k), zgrid(k+1), &
-                        [var(i, j, k), var(i, j+1, k), var(i, j, k+1), var(i, j+1, k+1)])
+                        [var(ii, jj, kk), var(ii, jj+1, kk), var(ii, jj, kk+1), var(ii, jj+1, kk+1)])
   ! p_x2 y -- z plane
   tmp(1, 2) = bilinear_interpolation(y, z, ygrid(j), ygrid(j+1), zgrid(k), zgrid(k+1), &
-                        [var(i+1, j, k), var(i+1, j+1, k), var(i+1, j, k+1), var(i+1, j+1, k+1)])
+                        [var(ii+1, jj, kk), var(ii+1, jj+1, kk), var(ii+1, jj, kk+1), var(ii+1, jj+1, kk+1)])
 
   ! p_y1 x -- z plane
   tmp(2, 1) = bilinear_interpolation(x, z, xgrid(i), xgrid(i+1), zgrid(k), zgrid(k+1), &
-                        [var(i, j, k), var(i+1, j, k), var(i, j, k+1), var(i+1, j, k+1)])
+                        [var(ii, jj, kk), var(ii+1, jj, kk), var(ii, jj, kk+1), var(ii+1, jj, kk+1)])
   ! p_y2 x -- z plane
   tmp(2, 2) = bilinear_interpolation(x, z, xgrid(i), xgrid(i+1), zgrid(k), zgrid(k+1), &
-                        [var(i, j+1, k), var(i+1, j+1, k), var(i, j+1, k+1), var(i+1, j+1, k+1)])
+                        [var(ii, jj+1, kk), var(ii+1, jj+1, kk), var(ii, jj+1, kk+1), var(ii+1, jj+1, kk+1)])
 
   ! p_z1 x -- y plane
   tmp(3, 1) = bilinear_interpolation(x, y, xgrid(i), xgrid(i+1), ygrid(j), ygrid(j+1), &
-                        [var(i, j, k), var(i+1, j, k), var(i, j+1, k), var(i+1, j+1, k)])
+                        [var(ii, jj, kk), var(ii+1, jj, kk), var(ii, jj+1, kk), var(ii+1, jj+1, kk)])
   ! p_z2 x -- y plane
   tmp(3, 2) = bilinear_interpolation(x, y, xgrid(i), xgrid(i+1), ygrid(j), ygrid(j+1), &
-                        [var(i, j, k+1), var(i+1, j, k+1), var(i, j+1, k+1), var(i+1, j+1, k+1)])
+                        [var(ii, jj, kk+1), var(ii+1, jj, kk+1), var(ii, jj+1, kk+1), var(ii+1, jj+1, kk+1)])
 
   val = linear_interpolation(x, xgrid(i), xgrid(i+1), tmp(1, 1), tmp(1, 2))
 
