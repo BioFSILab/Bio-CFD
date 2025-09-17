@@ -254,7 +254,7 @@ contains
 !c***********************************************************************
 !c     navier-stokes equations for constant properties
 !c***********************************************************************
-      INTEGER (dp) :: i, j, k, g, n ,nx_var,ny_var,nz_var, n1, nn, i11, j11, k11, &
+      INTEGER (dp) :: i, j, k, g, n ,nx_var,ny_var,nz_var, n1, nn, &
            index_ip1, index_im1, index_jp1, index_jm1, index_kp1, index_km1, block_idx_ts, idx
          REAL (dp) :: dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14, &
                  u15,u16,v1a,v22,v3,v4,v5,v6,v7,v8,v9,v10,v11,v12,v13,v14,v15,v16, &
@@ -290,7 +290,7 @@ contains
 !$acc	        u_in_wm,vw_n,vw_s,v_in_wm,duwtdx,dvwtdy,dwwtdz,        &
 !$acc		 duwdx,dvwdy,dwwdz,d2wdx2,d2wdy2,d2wdz2,xtt2,residu,ytt2,residv,ztt2,residw, &
 !$acc           index_ip1,index_im1,index_jp1,index_jm1,index_kp1,index_km1, &
-!$acc           i11,j11,k11,temp_u2dotn,temp_u1dotn, &
+!$acc           temp_u2dotn,temp_u1dotn, &
 !$acc           temp_v2dotn,temp_v1dotn, &
 !$acc           temp_w2dotn,temp_w1dotn, temp_pdotn, block_idx_ts, idx) &
 !$acc default(present)   &
@@ -312,12 +312,7 @@ contains
            block(g)%cell2(i, j+1, k)==2 .OR. block(g)%cell2(i, j-1, k)==2 .OR. &
            block(g)%cell2(i, j, k+1)==2.OR. block(g)%cell2(i, j, k-1)==2) THEN
         !$acc loop seq
-             DO nn = 1, block(g)%TSCellCount
-                ! TODO: i11, j11, and k11, aren't used anywhere
-                i11 = block(g)%TSIndexPtr(nn, 1)
-                j11 = block(g)%TSIndexPtr(nn, 2)
-                k11 = block(g)%TSIndexPtr(nn, 3)
-
+             DO nn = 1, block(g)%TSCellCount 
                 ! Here we calculate all seven possible variables, even
                 ! though we will likely only ever use six. This slight
                 ! computational inefficiency is worth it for far
