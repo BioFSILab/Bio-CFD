@@ -312,7 +312,7 @@ contains
            block(g)%cell2(i, j+1, k)==2 .OR. block(g)%cell2(i, j-1, k)==2 .OR. &
            block(g)%cell2(i, j, k+1)==2.OR. block(g)%cell2(i, j, k-1)==2) THEN
         !$acc loop seq
-             DO nn = 1, block(g)%TSCellCount 
+             DO nn = 1, block(g)%TSCellCount
                 ! Here we calculate all seven possible variables, even
                 ! though we will likely only ever use six. This slight
                 ! computational inefficiency is worth it for far
