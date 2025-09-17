@@ -2039,6 +2039,9 @@ SUBROUTINE velocityForcingField
 
 END SUBROUTINE velocityForcingField
 
+!> Derivatives are computed using Lagrange polynomials, see
+!> https://en.wikipedia.org/wiki/Lagrange_polynomial for more
+!> information about how these are constructed.
 pure function compute_derivative(x, x2, x1, p_x, p_x2, p_x1) result(out)
   real(dp), intent(in) :: x, x2, x1, p_x, p_x2, p_x1
   real(dp) :: out
