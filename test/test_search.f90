@@ -68,7 +68,8 @@ contains
     blk%ny = 5
     blk%nz = 5
 
-    allocate(blk%cell(blk%nx, blk%ny, blk%nz))
+    ! See biocfd_allocate_arrays (this is just a simpler way)
+    allocate(blk%cell(blk%nx+2, blk%ny+2, blk%nz+2))
     blk%cell = 0
 
     call cellCount_solid_coarse(blk)
