@@ -213,7 +213,7 @@ module biocfd_search
 
       SUBROUTINE computeSurfaceNorm(blk)
         type(Blocks), intent(inout) :: blk
-        INTEGER(int64) ::  n, g  !c1, c2, c3, c4
+        INTEGER(int64) ::  n  !c1, c2, c3, c4
         REAL(dp)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL, binor
         REAL(dp)      :: var_xcent, var_ycent, var_zcent
 
