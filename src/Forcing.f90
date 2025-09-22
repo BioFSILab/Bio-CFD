@@ -1389,7 +1389,7 @@ SUBROUTINE velocityForcingField
             if(pos1_z>=block(g)%zu(kl).and.pos1_z<block(g)%zu(kl+1)) i_z1 = kl
          END DO
 
-         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, & 
+         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                             block(g)%xu, block(g)%yu, block(g)%zu, &
                                             1, block(g)%ut, u_pos1, derivatives)
 
@@ -1436,7 +1436,7 @@ SUBROUTINE velocityForcingField
             if(pos1_z>=block(g)%zu(kl).and.pos1_z<block(g)%zu(kl+1)) i_z1 = kl
          END DO
 
-         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, & 
+         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                             block(g)%xu, block(g)%yu, block(g)%zu, &
                                             1, block(g)%ut, u_pos1, derivatives)
 
@@ -1488,7 +1488,7 @@ SUBROUTINE velocityForcingField
             if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
          END DO
 
-         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, & 
+         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                             block(g)%xv, block(g)%yv, block(g)%zv, &
                                             2, block(g)%vt, v_pos1, derivatives)
          dvdn_e =  derivatives(1) * block(g)%cosAlpha(block(g)%nelv2(n)) &
@@ -1542,7 +1542,7 @@ SUBROUTINE velocityForcingField
             if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
          END DO
 
-         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, & 
+         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                             block(g)%xv, block(g)%yv, block(g)%zv, &
                                             2, block(g)%vt, v_pos1, derivatives)
          dvdn_e = derivatives(1) * block(g)%cosAlpha(block(g)%nelv1(n)) &
@@ -1588,7 +1588,7 @@ SUBROUTINE velocityForcingField
             if(pos1_z>=block(g)%zw(kl).and.pos1_z<block(g)%zw(kl+1)) i_z1 = kl
          END DO
 
-         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, & 
+         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                             block(g)%xw, block(g)%yw, block(g)%zw, &
                                             3, block(g)%wt, w_pos1, derivatives)
          dwdn_e = derivatives(1) * block(g)%cosAlpha(block(g)%nelw2(n)) &
@@ -1636,7 +1636,7 @@ SUBROUTINE velocityForcingField
             if(pos1_z>=block(g)%zw(kl).and.pos1_z<block(g)%zw(kl+1)) i_z1 = kl
          END DO
 
-         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, & 
+         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                             block(g)%xw, block(g)%yw, block(g)%zw, &
                                             3, block(g)%wt, w_pos1, derivatives)
          dwdn_e = derivatives(1) * block(g)%cosAlpha(block(g)%nelw1(n)) &
