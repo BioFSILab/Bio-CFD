@@ -120,142 +120,136 @@ module biocfd_search
 
       END SUBROUTINE shiftSurfaceNodesInitial
 
-      SUBROUTINE computeSurfaceVariables
-
-        INTEGER(int64) ::  i, g
+      SUBROUTINE computeSurfaceVariables(blk,g)
+        type(Blocks), intent(inout) :: blk
+        INTEGER(int64) ::  i
+        INTEGER(int64), intent(in) :: g
         REAL(dp)      ::  xr1, yr1, zr1
         REAL(dp)      :: angg, angt
         REAL(dp)      :: bdy,bdfr
         CHARACTER(len=150) :: filename1
 
-        DO g=blk_start,nblocks
         angg=90
-        aoa1       =  (block(g)%a0)*sin(2._dp*pi*freq*(totime+deltat) + phase_angle)
+        aoa1       =  (blk%a0)*sin(2._dp*pi*freq*(totime+deltat) + phase_angle)
         aoa2       = -aoa1
         ang_theta  =  2._dp*pi*freq
-        bdfr=block(g)%bfreq
-        bdy=block(g)%yamp
+        bdfr=blk%bfreq
+        bdy=blk%yamp
         angt  =  2._dp*pi*bdfr
 
-        block(g)%xpth2=block(g)%xshift-(ita*dxmin*xfact)
-        block(g)%ypth2=(block(g)%yamp)*sin(angt*block(g)%xpth2)
-        block(g)%xchg=block(g)%xpth2-block(g)%xpth1
-        block(g)%xpth1=block(g)%xpth2
+        blk%xpth2=blk%xshift-(ita*dxmin*xfact)
+        blk%ypth2=(blk%yamp)*sin(angt*blk%xpth2)
+        blk%xchg=blk%xpth2-blk%xpth1
+        blk%xpth1=blk%xpth2
         PRINT*, "angles =", aoa1*180._dp/pi, aoa2*180._dp/pi
-        block(g)%thetaDot1 = ang_theta*block(g)%a0*cos(2._dp*pi*freq*(totime+deltat) + phase_angle)
-        block(g)%thetaDDot1 = -ang_theta*ang_theta*block(g)%a0*sin(2._dp*pi*freq*(totime+deltat) &
+        blk%thetaDot1 = ang_theta*blk%a0*cos(2._dp*pi*freq*(totime+deltat) + phase_angle)
+        blk%thetaDDot1 = -ang_theta*ang_theta*blk%a0*sin(2._dp*pi*freq*(totime+deltat) &
                               + phase_angle)
-        block(g)%thetaDot2  = -block(g)%thetaDot1
-        block(g)%thetaDDot2 = -block(g)%thetaDDot1
+        blk%thetaDot2  = -blk%thetaDot1
+        blk%thetaDDot2 = -blk%thetaDDot1
 
-       block(g)%yt         =  bdy*sin(angt*(totime) )
-       block(g)%ydot       =  angt*bdy*cos(angt*(totime))
-       block(g)%yddot      =  -angt*angt*bdy*sin(angt*(totime))
+        blk%yt         =  bdy*sin(angt*(totime) )
+        blk%ydot       =  angt*bdy*cos(angt*(totime))
+        blk%yddot      =  -angt*angt*bdy*sin(angt*(totime))
 
-       block(g)%xt         = block(g)%xpth2
-       block(g)%xdot       = -(dxmin*xfact)/deltat
+        blk%xt         = blk%xpth2
+        blk%xdot       = -(dxmin*xfact)/deltat
 
-           block(g)%ychg=block(g)%yt - bdy*sin(angt*(totime-deltat) )
-        block(g)%ymove = block(g)%yt
-        block(g)%xmove = block(g)%xchg
-        block(g)%zmove = 0.
+        blk%ychg=blk%yt - bdy*sin(angt*(totime-deltat) )
+        blk%ymove = blk%yt
+        blk%xmove = blk%xchg
+        blk%zmove = 0.
 
-        block(g)%ypos =  block(g)%ypos  + block(g)%ychg
-        block(g)%xpos =  block(g)%xpos  + block(g)%xmove
-        block(g)%piv_y = block(g)%piv_y + block(g)%ychg
-        block(g)%piv_x = block(g)%piv_x + block(g)%xmove
-        block(g)%piv_z = block(g)%piv_z + block(g)%zmove
-        block(g)%nxty_cent= block(g)%nxty_cent + block(g)%ychg
-        block(g)%nxtx_cent= block(g)%nxtx_cent + block(g)%xmove
-        WRITE(filename1,1) block(g)%fineg,re, g
+        blk%ypos =  blk%ypos  + blk%ychg
+        blk%xpos =  blk%xpos  + blk%xmove
+        blk%piv_y = blk%piv_y + blk%ychg
+        blk%piv_x = blk%piv_x + blk%xmove
+        blk%piv_z = blk%piv_z + blk%zmove
+        blk%nxty_cent= blk%nxty_cent + blk%ychg
+        blk%nxtx_cent= blk%nxtx_cent + blk%xmove
+        WRITE(filename1,1) blk%fineg,re, g
       1  FORMAT('d',I4.4,'_index.',F8.2,'.',i3.1,".dat")
         OPEN(UNIT = 17, FILE = filename1,POSITION='APPEND', STATUS = 'unknown')
-        write(17,14) totime, block(g)%nxty_cent, block(g)%inity_cent, block(g)%ymove, &
-                     block(g)%nxtx_cent, block(g)%xmove
+        write(17,14) totime, blk%nxty_cent, blk%inity_cent, blk%ymove, &
+                     blk%nxtx_cent, blk%xmove
      close(17)
      14      FORMAT(7F15.8)
-        print*,'centn',block(g)%nxty_cent,'centi',block(g)%inity_cent,'mv',block(g)%ychg
-      DO i = 1, block(g)%ibnodes
-      IF (block(g)%ibNodeId(i)==51) THEN
-             xr1 =  block(g)%xnode(i)
-             zr1 =  block(g)%znode(i)*cos(aoa1) + block(g)%ynode(i)*sin(aoa1) + piv_pt &
+        print*,'centn',blk%nxty_cent,'centi',blk%inity_cent,'mv',blk%ychg
+      DO i = 1, blk%ibnodes
+      IF (blk%ibNodeId(i)==51) THEN
+             xr1 =  blk%xnode(i)
+             zr1 =  blk%znode(i)*cos(aoa1) + blk%ynode(i)*sin(aoa1) + piv_pt &
                     - piv_pt*cos(aoa1)
-             yr1 = -block(g)%znode(i)*sin(aoa1) + block(g)%ynode(i)*cos(aoa1) + piv_pt*sin(aoa1)
-         ELSEIF (block(g)%ibNodeId(i)==52) THEN
-             xr1 =  block(g)%xnode(i)
-             zr1 =  block(g)%znode(i)*cos(aoa2) + block(g)%ynode(i)*sin(aoa2)  + piv_pt &
+             yr1 = -blk%znode(i)*sin(aoa1) + blk%ynode(i)*cos(aoa1) + piv_pt*sin(aoa1)
+         ELSEIF (blk%ibNodeId(i)==52) THEN
+             xr1 =  blk%xnode(i)
+             zr1 =  blk%znode(i)*cos(aoa2) + blk%ynode(i)*sin(aoa2)  + piv_pt &
                     - piv_pt*cos(aoa2)
-             yr1 = -block(g)%znode(i)*sin(aoa2) + block(g)%ynode(i)*cos(aoa2)  + piv_pt*sin(aoa2)
+             yr1 = -blk%znode(i)*sin(aoa2) + blk%ynode(i)*cos(aoa2)  + piv_pt*sin(aoa2)
            ELSE
-               xr1 = block(g)% xnode(i)
-               zr1 = block(g)% znode(i)
-               yr1 = block(g)% ynode(i)
+               xr1 = blk% xnode(i)
+               zr1 = blk% znode(i)
+               yr1 = blk% ynode(i)
            ENDIF
 
-           block(g)% xnode1(i) = xr1 +block(g)%xpth2
-           block(g)% ynode1(i) = yr1 +block(g)%yshift +block(g)%ymove
-           block(g)% znode1(i) = zr1 +block(g)%zshift +block(g)%zmove
+           blk%xnode1(i) = xr1 +blk%xpth2
+           blk%ynode1(i) = yr1 +blk%yshift +blk%ymove
+           blk%znode1(i) = zr1 +blk%zshift +blk%zmove
         ENDDO
-           write(*,*) block(g)%xnode1(1),block(g)% ynode1(1), block(g)% znode1(1)
-        ENDDO
+           write(*,*) blk%xnode1(1),blk%ynode1(1),blk%znode1(1)
 
       END SUBROUTINE computeSurfaceVariables
 
-      SUBROUTINE computeSurfaceNorm
-
-        INTEGER(int64) ::  n, g  !c1, c2, c3, c4
+      SUBROUTINE computeSurfaceNorm(blk)
+        type(Blocks), intent(inout) :: blk
+        INTEGER(int64) ::  n  !c1, c2, c3, c4
         REAL(dp)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL, binor
         REAL(dp)      :: var_xcent, var_ycent, var_zcent
 
-        DO g=blk_start, nblocks
-
-        ALLOCATE (block(g)%xcent(block(g)%ibElems), block(g)%ycent(block(g)%ibElems), &
-                  block(g)%zcent(block(g)%ibElems), &
-                  block(g)%cosAlpha(block(g)%ibElems), block(g)%cosBeta(block(g)%ibElems), &
-                  block(g)%cosGamma(block(g)%ibElems))
+        ALLOCATE (blk%xcent(blk%ibElems), blk%ycent(blk%ibElems), &
+                  blk%zcent(blk%ibElems), &
+                  blk%cosAlpha(blk%ibElems), blk%cosBeta(blk%ibElems), &
+                  blk%cosGamma(blk%ibElems))
 
         !compute centroid and direction cosines
        !$acc parallel loop gang vector default(present) private (var_xcent, var_ycent, var_zcent,p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL)  firstprivate (inor)
-        DO n = 1, block(g)%ibElems
-           p1x = block(g)%xnode1(block(g)%ibElP1(n))                       !x coordinate element node 1
-           p1y = block(g)%ynode1(block(g)%ibElP1(n))                       !y coordinate element node 1
-           p1z = block(g)%znode1(block(g)%ibElP1(n))                       !z coordinate element node 1
+        DO n = 1, blk%ibElems
+           p1x = blk%xnode1(blk%ibElP1(n))                       !x coordinate element node 1
+           p1y = blk%ynode1(blk%ibElP1(n))                       !y coordinate element node 1
+           p1z = blk%znode1(blk%ibElP1(n))                       !z coordinate element node 1
 
-           p2x = block(g)%xnode1(block(g)%ibElP2(n))                       !x coordinate element node 2
-           p2y = block(g)%ynode1(block(g)%ibElP2(n))                       !y coordinate element node 2
-           p2z = block(g)%znode1(block(g)%ibElP2(n))                       !z coordinate element node 2
+           p2x = blk%xnode1(blk%ibElP2(n))                       !x coordinate element node 2
+           p2y = blk%ynode1(blk%ibElP2(n))                       !y coordinate element node 2
+           p2z = blk%znode1(blk%ibElP2(n))                       !z coordinate element node 2
 
-           p3x = block(g)%xnode1(block(g)%ibElP3(n))                       !x coordinate element node 3
-           p3y = block(g)%ynode1(block(g)%ibElP3(n))                       !y coordinate element node 3
-           p3z = block(g)%znode1(block(g)%ibElP3(n))                       !z coordinate element node 3
+           p3x = blk%xnode1(blk%ibElP3(n))                       !x coordinate element node 3
+           p3y = blk%ynode1(blk%ibElP3(n))                       !y coordinate element node 3
+           p3z = blk%znode1(blk%ibElP3(n))                       !z coordinate element node 3
 
 
            var_xcent =  (p2x+p1x+p3x)/3._dp                  !centroid x coordinate element
            var_ycent =  (p2y+p1y+p3y)/3._dp                  !centroid y coordinate element
            var_zcent =  (p2z+p1z+p3z)/3._dp                  !centroid z coordinate element
 
-           block(g)%xcent(n) =  var_xcent                  !centroid x coordinate element
-           block(g)%ycent(n) =  var_ycent                  !centroid y coordinate element
-           block(g)%zcent(n) =  var_zcent                  !centroid z coordinate element
+           blk%xcent(n) =  var_xcent                  !centroid x coordinate element
+           blk%ycent(n) =  var_ycent                  !centroid y coordinate element
+           blk%zcent(n) =  var_zcent                  !centroid z coordinate element
 
-           block(g)%cosAlpha(n) = (p2y-p1y)*(p3z-p1z)-(p3y-p1y)*(p2z-p1z)
-           block(g)%cosBeta(n)  = (p2z-p1z)*(p3x-p1x)-(p3z-p1z)*(p2x-p1x)
-           block(g)%cosGamma(n) = (p2x-p1x)*(p3y-p1y)-(p3x-p1x)*(p2y-p1y)
+           blk%cosAlpha(n) = (p2y-p1y)*(p3z-p1z)-(p3y-p1y)*(p2z-p1z)
+           blk%cosBeta(n)  = (p2z-p1z)*(p3x-p1x)-(p3z-p1z)*(p2x-p1x)
+           blk%cosGamma(n) = (p2x-p1x)*(p3y-p1y)-(p3x-p1x)*(p2y-p1y)
 
-           lenEL = dsqrt(block(g)%cosAlpha(n)**2 + block(g)%cosBeta(n)**2 + block(g)%cosGamma(n)**2)   !length of element
+           lenEL = dsqrt(blk%cosAlpha(n)**2 + blk%cosBeta(n)**2 + blk%cosGamma(n)**2)   !length of element
 
                 binor=inor
 
-           block(g)%cosAlpha(n) = block(g)%cosAlpha(n)/lenEl*binor               !direction cosine unit normal along x
-           block(g)%cosBeta(n)  = block(g)%cosBeta(n)/lenEl*binor                !direction cosine unit normal along y
-           block(g)%cosGamma(n) = block(g)%cosGamma(n)/lenEl*binor               !direction cosine unit normal along z
+           blk%cosAlpha(n) = blk%cosAlpha(n)/lenEl*binor               !direction cosine unit normal along x
+           blk%cosBeta(n)  = blk%cosBeta(n)/lenEl*binor                !direction cosine unit normal along y
+           blk%cosGamma(n) = blk%cosGamma(n)/lenEl*binor               !direction cosine unit normal along z
         ENDDO
        !$acc end parallel loop
 
         print*, 'SurfaceNorm done, inor =', inor
-
-        END DO
-
 
      END SUBROUTINE computeSurfaceNorm
 
@@ -1747,75 +1741,74 @@ block(g)%fluidCellCount = flcnt
 
         end subroutine change_block_interface
 
-        SUBROUTINE cellCount_solid_coarse
+        SUBROUTINE cellCount_solid_coarse(blk)
 
+        type(Blocks), intent(inout) :: blk
         INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k
-        INTEGER (int64) ::  g
-        g=1
 
-        block(g)%fluidCellCount=0
+         blk%fluidCellCount=0
          iPt  = 0
          iPt1 = 0
          iPt2 = 0
-         DO k = 2, block(g)%nz +1
-         DO j = 2, block(g)%ny +1
-         DO i = 2, block(g)%nx +1
-            IF (block(g)%cell(i,j,k)==0) THEN
-                block(g)%fluidCellCount=block(g)%fluidCellCount +1
+         DO k = 2, blk%nz +1
+         DO j = 2, blk%ny +1
+         DO i = 2, blk%nx +1
+            IF (blk%cell(i,j,k)==0) THEN
+                blk%fluidCellCount=blk%fluidCellCount +1
             ENDIF
          end do
          end do
          end do
-         ALLOCATE (block(g)%fluidIndexPtr(block(g)%fluidCellCount,3))
-         DO k = 2, block(g)%nz +1
-         DO j = 2, block(g)%ny +1
-         DO i = 2, block(g)%nx +1
-            IF (block(g)%cell(i,j,k)==0) THEN
+         ALLOCATE (blk%fluidIndexPtr(blk%fluidCellCount,3))
+         DO k = 2, blk%nz +1
+         DO j = 2, blk%ny +1
+         DO i = 2, blk%nx +1
+            IF (blk%cell(i,j,k)==0) THEN
                iPt1 = iPt1 + 1
-               block(g)%fluidIndexPtr(iPt1, 1) = i
-               block(g)%fluidIndexPtr(iPt1, 2) = j
-               block(g)%fluidIndexPtr(iPt1, 3) = k
+               blk%fluidIndexPtr(iPt1, 1) = i
+               blk%fluidIndexPtr(iPt1, 2) = j
+               blk%fluidIndexPtr(iPt1, 3) = k
             ENDIF
          END DO
          END DO
          END DO
-         block(g)%redCellCount = 0
-         block(g)%blackCellCount  = 0
+         blk%redCellCount = 0
+         blk%blackCellCount  = 0
 
-         DO n = 1, block(g)%fluidCellCount
-            i = block(g)%fluidIndexPtr(n, 1)
-            j = block(g)%fluidIndexPtr(n, 2)
-            k = block(g)%fluidIndexPtr(n, 3)
+         DO n = 1, blk%fluidCellCount
+            i = blk%fluidIndexPtr(n, 1)
+            j = blk%fluidIndexPtr(n, 2)
+            k = blk%fluidIndexPtr(n, 3)
             IF (mod(i+j+k,2_int64)==1) THEN
-               block(g)%redCellCount = block(g)%redCellCount + 1
+               blk%redCellCount = blk%redCellCount + 1
             ELSE
-               block(g)%blackCellCount = block(g)%blackCellCount + 1
+               blk%blackCellCount = blk%blackCellCount + 1
             ENDIF
          ENDDO
 
-         ALLOCATE (block(g)%redCellIndexPtr(block(g)%redCellCount,3), &
-                   block(g)%blackCellIndexPtr(block(g)%blackCellCount,3))
+         ALLOCATE (blk%redCellIndexPtr(blk%redCellCount,3), &
+                   blk%blackCellIndexPtr(blk%blackCellCount,3))
          ipt1 = 0
          iPt = 0
 
-         DO n = 1, block(g)%fluidCellCount
-            i = block(g)%fluidIndexPtr(n, 1)
-            j = block(g)%fluidIndexPtr(n, 2)
-            k = block(g)%fluidIndexPtr(n, 3)
+         DO n = 1, blk%fluidCellCount
+            i = blk%fluidIndexPtr(n, 1)
+            j = blk%fluidIndexPtr(n, 2)
+            k = blk%fluidIndexPtr(n, 3)
             IF (mod(i+j+k,2_int64)==1) THEN
                iPt = iPt + 1
-               block(g)%redCellIndexPtr(iPt, 1) = i
-               block(g)%redCellIndexPtr(iPt, 2) = j
-               block(g)%redCellIndexPtr(iPt, 3) = k
+               blk%redCellIndexPtr(iPt, 1) = i
+               blk%redCellIndexPtr(iPt, 2) = j
+               blk%redCellIndexPtr(iPt, 3) = k
             ELSE
                iPt1 = iPt1 + 1
-               block(g)%blackCellIndexPtr(iPt1, 1) = i
-               block(g)%blackCellIndexPtr(iPt1, 2) = j
-               block(g)%blackCellIndexPtr(iPt1, 3) = k
+               blk%blackCellIndexPtr(iPt1, 1) = i
+               blk%blackCellIndexPtr(iPt1, 2) = j
+               blk%blackCellIndexPtr(iPt1, 3) = k
             ENDIF
          ENDDO
 
-            print*, g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
+            print*, "1", blk%fluidCellCount, blk%redCellCount, blk%blackCellCount
 
         END SUBROUTINE cellCount_solid_coarse
 end module biocfd_search

@@ -53,7 +53,9 @@
         do g=blk_start, size(block)
            CALL shiftSurfaceNodesInitial(block(g))
         end do
-        CALL computeSurfaceNorm
+        do g=blk_start, size(block)
+           CALL computeSurfaceNorm(block(g))
+        end do
         CALL interfaceDetail
         totalTime=0.
         totime = 0.
@@ -65,7 +67,7 @@
         print*,'12'
         CALL fine_block_cell
         print*,'13'
-        CALL cellCount_solid_coarse
+        CALL cellCount_solid_coarse(block(1))
         print*,'14'
         IF (iStart==0) CALL initialConditions
         IF (iStart==1) CALL lastConditions
@@ -101,14 +103,18 @@
             block(g)%blk_mv_tag=0.
         END DO
         print *,10
-            CALL computeSurfaceVariables
+        DO g=blk_start, nblocks
+           CALL computeSurfaceVariables(block(g),g)
+        END DO
            CALL block_move_check
            CALL change_block_coords
            CALL change_block_interface
           CALL fine_block_cell
           CALL cellCount_solid_coarse_mv
            print*,1
-           CALL computeSurfaceNorm
+         do g=blk_start, size(block)
+            CALL computeSurfaceNorm(block(g))
+         end do
            print*,2
            CALL tagging_th_move
            CALL selectiveRetagging_th
