@@ -49,7 +49,9 @@
         totime = 0.
         ita1 = 0
         ita2 = 0
-        CALL tagging_th
+        do g=blk_start, size(block)
+           CALL tagging_th(block(g),g)
+        end do
         print*,'11'
         CALL cellCount_solid
         print*,'12'

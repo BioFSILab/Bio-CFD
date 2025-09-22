@@ -264,20 +264,20 @@ module biocfd_search
 
      END SUBROUTINE computeSurfaceNorm
 
-     SUBROUTINE tagging_th
-
-        INTEGER(int64) :: g, m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
+     SUBROUTINE tagging_th(blk,blk_no)
+       type(Blocks), intent(inout) :: blk
+       INTEGER(int64), intent(in)  :: blk_no
+       INTEGER(int64) :: m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
         REAL(dp)      :: minDis1, minDis, &
                          n2dotn, dis_cen, dis_pnt
 
         CHARACTER(LEN=120) :: filename1
-        DO g=blk_start, nblocks
-        block(g)%ibCellCount = 0
-        block(g)%fluidCellCount = 0
-        block(g)%solidCellCount = 0
-        block(g)%cell = 0
-        block(g)%cell2 = 0
-        block(g)%nodeIdTag = 0
+        blk%ibCellCount = 0
+        blk%fluidCellCount = 0
+        blk%solidCellCount = 0
+        blk%cell = 0
+        blk%cell2 = 0
+        blk%nodeIdTag = 0
         n2dotn = 0
 
  !$acc parallel loop collapse(3) default(present)
@@ -295,28 +295,28 @@ module biocfd_search
 #ifndef _OPENACC
         !$omp parallel do default(none) private(minDis, minDis1) &
         !$omp& private(dis_cen, dis_pnt, nel2Cen, nel2Pnt, n2dotn) &
-        !$omp& shared(g, block)
+        !$omp& shared(blk_no, blk)
 #endif
-        DO k = block(g)%k_startSearch, block(g)%k_endSearch
-        DO j = block(g)%j_startSearch, block(g)%j_endSearch
-        DO i = block(g)%i_startSearch, block(g)%i_endSearch
+        DO k = blk%k_startSearch, blk%k_endSearch
+        DO j = blk%j_startSearch, blk%j_endSearch
+        DO i = blk%i_startSearch, blk%i_endSearch
             minDis  = 1e14_dp
             minDis1 = 1e14_dp
 
             !$acc loop seq
-            DO m = 1, block(g)%ibElems
+            DO m = 1, blk%ibElems
             ! I wanted to use associate here, but nvfortran doesn't
             ! like it on the GPU (although I can't find an existing
             ! bug report of this).
             !
             ! No need to take the sqrt because we are just looking for
             ! the minimum distance
-               dis_cen  = (block(g)%xp(i)-block(g)%xcent(m))**2 &
-                        + (block(g)%yp(j)-block(g)%ycent(m))**2 &
-                        + (block(g)%zp(k)-block(g)%zcent(m))**2
-               dis_pnt  = (block(g)%x1(i)-block(g)%xcent(m))**2 &
-                        + (block(g)%y1(j)-block(g)%ycent(m))**2 &
-                        + (block(g)%z1(k)-block(g)%zcent(m))**2
+               dis_cen  = (blk%xp(i)-blk%xcent(m))**2 &
+                        + (blk%yp(j)-blk%ycent(m))**2 &
+                        + (blk%zp(k)-blk%zcent(m))**2
+               dis_pnt  = (blk%x1(i)-blk%xcent(m))**2 &
+                        + (blk%y1(j)-blk%ycent(m))**2 &
+                        + (blk%z1(k)-blk%zcent(m))**2
                IF (dis_cen<minDis) THEN
                   minDis    = dis_cen
                   nel2Cen   = m
@@ -326,24 +326,24 @@ module biocfd_search
                   nel2Pnt   = m
                ENDIF
             ENDDO
-            IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen) .AND. &
-                block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
-               (block(g)%y1(j)<=block(g)%ycent(nel2Cen) .AND. &
-                block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
-               (block(g)%z1(k)<=block(g)%zcent(nel2Cen) .AND. &
-                block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
-               block(g)%cell(i,j,k) = 2
+            IF((blk%x1(i)<=blk%xcent(nel2Cen) .AND. &
+                blk%x1(i+1)>=blk%xcent(nel2Cen)).AND. &
+               (blk%y1(j)<=blk%ycent(nel2Cen) .AND. &
+                blk%y1(j+1)>=blk%ycent(nel2Cen)).AND. &
+               (blk%z1(k)<=blk%zcent(nel2Cen) .AND. &
+                blk%z1(k+1)>=blk%zcent(nel2Cen))) THEN
+               blk%cell(i,j,k) = 2
 
             ENDIF
 
-            n2dotn  = (block(g)%x1(i) - block(g)%xcent(nel2Pnt))*block(g)%cosAlpha(nel2Pnt) + &
-                      (block(g)%y1(j) - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
-                      (block(g)%z1(k) - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
+            n2dotn  = (blk%x1(i) - blk%xcent(nel2Pnt))*blk%cosAlpha(nel2Pnt) + &
+                      (blk%y1(j) - blk%ycent(nel2Pnt))*blk%cosBeta(nel2Pnt)  + &
+                      (blk%z1(k) - blk%zcent(nel2Pnt))*blk%cosGamma(nel2Pnt)
 
             IF (n2dotn>=-1e-16_dp) THEN
-               block(g)%nodeIdTag(i,j,k) = 0
+               blk%nodeIdTag(i,j,k) = 0
             ELSE
-               block(g)%nodeIdTag(i,j,k) = 1
+               blk%nodeIdTag(i,j,k) = 1
             ENDIF
          END DO
          END DO
@@ -354,16 +354,16 @@ module biocfd_search
 !$acc end parallel loop
 
 !$acc parallel loop collapse(3) default(present)
-           DO k = block(g)%k_startSearch, block(g)%k_endSearch
-           DO j = block(g)%j_startSearch, block(g)%j_endSearch
-           DO i = block(g)%i_startSearch, block(g)%i_endSearch
-               IF (block(g)%cell(i,j,k)/=2) THEN
-                  sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
-                              + block(g)%nodeIdTag(i,j+1,k)    + block(g)%nodeIdTag(i+1,j+1,k)   &
-                              + block(g)%nodeIdTag(i,j,k+1)    + block(g)%nodeIdTag(i+1,j,k+1)     &
-                              + block(g)%nodeIdTag(i,j+1,k+1)  + block(g)%nodeIdTag(i+1,j+1,k+1)
+           DO k = blk%k_startSearch, blk%k_endSearch
+           DO j = blk%j_startSearch, blk%j_endSearch
+           DO i = blk%i_startSearch, blk%i_endSearch
+               IF (blk%cell(i,j,k)/=2) THEN
+                  sumNodeId = blk%nodeIdTag(i,j,k)      + blk%nodeIdTag(i+1,j,k)     &
+                              + blk%nodeIdTag(i,j+1,k)    + blk%nodeIdTag(i+1,j+1,k)   &
+                              + blk%nodeIdTag(i,j,k+1)    + blk%nodeIdTag(i+1,j,k+1)     &
+                              + blk%nodeIdTag(i,j+1,k+1)  + blk%nodeIdTag(i+1,j+1,k+1)
                   IF (sumNodeId==8) THEN
-                     block(g)%cell(i,j,k) = 1
+                     blk%cell(i,j,k) = 1
                   ENDIF
                ENDIF
            END DO
@@ -372,13 +372,13 @@ module biocfd_search
 !$acc end parallel loop
 
 
-         WRITE(filename1,1) g
+         WRITE(filename1,1) blk_no
   1      FORMAT('butter_f.',i3.3,".dat")
           OPEN(11,FILE=filename1,status='unknown')
-        DO k = 1, block(g)%nz+2
-        DO j = 1, block(g)%ny+2
-        DO i = 1, block(g)%nx+2
-        WRITE(11,*) block(g)%cell(i,j,k), block(g)%nodeIdTag(i,j,k)
+        DO k = 1, blk%nz+2
+        DO j = 1, blk%ny+2
+        DO i = 1, blk%nx+2
+        WRITE(11,*) blk%cell(i,j,k), blk%nodeIdTag(i,j,k)
         END DO
         END DO
         END DO
@@ -386,33 +386,32 @@ module biocfd_search
 
 
 
-         block(g)%ibCellCount = 0
-         block(g)%solidCellCount = 0
-         block(g)%fluidCellCount = 0
-         DO k = 2, block(g)%nz+1
-         DO j = 2, block(g)%ny+1
-         DO i = 2, block(g)%nx+1
-               IF (block(g)%cell(i,j,k)==1) THEN
-                  block(g)%solidCellCount = block(g)%solidCellCount + 1
-               ELSEIF (block(g)%cell(i,j,k)==0) THEN
-                  block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
-               ELSEIF (block(g)%cell(i,j,k)==2) THEN
-                  block(g)%ibCellCount = block(g)%ibCellCount + 1
+         blk%ibCellCount = 0
+         blk%solidCellCount = 0
+         blk%fluidCellCount = 0
+         DO k = 2, blk%nz+1
+         DO j = 2, blk%ny+1
+         DO i = 2, blk%nx+1
+               IF (blk%cell(i,j,k)==1) THEN
+                  blk%solidCellCount = blk%solidCellCount + 1
+               ELSEIF (blk%cell(i,j,k)==0) THEN
+                  blk%fluidCellCount  = blk%fluidCellCount + 1
+               ELSEIF (blk%cell(i,j,k)==2) THEN
+                  blk%ibCellCount = blk%ibCellCount + 1
                ENDIF
          END DO
          END DO
          END DO
 
-         WRITE(filename1,2) g
+         WRITE(filename1,2) blk_no
  2       FORMAT('butter_cellcount_f.',i3.3,".dat")
          OPEN(12,FILE=filename1,FORM='formatted')
-        WRITE(12,*) block(g)%solidCellCount, block(g)%fluidCellCount, block(g)%ibCellCount
+        WRITE(12,*) blk%solidCellCount, blk%fluidCellCount, blk%ibCellCount
         CLOSE(12)
          print*, 'search done'
-         Print*, 'imms. cells=', block(g)%ibCellCount
-        Print*, 'fluid cells=',block(g)%fluidCellCount
-        Print*, 'solid cells=', block(g)%solidCellCount
-        END DO
+         Print*, 'imms. cells=', blk%ibCellCount
+        Print*, 'fluid cells=',blk%fluidCellCount
+        Print*, 'solid cells=', blk%solidCellCount
      END SUBROUTINE tagging_th
 
      SUBROUTINE tagging_th_move
