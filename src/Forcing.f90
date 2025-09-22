@@ -1347,9 +1347,9 @@ SUBROUTINE velocityForcingField
         DO g=blk_start,nblocks
  !$acc parallel loop gang vector         &
  !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1,           &
- !$acc          aval, bval, cval, sur2nodeDis, h1, h2,               &
+ !$acc          aval, bval, cval, sur2nodeDis, &
  !$acc          usurf, u_pos1, vsurf, v_pos1, wsurf, w_pos1, &
- !$acc          dudn_e, ddvdn_e, dwdn_e, k, j, i, il, jl, kl, i_x1, i_y1, i_z1) &
+ !$acc          dudn_e, dvdn_e, dwdn_e, k, j, i, il, jl, kl, i_x1, i_y1, i_z1) &
  !$acc default(present) private(derivatives)
       DO n = 1, block(g)%ibCellCount
 
