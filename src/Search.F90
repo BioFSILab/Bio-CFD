@@ -52,16 +52,6 @@ module biocfd_search
         REAL(dp)      ::  xr1, yr1, zr1, angt
         REAL(dp)      :: bdy,bdfr
 
-        phase_angle = phase_angle*pi/180_dp
-        aoa1 = aoa*pi/180_dp
-        aoa2 = -aoa1
-        alpha_m = alpha_m*pi/180_dp
-        theta_m = theta_m*pi/180_dp
-        a0y = 0.  !a0y
-        ang_theta = 0.  !2._dp*pi*freq
-        alpha_t=(alpha_m*0.5_dp)*(1+cos(ang_theta*(totime+deltat)+phase_angle))
-        theta_t       =  theta_m*cos(ang_theta*(totime+deltat))
-
         ALLOCATE (blk%xnode1(blk%ibNodes), blk%ynode1(blk%ibNodes), &
                   blk%znode1(blk%ibNodes) )
         blk%xnode1 = blk%xnode
