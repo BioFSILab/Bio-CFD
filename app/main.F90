@@ -89,7 +89,9 @@
             block(g)%blk_mv_tag=0.
         END DO
         print *,10
-            CALL computeSurfaceVariables
+        DO g=blk_start, nblocks
+           CALL computeSurfaceVariables(block(g),g)
+        END DO
            CALL block_move_check
            CALL change_block_coords
            CALL change_block_interface
