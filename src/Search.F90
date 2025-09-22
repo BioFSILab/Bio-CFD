@@ -211,61 +211,56 @@ module biocfd_search
 
       END SUBROUTINE computeSurfaceVariables
 
-      SUBROUTINE computeSurfaceNorm
-
+      SUBROUTINE computeSurfaceNorm(blk)
+        type(Blocks), intent(inout) :: blk
         INTEGER(int64) ::  n, g  !c1, c2, c3, c4
         REAL(dp)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL, binor
         REAL(dp)      :: var_xcent, var_ycent, var_zcent
 
-        DO g=blk_start, nblocks
-
-        ALLOCATE (block(g)%xcent(block(g)%ibElems), block(g)%ycent(block(g)%ibElems), &
-                  block(g)%zcent(block(g)%ibElems), &
-                  block(g)%cosAlpha(block(g)%ibElems), block(g)%cosBeta(block(g)%ibElems), &
-                  block(g)%cosGamma(block(g)%ibElems))
+        ALLOCATE (blk%xcent(blk%ibElems), blk%ycent(blk%ibElems), &
+                  blk%zcent(blk%ibElems), &
+                  blk%cosAlpha(blk%ibElems), blk%cosBeta(blk%ibElems), &
+                  blk%cosGamma(blk%ibElems))
 
         !compute centroid and direction cosines
        !$acc parallel loop gang vector default(present) private (var_xcent, var_ycent, var_zcent,p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL)  firstprivate (inor)
         DO n = 1, block(g)%ibElems
-           p1x = block(g)%xnode1(block(g)%ibElP1(n))                       !x coordinate element node 1
-           p1y = block(g)%ynode1(block(g)%ibElP1(n))                       !y coordinate element node 1
-           p1z = block(g)%znode1(block(g)%ibElP1(n))                       !z coordinate element node 1
+           p1x = blk%xnode1(blk%ibElP1(n))                       !x coordinate element node 1
+           p1y = blk%ynode1(blk%ibElP1(n))                       !y coordinate element node 1
+           p1z = blk%znode1(blk%ibElP1(n))                       !z coordinate element node 1
 
-           p2x = block(g)%xnode1(block(g)%ibElP2(n))                       !x coordinate element node 2
-           p2y = block(g)%ynode1(block(g)%ibElP2(n))                       !y coordinate element node 2
-           p2z = block(g)%znode1(block(g)%ibElP2(n))                       !z coordinate element node 2
+           p2x = blk%xnode1(blk%ibElP2(n))                       !x coordinate element node 2
+           p2y = blk%ynode1(blk%ibElP2(n))                       !y coordinate element node 2
+           p2z = blk%znode1(blk%ibElP2(n))                       !z coordinate element node 2
 
-           p3x = block(g)%xnode1(block(g)%ibElP3(n))                       !x coordinate element node 3
-           p3y = block(g)%ynode1(block(g)%ibElP3(n))                       !y coordinate element node 3
-           p3z = block(g)%znode1(block(g)%ibElP3(n))                       !z coordinate element node 3
+           p3x = blk%xnode1(blk%ibElP3(n))                       !x coordinate element node 3
+           p3y = blk%ynode1(blk%ibElP3(n))                       !y coordinate element node 3
+           p3z = blk%znode1(blk%ibElP3(n))                       !z coordinate element node 3
 
 
            var_xcent =  (p2x+p1x+p3x)/3._dp                  !centroid x coordinate element
            var_ycent =  (p2y+p1y+p3y)/3._dp                  !centroid y coordinate element
            var_zcent =  (p2z+p1z+p3z)/3._dp                  !centroid z coordinate element
 
-           block(g)%xcent(n) =  var_xcent                  !centroid x coordinate element
-           block(g)%ycent(n) =  var_ycent                  !centroid y coordinate element
-           block(g)%zcent(n) =  var_zcent                  !centroid z coordinate element
+           blk%xcent(n) =  var_xcent                  !centroid x coordinate element
+           blk%ycent(n) =  var_ycent                  !centroid y coordinate element
+           blk%zcent(n) =  var_zcent                  !centroid z coordinate element
 
-           block(g)%cosAlpha(n) = (p2y-p1y)*(p3z-p1z)-(p3y-p1y)*(p2z-p1z)
-           block(g)%cosBeta(n)  = (p2z-p1z)*(p3x-p1x)-(p3z-p1z)*(p2x-p1x)
-           block(g)%cosGamma(n) = (p2x-p1x)*(p3y-p1y)-(p3x-p1x)*(p2y-p1y)
+           blk%cosAlpha(n) = (p2y-p1y)*(p3z-p1z)-(p3y-p1y)*(p2z-p1z)
+           blk%cosBeta(n)  = (p2z-p1z)*(p3x-p1x)-(p3z-p1z)*(p2x-p1x)
+           blk%cosGamma(n) = (p2x-p1x)*(p3y-p1y)-(p3x-p1x)*(p2y-p1y)
 
-           lenEL = dsqrt(block(g)%cosAlpha(n)**2 + block(g)%cosBeta(n)**2 + block(g)%cosGamma(n)**2)   !length of element
+           lenEL = dsqrt(blk%cosAlpha(n)**2 + blk%cosBeta(n)**2 + blk%cosGamma(n)**2)   !length of element
 
                 binor=inor
 
-           block(g)%cosAlpha(n) = block(g)%cosAlpha(n)/lenEl*binor               !direction cosine unit normal along x
-           block(g)%cosBeta(n)  = block(g)%cosBeta(n)/lenEl*binor                !direction cosine unit normal along y
-           block(g)%cosGamma(n) = block(g)%cosGamma(n)/lenEl*binor               !direction cosine unit normal along z
+           blk%cosAlpha(n) = blk%cosAlpha(n)/lenEl*binor               !direction cosine unit normal along x
+           blk%cosBeta(n)  = blk%cosBeta(n)/lenEl*binor                !direction cosine unit normal along y
+           blk%cosGamma(n) = blk%cosGamma(n)/lenEl*binor               !direction cosine unit normal along z
         ENDDO
        !$acc end parallel loop
 
         print*, 'SurfaceNorm done, inor =', inor
-
-        END DO
-
 
      END SUBROUTINE computeSurfaceNorm
 
