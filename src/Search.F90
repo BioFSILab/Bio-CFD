@@ -133,7 +133,8 @@ module biocfd_search
 
       SUBROUTINE computeSurfaceVariables(blk,g)
         type(Blocks), intent(inout) :: blk
-        INTEGER(int64) ::  i, g
+        INTEGER(int64) ::  i
+        INTEGER(int64), intent(in) :: g
         REAL(dp)      ::  xr1, yr1, zr1
         REAL(dp)      :: angg, angt
         REAL(dp)      :: bdy,bdfr
