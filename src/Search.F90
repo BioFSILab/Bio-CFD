@@ -131,84 +131,82 @@ module biocfd_search
 
       END SUBROUTINE shiftSurfaceNodesInitial
 
-      SUBROUTINE computeSurfaceVariables
-
+      SUBROUTINE computeSurfaceVariables(blk,g)
+        type(Blocks), intent(inout) :: blk
         INTEGER(int64) ::  i, g
         REAL(dp)      ::  xr1, yr1, zr1
         REAL(dp)      :: angg, angt
         REAL(dp)      :: bdy,bdfr
         CHARACTER(len=150) :: filename1
 
-        DO g=blk_start,nblocks
         angg=90
-        aoa1       =  (block(g)%a0)*sin(2._dp*pi*freq*(totime+deltat) + phase_angle)
+        aoa1       =  (blk%a0)*sin(2._dp*pi*freq*(totime+deltat) + phase_angle)
         aoa2       = -aoa1
         ang_theta  =  2._dp*pi*freq
-        bdfr=block(g)%bfreq
-        bdy=block(g)%yamp
+        bdfr=blk%bfreq
+        bdy=blk%yamp
         angt  =  2._dp*pi*bdfr
 
-        block(g)%xpth2=block(g)%xshift-(ita*dxmin*xfact)
-        block(g)%ypth2=(block(g)%yamp)*sin(angt*block(g)%xpth2)
-        block(g)%xchg=block(g)%xpth2-block(g)%xpth1
-        block(g)%xpth1=block(g)%xpth2
+        blk%xpth2=blk%xshift-(ita*dxmin*xfact)
+        blk%ypth2=(blk%yamp)*sin(angt*blk%xpth2)
+        blk%xchg=blk%xpth2-blk%xpth1
+        blk%xpth1=blk%xpth2
         PRINT*, "angles =", aoa1*180._dp/pi, aoa2*180._dp/pi
-        block(g)%thetaDot1 = ang_theta*block(g)%a0*cos(2._dp*pi*freq*(totime+deltat) + phase_angle)
-        block(g)%thetaDDot1 = -ang_theta*ang_theta*block(g)%a0*sin(2._dp*pi*freq*(totime+deltat) &
+        blk%thetaDot1 = ang_theta*blk%a0*cos(2._dp*pi*freq*(totime+deltat) + phase_angle)
+        blk%thetaDDot1 = -ang_theta*ang_theta*blk%a0*sin(2._dp*pi*freq*(totime+deltat) &
                               + phase_angle)
-        block(g)%thetaDot2  = -block(g)%thetaDot1
-        block(g)%thetaDDot2 = -block(g)%thetaDDot1
+        blk%thetaDot2  = -blk%thetaDot1
+        blk%thetaDDot2 = -blk%thetaDDot1
 
-       block(g)%yt         =  bdy*sin(angt*(totime) )
-       block(g)%ydot       =  angt*bdy*cos(angt*(totime))
-       block(g)%yddot      =  -angt*angt*bdy*sin(angt*(totime))
+        blk%yt         =  bdy*sin(angt*(totime) )
+        blk%ydot       =  angt*bdy*cos(angt*(totime))
+        blk%yddot      =  -angt*angt*bdy*sin(angt*(totime))
 
-       block(g)%xt         = block(g)%xpth2
-       block(g)%xdot       = -(dxmin*xfact)/deltat
+        blk%xt         = blk%xpth2
+        blk%xdot       = -(dxmin*xfact)/deltat
 
-           block(g)%ychg=block(g)%yt - bdy*sin(angt*(totime-deltat) )
-        block(g)%ymove = block(g)%yt
-        block(g)%xmove = block(g)%xchg
-        block(g)%zmove = 0.
+        blk%ychg=blk%yt - bdy*sin(angt*(totime-deltat) )
+        blk%ymove = blk%yt
+        blk%xmove = blk%xchg
+        blk%zmove = 0.
 
-        block(g)%ypos =  block(g)%ypos  + block(g)%ychg
-        block(g)%xpos =  block(g)%xpos  + block(g)%xmove
-        block(g)%piv_y = block(g)%piv_y + block(g)%ychg
-        block(g)%piv_x = block(g)%piv_x + block(g)%xmove
-        block(g)%piv_z = block(g)%piv_z + block(g)%zmove
-        block(g)%nxty_cent= block(g)%nxty_cent + block(g)%ychg
-        block(g)%nxtx_cent= block(g)%nxtx_cent + block(g)%xmove
-        WRITE(filename1,1) block(g)%fineg,re, g
+        blk%ypos =  blk%ypos  + blk%ychg
+        blk%xpos =  blk%xpos  + blk%xmove
+        blk%piv_y = blk%piv_y + blk%ychg
+        blk%piv_x = blk%piv_x + blk%xmove
+        blk%piv_z = blk%piv_z + blk%zmove
+        blk%nxty_cent= blk%nxty_cent + blk%ychg
+        blk%nxtx_cent= blk%nxtx_cent + blk%xmove
+        WRITE(filename1,1) blk%fineg,re, g
       1  FORMAT('d',I4.4,'_index.',F8.2,'.',i3.1,".dat")
         OPEN(UNIT = 17, FILE = filename1,POSITION='APPEND', STATUS = 'unknown')
-        write(17,14) totime, block(g)%nxty_cent, block(g)%inity_cent, block(g)%ymove, &
-                     block(g)%nxtx_cent, block(g)%xmove
+        write(17,14) totime, blk%nxty_cent, blk%inity_cent, blk%ymove, &
+                     blk%nxtx_cent, blk%xmove
      close(17)
      14      FORMAT(7F15.8)
-        print*,'centn',block(g)%nxty_cent,'centi',block(g)%inity_cent,'mv',block(g)%ychg
-      DO i = 1, block(g)%ibnodes
-      IF (block(g)%ibNodeId(i)==51) THEN
-             xr1 =  block(g)%xnode(i)
-             zr1 =  block(g)%znode(i)*cos(aoa1) + block(g)%ynode(i)*sin(aoa1) + piv_pt &
+        print*,'centn',blk%nxty_cent,'centi',blk%inity_cent,'mv',blk%ychg
+      DO i = 1, blk%ibnodes
+      IF (blk%ibNodeId(i)==51) THEN
+             xr1 =  blk%xnode(i)
+             zr1 =  blk%znode(i)*cos(aoa1) + blk%ynode(i)*sin(aoa1) + piv_pt &
                     - piv_pt*cos(aoa1)
-             yr1 = -block(g)%znode(i)*sin(aoa1) + block(g)%ynode(i)*cos(aoa1) + piv_pt*sin(aoa1)
-         ELSEIF (block(g)%ibNodeId(i)==52) THEN
-             xr1 =  block(g)%xnode(i)
-             zr1 =  block(g)%znode(i)*cos(aoa2) + block(g)%ynode(i)*sin(aoa2)  + piv_pt &
+             yr1 = -blk%znode(i)*sin(aoa1) + blk%ynode(i)*cos(aoa1) + piv_pt*sin(aoa1)
+         ELSEIF (blk%ibNodeId(i)==52) THEN
+             xr1 =  blk%xnode(i)
+             zr1 =  blk%znode(i)*cos(aoa2) + blk%ynode(i)*sin(aoa2)  + piv_pt &
                     - piv_pt*cos(aoa2)
-             yr1 = -block(g)%znode(i)*sin(aoa2) + block(g)%ynode(i)*cos(aoa2)  + piv_pt*sin(aoa2)
+             yr1 = -blk%znode(i)*sin(aoa2) + blk%ynode(i)*cos(aoa2)  + piv_pt*sin(aoa2)
            ELSE
-               xr1 = block(g)% xnode(i)
-               zr1 = block(g)% znode(i)
-               yr1 = block(g)% ynode(i)
+               xr1 = blk% xnode(i)
+               zr1 = blk% znode(i)
+               yr1 = blk% ynode(i)
            ENDIF
 
-           block(g)% xnode1(i) = xr1 +block(g)%xpth2
-           block(g)% ynode1(i) = yr1 +block(g)%yshift +block(g)%ymove
-           block(g)% znode1(i) = zr1 +block(g)%zshift +block(g)%zmove
+           blk%xnode1(i) = xr1 +blk%xpth2
+           blk%ynode1(i) = yr1 +blk%yshift +blk%ymove
+           blk%znode1(i) = zr1 +blk%zshift +blk%zmove
         ENDDO
-           write(*,*) block(g)%xnode1(1),block(g)% ynode1(1), block(g)% znode1(1)
-        ENDDO
+           write(*,*) blk%xnode1(1),blk%ynode1(1),blk%znode1(1)
 
       END SUBROUTINE computeSurfaceVariables
 
