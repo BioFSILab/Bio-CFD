@@ -1339,30 +1339,17 @@ SUBROUTINE velocityForcingField
 
       INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1,  &
-                         aval, bval, cval, sur2nodeDis, h1, h2, &
-                         usurf, u_pos1, u_x1, u_x2, u_y1, u_y2, u_z1, u_z2, &
-                         vsurf, v_pos1, v_x1, v_x2, v_y1, v_y2, v_z1, v_z2, &
-                         wsurf, w_pos1, w_x1, w_x2, w_y1, w_y2, w_z1, w_z2, &
-                         dudn_e, dudx_e, dudy_e, dudz_e, dvdn_e, dvdx_e, dvdy_e, dvdz_e, &
-                         dwdn_e, dwdx_e, dwdy_e, dwdz_e, &
-                         u_x1_z1, u_x2_z1, u_x1_z2, u_x2_z2, u_z1_x1, &
-                         u_z2_x1, u_z1_x2, u_z2_x2, v_x1_z1, v_x2_z1, &
-                         v_x1_z2, v_x2_z2, v_z1_x1, v_z2_x1, v_z1_x2, &
-                         v_z2_x2, w_x1_z1, w_x2_z1, w_x1_z2, w_x2_z2, &
-                         w_z1_x1, w_z2_x1, w_z1_x2, w_z2_x2
+                         aval, bval, cval, sur2nodeDis, &
+                         usurf, u_pos1, vsurf, v_pos1, wsurf, w_pos1, &
+                         dudn_e, dvdn_e, dwdn_e
       real(dp) :: derivatives(3)
 
         DO g=blk_start,nblocks
  !$acc parallel loop gang vector         &
  !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1,           &
  !$acc          aval, bval, cval, sur2nodeDis, h1, h2,               &
- !$acc          usurf, u_pos1, u_x1, u_x2, u_y1, u_y2, u_z1, u_z2,   &
- !$acc          vsurf, v_pos1, v_x1, v_x2, v_y1, v_y2, v_z1, v_z2,   &
- !$acc          wsurf, w_pos1, w_x1, w_x2, w_y1, w_y2, w_z1, w_z2,   &
- !$acc          dudn_e, dudx_e, dudy_e, dudz_e, dvdn_e, dvdx_e, dvdy_e, dvdz_e,  &
- !$acc          dwdn_e, dwdx_e, dwdy_e, dwdz_e, u_x1_z1, u_x2_z1, u_x1_z2, u_x2_z2, u_z1_x1,  &
- !$acc          u_z2_x1, u_z1_x2, u_z2_x2, v_x1_z1, v_x2_z1, v_x1_z2, v_x2_z2, v_z1_x1, v_z2_x1, v_z1_x2, &
- !$acc          v_z2_x2, w_x1_z1, w_x2_z1, w_x1_z2, w_x2_z2, w_z1_x1, w_z2_x1, w_z1_x2, w_z2_x2, k, j, i, il, jl, kl, i_x1, i_y1, i_z1) &
+ !$acc          usurf, u_pos1, vsurf, v_pos1, wsurf, w_pos1, &
+ !$acc          dudn_e, ddvdn_e, dwdn_e, k, j, i, il, jl, kl, i_x1, i_y1, i_z1) &
  !$acc default(present) private(derivatives)
       DO n = 1, block(g)%ibCellCount
 
