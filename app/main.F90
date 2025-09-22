@@ -53,7 +53,7 @@
         print*,'12'
         CALL fine_block_cell
         print*,'13'
-        CALL cellCount_solid_coarse
+        CALL cellCount_solid_coarse(block(1))
         print*,'14'
         IF (iStart==0) CALL initialConditions
         IF (iStart==1) CALL lastConditions
