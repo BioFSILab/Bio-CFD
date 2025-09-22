@@ -13,7 +13,10 @@ contains
     !> Collection of tests
     type(unittest_type), allocatable, intent(out) :: testsuite(:)
 
-    testsuite = [new_unittest("find_dist_node", test_find_dist_node)]
+    testsuite = [ &
+         new_unittest("find_dist_node", test_find_dist_node), &
+         new_unittest("cellCount_solid_coarse", test_cell_count_solid_coarse) &
+         ]
   end subroutine collect_search
 
 
@@ -51,4 +54,33 @@ contains
     call check(error, blk%mk, expected)
     if (allocated(error)) return
   end subroutine test_find_dist_node
+
+  subroutine test_cell_count_solid_coarse(error)
+    use biocfd_blocks, only: Blocks
+    use biocfd_search, only: cellCount_solid_coarse
+    !> Error handling
+    type(error_type), allocatable, intent(out) :: error
+
+    type(Blocks) :: blk
+    integer(int64) :: expected
+
+    blk%nx = 5
+    blk%ny = 5
+    blk%nz = 5
+
+    allocate(blk%cell(blk%nx, blk%ny, blk%nz))
+    blk%cell = 0
+
+    call cellCount_solid_coarse(blk)
+
+    expected = blk%nx * blk%ny * blk%nz
+    ! Check that all cells are identified as fluid cells
+    call check(error, blk%fluidCellCount, expected)
+    if (allocated(error)) return
+    ! Check that the sum of red + black cells == fluid cells
+    call check(error, blk%redCellCount + blk%blackCellCount, blk%fluidCellCount)
+    if (allocated(error)) return
+
+  end subroutine test_cell_count_solid_coarse
+
 end module test_search
