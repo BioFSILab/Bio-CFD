@@ -39,8 +39,8 @@
         end do
         do g=blk_start, size(block)
            CALL findDistnode(block(g))
+           CALL shiftSurfaceNodesInitial(block(g))
         end do
-        CALL shiftSurfaceNodesInitial
         CALL computeSurfaceNorm
         CALL interfaceDetail
         totalTime=0.
