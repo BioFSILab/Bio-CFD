@@ -3,6 +3,7 @@ program tester
   use testdrive, only : run_testsuite, new_testsuite, testsuite_type
   use test_search, only : collect_search
   use test_interpolation, only: collect_interpolation
+  use test_allocate, only: collect_allocate_arrays
   implicit none
   integer :: stat, is
   type(testsuite_type), allocatable :: testsuites(:)
@@ -12,7 +13,8 @@ program tester
 
   testsuites = [ &
     new_testsuite("search", collect_search), &
-    new_testsuite("interpolation", collect_interpolation) &
+    new_testsuite("interpolation", collect_interpolation), &
+    new_testsuite("allocate_arrays", collect_allocate_arrays) &
     ]
 
   do is = 1, size(testsuites)
