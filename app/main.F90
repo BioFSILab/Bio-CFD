@@ -121,7 +121,9 @@
          end do
            print*,2
            CALL tagging_th_move
-           CALL selectiveRetagging_th
+        do g=blk_start, size(block)
+           CALL selectiveRetagging_th(block(g))
+        end do
         DO g=blk_start, nblocks
             block(g)%blk_mv_tag=0.
               DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,&

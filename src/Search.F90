@@ -633,52 +633,51 @@ module biocfd_search
         !$acc end parallel loop
              END SUBROUTINE findTScells
 
-     SUBROUTINE selectiveRetagging_th
-
-        INTEGER(int64) ::  n, g, m, i, j, k, i1, j1, k1, nn, &
+     SUBROUTINE selectiveRetagging_th(blk)
+       type(Blocks), intent(inout) :: blk
+        INTEGER(int64) ::  n, m, i, j, k, i1, j1, k1, nn, &
                                nel2Pnt, nel2Cen, sumNodeID
         INTEGER            :: flcnt, sdcnt, ibcnt
         REAL(dp)      :: minDis, minDis1, dis_cen, dis_pnt, n2dotn
         integer :: iprime, jprime, kprime
 
-       DO g=blk_start,nblocks
-        if( block(g)%blk_mv_tag ==0)then
+        if( blk%blk_mv_tag ==0)then
 
        ! Set the intercepted indicies cell value to 0, we do this in a
        ! seperate loop so that we can nicely GPU-ise the computation
        !$acc parallel loop default(present) private(i1, j1, k1)
-       DO nn = 1, block(g)%ibCellCount
-         i1 = block(g)%interceptedIndexPtr(nn, 1)
-         j1 = block(g)%interceptedIndexPtr(nn, 2)
-         k1 = block(g)%interceptedIndexPtr(nn, 3)
-         block(g)%cell(i1,j1,k1) = 0
+       DO nn = 1, blK%ibCellCount
+         i1 = blk%interceptedIndexPtr(nn, 1)
+         j1 = blk%interceptedIndexPtr(nn, 2)
+         k1 = blk%interceptedIndexPtr(nn, 3)
+         blk%cell(i1,j1,k1) = 0
         END DO
         !$acc end parallel loop
 
         !$acc parallel loop default(present) collapse(4) private(i, j, k) &
         !$acc private(minDis, minDis1, dis_cen, dis_pnt, nel2Cen, nel2Pnt) &
         !$acc private(n2dotn) firstprivate(g)
-        DO nn = 1, block(g)%ibCellCount
+        DO nn = 1, blk%ibCellCount
            DO kprime = -1,+1
            DO jprime = -1,+1
            DO iprime = -1,+1
 
-               i = block(g)%interceptedIndexPtr(nn, 1) + iprime
-               j = block(g)%interceptedIndexPtr(nn, 2) + jprime
-               k = block(g)%interceptedIndexPtr(nn, 3) + kprime
+               i = blk%interceptedIndexPtr(nn, 1) + iprime
+               j = blk%interceptedIndexPtr(nn, 2) + jprime
+               k = blk%interceptedIndexPtr(nn, 3) + kprime
 
                minDis  = 1e14_dp
                minDis1 = 1e14_dp
 
                !$acc loop seq
-               DO m = 1, block(g)%ibElems
+               DO m = 1, blk%ibElems
                   ! No need to take sqrt because we just use for distance comparison
-                  dis_cen  = (block(g)%xp(i)-block(g)%xcent(m))**2 &
-                           + (block(g)%yp(j)-block(g)%ycent(m))**2 &
-                           + (block(g)%zp(k)-block(g)%zcent(m))**2
-                  dis_pnt  = (block(g)%x1(i)-block(g)%xcent(m))**2 &
-                           + (block(g)%y1(j)-block(g)%ycent(m))**2 &
-                           + (block(g)%z1(k)-block(g)%zcent(m))**2
+                  dis_cen  = (blk%xp(i)-blk%xcent(m))**2 &
+                           + (blk%yp(j)-blk%ycent(m))**2 &
+                           + (blk%zp(k)-blk%zcent(m))**2
+                  dis_pnt  = (blk%x1(i)-blk%xcent(m))**2 &
+                           + (blk%y1(j)-blk%ycent(m))**2 &
+                           + (blk%z1(k)-blk%zcent(m))**2
                   IF (dis_cen<minDis) THEN
                      minDis    = dis_cen
                      nel2Cen   = m
@@ -688,23 +687,23 @@ module biocfd_search
                      nel2Pnt   = m
                   ENDIF
                ENDDO
-               IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen).AND. &
-                   block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
-                  (block(g)%y1(j)<=block(g)%ycent(nel2Cen).AND. &
-                   block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
-                  (block(g)%z1(k)<=block(g)%zcent(nel2Cen).AND. &
-                   block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
-                        block(g)%cell(i,j,k) = 2
+               IF((blk%x1(i)<=blk%xcent(nel2Cen).AND. &
+                   blk%x1(i+1)>=blk%xcent(nel2Cen)).AND. &
+                  (blk%y1(j)<=blk%ycent(nel2Cen).AND. &
+                   blk%y1(j+1)>=blk%ycent(nel2Cen)).AND. &
+                  (blk%z1(k)<=blk%zcent(nel2Cen).AND. &
+                   blk%z1(k+1)>=blk%zcent(nel2Cen))) THEN
+                        blk%cell(i,j,k) = 2
                ENDIF
 
-               n2dotn  = (block(g)%x1(i) - block(g)%xcent(nel2Pnt)) * block(g)%cosAlpha(nel2Pnt) + &
-                         (block(g)%y1(j) - block(g)%ycent(nel2Pnt)) * block(g)%cosBeta(nel2Pnt)  + &
-                         (block(g)%z1(k) - block(g)%zcent(nel2Pnt)) * block(g)%cosGamma(nel2Pnt)
+               n2dotn  = (blk%x1(i) - blk%xcent(nel2Pnt)) * blk%cosAlpha(nel2Pnt) + &
+                         (blk%y1(j) - blk%ycent(nel2Pnt)) * blk%cosBeta(nel2Pnt)  + &
+                         (blk%z1(k) - blk%zcent(nel2Pnt)) * blk%cosGamma(nel2Pnt)
 
                IF (n2dotn>=-1e-16_dp) THEN
-                  block(g)%nodeIdTag(i,j,k) = 0
+                  blk%nodeIdTag(i,j,k) = 0
                ELSE
-                  block(g)%nodeIdTag(i,j,k) = 1
+                  blk%nodeIdTag(i,j,k) = 1
                ENDIF
            END DO
            END DO
@@ -713,59 +712,58 @@ module biocfd_search
 !$acc end parallel loop
 
 !$acc parallel loop gang vector default(present)
-        DO nn = 1, block(g)%ibCellCount
-        i1 = block(g)%interceptedIndexPtr(nn, 1)
-        j1 = block(g)%interceptedIndexPtr(nn, 2)
-        k1 = block(g)%interceptedIndexPtr(nn, 3)
+        DO nn = 1, blk%ibCellCount
+        i1 = blk%interceptedIndexPtr(nn, 1)
+        j1 = blk%interceptedIndexPtr(nn, 2)
+        k1 = blk%interceptedIndexPtr(nn, 3)
            !$acc loop collapse(3) seq
            DO k = k1-1, k1+1
            DO j = j1-1, j1+1
            DO i = i1-1, i1+1
-               IF (block(g)%cell(i,j,k)/=2) THEN
+               IF (blk%cell(i,j,k)/=2) THEN
                   sumNodeId = 0
-                  sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
-                           + block(g)%nodeIdTag(i,j+1,k)    + block(g)%nodeIdTag(i+1,j+1,k)   &
-                           + block(g)%nodeIdTag(i,j,k+1)    + block(g)%nodeIdTag(i+1,j,k+1)     &
-                           + block(g)%nodeIdTag(i,j+1,k+1)  + block(g)%nodeIdTag(i+1,j+1,k+1)
+                  sumNodeId = blk%nodeIdTag(i,j,k)      + blk%nodeIdTag(i+1,j,k)     &
+                           + blk%nodeIdTag(i,j+1,k)    + blk%nodeIdTag(i+1,j+1,k)   &
+                           + blk%nodeIdTag(i,j,k+1)    + blk%nodeIdTag(i+1,j,k+1)     &
+                           + blk%nodeIdTag(i,j+1,k+1)  + blk%nodeIdTag(i+1,j+1,k+1)
                   IF (sumNodeId==8) THEN
-                     block(g)%cell(i,j,k) = 1
+                     blk%cell(i,j,k) = 1
                   ELSE
-                     block(g)%cell(i,j,k) = 0
+                     blk%cell(i,j,k) = 0
                   ENDIF
                ENDIF
            END DO
            END DO
            END DO
         ENDDO
-  block(g)%ibCellCount = 0
-  block(g)%solidCellCount = 0
-block(g)%fluidCellCount = 0
+blk%ibCellCount = 0
+blk%solidCellCount = 0
+blk%fluidCellCount = 0
 sdcnt=0
 flcnt=0
 ibcnt=0
 !$acc parallel loop gang vector collapse(3) default(present) private(i,j,k,n) reduction(+: sdcnt, flcnt, ibcnt)
-         DO k = 2, block(g)%nz+1
-         DO j = 2, block(g)%ny+1
-         DO i = 2, block(g)%nx+1
-            n = i-1  + block(g)%nx*(j-2)  + block(g)%nx*block(g)%ny*(k-2)
-            IF (block(g)%cell(i,j,k)==1) THEN
+         DO k = 2, blk%nz+1
+         DO j = 2, blk%ny+1
+         DO i = 2, blk%nx+1
+            n = i-1  + blk%nx*(j-2)  + blk%nx*blk%ny*(k-2)
+            IF (blk%cell(i,j,k)==1) THEN
                 sdcnt = sdcnt + 1
-            ELSEIF (block(g)%cell(i,j,k)==0) THEN
+            ELSEIF (blk%cell(i,j,k)==0) THEN
                flcnt  = flcnt + 1
-            ELSEIF (block(g)%cell(i,j,k)==2) THEN
+            ELSEIF (blk%cell(i,j,k)==2) THEN
                 ibcnt = ibcnt + 1
             ENDIF
          END DO
          END DO
          END DO
 !$acc end parallel loop
-  block(g)%ibCellCount = ibcnt
-  block(g)%solidCellCount = sdcnt
-block(g)%fluidCellCount = flcnt
-       print*, 'selective retagging', block(g)%ibCellCount, block(g)%fluidCellCount, &
-                block(g)%solidCellCount
+blk%ibCellCount = ibcnt
+blk%solidCellCount = sdcnt
+blk%fluidCellCount = flcnt
+       print*, 'selective retagging', blk%ibCellCount, blk%fluidCellCount, &
+                blk%solidCellCount
      END IF
-       ENDDO
      END SUBROUTINE selectiveRetagging_th
 
      SUBROUTINE cellCount_solid
