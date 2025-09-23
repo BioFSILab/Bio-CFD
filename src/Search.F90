@@ -540,43 +540,38 @@ module biocfd_search
         ENDDO
      END SUBROUTINE tagging_th_move
 
-     SUBROUTINE findTScells
-
-        INTEGER            :: g,i, j, k, i1, j1, k1, iPt1, m, n, tscnt
-
-
-        print*,'inside findTScells'
-
-        DO g=blk_start, nblocks
+     SUBROUTINE findTScells(blk)
+       type(Blocks), intent(inout) :: blk
+        INTEGER            :: i, j, k, i1, j1, k1, iPt1, m, n, tscnt
         !$acc parallel loop collapse(3) default(present)
-                 DO k = 2, block(g)%nz+1
-                 DO j = 2, block(g)%ny+1
-                 DO i = 2, block(g)%nx+1
-                    block(g)%cell2(i,j,k) = 0
+                 DO k = 2, blk%nz+1
+                 DO j = 2, blk%ny+1
+                 DO i = 2, blk%nx+1
+                    blk%cell2(i,j,k) = 0
                  END DO
                  END DO
                  END DO
         !$acc end parallel loop
 
         !$acc parallel loop default(present)
-        DO n = 1, block(g)%ibCellCount
-        i = block(g)%interceptedIndexPtr(n, 1)
-        j = block(g)%interceptedIndexPtr(n, 2)
-        k = block(g)%interceptedIndexPtr(n, 3)
-         IF(block(g)%ibSurfID(block(g)%nelp(n))==51.OR.block(g)%ibSurfID(block(g)%nelp(n))==52) &
-            block(g)%cell2(i, j, k) = 2
+        DO n = 1, blk%ibCellCount
+        i = blk%interceptedIndexPtr(n, 1)
+        j = blk%interceptedIndexPtr(n, 2)
+        k = blk%interceptedIndexPtr(n, 3)
+         IF(blk%ibSurfID(blk%nelp(n))==51.OR.blk%ibSurfID(blk%nelp(n))==52) &
+            blk%cell2(i, j, k) = 2
 
          END DO
         !$acc end parallel loop
 
-        block(g)%TSCellCount = 0
+        blk%TSCellCount = 0
         tscnt=0
         !$acc parallel loop collapse(3) default(present) reduction(+:tscnt)
-                 DO k = 2, block(g)%nz+1
-                 DO j = 2, block(g)%ny+1
-                 DO i = 2, block(g)%nx+1
-                     IF (block(g)%cell2(i,j,k)==2) THEN
-                           !block(g)%TSCellCount = block(g)%TSCellCount + 1
+                 DO k = 2, blk%nz+1
+                 DO j = 2, blk%ny+1
+                 DO i = 2, blk%nx+1
+                     IF (blk%cell2(i,j,k)==2) THEN
+                           !blk%TSCellCount = blk%TSCellCount + 1
                            tscnt = tscnt + 1
                      ENDIF
                  END DO
@@ -584,72 +579,70 @@ module biocfd_search
                  END DO
         !$acc end parallel loop
 
-        block(g)%TSCellCount = tscnt
-        print*, 'TScell count =', block(g)%TSCellCount
+        blk%TSCellCount = tscnt
+        print*, 'TScell count =', blk%TSCellCount
 
-        ALLOCATE(block(g)%TSIndexPtr(block(g)%TSCellCount,3))
+        ALLOCATE(blk%TSIndexPtr(blk%TSCellCount,3))
 
         iPt1 = 0
-        DO k=1, block(g)%nz+3
-           DO j=1, block(g)%ny+3
-              DO i=1, block(g)%nx+3
-                 IF (block(g)%cell2(i,j,k)==2) THEN
+        DO k=1,blk%nz+3
+           DO j=1,blk%ny+3
+              DO i=1,blk%nx+3
+                 IF (blk%cell2(i,j,k)==2) THEN
                     iPt1 = iPt1 + 1
-                    block(g)%TSIndexPtr(iPt1, :) = [i, j, k]
+                    blk%TSIndexPtr(iPt1, :) = [i, j, k]
                  ENDIF
               END DO
            END DO
         END DO
 
         ALLOCATE(&
-          block(g)%u2_ghost(block(g)%TSCellCount),  &
-          block(g)%u2t_ghost(block(g)%TSCellCount), &
-          block(g)%v2_ghost(block(g)%TSCellCount), &
-          block(g)%v2t_ghost(block(g)%TSCellCount), &
-          block(g)%p_ghost(block(g)%TSCellCount), &
-          block(g)%pt_ghost(block(g)%TSCellCount), &
-          block(g)%u1_ghost(block(g)%TSCellCount),  &
-          block(g)%u1t_ghost(block(g)%TSCellCount), &
-          block(g)%v1_ghost(block(g)%TSCellCount), &
-          block(g)%v1t_ghost(block(g)%TSCellCount), &
-          block(g)%w2_ghost(block(g)%TSCellCount), &
-          block(g)%w2t_ghost(block(g)%TSCellCount), &
-          block(g)%w1_ghost(block(g)%TSCellCount),  &
-          block(g)%w1t_ghost(block(g)%TSCellCount), &
-          block(g)%index_ts(block(g)%TSCellCount))
+          blk%u2_ghost(blk%TSCellCount),  &
+          blk%u2t_ghost(blk%TSCellCount), &
+          blk%v2_ghost(blk%TSCellCount), &
+          blk%v2t_ghost(blk%TSCellCount), &
+          blk%p_ghost(blk%TSCellCount), &
+          blk%pt_ghost(blk%TSCellCount), &
+          blk%u1_ghost(blk%TSCellCount),  &
+          blk%u1t_ghost(blk%TSCellCount), &
+          blk%v1_ghost(blk%TSCellCount), &
+          blk%v1t_ghost(blk%TSCellCount), &
+          blk%w2_ghost(blk%TSCellCount), &
+          blk%w2t_ghost(blk%TSCellCount), &
+          blk%w1_ghost(blk%TSCellCount),  &
+          blk%w1t_ghost(blk%TSCellCount), &
+          blk%index_ts(blk%TSCellCount))
 
         !$acc parallel loop default(present)
-        DO n = 1, block(g)%TSCellCount
-        i = block(g)%TSIndexPtr(n, 1)
-        j = block(g)%TSIndexPtr(n, 2)
-        k = block(g)%TSIndexPtr(n, 3)
+        DO n = 1, blk%TSCellCount
+        i = blk%TSIndexPtr(n, 1)
+        j = blk%TSIndexPtr(n, 2)
+        k = blk%TSIndexPtr(n, 3)
            !$acc loop seq
-           DO m = 1, block(g)%ibCellCount
-           i1 = block(g)%interceptedIndexPtr(m, 1)
-           j1 = block(g)%interceptedIndexPtr(m, 2)
-           k1 = block(g)%interceptedIndexPtr(m, 3)
+           DO m = 1, blk%ibCellCount
+           i1 = blk%interceptedIndexPtr(m, 1)
+           j1 = blk%interceptedIndexPtr(m, 2)
+           k1 = blk%interceptedIndexPtr(m, 3)
               IF (i1==i .AND. j1==j .AND. k1==k) THEN
-                  block(g)%index_ts(n) = m
+                  blk%index_ts(n) = m
               ENDIF
            ENDDO
-           block(g)%u2_ghost(n)  = 0.
-           block(g)%u2t_ghost(n) = 0.
-           block(g)%v2_ghost(n)  = 0.
-           block(g)%v2t_ghost(n) = 0.
-           block(g)%p_ghost(n)   = 0.
-           block(g)%pt_ghost(n)  = 0.
-           block(g)%u1_ghost(n)  = 0.
-           block(g)%u1t_ghost(n) = 0.
-           block(g)%v1_ghost(n)  = 0.
-           block(g)%v1t_ghost(n) = 0.
-           block(g)%w2_ghost(n)  = 0.
-           block(g)%w2t_ghost(n) = 0.
-           block(g)%w1_ghost(n)  = 0.
-           block(g)%w1t_ghost(n) = 0.
+           blk%u2_ghost(n)  = 0.
+           blk%u2t_ghost(n) = 0.
+           blk%v2_ghost(n)  = 0.
+           blk%v2t_ghost(n) = 0.
+           blk%p_ghost(n)   = 0.
+           blk%pt_ghost(n)  = 0.
+           blk%u1_ghost(n)  = 0.
+           blk%u1t_ghost(n) = 0.
+           blk%v1_ghost(n)  = 0.
+           blk%v1t_ghost(n) = 0.
+           blk%w2_ghost(n)  = 0.
+           blk%w2t_ghost(n) = 0.
+           blk%w1_ghost(n)  = 0.
+           blk%w1t_ghost(n) = 0.
         ENDDO
         !$acc end parallel loop
-
-           enddo
              END SUBROUTINE findTScells
 
      SUBROUTINE selectiveRetagging_th
