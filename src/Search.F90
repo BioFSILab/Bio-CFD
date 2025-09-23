@@ -656,7 +656,7 @@ module biocfd_search
 
         !$acc parallel loop default(present) collapse(4) private(i, j, k) &
         !$acc private(minDis, minDis1, dis_cen, dis_pnt, nel2Cen, nel2Pnt) &
-        !$acc private(n2dotn) firstprivate(g)
+        !$acc private(n2dotn)
         DO nn = 1, blk%ibCellCount
            DO kprime = -1,+1
            DO jprime = -1,+1
