@@ -61,7 +61,6 @@
         IF (iStart==1) CALL lastConditions
         CALL computeNormDistance
         do g=blk_start, size(block)
-           print*,'inside findTScells'
            CALL findTScells(block(g))
         end do
         CALL coefficientMatrix
@@ -132,7 +131,6 @@
         ENDDO
            CALL computeNormDistance
         do g=blk_start, size(block)
-              print*,'inside findTScells'
            CALL findTScells(block(g))
         end do
         CALL cpu_time(dStart1)
