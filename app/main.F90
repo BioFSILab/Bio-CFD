@@ -2,7 +2,8 @@
       PROGRAM main
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, istart, &
-             ita, ita1, ita2, itamax, nblocks, totaltime, totime
+             ita, ita1, ita2, itamax, nblocks, totaltime, totime,a0y,alpha_m, &
+             alpha_t,ang_theta,aoa,aoa1,aoa2,phase_angle,pi,theta_m,theta_t
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
@@ -40,7 +41,18 @@
         do g=blk_start, size(block)
            CALL findDistnode(block(g))
         end do
-        CALL shiftSurfaceNodesInitial
+        phase_angle = phase_angle*pi/180_dp
+        aoa1 = aoa*pi/180_dp
+        aoa2 = -aoa1
+        alpha_m = alpha_m*pi/180_dp
+        theta_m = theta_m*pi/180_dp
+        a0y = 0.  !a0y
+        ang_theta = 0.  !2._dp*pi*freq
+        alpha_t=(alpha_m*0.5_dp)*(1+cos(ang_theta*(totime+deltat)+phase_angle))
+        theta_t       =  theta_m*cos(ang_theta*(totime+deltat))
+        do g=blk_start, size(block)
+           CALL shiftSurfaceNodesInitial(block(g))
+        end do
         do g=blk_start, size(block)
            CALL computeSurfaceNorm(block(g))
         end do

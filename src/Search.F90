@@ -46,88 +46,77 @@ module biocfd_search
         ENDDO
         end subroutine findDistnode
 
-     SUBROUTINE shiftSurfaceNodesInitial
-        INTEGER(int64) ::  i, g
+        SUBROUTINE shiftSurfaceNodesInitial(blk)
+        type(Blocks), intent(inout) :: blk
+        INTEGER(int64) ::  i
         REAL(dp)      ::  xr1, yr1, zr1, angt
         REAL(dp)      :: bdy,bdfr
 
-        phase_angle = phase_angle*pi/180_dp
-        aoa1 = aoa*pi/180_dp
-        aoa2 = -aoa1
-        alpha_m = alpha_m*pi/180_dp
-        theta_m = theta_m*pi/180_dp
-        a0y = 0.  !a0y
-        ang_theta = 0.  !2._dp*pi*freq
-        alpha_t=(alpha_m*0.5_dp)*(1+cos(ang_theta*(totime+deltat)+phase_angle))
-        theta_t       =  theta_m*cos(ang_theta*(totime+deltat))
-        DO g=blk_start,nblocks
-        ALLOCATE (block(g)%xnode1(block(g)%ibNodes), block(g)%ynode1(block(g)%ibNodes), &
-                  block(g)%znode1(block(g)%ibNodes) )
-        block(g)%xnode1 = block(g)%xnode
-        block(g)%ynode1 = block(g)%ynode
-        block(g)%znode1 = block(g)%znode
+        ALLOCATE (blk%xnode1(blk%ibNodes), blk%ynode1(blk%ibNodes), &
+                  blk%znode1(blk%ibNodes) )
+        blk%xnode1 = blk%xnode
+        blk%ynode1 = blk%ynode
+        blk%znode1 = blk%znode
         xfact=0.05_dp
         bdfr=15
         bdy=15*dxmin
         angt  =  2._dp*pi*bdfr
 
-        block(g)%xmove = 0.
-        block(g)%ymove = 0.
-        block(g)%zmove = 0.
+        blk%xmove = 0.
+        blk%ymove = 0.
+        blk%zmove = 0.
 
-        block(g)%a0 = block(g)%a0*pi/180_dp
-         angt  =  2._dp*pi*block(g)%bfreq
-         block(g)%xpth1=block(g)%xshift-(ita*dxmin*xfact)
-        block(g)%xpth2=block(g)%xshift-(ita*dxmin*xfact)
-        block(g)%ypth2=(block(g)%yamp)*sin(angt*block(g)%xshift)
-        block(g)%piv_x = block(g)%xshift
-        block(g)%piv_y = block(g)%yshift
-        block(g)%piv_z = block(g)%zshift
+        blk%a0 = blk%a0*pi/180_dp
+         angt  =  2._dp*pi*blk%bfreq
+        blk%xpth1=blk%xshift-(ita*dxmin*xfact)
+        blk%xpth2=blk%xshift-(ita*dxmin*xfact)
+        blk%ypth2=(blk%yamp)*sin(angt*blk%xshift)
+        blk%piv_x = blk%xshift
+        blk%piv_y = blk%yshift
+        blk%piv_z = blk%zshift
 
-        block(g)%thetaDot  =  0.
-        block(g)% thetaDDot =  0._dp
-        block(g)% thetaDot   =  0.  !ang_theta*a0*cos(2._dp*pi*freq*totime + phase_angle)
-        block(g)%thetaDot1  = 0.
-        block(g)% thetaDot2  = 0.
-        block(g)% alphaDot  = 0.
-        block(g)% thetaDDot1 = 0.
-        block(g)%thetaDDot2 = 0.
-        block(g)% thetaDDot  = 0.  !-ang_theta*ang_theta*a0*sin(2._dp*pi*freq*totime + phase_angle)
-       block(g)%yt         =  bdy*sin(2*pi*bdfr*totime )
-       block(g)%ydot       =  angt*bdy*cos(2*pi*bdfr*totime)
-       block(g)%yddot      =  -angt*angt*bdy*sin(2*pi*bdfr*totime)
-       block(g)%xt         =  block(g)%xshift- (ita*dxmin*xfact)
-       block(g)%xdot       =  -(dxmin*xfact)/deltat
-        block(g)%inity_cent=block(g)%yshift
-        block(g)%nxty_cent=block(g)%yshift
-        block(g)%initx_cent=block(g)%xshift
-        block(g)%nxtx_cent=block(g)%xshift
-        block(g)%initz_cent=block(g)%zshift
-        block(g)%nxtz_cent=block(g)%zshift
-        block(g)%ypos=block(g)%yshift
-        block(g)%xpos=block(g)%xshift
-        DO i = 1, block(g)%ibnodes
-        IF (block(g)%ibNodeId(i)==51) THEN
-            xr1 =  block(g)%xnode(i)
-            zr1 =  block(g)%znode(i)*cos(aoa1) + block(g)%ynode(i)*sin(aoa1) + piv_pt &
+        blk%thetaDot  =  0.
+        blk% thetaDDot =  0._dp
+        blk% thetaDot   =  0.  !ang_theta*a0*cos(2._dp*pi*freq*totime + phase_angle)
+        blk%thetaDot1  = 0.
+        blk% thetaDot2  = 0.
+        blk% alphaDot  = 0.
+        blk% thetaDDot1 = 0.
+        blk%thetaDDot2 = 0.
+        blk% thetaDDot  = 0.  !-ang_theta*ang_theta*a0*sin(2._dp*pi*freq*totime + phase_angle)
+        blk%yt         =  bdy*sin(2*pi*bdfr*totime )
+        blk%ydot       =  angt*bdy*cos(2*pi*bdfr*totime)
+        blk%yddot      =  -angt*angt*bdy*sin(2*pi*bdfr*totime)
+        blk%xt         =  blk%xshift- (ita*dxmin*xfact)
+        blk%xdot       =  -(dxmin*xfact)/deltat
+        blk%inity_cent=blk%yshift
+        blk%nxty_cent=blk%yshift
+        blk%initx_cent=blk%xshift
+        blk%nxtx_cent=blk%xshift
+        blk%initz_cent=blk%zshift
+        blk%nxtz_cent=blk%zshift
+        blk%ypos=blk%yshift
+        blk%xpos=blk%xshift
+        DO i = 1, blk%ibnodes
+        IF (blk%ibNodeId(i)==51) THEN
+            xr1 =  blk%xnode(i)
+            zr1 =  blk%znode(i)*cos(aoa1) + blk%ynode(i)*sin(aoa1) + piv_pt &
                    - piv_pt*cos(aoa1)
-            yr1 = -block(g)%znode(i)*sin(aoa1) + block(g)%ynode(i)*cos(aoa1) + piv_pt*sin(aoa1)
-         ELSEIF (block(g)%ibNodeId(i)==52) THEN
-            xr1 =  block(g)%xnode(i)
-            zr1 =  block(g)%znode(i)*cos(aoa2) + block(g)%ynode(i)*sin(aoa2)  + piv_pt &
+            yr1 = -blk%znode(i)*sin(aoa1) + blk%ynode(i)*cos(aoa1) + piv_pt*sin(aoa1)
+         ELSEIF (blk%ibNodeId(i)==52) THEN
+            xr1 =  blk%xnode(i)
+            zr1 =  blk%znode(i)*cos(aoa2) + blk%ynode(i)*sin(aoa2)  + piv_pt &
                    - piv_pt*cos(aoa2)
-            yr1 = -block(g)%znode(i)*sin(aoa2) + block(g)%ynode(i)*cos(aoa2)  + piv_pt*sin(aoa2)
+            yr1 = -blk%znode(i)*sin(aoa2) + blk%ynode(i)*cos(aoa2)  + piv_pt*sin(aoa2)
            ELSE
-               xr1 = block(g)% xnode(i)
-               zr1 = block(g)% znode(i)  !*cos(aoa1) + ynode(i)*sin(aoa1)
-               yr1 = block(g)% ynode(i)  !*sin(aoa1) + ynode(i)*cos(aoa1)
+               xr1 = blk% xnode(i)
+               zr1 = blk% znode(i)  !*cos(aoa1) + ynode(i)*sin(aoa1)
+               yr1 = blk% ynode(i)  !*sin(aoa1) + ynode(i)*cos(aoa1)
            ENDIF
-           block(g)%xnode1(i) = xr1+ block(g)%xShift
-               block(g)%ynode1(i) = yr1+ block(g)%yShift
-           block(g)%znode1(i) = zr1+ block(g)%zshift
+           blk%xnode1(i) = xr1+ blk%xShift
+           blk%ynode1(i) = yr1+ blk%yShift
+           blk%znode1(i) = zr1+ blk%zshift
         ENDDO
-
-        END DO
 
       END SUBROUTINE shiftSurfaceNodesInitial
 
