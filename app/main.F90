@@ -88,13 +88,13 @@
         ita2 = ita2 + 1
         totime = totime + deltat
         CALL nsMomentum2order
-        CALL velocityBC
+        CALL velocityBC(block(1))
         do g=blk_start, size(block)
            CALL solidCellBC(block(g))
         end do
         !$acc wait
         CALL velocityForcing1
-        CALL velocityBC
+        CALL velocityBC(block(1))
         CALL poissonSolver
         print *,7
         CALL pressureForcing1
@@ -123,7 +123,9 @@
          end do
            print*,2
            CALL tagging_th_move
-           CALL selectiveRetagging_th
+        do g=blk_start, size(block)
+           CALL selectiveRetagging_th(block(g))
+        end do
         DO g=blk_start, nblocks
             block(g)%blk_mv_tag=0.
               DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,&
