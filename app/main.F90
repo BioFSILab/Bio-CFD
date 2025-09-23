@@ -88,11 +88,11 @@
         ita2 = ita2 + 1
         totime = totime + deltat
         CALL nsMomentum2order
-        CALL velocityBC
+        CALL velocityBC(block(1))
         CALL solidCellBC
         !$acc wait
         CALL velocityForcing1
-        CALL velocityBC
+        CALL velocityBC(block(1))
         CALL poissonSolver
         print *,7
         CALL pressureForcing1
