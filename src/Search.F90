@@ -1293,16 +1293,6 @@ blk%fluidCellCount = flcnt
           endif
         ENDDO
 
-        DO k=1,block(b_blk_no)%nz+2
-        DO i=1,block(b_blk_no)%nx+2
-        DO j=1,block(b_blk_no)%ny+2
-            block(b_blk_no)%u_dum(i,j,k)=block(b_blk_no)%u(i,j,k)
-            block(b_blk_no)%v_dum(i,j,k)=block(b_blk_no)%v(i,j,k)
-            block(b_blk_no)%w_dum(i,j,k)=block(b_blk_no)%w(i,j,k)
-            block(b_blk_no)%p_dum(i,j,k)=block(b_blk_no)%p(i,j,k)
-        ENDDO
-        ENDDO
-        ENDDO
         endif
 
         ENDDO
@@ -1314,10 +1304,27 @@ blk%fluidCellCount = flcnt
         INTEGER(int64) :: i,j,k,g, a_blk_no, b_blk_no,countx_st,countz_st,county_st
         REAL(dp) :: change_y_f,change_x_f
         REAL(dp) :: change_z_f
+        REAL (dp), ALLOCATABLE, DIMENSION (:, :, :) :: u_dum,v_dum,w_dum,p_dum
         DO g=blk_start,nblocks
 
         if ( block(g)% move_check == 1) then
 
+        ALLOCATE(&
+        u_dum(block(g)%nx+2, block(g)%ny+2, block(g)%nz+2), &
+        v_dum(block(g)%nx+2, block(g)%ny+2, block(g)%nz+2), &
+        w_dum(block(g)%nx+2, block(g)%ny+2, block(g)%nz+2), &
+        p_dum(block(g)%nx+2, block(g)%ny+2, block(g)%nz+2))
+
+        DO k=1,block(b_blk_no)%nz+2
+        DO i=1,block(b_blk_no)%nx+2
+        DO j=1,block(b_blk_no)%ny+2
+            u_dum(i,j,k)=block(b_blk_no)%u(i,j,k)
+            v_dum(i,j,k)=block(b_blk_no)%v(i,j,k)
+            w_dum(i,j,k)=block(b_blk_no)%w(i,j,k)
+            p_dum(i,j,k)=block(b_blk_no)%p(i,j,k)
+        ENDDO
+        ENDDO
+        ENDDO
 
        change_z_f= block(g)%move_amtz * block(g)%dz
        change_y_f= block(g)%move_amty * block(g)%dy
@@ -1454,10 +1461,10 @@ blk%fluidCellCount = flcnt
         DO i=block(b_blk_no)%cpy_x_start_mv,block(b_blk_no)%cpy_x_end_mv
         county_st=block(b_blk_no)%cpy_y_start
         DO j=block(b_blk_no)%cpy_y_start_mv,block(b_blk_no)%cpy_y_end_mv
-                block(b_blk_no)%u(i,j,k)=block(b_blk_no)%u_dum(countx_st,county_st,countz_st)
-                block(b_blk_no)%v(i,j,k)=block(b_blk_no)%v_dum(countx_st,county_st,countz_st)
-                block(b_blk_no)%w(i,j,k)=block(b_blk_no)%w_dum(countx_st,county_st,countz_st)
-                block(b_blk_no)%p(i,j,k)=block(b_blk_no)%p_dum(countx_st,county_st,countz_st)
+                block(b_blk_no)%u(i,j,k)=u_dum(countx_st,county_st,countz_st)
+                block(b_blk_no)%v(i,j,k)=v_dum(countx_st,county_st,countz_st)
+                block(b_blk_no)%w(i,j,k)=w_dum(countx_st,county_st,countz_st)
+                block(b_blk_no)%p(i,j,k)=p_dum(countx_st,county_st,countz_st)
                 county_st=county_st+1
         ENDDO
                 countx_st=countx_st+1
