@@ -141,7 +141,7 @@
 
             CALL cellCount_solid
         DO g=blk_start, nblocks
-            call solidCellBC_move(g)
+            call solidCellBC_move(block(g))
              call updateVelocity_newv(g)
             block(g)%move_check=0.
         ENDDO
