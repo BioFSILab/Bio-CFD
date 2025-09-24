@@ -2,7 +2,7 @@
       PROGRAM main
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, istart, &
-             ita, ita1, ita2, itamax, nblocks, totaltime, totime,a0y,alpha_m, &
+             ita, ita1, ita2, itamax, nblocks, totaltime, totime,alpha_m, &
              ang_theta,aoa,aoa1,aoa2,phase_angle,pi,theta_m
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
@@ -45,7 +45,6 @@
         aoa2 = -aoa1
         alpha_m = alpha_m*pi/180_dp
         theta_m = theta_m*pi/180_dp
-        a0y = 0.  !a0y
         ang_theta = 0.  !2._dp*pi*freq
         do g=blk_start, size(block)
            CALL shiftSurfaceNodesInitial(block(g))
