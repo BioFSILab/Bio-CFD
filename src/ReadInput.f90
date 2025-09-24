@@ -1,6 +1,6 @@
 module biocfd_read_input
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, w0, v0, uc, u_tip, u0, totime, theta_m1, theta_m, &
+  use global, only : block, uc, u_tip, u0, totime, theta_m1, theta_m, &
        surgeopoints, rho_f, rev, re, piv_pt, pi, phase_angle, pcitamax, omega4, &
        omega3, omega2, omega1, nblocks, mu_f, l_c, itamax, ita1, ita, istart, &
        intflines, inor, freq, epsi, dxmin, dt_order, disp, deltat, char_f, &

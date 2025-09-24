@@ -29,7 +29,6 @@
         IMPLICIT NONE
 
         INTEGER (int64) :: g
-        real(dp) :: dstart1, dfinish1
         CALL readInput
         CALL readBlockInterface
         do g=blk_start, size(block)
@@ -149,14 +148,10 @@
         do g=blk_start, size(block)
            CALL findTScells(block(g))
         end do
-        CALL cpu_time(dStart1)
         CALL velocityForcingField
         CALL pressureForcingField
-        CALL cpu_time(dFinish1)
-        CALL cpu_time(dStart1)
         CALL velocityForcingGhost
         CALL pressureForcingGhost
-        CALL cpu_time(dFinish1)
         IF(ita>=itamax) EXIT
         END DO
       END PROGRAM main
