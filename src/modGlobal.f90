@@ -14,7 +14,7 @@ MODULE global
                                 omega,omega1,omega2,omega3,omega4,  &
                                 dxmin, &
                                 freq, &
-                                u0, v0, w0, &
+                                u0, &
                                 epsi, re, rev, &
                                 alpha, &
                                 xfact,deltat,totime, totalTime, dfinish, dstart, &

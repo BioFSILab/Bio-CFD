@@ -26,7 +26,7 @@ module biocfd_read_input
        NAMELIST /input_data/ nblocks, intflines,  &
                    itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
                    re,rho_f, mu_f, l_c, &
-                   u0, v0,  w0,  &
+                   u0,  &
                    surGeoPoints,a0y, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
                    istart, dt_order, inor, dxmin
 
