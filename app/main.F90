@@ -95,7 +95,9 @@
         CALL velocityBC(block(1))
         CALL poissonSolver
         print *,7
-        CALL pressureForcing1
+        do g=blk_start, size(block)
+           CALL pressureForcing1(block(g))
+        end do
         CALL write_output
         !$acc wait
         CALL writeResult
