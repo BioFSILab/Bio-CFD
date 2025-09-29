@@ -166,7 +166,9 @@
         end do
         CALL cpu_time(dFinish1)
         CALL cpu_time(dStart1)
-        CALL velocityForcingGhost
+        do g=blk_start, size(block)
+           CALL velocityForcingGhost(block(g))
+        end do
         do g=blk_start, size(block)
            CALL pressureForcingGhost(block(g))
         end do
