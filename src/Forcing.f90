@@ -945,323 +945,321 @@ SUBROUTINE pressureForcingField(blk)
       !$acc end parallel loop
 END SUBROUTINE pressureForcingField
 
-SUBROUTINE velocityForcingField
-
-      INTEGER :: g,n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
+SUBROUTINE velocityForcingField(blk)
+      type(Blocks), intent(inout) :: blk
+      INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1,  &
                          aval, bval, cval, sur2nodeDis, &
                          usurf, u_pos1, vsurf, v_pos1, wsurf, w_pos1, &
                          dudn_e, dvdn_e, dwdn_e
       real(dp) :: derivatives(3)
 
-        DO g=blk_start,nblocks
  !$acc parallel loop gang vector         &
  !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1,           &
  !$acc          aval, bval, cval, sur2nodeDis, &
  !$acc          usurf, u_pos1, vsurf, v_pos1, wsurf, w_pos1, &
  !$acc          dudn_e, dvdn_e, dwdn_e, k, j, i, il, jl, kl, i_x1, i_y1, i_z1) &
  !$acc default(present) private(derivatives)
-      DO n = 1, block(g)%ibCellCount
+      DO n = 1, blk%ibCellCount
 
-         i = block(g)%interceptedIndexPtr(n, 1)
-         j = block(g)%interceptedIndexPtr(n, 2)
-         k = block(g)%interceptedIndexPtr(n, 3)
+         i = blk%interceptedIndexPtr(n, 1)
+         j = blk%interceptedIndexPtr(n, 2)
+         k = blk%interceptedIndexPtr(n, 3)
 
 !***********************U(i,j,k)****************************************
-         IF (block(g)%ibSurfID(block(g)%nelu2(n))==50) THEN
-             usurf = 0._dp + block(g)%xdot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelu2(n))==51) THEN
-             usurf = 0._dp + block(g)%xdot
-         ELSEIF (block(g)%ibSurfId(block(g)%nelu2(n))==52) THEN
-             usurf = 0._dp + block(g)%xdot
+         IF (blk%ibSurfID(blk%nelu2(n))==50) THEN
+             usurf = 0._dp + blk%xdot
+         ELSEIF (blk%ibSurfID(blk%nelu2(n))==51) THEN
+             usurf = 0._dp + blk%xdot
+         ELSEIF (blk%ibSurfId(blk%nelu2(n))==52) THEN
+             usurf = 0._dp + blk%xdot
          ENDIF
 
-         sur2nodeDis = block(g)%u2NormDis(n)
+         sur2nodeDis = blk%u2NormDis(n)
 
-         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xu(i+1) + pt1*block(g)%cosAlpha(block(g)%nelu2(n))
-         pos1_y = block(g)%yu(j)   + pt1*block(g)%cosBeta(block(g)%nelu2(n))
-         pos1_z = block(g)%zu(k)   + pt1*block(g)%cosGamma(block(g)%nelu2(n))
+         pos1_x = blk%xu(i+1) + pt1*blk%cosAlpha(blk%nelu2(n))
+         pos1_y = blk%yu(j)   + pt1*blk%cosBeta(blk%nelu2(n))
+         pos1_z = blk%zu(k)   + pt1*blk%cosGamma(blk%nelu2(n))
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x>=block(g)%xu(il).and.pos1_x<block(g)%xu(il+1)) i_x1 = il
+            if(pos1_x>=blk%xu(il).and.pos1_x<blk%xu(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y>=block(g)%yu(jl).and.pos1_y<block(g)%yu(jl+1)) i_y1 = jl
+            if(pos1_y>=blk%yu(jl).and.pos1_y<blk%yu(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z>=block(g)%zu(kl).and.pos1_z<block(g)%zu(kl+1)) i_z1 = kl
+            if(pos1_z>=blk%zu(kl).and.pos1_z<blk%zu(kl+1)) i_z1 = kl
          END DO
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-                                            block(g)%xu, block(g)%yu, block(g)%zu, &
-                                            1, block(g)%ut, u_pos1, derivatives)
+                                            blk%xu, blk%yu, blk%zu, &
+                                            1, blk%ut, u_pos1, derivatives)
 
-         dudn_e =   derivatives(1) * block(g)%cosAlpha(block(g)%nelu2(n)) &
-                  + derivatives(2) * block(g)%cosBeta(block(g)%nelu2(n)) &
-                  + derivatives(3) * block(g)%cosGamma(block(g)%nelu2(n))
+         dudn_e =   derivatives(1) * blk%cosAlpha(blk%nelu2(n)) &
+                  + derivatives(2) * blk%cosBeta(blk%nelu2(n)) &
+                  + derivatives(3) * blk%cosGamma(blk%nelu2(n))
 
          n1 = pt1 + sur2nodeDis
 
          cval = usurf
          bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
-         block(g)%u(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
+         blk%u(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !******************************U(i-1,j,k)*******************************
-         IF (block(g)%ibSurfID(block(g)%nelu1(n))==50) THEN
-             usurf = 0._dp + block(g)%xdot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelu1(n))==51) THEN
-             usurf = 0._dp + block(g)%xdot
-         ELSEIF (block(g)%ibSurfId(block(g)%nelu1(n))==52) THEN
-             usurf = 0._dp + block(g)%xdot
+         IF (blk%ibSurfID(blk%nelu1(n))==50) THEN
+             usurf = 0._dp + blk%xdot
+         ELSEIF (blk%ibSurfID(blk%nelu1(n))==51) THEN
+             usurf = 0._dp + blk%xdot
+         ELSEIF (blk%ibSurfId(blk%nelu1(n))==52) THEN
+             usurf = 0._dp + blk%xdot
          ENDIF
 
-         sur2nodeDis = block(g)%u1NormDis(n)
+         sur2nodeDis = blk%u1NormDis(n)
 
-         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 &
-               + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2) &
+         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 &
+               + blk%deltay(j)**2 + blk%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xu(i) + pt1*block(g)%cosAlpha(block(g)%nelu1(n))
-         pos1_y = block(g)%yu(j) + pt1*block(g)%cosBeta(block(g)%nelu1(n))
-         pos1_z = block(g)%zu(k) + pt1*block(g)%cosGamma(block(g)%nelu1(n))
+         pos1_x = blk%xu(i) + pt1*blk%cosAlpha(blk%nelu1(n))
+         pos1_y = blk%yu(j) + pt1*blk%cosBeta(blk%nelu1(n))
+         pos1_z = blk%zu(k) + pt1*blk%cosGamma(blk%nelu1(n))
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x>=block(g)%xu(il).and.pos1_x<block(g)%xu(il+1)) i_x1 = il
+            if(pos1_x>=blk%xu(il).and.pos1_x<blk%xu(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y>=block(g)%yu(jl).and.pos1_y<block(g)%yu(jl+1)) i_y1 = jl
+            if(pos1_y>=blk%yu(jl).and.pos1_y<blk%yu(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z>=block(g)%zu(kl).and.pos1_z<block(g)%zu(kl+1)) i_z1 = kl
+            if(pos1_z>=blk%zu(kl).and.pos1_z<blk%zu(kl+1)) i_z1 = kl
          END DO
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-                                            block(g)%xu, block(g)%yu, block(g)%zu, &
-                                            1, block(g)%ut, u_pos1, derivatives)
+                                            blk%xu, blk%yu, blk%zu, &
+                                            1, blk%ut, u_pos1, derivatives)
 
-         dudn_e =   derivatives(1) * block(g)%cosAlpha(block(g)%nelu1(n)) &
-                  + derivatives(2) * block(g)%cosBeta(block(g)%nelu1(n)) &
-                  + derivatives(3) * block(g)%cosGamma(block(g)%nelu1(n))
+         dudn_e =   derivatives(1) * blk%cosAlpha(blk%nelu1(n)) &
+                  + derivatives(2) * blk%cosBeta(blk%nelu1(n)) &
+                  + derivatives(3) * blk%cosGamma(blk%nelu1(n))
 
          n1 = pt1 + sur2nodeDis
 
          cval = usurf
          bval = 2._dp/n1*(u_pos1 - usurf) - dudn_e
          avaL = dudn_e/n1 - (u_pos1 - usurf)/n1**2
-         block(g)%u(i-1,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
+         blk%u(i-1,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !**************************V(i,j,k)*************************************
-         IF (block(g)%ibSurfID(block(g)%nelv2(n))==50) THEN
-           vsurf = 0._dp + block(g)%ydot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelv2(n))==51) THEN
-           block(g)%thetaDot =  block(g)%thetaDot1
-           vsurf = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z) &
-                   + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv2(n)) - block(g)%piv_x) &
-                   + block(g)%ydot
-         ELSEIF (block(g)%ibSurfId(block(g)%nelv2(n))==52) THEN
-           block(g)%thetaDot =  block(g)%thetaDot2
-           vsurf = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv2(n)) - block(g)%piv_z) &
-                   + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv2(n)) - block(g)%piv_x) &
-                   + block(g)%ydot
+         IF (blk%ibSurfID(blk%nelv2(n))==50) THEN
+           vsurf = 0._dp + blk%ydot
+         ELSEIF (blk%ibSurfID(blk%nelv2(n))==51) THEN
+           blk%thetaDot =  blk%thetaDot1
+           vsurf = -blk%thetaDot*(blk%zcent(blk%nelv2(n)) - blk%piv_z) &
+                   + (-blk%alphaDot)*(blk%xcent(blk%nelv2(n)) - blk%piv_x) &
+                   + blk%ydot
+         ELSEIF (blk%ibSurfId(blk%nelv2(n))==52) THEN
+           blk%thetaDot =  blk%thetaDot2
+           vsurf = -blk%thetaDot*(blk%zcent(blk%nelv2(n)) - blk%piv_z) &
+                   + (-blk%alphaDot)*( blk%xcent(blk%nelv2(n)) - blk%piv_x) &
+                   + blk%ydot
          ENDIF
 
-         sur2nodeDis = block(g)%v2NormDis(n)
+         sur2nodeDis = blk%v2NormDis(n)
 
-         pt1 = 1.21_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.21_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xv(i) + pt1*block(g)%cosAlpha(block(g)%nelv2(n))
-         pos1_y = block(g)%yv(j+1) + pt1*block(g)%cosBeta(block(g)%nelv2(n))
-         pos1_z = block(g)%zv(k) + pt1*block(g)%cosGamma(block(g)%nelv2(n))
+         pos1_x = blk%xv(i) + pt1*blk%cosAlpha(blk%nelv2(n))
+         pos1_y = blk%yv(j+1) + pt1*blk%cosBeta(blk%nelv2(n))
+         pos1_z = blk%zv(k) + pt1*blk%cosGamma(blk%nelv2(n))
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x>=block(g)%xv(il).and.pos1_x<block(g)%xv(il+1)) i_x1 = il
+            if(pos1_x>=blk%xv(il).and.pos1_x<blk%xv(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y>=block(g)%yv(jl).and.pos1_y<block(g)%yv(jl+1)) i_y1 = jl
+            if(pos1_y>=blk%yv(jl).and.pos1_y<blk%yv(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
+            if(pos1_z>=blk%zv(kl).and.pos1_z<blk%zv(kl+1)) i_z1 = kl
          END DO
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-                                            block(g)%xv, block(g)%yv, block(g)%zv, &
-                                            2, block(g)%vt, v_pos1, derivatives)
-         dvdn_e =  derivatives(1) * block(g)%cosAlpha(block(g)%nelv2(n)) &
-                 + derivatives(2) * block(g)%cosBeta(block(g)%nelv2(n)) &
-                 + derivatives(3) * block(g)%cosGamma(block(g)%nelv2(n))
+                                            blk%xv, blk%yv, blk%zv, &
+                                            2, blk%vt, v_pos1, derivatives)
+         dvdn_e =  derivatives(1) * blk%cosAlpha(blk%nelv2(n)) &
+                 + derivatives(2) * blk%cosBeta(blk%nelv2(n)) &
+                 + derivatives(3) * blk%cosGamma(blk%nelv2(n))
 
          n1 = pt1 + sur2nodeDis
 
          cval = vsurf
          bval = 2._dp/n1*(v_pos1 - vsurf) - dvdn_e
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
-         block(g)%v(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
+         blk%v(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !**************************V(i,j-1,k)*************************************
-         IF (block(g)%ibSurfID(block(g)%nelv1(n))==50) THEN
-           vsurf = 0._dp + block(g)%ydot
-         ELSEIF (block(g)%ibSurfID(block(g)%nelv1(n))==51) THEN
-           block(g)%thetaDot =  block(g)%thetaDot1
+         IF (blk%ibSurfID(blk%nelv1(n))==50) THEN
+           vsurf = 0._dp + blk%ydot
+         ELSEIF (blk%ibSurfID(blk%nelv1(n))==51) THEN
+           blk%thetaDot =  blk%thetaDot1
            !vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)
-           vsurf = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)  &
-                   + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv1(n)) - block(g)%piv_x) &
-                   + block(g)%ydot
-         ELSEIF (block(g)%ibSurfId(block(g)%nelv1(n))==52) THEN
-           block(g)%thetaDot =  block(g)%thetaDot2
+           vsurf = -blk%thetaDot*(blk%zcent(blk%nelv1(n)) - blk%piv_z)  &
+                   + (-blk%alphaDot)*(blk%xcent(blk%nelv1(n)) - blk%piv_x) &
+                   + blk%ydot
+         ELSEIF (blk%ibSurfId(blk%nelv1(n))==52) THEN
+           blk%thetaDot =  blk%thetaDot2
            !vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)! + ydot
-           vsurf = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)  &
-                   + (-block(g)%alphaDot)*( block(g)%xcent(block(g)%nelv1(n)) - block(g)%piv_x) &
-                   + block(g)%ydot
+           vsurf = -blk%thetaDot*(blk%zcent(blk%nelv1(n)) - blk%piv_z)  &
+                   + (-blk%alphaDot)*(blk%xcent(blk%nelv1(n)) - blk%piv_x) &
+                   + blk%ydot
          ENDIF
 
          !vsurf =  -block(g)%thetaDot*(block(g)%xcent(block(g)%nelv1(n)) - block(g)%piv_x) + ydot
-         sur2nodeDis = block(g)%v1NormDis(n)
+         sur2nodeDis = blk%v1NormDis(n)
 
-         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xv(i) + pt1*block(g)%cosAlpha(block(g)%nelv1(n))
-         pos1_y = block(g)%yv(j) + pt1*block(g)%cosBeta(block(g)%nelv1(n))
-         pos1_z = block(g)%zv(k) + pt1*block(g)%cosGamma(block(g)%nelv1(n))
+         pos1_x = blk%xv(i) + pt1*blk%cosAlpha(blk%nelv1(n))
+         pos1_y = blk%yv(j) + pt1*blk%cosBeta(blk%nelv1(n))
+         pos1_z = blk%zv(k) + pt1*blk%cosGamma(blk%nelv1(n))
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x>=block(g)%xv(il).and.pos1_x<block(g)%xv(il+1)) i_x1 = il
+            if(pos1_x>=blk%xv(il).and.pos1_x<blk%xv(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y>=block(g)%yv(jl).and.pos1_y<block(g)%yv(jl+1)) i_y1 = jl
+            if(pos1_y>=blk%yv(jl).and.pos1_y<blk%yv(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z>=block(g)%zv(kl).and.pos1_z<block(g)%zv(kl+1)) i_z1 = kl
+            if(pos1_z>=blk%zv(kl).and.pos1_z<blk%zv(kl+1)) i_z1 = kl
          END DO
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-                                            block(g)%xv, block(g)%yv, block(g)%zv, &
-                                            2, block(g)%vt, v_pos1, derivatives)
-         dvdn_e = derivatives(1) * block(g)%cosAlpha(block(g)%nelv1(n)) &
-                + derivatives(2) * block(g)%cosBeta(block(g)%nelv1(n)) &
-                + derivatives(3) * block(g)%cosGamma(block(g)%nelv1(n))
+                                            blk%xv, blk%yv, blk%zv, &
+                                            2, blk%vt, v_pos1, derivatives)
+         dvdn_e = derivatives(1) * blk%cosAlpha(blk%nelv1(n)) &
+                + derivatives(2) * blk%cosBeta(blk%nelv1(n)) &
+                + derivatives(3) * blk%cosGamma(blk%nelv1(n))
 
          n1 = pt1 + sur2nodeDis
 
          cval = vsurf
          bval = 2._dp/n1*(v_pos1 - vsurf) - dvdn_e
          avaL = dvdn_e/n1 - (v_pos1 - vsurf)/n1**2
-         block(g)%v(i,j-1,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
+         blk%v(i,j-1,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !**************************W(i,j,k)*************************************
-         IF (block(g)%ibSurfID(block(g)%nelw2(n))==50) THEN
+         IF (blk%ibSurfID(blk%nelw2(n))==50) THEN
            wsurf = 0.
-         ELSEIF (block(g)%ibSurfID(block(g)%nelw2(n))==51) THEN
-           block(g)%thetaDot = block(g)%thetaDot1
-           wsurf    = block(g)%thetaDot*(block(g)%ycent(block(g)%nelw2(n)) - block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelw2(n))==52) THEN
-           block(g)%thetaDot = block(g)%thetaDot2
-           wsurf    = block(g)%thetaDot*(block(g)%ycent(block(g)%nelw2(n)) - block(g)%piv_y)  ! + ydot
+         ELSEIF (blk%ibSurfID(blk%nelw2(n))==51) THEN
+           blk%thetaDot = blk%thetaDot1
+           wsurf    = blk%thetaDot*(blk%ycent(blk%nelw2(n)) - blk%piv_y)
+         ELSEIF (blk%ibSurfId(blk%nelw2(n))==52) THEN
+           blk%thetaDot = blk%thetaDot2
+           wsurf    = blk%thetaDot*(blk%ycent(blk%nelw2(n)) - blk%piv_y)  ! + ydot
          ENDIF
 
-         sur2nodeDis = block(g)%w2NormDis(n)
-         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         sur2nodeDis = blk%w2NormDis(n)
+         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xw(i) + pt1*block(g)%cosAlpha(block(g)%nelw2(n))
-         pos1_y = block(g)%yw(j) + pt1*block(g)%cosBeta(block(g)%nelw2(n))
-         pos1_z = block(g)%zw(k+1) + pt1*block(g)%cosGamma(block(g)%nelw2(n))
+         pos1_x = blk%xw(i) + pt1*blk%cosAlpha(blk%nelw2(n))
+         pos1_y = blk%yw(j) + pt1*blk%cosBeta(blk%nelw2(n))
+         pos1_z = blk%zw(k+1) + pt1*blk%cosGamma(blk%nelw2(n))
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x>=block(g)%xw(il).and.pos1_x<block(g)%xw(il+1)) i_x1 = il
+            if(pos1_x>=blk%xw(il).and.pos1_x<blk%xw(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y>=block(g)%yw(jl).and.pos1_y<block(g)%yw(jl+1)) i_y1 = jl
+            if(pos1_y>=blk%yw(jl).and.pos1_y<blk%yw(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z>=block(g)%zw(kl).and.pos1_z<block(g)%zw(kl+1)) i_z1 = kl
+            if(pos1_z>=blk%zw(kl).and.pos1_z<blk%zw(kl+1)) i_z1 = kl
          END DO
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-                                            block(g)%xw, block(g)%yw, block(g)%zw, &
-                                            3, block(g)%wt, w_pos1, derivatives)
-         dwdn_e = derivatives(1) * block(g)%cosAlpha(block(g)%nelw2(n)) &
-                + derivatives(2) * block(g)%cosBeta(block(g)%nelw2(n)) &
-                + derivatives(3) * block(g)%cosGamma(block(g)%nelw2(n))
+                                            blk%xw, blk%yw, blk%zw, &
+                                            3, blk%wt, w_pos1, derivatives)
+         dwdn_e = derivatives(1) * blk%cosAlpha(blk%nelw2(n)) &
+                + derivatives(2) * blk%cosBeta(blk%nelw2(n)) &
+                + derivatives(3) * blk%cosGamma(blk%nelw2(n))
 
          n1 = pt1 + sur2nodeDis
 
          cval = wsurf
          bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
-         block(g)%w(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
+         blk%w(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
 !**************************W(i,j,k-1)*************************************
          wsurf = 0._dp
-         IF (block(g)%ibSurfID(block(g)%nelw1(n))==50) THEN
+         IF (blk%ibSurfID(blk%nelw1(n))==50) THEN
            wsurf = 0.
-         ELSEIF (block(g)%ibSurfID(block(g)%nelw1(n))==51) THEN
-           block(g)%thetaDot = block(g)%thetaDot1
-           wsurf    = block(g)%thetaDot*(block(g)%ycent(block(g)%nelw1(n)) - block(g)%piv_y)
-         ELSEIF (block(g)%ibSurfId(block(g)%nelw1(n))==52) THEN
-           block(g)%thetaDot = block(g)%thetaDot2
-           wsurf    = block(g)%thetaDot*(block(g)%ycent(block(g)%nelw1(n)) - block(g)%piv_y)  ! + ydot
+         ELSEIF (blk%ibSurfID(blk%nelw1(n))==51) THEN
+           blk%thetaDot = blk%thetaDot1
+           wsurf    = blk%thetaDot*(blk%ycent(blk%nelw1(n)) - blk%piv_y)
+         ELSEIF (blk%ibSurfId(blk%nelw1(n))==52) THEN
+           blk%thetaDot = blk%thetaDot2
+           wsurf    = blk%thetaDot*(blk%ycent(blk%nelw1(n)) - blk%piv_y)  ! + ydot
          ENDIF
 
-         sur2nodeDis = block(g)%w1NormDis(n)
+         sur2nodeDis = blk%w1NormDis(n)
 
-         pt1 = 1.51_dp*dsqrt(block(g)%deltax(i)**2 + block(g)%deltay(j)**2 + block(g)%deltaz(k)**2)&
+         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = block(g)%xw(i) + pt1*block(g)%cosAlpha(block(g)%nelw1(n))
-         pos1_y = block(g)%yw(j) + pt1*block(g)%cosBeta(block(g)%nelw1(n))
-         pos1_z = block(g)%zw(k) + pt1*block(g)%cosGamma(block(g)%nelw1(n))
+         pos1_x = blk%xw(i) + pt1*blk%cosAlpha(blk%nelw1(n))
+         pos1_y = blk%yw(j) + pt1*blk%cosBeta(blk%nelw1(n))
+         pos1_z = blk%zw(k) + pt1*blk%cosGamma(blk%nelw1(n))
 
          !$acc loop seq
          DO il = i-7, i+7
-            if(pos1_x>=block(g)%xw(il).and.pos1_x<block(g)%xw(il+1)) i_x1 = il
+            if(pos1_x>=blk%xw(il).and.pos1_x<blk%xw(il+1)) i_x1 = il
          END DO
          !$acc loop seq
          DO jl = j-7, j+7
-            if(pos1_y>=block(g)%yw(jl).and.pos1_y<block(g)%yw(jl+1)) i_y1 = jl
+            if(pos1_y>=blk%yw(jl).and.pos1_y<blk%yw(jl+1)) i_y1 = jl
          END DO
          !$acc loop seq
          DO kl = k-7, k+7
-            if(pos1_z>=block(g)%zw(kl).and.pos1_z<block(g)%zw(kl+1)) i_z1 = kl
+            if(pos1_z>=blk%zw(kl).and.pos1_z<blk%zw(kl+1)) i_z1 = kl
          END DO
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-                                            block(g)%xw, block(g)%yw, block(g)%zw, &
-                                            3, block(g)%wt, w_pos1, derivatives)
-         dwdn_e = derivatives(1) * block(g)%cosAlpha(block(g)%nelw1(n)) &
-                + derivatives(2) * block(g)%cosBeta(block(g)%nelw1(n)) &
-                + derivatives(3) * block(g)%cosGamma(block(g)%nelw1(n))
+                                            blk%xw, blk%yw, blk%zw, &
+                                            3, blk%wt, w_pos1, derivatives)
+         dwdn_e = derivatives(1) * blk%cosAlpha(blk%nelw1(n)) &
+                + derivatives(2) * blk%cosBeta(blk%nelw1(n)) &
+                + derivatives(3) * blk%cosGamma(blk%nelw1(n))
 
          n1 = pt1 + sur2nodeDis
 
          cval = wsurf
          bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
-         block(g)%w(i,j,k-1) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
+         blk%w(i,j,k-1) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
       ENDDO
       !$acc end parallel loop
-      ENDDO
 
 END SUBROUTINE velocityForcingField
 
