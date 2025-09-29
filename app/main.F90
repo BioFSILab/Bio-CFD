@@ -151,7 +151,9 @@
         end do
         CALL cpu_time(dStart1)
         CALL velocityForcingField
-        CALL pressureForcingField
+        do g=blk_start, size(block)
+           CALL pressureForcingField(block(g))
+        end do
         CALL cpu_time(dFinish1)
         CALL cpu_time(dStart1)
         CALL velocityForcingGhost
