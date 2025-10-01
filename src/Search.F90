@@ -859,29 +859,26 @@ blk%fluidCellCount = flcnt
         END DO
      END SUBROUTINE cellCount_solid
 
-     SUBROUTINE computeNormDistance
-
+     SUBROUTINE computeNormDistance(blk)
+       type(Blocks), intent(inout) :: blk
         INTEGER            ::  nel2u1, nel2u2, nel2v1, nel2v2, nel2w1, nel2w2
-        INTEGER            :: k, nel2p, g, ibxx, m
+        INTEGER            :: k, nel2p, ibxx, m
         REAL(dp) :: n1x, n2x, n3x, n1y, n2y, n3y, n1z, n2z, n3z, &
                     dis, dis1, dis2, dis3, dis4, dis5, dis6, &
                     minDis, minDis1, minDis2, minDis3, minDis4, minDis5, minDis6, &
                     cent_x, cent_y,cent_z
 
-        print*, 'computeNormDistance started'
-        DO g=blk_start,nblocks
-
-        ibxx=block(g)%ibCellCount
+        ibxx=blk%ibCellCount
         print*,ibxx
-        ALLOCATE(block(g)%pNormDis(ibxx), block(g)%nelp(ibxx), &
-        block(g)%nelu1(ibxx), block(g)%nelu2(ibxx), block(g)%nelv1(ibxx), &
-        block(g)%nelv2(ibxx), block(g)%nelw1(ibxx), block(g)%nelw2(ibxx), &
-        block(g)%u1NormDis(ibxx), block(g)%u2NormDis(ibxx) , block(g)%v1NormDis(ibxx), &
-        block(g)%v2NormDis(ibxx) , block(g)%w1NormDis(ibxx), block(g)%w2NormDis(ibxx))
+        ALLOCATE(blk%pNormDis(ibxx), blk%nelp(ibxx), &
+        blk%nelu1(ibxx), blk%nelu2(ibxx), blk%nelv1(ibxx), &
+        blk%nelv2(ibxx), blk%nelw1(ibxx), blk%nelw2(ibxx), &
+        blk%u1NormDis(ibxx), blk%u2NormDis(ibxx) , blk%v1NormDis(ibxx), &
+        blk%v2NormDis(ibxx) , blk%w1NormDis(ibxx), blk%w2NormDis(ibxx))
 
         !$acc parallel loop gang vector default(present) &
         !$acc private (k, n1x, n2x, n3x, n1y, n2y, n3y, n1z, n2z, n3z, nel2p)
-        DO k = 1, block(g)%ibCellCount
+        DO k = 1, blk%ibCellCount
 
            m = 0
            minDis  = 1e14_dp
@@ -891,20 +888,20 @@ blk%fluidCellCount = flcnt
            minDis4 = 1e14_dp
            minDis5 = 1e14_dp
            minDis6 = 1e14_dp
-           n1x = block(g)%xp(block(g)%interceptedIndexPtr(k, 1))
-           n2x = block(g)%x1(block(g)%interceptedIndexPtr(k, 1))
-           n3x = block(g)%x1(block(g)%interceptedIndexPtr(k, 1)+1)
-           n1y = block(g)%yp(block(g)%interceptedIndexPtr(k, 2))
-           n2y = block(g)%y1(block(g)%interceptedIndexPtr(k, 2))
-           n3y = block(g)%y1(block(g)%interceptedIndexPtr(k, 2)+1)
-           n1z = block(g)%zp(block(g)%interceptedIndexPtr(k, 3))
-           n2z = block(g)%z1(block(g)%interceptedIndexPtr(k, 3))
-           n3z = block(g)%z1(block(g)%interceptedIndexPtr(k, 3)+1)
+           n1x = blk%xp(blk%interceptedIndexPtr(k, 1))
+           n2x = blk%x1(blk%interceptedIndexPtr(k, 1))
+           n3x = blk%x1(blk%interceptedIndexPtr(k, 1)+1)
+           n1y = blk%yp(blk%interceptedIndexPtr(k, 2))
+           n2y = blk%y1(blk%interceptedIndexPtr(k, 2))
+           n3y = blk%y1(blk%interceptedIndexPtr(k, 2)+1)
+           n1z = blk%zp(blk%interceptedIndexPtr(k, 3))
+           n2z = blk%z1(blk%interceptedIndexPtr(k, 3))
+           n3z = blk%z1(blk%interceptedIndexPtr(k, 3)+1)
           !$acc loop seq
-        DO m = 1, block(g)%ibElems
-        cent_x = block(g)%xcent(m)
-        cent_y = block(g)%ycent(m)
-        cent_z = block(g)%zcent(m)
+        DO m = 1, blk%ibElems
+        cent_x = blk%xcent(m)
+        cent_y = blk%ycent(m)
+        cent_z = blk%zcent(m)
         ! No need to take sqrt because we just use for distance comparison
               dis   =  (n1x-cent_x)**2 + (n1y-cent_y)**2 + (n1z-cent_z)**2
               dis1  =  (n2x-cent_x)**2 + (n1y-cent_y)**2 + (n1z-cent_z)**2
@@ -943,45 +940,42 @@ blk%fluidCellCount = flcnt
               ENDIF
            ENDDO
 
-           block(g)% nelp(k)  = nel2p
-           block(g)% nelu1(k) = nel2u1
-           block(g)% nelu2(k) = nel2u2
-           block(g)% nelv1(k) = nel2v1
-           block(g)% nelv2(k) = nel2v2
-           block(g)% nelw1(k) = nel2w1
-           block(g)% nelw2(k) = nel2w2
-          block(g)% pNormDis(k)  = (n1x -block(g)% xcent(nel2p))*block(g)%cosAlpha(nel2p) + &
-                   (n1y -block(g)% ycent(nel2p))*block(g)%cosBeta(nel2p)  + &
-                   (n1z -block(g)% zcent(nel2p))*block(g)%cosGamma(nel2p)
+           blk%nelp(k)  = nel2p
+           blk%nelu1(k) = nel2u1
+           blk%nelu2(k) = nel2u2
+           blk%nelv1(k) = nel2v1
+           blk%nelv2(k) = nel2v2
+           blk%nelw1(k) = nel2w1
+           blk% nelw2(k) = nel2w2
+          blk%pNormDis(k)  = (n1x -blk%xcent(nel2p))*blk%cosAlpha(nel2p) + &
+                   (n1y -blk%ycent(nel2p))*blk%cosBeta(nel2p)  + &
+                   (n1z -blk%zcent(nel2p))*blk%cosGamma(nel2p)
 
-          block(g)% u1NormDis(k) = (n2x -block(g)% xcent(nel2u1))*block(g)%cosAlpha(nel2u1) + &
-                       (n1y -block(g)% ycent(nel2u1))*block(g)%cosBeta(nel2u1)  + &
-                       (n1z - block(g)%zcent(nel2u1))*block(g)%cosGamma(nel2u1)
+          blk%u1NormDis(k) = (n2x -blk%xcent(nel2u1))*blk%cosAlpha(nel2u1) + &
+                       (n1y -blk%ycent(nel2u1))*blk%cosBeta(nel2u1)  + &
+                       (n1z - blk%zcent(nel2u1))*blk%cosGamma(nel2u1)
 
-          block(g)% u2NormDis(k) = (n3x - block(g)%xcent(nel2u2))*block(g)%cosAlpha(nel2u2) + &
-              (n1y -block(g)% ycent(nel2u2))*block(g)%cosBeta(nel2u2)  + &
-              (n1z -block(g)% zcent(nel2u2))*block(g)%cosGamma(nel2u2)
+          blk%u2NormDis(k) = (n3x - blk%xcent(nel2u2))*blk%cosAlpha(nel2u2) + &
+              (n1y -blk%ycent(nel2u2))*blk%cosBeta(nel2u2)  + &
+              (n1z -blk%zcent(nel2u2))*blk%cosGamma(nel2u2)
 
-          block(g)% v1NormDis(k) = (n1x - block(g)%xcent(nel2v1))*block(g)%cosAlpha(nel2v1) + &
-              (n2y - block(g)%ycent(nel2v1))*block(g)%cosBeta(nel2v1)  + &
-              (n1z - block(g)%zcent(nel2v1))*block(g)%cosGamma(nel2v1)
+          blk%v1NormDis(k) = (n1x - blk%xcent(nel2v1))*blk%cosAlpha(nel2v1) + &
+              (n2y - blk%ycent(nel2v1))*blk%cosBeta(nel2v1)  + &
+              (n1z - blk%zcent(nel2v1))*blk%cosGamma(nel2v1)
 
-          block(g)% v2NormDis(k) = (n1x - block(g)%xcent(nel2v2))*block(g)%cosAlpha(nel2v2) + &
-                   (n3y -block(g)% ycent(nel2v2))*block(g)%cosBeta(nel2v2)  + &
-                   (n1z -block(g)% zcent(nel2v2))*block(g)%cosGamma(nel2v2)
+          blk%v2NormDis(k) = (n1x - blk%xcent(nel2v2))*blk%cosAlpha(nel2v2) + &
+                   (n3y -blk%ycent(nel2v2))*blk%cosBeta(nel2v2)  + &
+                   (n1z -blk%zcent(nel2v2))*blk%cosGamma(nel2v2)
 
-          block(g)% w1NormDis(k) = (n1x -block(g)% xcent(nel2w1))*block(g)%cosAlpha(nel2w1) + &
-                       (n1y -block(g)% ycent(nel2w1))*block(g)%cosBeta(nel2w1)  + &
-                       (n2z -block(g)% zcent(nel2w1))*block(g)%cosGamma(nel2w1)
+          blk%w1NormDis(k) = (n1x -blk%xcent(nel2w1))*blk%cosAlpha(nel2w1) + &
+                       (n1y -blk%ycent(nel2w1))*blk%cosBeta(nel2w1)  + &
+                       (n2z -blk%zcent(nel2w1))*blk%cosGamma(nel2w1)
 
-          block(g)% w2NormDis(k) = (n1x -block(g)% xcent(nel2w2))*block(g)%cosAlpha(nel2w2) + &
-                           (n1y -block(g)% ycent(nel2w2))*block(g)%cosBeta(nel2w2)  + &
-                           (n3z -block(g)% zcent(nel2w2))*block(g)%cosGamma(nel2w2)
+          blk%w2NormDis(k) = (n1x -blk%xcent(nel2w2))*blk%cosAlpha(nel2w2) + &
+                           (n1y -blk%ycent(nel2w2))*blk%cosBeta(nel2w2)  + &
+                           (n3z -blk% zcent(nel2w2))*blk%cosGamma(nel2w2)
         END DO
         !$acc end parallel loop
-
-         END DO
-         print*, 'computeNormDistance done'
 
      END SUBROUTINE computeNormDistance
 

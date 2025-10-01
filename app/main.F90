@@ -73,7 +73,9 @@
         print*,'14'
         IF (iStart==0) CALL initialConditions
         IF (iStart==1) CALL lastConditions
-        CALL computeNormDistance
+        do g=blk_start, size(block)
+           CALL computeNormDistance(block(g))
+        end do
         do g=blk_start, size(block)
            CALL findTScells(block(g))
         end do
@@ -145,7 +147,9 @@
              call updateVelocity_newv(g)
             block(g)%move_check=0.
         ENDDO
-           CALL computeNormDistance
+        do g=blk_start, size(block)
+           CALL computeNormDistance(block(g))
+        end do
         do g=blk_start, size(block)
            CALL findTScells(block(g))
         end do
