@@ -69,7 +69,9 @@
         print*,'14'
         IF (iStart==0) CALL initialConditions
         IF (iStart==1) CALL lastConditions
-        CALL computeNormDistance
+        do g=blk_start, size(block)
+           CALL computeNormDistance(block(g))
+        end do
         do g=blk_start, size(block)
            CALL findTScells(block(g))
         end do
@@ -85,13 +87,19 @@
         totime = totime + deltat
         CALL nsMomentum2order
         CALL velocityBC(block(1))
-        CALL solidCellBC
+        do g=blk_start, size(block)
+           CALL solidCellBC(block(g))
+        end do
         !$acc wait
-        CALL velocityForcing1
+        do g=blk_start, size(block)
+           CALL velocityForcing1(block(g))
+        end do
         CALL velocityBC(block(1))
         CALL poissonSolver
         print *,7
-        CALL pressureForcing1
+        do g=blk_start, size(block)
+           CALL pressureForcing1(block(g))
+        end do
         CALL write_output
         !$acc wait
         CALL writeResult
@@ -137,18 +145,28 @@
 
             CALL cellCount_solid
         DO g=blk_start, nblocks
-            call solidCellBC_move(g)
+            call solidCellBC_move(block(g))
              call updateVelocity_newv(g)
             block(g)%move_check=0.
         ENDDO
-           CALL computeNormDistance
+        do g=blk_start, size(block)
+           CALL computeNormDistance(block(g))
+        end do
         do g=blk_start, size(block)
            CALL findTScells(block(g))
         end do
-        CALL velocityForcingField
-        CALL pressureForcingField
-        CALL velocityForcingGhost
-        CALL pressureForcingGhost
+        do g=blk_start, size(block)
+           CALL velocityForcingField(block(g))
+        end do
+        do g=blk_start, size(block)
+           CALL pressureForcingField(block(g))
+        end do
+        do g=blk_start, size(block)
+           CALL velocityForcingGhost(block(g))
+        end do
+        do g=blk_start, size(block)
+           CALL pressureForcingGhost(block(g))
+        end do
         IF(ita>=itamax) EXIT
         END DO
       END PROGRAM main

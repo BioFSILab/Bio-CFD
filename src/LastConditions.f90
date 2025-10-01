@@ -1,5 +1,5 @@
 module biocfd_last_conditions
-  use iso_fortran_env, only : dp => real64
+  use, intrinsic :: iso_fortran_env, only : dp => real64
   use global, only : block, ita, ita1, ita2, nblocks, re, totime
   implicit none
   private

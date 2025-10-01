@@ -1,6 +1,6 @@
 module biocfd_boundary_conditions
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, blk_start, nblocks, deltat, uc
+  use global, only : deltat, uc
   use biocfd_blocks,only : Blocks
   implicit none
   private
@@ -73,43 +73,42 @@ SUBROUTINE velocityBC(blk)
       !$acc end parallel loop
       END SUBROUTINE velocityBC
 
-      SUBROUTINE solidCellBC
-         INTEGER (int64):: i, j, k, n, g
-         DO g=blk_start,nblocks
+      SUBROUTINE solidCellBC(blk)
+        type(Blocks), intent(inout) :: blk
+        INTEGER (int64):: i, j, k, n
         !$acc parallel loop gang vector &
         !$acc default(present) &
         !$acc private (i, j, k)
-         DO n = 1, block(g)%solidCellCount
-            i = block(g)%solidIndexPtr(n,1)
-            j = block(g)%solidIndexPtr(n,2)
-            k = block(g)%solidIndexPtr(n,3)
-            block(g)%ut(i,j,k) = 0._dp
-            block(g)%vt(i,j,k) = 0._dp
-            block(g)%wt(i,j,k) = 0._dp
-            block(g)%p(i,j,k)  = 0._dp
+         DO n = 1, blk%solidCellCount
+            i = blk%solidIndexPtr(n,1)
+            j = blk%solidIndexPtr(n,2)
+            k = blk%solidIndexPtr(n,3)
+            blk%ut(i,j,k) = 0._dp
+            blk%vt(i,j,k) = 0._dp
+            blk%wt(i,j,k) = 0._dp
+            blk%p(i,j,k)  = 0._dp
          END DO
         !$acc end parallel loop
-         END DO
       END SUBROUTINE solidCellBC
 
-      SUBROUTINE solidCellBC_move(g)
-         INTEGER (int64):: i, j, k,n
-         INTEGER (int64),INTENT(IN):: g
+      SUBROUTINE solidCellBC_move(blk)
+        type(Blocks), intent(inout) :: blk
+        INTEGER (int64):: i, j, k,n
 
-         if (block(g)%move_check == 1) then
+         if (blk%move_check == 1) then
          !$acc parallel loop gang vector &
          !$acc default(present)private (i, j)
-         DO n = 1, block(g)%solidCellCount
-            i = block(g)%solidIndexPtr(n,1)
-            j = block(g)%solidIndexPtr(n,2)
-            k = block(g)%solidIndexPtr(n,3)
-            block(g)%ut(i,j,k) = 0._dp
-            block(g)%vt(i,j,k) = 0._dp
-            block(g)%wt(i,j,k) = 0._dp
-            block(g)%p(i,j,k) = 0._dp
-            block(g)%u(i,j,k) = 0._dp
-            block(g)%v(i,j,k) = 0._dp
-            block(g)%w(i,j,k) = 0._dp
+         DO n = 1, blk%solidCellCount
+            i = blk%solidIndexPtr(n,1)
+            j = blk%solidIndexPtr(n,2)
+            k = blk%solidIndexPtr(n,3)
+            blk%ut(i,j,k) = 0._dp
+            blk%vt(i,j,k) = 0._dp
+            blk%wt(i,j,k) = 0._dp
+            blk%p(i,j,k) = 0._dp
+            blk%u(i,j,k) = 0._dp
+            blk%v(i,j,k) = 0._dp
+            blk%w(i,j,k) = 0._dp
          END DO
          !$acc end parallel loop
         endif
