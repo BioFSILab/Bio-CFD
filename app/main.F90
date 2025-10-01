@@ -160,7 +160,9 @@
            CALL findTScells(block(g))
         end do
         CALL cpu_time(dStart1)
-        CALL velocityForcingField
+        do g=blk_start, size(block)
+           CALL velocityForcingField(block(g))
+        end do
         do g=blk_start, size(block)
            CALL pressureForcingField(block(g))
         end do
