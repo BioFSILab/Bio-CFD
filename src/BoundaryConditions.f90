@@ -12,7 +12,7 @@ SUBROUTINE velocityBC(blk,deltat,uc)
       type(Blocks), intent(inout) :: blk
       INTEGER (int64):: i, j, k
       REAL(dp), intent(in) :: deltat,uc
-      
+
      !$acc parallel loop gang vector collapse (2) default(present)  &
      !$acc firstprivate (uc, deltat)
       DO  k = 2, blk%nz+1
