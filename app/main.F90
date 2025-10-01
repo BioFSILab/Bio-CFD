@@ -3,7 +3,7 @@
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, istart, &
              ita, ita1, ita2, itamax, nblocks, totaltime, totime,a0y,alpha_m, &
-             alpha_t,ang_theta,aoa,aoa1,aoa2,phase_angle,pi,theta_m,theta_t
+             alpha_t,ang_theta,aoa,aoa1,aoa2,phase_angle,pi,theta_m,theta_t,uc
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
@@ -90,7 +90,7 @@
         ita2 = ita2 + 1
         totime = totime + deltat
         CALL nsMomentum2order
-        CALL velocityBC(block(1))
+        CALL velocityBC(block(1),deltat,uc)
         do g=blk_start, size(block)
            CALL solidCellBC(block(g))
         end do
@@ -98,7 +98,7 @@
         do g=blk_start, size(block)
            CALL velocityForcing1(block(g))
         end do
-        CALL velocityBC(block(1))
+        CALL velocityBC(block(1),deltat,uc)
         CALL poissonSolver
         print *,7
         do g=blk_start, size(block)

@@ -2,7 +2,7 @@ module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, pcitamax, &
        amgxita, dfinish, dstart, ita, nblocks, totaltime, &
-       totime
+       totime,uc
 #ifdef _OPENMP
   use omp_lib, only: omp_get_max_threads, omp_get_thread_num
 #endif
@@ -133,7 +133,7 @@ module biocfd_pcor_vcor
         END DO
         !$omp end do
         !$omp end parallel
-         CALL velocityBC(block(1))      !correct velocity at boundaries
+         CALL velocityBC(block(1),deltat,uc)      !correct velocity at boundaries
 
          DO g=1,nblocks
          err_ds=0.
