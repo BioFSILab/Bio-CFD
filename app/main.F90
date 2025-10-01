@@ -95,7 +95,9 @@
            CALL solidCellBC(block(g))
         end do
         !$acc wait
-        CALL velocityForcing1
+        do g=blk_start, size(block)
+           CALL velocityForcing1(block(g))
+        end do
         CALL velocityBC(block(1))
         CALL poissonSolver
         print *,7
