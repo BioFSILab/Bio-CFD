@@ -1,6 +1,6 @@
 module biocfd_boundary_conditions
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, blk_start, nblocks, deltat, uc
+  use global, only : deltat, uc
   use biocfd_blocks,only : Blocks
   implicit none
   private
