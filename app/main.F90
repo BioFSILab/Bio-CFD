@@ -91,7 +91,9 @@
         totime = totime + deltat
         CALL nsMomentum2order
         CALL velocityBC(block(1))
-        CALL solidCellBC
+        do g=blk_start, size(block)
+           CALL solidCellBC(block(g))
+        end do
         !$acc wait
         CALL velocityForcing1
         CALL velocityBC(block(1))
