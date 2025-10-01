@@ -165,7 +165,9 @@
         CALL cpu_time(dFinish1)
         CALL cpu_time(dStart1)
         CALL velocityForcingGhost
-        CALL pressureForcingGhost
+        do g=blk_start, size(block)
+           CALL pressureForcingGhost(block(g))
+        end do
         CALL cpu_time(dFinish1)
         IF(ita>=itamax) EXIT
         END DO
