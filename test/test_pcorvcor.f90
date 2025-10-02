@@ -29,7 +29,6 @@ contains
     type(error_type), allocatable, intent(out) :: error
 
     type(Blocks) :: blk
-    integer(int64) :: expected
 
     blk%nx = 5
     blk%ny = 5
