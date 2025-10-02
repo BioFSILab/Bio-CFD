@@ -174,7 +174,7 @@
        end do
         DO g=blk_start, nblocks
             call solidCellBC_move(block(g))
-             call updateVelocity_newv(g)
+            call updateVelocity_newv(block(g))
             block(g)%move_check=0.
         ENDDO
         do g=blk_start, size(block)
