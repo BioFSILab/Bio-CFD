@@ -75,7 +75,10 @@
         do g=blk_start, size(block)
            CALL findTScells(block(g))
         end do
-        CALL coefficientMatrix
+        do g=1, size(block)
+           CALL coefficientMatrix(block(g), g == 1)
+        end do
+        print*, "Coefficient Matrix generated"
         CALL non_uni_coeff
         totime = totime + deltat
         CALL write_output
