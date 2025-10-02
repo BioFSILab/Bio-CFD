@@ -766,50 +766,48 @@ blk%fluidCellCount = flcnt
      END IF
      END SUBROUTINE selectiveRetagging_th
 
-     SUBROUTINE cellCount_solid
+     SUBROUTINE cellCount_solid(blk)
 
-        INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k, g
+       type(Blocks), intent(inout) :: blk
+        INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k
         INTEGER (int64) :: cell_val
         integer :: red_count, black_count
         integer (int64):: idx
 
-        print*, "cellCount started"
 
-
-         DO g=blk_start,nblocks
          iPt  = 0
          iPt1 = 0
          iPt2 = 0
 
-         ALLOCATE(block(g)%interceptedIndexPtr(block(g)%ibCellCount,3), &
-                  block(g)%fluidIndexPtr(block(g)%fluidCellCount, 3), &
-                  block(g)%solidIndexPtr(block(g)%solidCellCount, 3))
+         ALLOCATE(blk%interceptedIndexPtr(blk%ibCellCount,3), &
+                  blk%fluidIndexPtr(blk%fluidCellCount, 3), &
+                  blk%solidIndexPtr(blk%solidCellCount, 3))
 
          !$acc parallel loop collapse(3) private(cell_val, idx)
-         DO k = 2, block(g)%nz+1
-           DO j = 2, block(g)%ny+1
-             DO i = 2, block(g)%nx+1
+         DO k = 2, blk%nz+1
+           DO j = 2, blk%ny+1
+             DO i = 2, blk%nx+1
 
-               cell_val = block(g)%cell(i,j,k)
+               cell_val = blk%cell(i,j,k)
 
                IF (cell_val==0) THEN
                 !$acc atomic capture
                   iPt1 = iPt1 + 1
                   idx = iPt1
                 !$acc end atomic
-                  block(g)%fluidIndexPtr(idx, :) = [i, j, k]
+                  blk%fluidIndexPtr(idx, :) = [i, j, k]
                ELSEIF (cell_val==1) THEN
                   !$acc atomic capture
                   iPt2 = iPt2 + 1
                   idx = iPt2
                   !$acc end atomic
-                  block(g)%solidIndexPtr(idx, :) = [i, j, k]
+                  blk%solidIndexPtr(idx, :) = [i, j, k]
                ELSEIF (cell_val==2) THEN
                   !$acc atomic capture
                   iPt = iPt + 1
                   idx = iPt
                   !$acc end atomic
-                  block(g)%interceptedIndexPtr(idx, :) = [i, j, k]
+                  blk%interceptedIndexPtr(idx, :) = [i, j, k]
                ENDIF
 
              END DO
@@ -821,8 +819,8 @@ blk%fluidCellCount = flcnt
           black_count = 0
 
          !$acc parallel loop reduction(+:red_count,black_count) private(i, j, k)
-         DO n = 1, block(g)%fluidCellCount
-          if (mod(sum(block(g)%fluidIndexPtr(n, :)), 2_int64) == 1) then
+         DO n = 1, blk%fluidCellCount
+          if (mod(sum(blk%fluidIndexPtr(n, :)), 2_int64) == 1) then
               red_count = red_count + 1
             ELSE
               black_count = black_count + 1
@@ -830,33 +828,31 @@ blk%fluidCellCount = flcnt
          ENDDO
          !$acc end parallel loop
 
-         block(g)%redCellCount = red_count
-         block(g)%blackCellCount  = black_count
+         blk%redCellCount = red_count
+         blk%blackCellCount  = black_count
 
-         ALLOCATE (block(g)%redCellIndexPtr(block(g)%redCellCount,3), &
-                   block(g)%blackCellIndexPtr(block(g)%blackCellCount,3))
+         ALLOCATE (blk%redCellIndexPtr(blk%redCellCount,3), &
+                   blk%blackCellIndexPtr(blk%blackCellCount,3))
          ipt1 = 0
          iPt = 0
          !$acc parallel loop
-         DO n = 1, block(g)%fluidCellCount
-            if (mod(sum(block(g)%fluidIndexPtr(n, :)), 2_int64) == 1) then
+         DO n = 1, blk%fluidCellCount
+            if (mod(sum(blk%fluidIndexPtr(n, :)), 2_int64) == 1) then
               !$acc atomic capture
                iPt = iPt + 1
                idx = iPt
                !$acc end atomic
-               block(g)%redCellIndexPtr(idx, :) = block(g)%fluidIndexPtr(n, :)
+               blk%redCellIndexPtr(idx, :) = blk%fluidIndexPtr(n, :)
             ELSE
               !$acc atomic capture
                iPt1 = iPt1 + 1
                idx = iPt1
                !$acc end atomic
-               block(g)%blackCellIndexPtr(idx, :) = block(g)%fluidIndexPtr(n, :)
+               blk%blackCellIndexPtr(idx, :) = blk%fluidIndexPtr(n, :)
             ENDIF
          ENDDO
          !$acc end parallel loop
 
-            print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
-        END DO
      END SUBROUTINE cellCount_solid
 
      SUBROUTINE computeNormDistance(blk)

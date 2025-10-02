@@ -61,7 +61,11 @@
            CALL tagging_th(block(g),g)
         end do
         print*,'11'
-        CALL cellCount_solid
+        print*, "cellCount started"
+        do g=blk_start, size(block)
+           CALL cellCount_solid(block(g))
+           print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
+        end do
         print*,'12'
         CALL fine_block_cell
         print*,'13'
@@ -142,8 +146,11 @@
              block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, &
              block(g)%w1_ghost,block(g)% w1t_ghost)
        END DO
-
-            CALL cellCount_solid
+       print*, "cellCount started"
+       do g=blk_start, size(block)
+          CALL cellCount_solid(block(g))
+          print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
+       end do
         DO g=blk_start, nblocks
             call solidCellBC_move(block(g))
              call updateVelocity_newv(g)
