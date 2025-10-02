@@ -1,10 +1,10 @@
 module biocfd_read_input
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, w0, v0, uc, u_tip, u0, totime, theta_m1, theta_m, &
+  use global, only : block, uc, u_tip, u0, totime, theta_m1, theta_m, &
        surgeopoints, rho_f, rev, re, piv_pt, pi, phase_angle, pcitamax, omega4, &
        omega3, omega2, omega1, nblocks, mu_f, l_c, itamax, ita1, ita, istart, &
        intflines, inor, freq, epsi, dxmin, dt_order, disp, deltat, char_f, &
-       blk_start, aoa, alpha_m1, alpha_m, alpha, a0y, line, intfr, Interfaces
+       blk_start, aoa, alpha_m1, alpha_m, alpha, line, intfr, Interfaces
   use biocfd_blocks,only : Blocks
   implicit none
 
@@ -26,8 +26,8 @@ module biocfd_read_input
        NAMELIST /input_data/ nblocks, intflines,  &
                    itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
                    re,rho_f, mu_f, l_c, &
-                   u0, v0,  w0,  &
-                   surGeoPoints,a0y, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
+                   u0,  &
+                   surGeoPoints, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
                    istart, dt_order, inor, dxmin
 
   open(newunit=io, file="input_data.nml", status="old", action="read")
@@ -97,7 +97,6 @@ module biocfd_read_input
         uc=u0*1
         re = rev
         pi = 4.D0*ATAN(1.D0)
-        a0y = 2*sin(pi/6)*l_c
         freq = freq*u0/l_c
         deltat = 1._dp/(4._dp*freq*dt_order)  !0.00041666666666_dp! *5e-4
         disp = block(blk_start)%a0*cos(2*pi*freq*deltat)

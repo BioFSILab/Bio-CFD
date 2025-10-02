@@ -1,6 +1,6 @@
 module biocfd_navier_stokes
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, al, alpha, deltat, nblocks, re, rev
+  use global, only : block, alpha, deltat, nblocks, re, rev
   implicit none
   private
 
@@ -270,7 +270,6 @@ contains
                           ztt2,residw, temp_u1dotn, temp_u2dotn, temp_v1dotn, temp_v2dotn, &
                           temp_w1dotn, temp_w2dotn, temp_pdotn
          logical :: do_third_order_upwinding
-     al = 1.
 
         DO g=1,nblocks
         nx_var=block(g)%nx
@@ -294,7 +293,7 @@ contains
 !$acc           temp_v2dotn,temp_v1dotn, &
 !$acc           temp_w2dotn,temp_w1dotn, temp_pdotn, block_idx_ts, idx) &
 !$acc default(present)   &
-!$acc firstprivate(nx_var, ny_var, nz_var, rev, deltat, al) &
+!$acc firstprivate(nx_var, ny_var, nz_var, rev, deltat) &
 !$acc private(do_third_order_upwinding)
      DO n = 1, block(g)%fluidCellCount
 
