@@ -57,12 +57,12 @@ contains
 
     ! Before calling updateVelocity_newv the arrays should be different
     call check(error, any(blk%u == blk%ut), .false.)
-    if (allocated(error)) return    
+    if (allocated(error)) return
     call check(error, any(blk%v == blk%vt), .false.)
     if (allocated(error)) return
     call check(error, any(blk%w == blk%wt), .false.)
     if (allocated(error)) return
- 
+
     call updateVelocity_newv(blk)
 
     ! After calling updatingVelocity_newv the arrays should be the same
