@@ -12,7 +12,7 @@ contains
   SUBROUTINE non_uni_coeff(blk)
 
        type(Blocks), intent(inout) :: blk
-       INTEGER  (dp) :: i, j, k, g, nx_var, ny_var, nz_var
+       INTEGER  (dp) :: i, j, k, nx_var, ny_var, nz_var
        REAL (dp)   :: tmp_dx1, tmp_dx2, tmp_dx3, tmp_dx4, tmp_dy1, tmp_dy2, tmp_dy3,         &
                       tmp_dy4, tmp_dz1, tmp_dz2, tmp_dz3, tmp_dz4
 
@@ -253,7 +253,7 @@ contains
 !c     navier-stokes equations for constant properties
 !c***********************************************************************
       type(Blocks), intent(inout) :: blk
-      INTEGER (dp) :: i, j, k, g, n ,nx_var,ny_var,nz_var, n1, nn, &
+      INTEGER (dp) :: i, j, k, n ,nx_var,ny_var,nz_var, n1, nn, &
            index_ip1, index_im1, index_jp1, index_jm1, index_kp1, index_km1, block_idx_ts, idx
          REAL (dp) :: dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14, &
                  u15,u16,v1a,v22,v3,v4,v5,v6,v7,v8,v9,v10,v11,v12,v13,v14,v15,v16, &
