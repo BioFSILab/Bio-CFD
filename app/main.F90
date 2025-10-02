@@ -172,7 +172,7 @@
           CALL cellCount_solid(block(g))
           print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
        end do
-        DO g=blk_start, nblocks
+        DO g=blk_start, size(block)
             call solidCellBC_move(block(g))
             call updateVelocity_newv(block(g))
             block(g)%move_check=0.
