@@ -3,7 +3,7 @@
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, istart, &
              ita, ita1, ita2, itamax, nblocks, totaltime, totime,alpha_m, &
-             ang_theta,aoa,aoa1,aoa2,phase_angle,pi,theta_m,theta_t,uc
+             ang_theta,aoa,aoa1,aoa2,phase_angle,pi,theta_m,uc
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
