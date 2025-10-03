@@ -919,15 +919,15 @@ ENDIF
         real(dp) :: f(8)
 
         f(1) = theta(3)
-        f(2) = 2.0_dp*theta(3)+theta(3)**2.0_dp
-        f(3) = 3.0_dp*theta(3)+3.0_dp*theta(3)**2.0_dp+theta(3)**3.0_dp
-        f(4) = 4.0_dp*theta(3)+6.0_dp*theta(3)**2.0_dp+4.0_dp*theta(3)**3.0_dp+theta(3)**4.0_dp
+        f(2) = 2.0_dp*theta(3)+theta(3)**2
+        f(3) = 3.0_dp*theta(3)+3.0_dp*theta(3)**2+theta(3)**3
+        f(4) = 4.0_dp*theta(3)+6.0_dp*theta(3)**2+4.0_dp*theta(3)**3+theta(3)**4
         f(5) = 1.0_dp/(theta(1)*theta(2))
-        f(6) = (2.0_dp*theta(1)+1.0_dp)/((theta(1)**2.0_dp)*(theta(2)**2.0_dp))
-        f(7) = (3.0_dp*theta(1)**2.0_dp+3.0_dp*theta(1)+1.0_dp)/ &
-               ((theta(1)**3.0_dp)*(theta(2)**3.0_dp))
-        f(8) = (4.0_dp*theta(1)**3.0_dp+6.0_dp*theta(1)**2.0_dp+4.0_dp*theta(1)+1.0_dp)/ &
-               ((theta(1)**4.0_dp)*(theta(2)**4.0_dp))
+        f(6) = (2.0_dp*theta(1)+1.0_dp)/((theta(1)**2)*(theta(2)**2))
+        f(7) = (3.0_dp*theta(1)**2+3.0_dp*theta(1)+1.0_dp)/ &
+               ((theta(1)**3)*(theta(2)**3))
+        f(8) = (4.0_dp*theta(1)**3+6.0_dp*theta(1)**2+4.0_dp*theta(1)+1.0_dp)/ &
+               ((theta(1)**4)*(theta(2)**4))
     end function compute_f
 
 
@@ -937,13 +937,13 @@ ENDIF
        real(dp), intent(in) :: f(8)
        real(dp) :: s(5:10, 1:7)
 
-       s(5, 1) = -1.0_dp/(theta_2**4.0_dp)
+       s(5, 1) = -1.0_dp/(theta_2**4)
        s(5, 2) = f(4)
        s(5, 3) = f(4)
        s(5, 4) = s(5, 1)
-       s(5, 5) = -(f(1)/(theta_2**4.0_dp)+f(4)/theta_2)
-       s(5, 6) = (f(4)/(theta_2**2.0_dp)-f(2)/(theta_2**4.0_dp))
-       s(5, 7) = -(f(3)/(theta_2**4.0_dp)+f(4)/(theta_2**3.0_dp))
+       s(5, 5) = -(f(1)/(theta_2**4)+f(4)/theta_2)
+       s(5, 6) = (f(4)/(theta_2**2)-f(2)/(theta_2**4))
+       s(5, 7) = -(f(3)/(theta_2**4)+f(4)/(theta_2**3))
 
        s(6, 1) = -1.0_dp
        s(6, 2) = f(8)
@@ -988,13 +988,13 @@ ENDIF
        real(dp), intent(in) :: theta(3)
        real(dp) :: ak(7)
 
-       ak(1) = (1.0_dp+2.0_dp*theta(1))*(theta(3)+theta(3)**2.0_dp)*theta(2)
-       ak(2) = (1.0_dp+theta(1))*(2.0_dp*theta(3)+theta(3)**2.0_dp)
+       ak(1) = (1.0_dp+2.0_dp*theta(1))*(theta(3)+theta(3)**2)*theta(2)
+       ak(2) = (1.0_dp+theta(1))*(2.0_dp*theta(3)+theta(3)**2)
        ak(3) = (1.0_dp+theta(1))
-       ak(4) = (1.0_dp+theta(1))*((1.0_dp+theta(3))**2.0_dp)
-       ak(5) = ((1.0_dp+theta(1))**2.0_dp)*(theta(3)+theta(3)**2.0_dp)*theta(2)
-       ak(6) = (theta(1)**2.0_dp)*theta(2)*(theta(3)+theta(3)**2.0_dp)
-       ak(7) = (1.0_dp+theta(1))*(theta(3)+theta(3)**2.0_dp)*theta(2)
+       ak(4) = (1.0_dp+theta(1))*((1.0_dp+theta(3))**2)
+       ak(5) = ((1.0_dp+theta(1))**2)*(theta(3)+theta(3)**2)*theta(2)
+       ak(6) = (theta(1)**2)*theta(2)*(theta(3)+theta(3)**2)
+       ak(7) = (1.0_dp+theta(1))*(theta(3)+theta(3)**2)*theta(2)
     end function compute_ak
 
     !> Check whether adjacent cells in a taxicab geometry
