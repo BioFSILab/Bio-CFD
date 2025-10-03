@@ -6,7 +6,7 @@
              ang_theta,aoa,aoa1,aoa2,phase_angle,pi,theta_m
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
-             cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
+             cellcount_solid_coarse, change_block_coords, &
              change_block_interface, computenormdistance, computesurfacevariables, findtscells, &
              fine_block_cell, selectiveretagging_th
         use biocfd_pcor_vcor, only: poissonSolver, updateVelocity_newv
@@ -118,7 +118,10 @@
            CALL change_block_coords
            CALL change_block_interface
           CALL fine_block_cell
-          CALL cellCount_solid_coarse_mv
+          if (coarse_flcnt_check == 1) then
+             call cellCount_solid_coarse(block(1))
+             coarse_flcnt_check = 0
+          end if
            print*,1
          do g=blk_start, size(block)
             CALL computeSurfaceNorm(block(g))

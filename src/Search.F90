@@ -13,7 +13,7 @@ module biocfd_search
 
   public :: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm
   public :: tagging_th, tagging_th_move, block_move_check, cellcount_solid
-  public :: cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords
+  public :: cellcount_solid_coarse, change_block_coords
   public :: change_block_interface, computenormdistance, computesurfacevariables, findtscells
   public :: fine_block_cell, selectiveretagging_th
 
@@ -1029,86 +1029,6 @@ blk%fluidCellCount = flcnt
 
         end subroutine fine_block_cell
 
-        SUBROUTINE cellCount_solid_coarse_mv
-
-        INTEGER(int64) ::  n, iPt, iPt1, iPt2, i, j, k
-        INTEGER(int64) ::  g
-        g=1
-
-        if ( coarse_flcnt_check == 1)then
-
-        block(g)%fluidCellCount=0
-         iPt  = 0
-         iPt1 = 0
-         iPt2 = 0
-         DO k = 2, block(g)%nz +1
-         DO j = 2, block(g)%ny +1
-         DO i = 2, block(g)%nx +1
-            IF (block(g)%cell(i,j,k)==0) THEN
-                block(g)%fluidCellCount=block(g)%fluidCellCount +1
-            ENDIF
-         end do
-         end do
-         end do
-         print*,'bef deall'
-         DEALLOCATE (block(g)%fluidIndexPtr)
-         print*,'aft deall'
-         ALLOCATE (block(g)%fluidIndexPtr(block(g)%fluidCellCount,3))
-         DO k = 2, block(g)%nz +1
-         DO j = 2, block(g)%ny +1
-         DO i = 2, block(g)%nx +1
-               n=    i-1  + (block(g)%nx)*(j-2)
-               IF (block(g)%cell(i,j,k)==0) THEN
-                  iPt1 = iPt1 + 1
-                  block(g)%fluidIndexPtr(iPt1, 1) = i
-                  block(g)%fluidIndexPtr(iPt1, 2) = j
-                  block(g)%fluidIndexPtr(iPt1, 3) = k
-               ENDIF
-         END DO
-         END DO
-         END DO
-         block(g)%redCellCount = 0
-         block(g)%blackCellCount  = 0
-
-         DO n = 1, block(g)%fluidCellCount
-            i = block(g)%fluidIndexPtr(n, 1)
-            j = block(g)%fluidIndexPtr(n, 2)
-            k = block(g)%fluidIndexPtr(n, 3)
-            IF (mod(i+j+k,2_int64)==1) THEN
-               block(g)%redCellCount = block(g)%redCellCount + 1
-            ELSE
-               block(g)%blackCellCount = block(g)%blackCellCount + 1
-            ENDIF
-         ENDDO
-         DEALLOCATE (block(g)%redCellIndexPtr ,block(g)%blackCellIndexPtr)
-         ALLOCATE(block(g)%redCellIndexPtr(block(g)%redCellCount,3) , &
-                  block(g)%blackCellIndexPtr(block(g)%blackCellCount,3))
-         ipt1 = 0
-         iPt = 0
-
-         DO n = 1, block(g)%fluidCellCount
-            i = block(g)%fluidIndexPtr(n, 1)
-            j = block(g)%fluidIndexPtr(n, 2)
-            k = block(g)%fluidIndexPtr(n, 3)
-            IF (mod(i+j+k,2_int64)==1) THEN
-               iPt = iPt + 1
-               block(g)%redCellIndexPtr(iPt, 1) = i
-               block(g)%redCellIndexPtr(iPt, 2) = j
-               block(g)%redCellIndexPtr(iPt, 3) = k
-            ELSE
-               iPt1 = iPt1 + 1
-               block(g)%blackCellIndexPtr(iPt1, 1) = i
-               block(g)%blackCellIndexPtr(iPt1, 2) = j
-               block(g)%blackCellIndexPtr(iPt1, 3) = k
-            ENDIF
-         ENDDO
-
-            print*, g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
-          ENDIF
-          coarse_flcnt_check=0
-
-        END SUBROUTINE cellCount_solid_coarse_mv
-
         SUBROUTINE block_move_check
 
         INTEGER(int64) :: i,j,k,g, a_blk_no, b_blk_no, factor
@@ -1743,6 +1663,7 @@ blk%fluidCellCount = flcnt
          end do
          end do
          end do
+         if (allocated(blk%fluidIndexPtr)) deallocate(blk%fluidIndexPtr)
          ALLOCATE (blk%fluidIndexPtr(blk%fluidCellCount,3))
          DO k = 2, blk%nz +1
          DO j = 2, blk%ny +1
@@ -1769,6 +1690,9 @@ blk%fluidCellCount = flcnt
                blk%blackCellCount = blk%blackCellCount + 1
             ENDIF
          ENDDO
+
+         if (allocated(blk%redCellIndexPtr)) deallocate(blk%redCellIndexPtr)
+         if (allocated(blk%blackCellIndexPtr)) deallocate(blk%blackCellIndexPtr)
 
          ALLOCATE (blk%redCellIndexPtr(blk%redCellCount,3), &
                    blk%blackCellIndexPtr(blk%blackCellCount,3))
