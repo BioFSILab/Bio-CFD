@@ -25,7 +25,7 @@ contains
        i = blk%fluidIndexPtr(n, 1)
        j = blk%fluidIndexPtr(n, 2)
        k = blk%fluidIndexPtr(n, 3)
-       blk%u(i,j,k) = uc  !396.33054782262406 !116.236233
+       blk%u(i,j,k) = uc
        blk%v(i,j,k) = 0._dp
        blk%w(i,j,k) = 0._dp
        blk%ut(i,j,k) = uc
