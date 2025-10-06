@@ -61,13 +61,26 @@
            CALL tagging_th(block(g),g)
         end do
         print*,'11'
-        CALL cellCount_solid
+        print*, "cellCount started"
+        do g=blk_start, size(block)
+           CALL cellCount_solid(block(g))
+           print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
+        end do
         print*,'12'
         CALL fine_block_cell
         print*,'13'
         CALL cellCount_solid_coarse(block(1))
         print*,'14'
-        IF (iStart==0) CALL initialConditions
+        IF (iStart==0) then
+           WRITE(*,*) 'Enter initialcondtitions'
+           ita = 0
+           ita1 = 0
+           totime = 0.
+           do g=1, size(block)
+              CALL initialConditions(block(g), uc)
+           end do
+           print*, 'initial'
+        end if
         IF (iStart==1) CALL lastConditions
         do g=blk_start, size(block)
            CALL computeNormDistance(block(g))
@@ -75,7 +88,10 @@
         do g=blk_start, size(block)
            CALL findTScells(block(g))
         end do
-        CALL coefficientMatrix
+        do g=1, size(block)
+           CALL coefficientMatrix(block(g), g == 1)
+        end do
+        print*, "Coefficient Matrix generated"
         CALL non_uni_coeff
         totime = totime + deltat
         CALL write_output
@@ -142,8 +158,11 @@
              block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, &
              block(g)%w1_ghost,block(g)% w1t_ghost)
        END DO
-
-            CALL cellCount_solid
+       print*, "cellCount started"
+       do g=blk_start, size(block)
+          CALL cellCount_solid(block(g))
+          print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
+       end do
         DO g=blk_start, nblocks
             call solidCellBC_move(block(g))
              call updateVelocity_newv(g)
