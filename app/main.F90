@@ -3,7 +3,7 @@
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, istart, &
              ita, ita1, ita2, itamax, nblocks, totaltime, totime,alpha_m, &
-             ang_theta,aoa,aoa1,aoa2,phase_angle,pi,theta_m
+             ang_theta,aoa,aoa1,aoa2,phase_angle,pi,theta_m, uc
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
@@ -67,7 +67,16 @@
         print*,'13'
         CALL cellCount_solid_coarse(block(1))
         print*,'14'
-        IF (iStart==0) CALL initialConditions
+        IF (iStart==0) then
+           WRITE(*,*) 'Enter initialcondtitions'
+           ita = 0
+           ita1 = 0
+           totime = 0.
+           do g=1, size(block)
+              CALL initialConditions(block(g), uc)
+           end do
+           print*, 'initial'
+        end if
         IF (iStart==1) CALL lastConditions
         do g=blk_start, size(block)
            CALL computeNormDistance(block(g))
