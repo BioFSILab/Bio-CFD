@@ -203,7 +203,7 @@ module biocfd_search
       SUBROUTINE computeSurfaceNorm(blk)
         type(Blocks), intent(inout) :: blk
         INTEGER(int64) ::  n  !c1, c2, c3, c4
-        REAL(dp)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL, binor
+        REAL(dp)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL
         REAL(dp)      :: var_xcent, var_ycent, var_zcent
 
         ALLOCATE (blk%xcent(blk%ibElems), blk%ycent(blk%ibElems), &
@@ -241,11 +241,9 @@ module biocfd_search
 
            lenEL = dsqrt(blk%cosAlpha(n)**2 + blk%cosBeta(n)**2 + blk%cosGamma(n)**2)   !length of element
 
-                binor=inor
-
-           blk%cosAlpha(n) = blk%cosAlpha(n)/lenEl*binor               !direction cosine unit normal along x
-           blk%cosBeta(n)  = blk%cosBeta(n)/lenEl*binor                !direction cosine unit normal along y
-           blk%cosGamma(n) = blk%cosGamma(n)/lenEl*binor               !direction cosine unit normal along z
+           blk%cosAlpha(n) = inor * blk%cosAlpha(n) / lenEl  ! direction cosine unit normal along x
+           blk%cosBeta(n)  = inor * blk%cosBeta(n) / lenEl   ! direction cosine unit normal along y
+           blk%cosGamma(n) = inor * blk%cosGamma(n) / lenEl  ! direction cosine unit normal along z
         ENDDO
        !$acc end parallel loop
 
