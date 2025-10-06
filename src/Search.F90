@@ -1,6 +1,6 @@
 module biocfd_search
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64, int32
-  use global, only: block, nblocks, blk_start, xfact, totime, &
+  use global, only: block, nblocks, blk_start, totime, &
        theta_m, piv_pt, pi, phase_angle, ita, dxmin, deltat, aoa2, aoa1, aoa, &
        ang_theta, alpha_m, re, freq, inor, char_f, &
        intflines, coarse_flcnt_check, intfr
@@ -10,6 +10,7 @@ module biocfd_search
   implicit NONE
 
   private
+  real(dp), parameter :: xfact = 0.05_dp
 
   public :: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm
   public :: tagging_th, tagging_th_move, block_move_check, cellcount_solid
@@ -57,7 +58,6 @@ module biocfd_search
         blk%xnode1 = blk%xnode
         blk%ynode1 = blk%ynode
         blk%znode1 = blk%znode
-        xfact=0.05_dp
         bdfr=15
         bdy=15*dxmin
         angt  =  2._dp*pi*bdfr
