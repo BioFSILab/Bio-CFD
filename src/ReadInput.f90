@@ -1,7 +1,7 @@
 module biocfd_read_input
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, uc, u_tip, u0, totime, theta_m1, theta_m, &
-       surgeopoints, rho_f, rev, re, piv_pt, pi, phase_angle, pcitamax, omega4, &
+       rho_f, rev, re, piv_pt, pi, phase_angle, pcitamax, omega4, &
        omega3, omega2, omega1, nblocks, mu_f, l_c, itamax, ita1, ita, istart, &
        intflines, inor, freq, epsi, dxmin, disp, deltat, char_f, &
        blk_start, aoa, alpha_m1, alpha_m, alpha, intfr, Interfaces
@@ -14,9 +14,10 @@ module biocfd_read_input
 
   contains
 
-      SUBROUTINE readInput
+      SUBROUTINE readInput(surGeoPoints)
        INTEGER (int64) :: i, g,io
-        CHARACTER(len=160)  :: filename1
+       CHARACTER(len=160)  :: filename1
+       INTEGER (int64),INTENT(OUT)   :: surGeoPoints
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
        !     not dependent on diff for checking code changes don't break code
        !     Variables removed from Blocks 'xstart, xend, ystart, yend, zstart, zend'
@@ -304,9 +305,10 @@ module biocfd_read_input
 
       END SUBROUTINE readInput
 
-      SUBROUTINE readSurfaceMeshGmsh(blk)
+      SUBROUTINE readSurfaceMeshGmsh(blk,surGeoPoints)
        type(Blocks), intent(inout) :: blk
        INTEGER(int64) :: n, i1, i2, i3, i5
+       INTEGER (int64),INTENT(IN)   :: surGeoPoints
 
        OPEN(121, FILE ='geometries/butterflyMedium.msh', form = 'formatted')               !READ SURFACE MESH FILE
         DO n = 1, 4

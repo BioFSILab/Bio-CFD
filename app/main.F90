@@ -29,10 +29,11 @@
         IMPLICIT NONE
 
         INTEGER (int64) :: g
-        CALL readInput
+        INTEGER (int64)   :: surGeoPoints
+        CALL readInput(surGeoPoints)
         CALL readBlockInterface
         do g=blk_start, size(block)
-          CALL readSurfaceMeshGmsh(block(g))
+          CALL readSurfaceMeshGmsh(block(g),surGeoPoints)
         end do
         do g=1, size(block)
           CALL allocateArrays(block(g))
