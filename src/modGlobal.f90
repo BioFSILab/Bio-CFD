@@ -4,7 +4,6 @@ MODULE global
        use biocfd_blocks,only : Blocks
        use biocfd_interfaces, only : Interfaces
        IMPLICIT NONE
-       CHARACTER (LEN = 3)   :: char_f
        INTEGER               :: istart
        INTEGER (int64)   :: itamax, pcItaMax,      &
                                 ita, ita1,   &

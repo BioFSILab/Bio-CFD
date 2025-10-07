@@ -20,9 +20,9 @@
         use biocfd_navier_stokes, only: non_uni_coeff, nsmomentum2order
         use biocfd_write_output_corner1, only: body_plot, writeresult
 #if USE_HDF5 == 1
-        use biocfd_write_output_corner1, only: write_output => write_output_hdf5
+        use biocfd_write_output_corner1, only: write_output_hdf5
 #else
-        use biocfd_write_output_corner1, only: write_output => write_output_ascii
+        use biocfd_write_output_corner1, only: write_output_ascii
 #endif
         use biocfd_forcing, only: pressureForcing1, pressureforcingfield, pressureforcingghost, &
              velocityforcing1, velocityforcingfield, velocityforcingghost
@@ -30,7 +30,8 @@
 
         INTEGER (int64) :: g
         INTEGER (int64)   :: surGeoPoints
-        CALL readInput(surGeoPoints)
+        CHARACTER (LEN = 3)   :: char_f
+        CALL readInput(surGeoPoints,char_f)
         CALL readBlockInterface
         do g=blk_start, size(block)
           CALL readSurfaceMeshGmsh(block(g),surGeoPoints)
@@ -93,7 +94,11 @@
         print*, "Coefficient Matrix generated"
         CALL non_uni_coeff
         totime = totime + deltat
-        CALL write_output
+#if USE_HDF5 == 1
+        CALL write_output_hdf5
+#else
+        CALL write_output_ascii(char_f)
+#endif
         coarse_flcnt_check=0
         print*, 'adam'
         DO
@@ -114,9 +119,13 @@
         do g=blk_start, size(block)
            CALL pressureForcing1(block(g))
         end do
-        CALL write_output
+#if USE_HDF5 == 1
+        CALL write_output_hdf5
+#else
+        CALL write_output_ascii(char_f)
+#endif
         !$acc wait
-        CALL writeResult
+        CALL writeResult(char_f)
         !$acc wait
         CALL body_plot
         DO g=blk_start, nblocks

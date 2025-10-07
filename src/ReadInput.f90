@@ -3,7 +3,7 @@ module biocfd_read_input
   use global, only : block, uc, u_tip, u0, totime, theta_m1, theta_m, &
        rho_f, re, piv_pt, pi, phase_angle, pcitamax, omega4, &
        omega3, omega2, omega1, nblocks, mu_f, l_c, itamax, ita1, ita, istart, &
-       intflines, inor, freq, epsi, dxmin, disp, deltat, char_f, &
+       intflines, inor, freq, epsi, dxmin, disp, deltat, &
        blk_start, aoa, alpha_m1, alpha_m, alpha, intfr, Interfaces
   use biocfd_blocks,only : Blocks
   implicit none
@@ -14,10 +14,11 @@ module biocfd_read_input
 
   contains
 
-      SUBROUTINE readInput(surGeoPoints)
+      SUBROUTINE readInput(surGeoPoints,char_f)
        INTEGER (int64) :: i, g,io
        CHARACTER(len=160)  :: filename1
        INTEGER (int64),INTENT(OUT)   :: surGeoPoints
+       CHARACTER (LEN = 3), INTENT(OUT)  :: char_f
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
        !     not dependent on diff for checking code changes don't break code
        !     Variables removed from Blocks 'xstart, xend, ystart, yend, zstart, zend'
