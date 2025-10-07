@@ -9,8 +9,7 @@ MODULE global
        INTEGER (int64)   :: itamax, pcItaMax,      &
                                 ita, ita1,ita2,    &
                                 inor,blk_start, coarse_flcnt_check
-       REAL (dp)        ::      dt_order,  &
-                                omega,omega1,omega2,omega3,omega4,  &
+       REAL (dp)        ::      omega,omega1,omega2,omega3,omega4,  &
                                 dxmin, &
                                 freq, &
                                 u0, &
