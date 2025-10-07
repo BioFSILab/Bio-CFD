@@ -7,7 +7,7 @@ MODULE global
        CHARACTER (LEN = 3)   :: char_f
        INTEGER               :: istart
        INTEGER (int64)   :: itamax, pcItaMax,      &
-                                ita, ita1,ita2,    &
+                                ita, ita1,   &
                                 inor,blk_start, coarse_flcnt_check
        REAL (dp)        ::      omega,omega1,omega2,omega3,omega4,  &
                                 dxmin, &
