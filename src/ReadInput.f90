@@ -4,7 +4,7 @@ module biocfd_read_input
        surgeopoints, rho_f, rev, re, piv_pt, pi, phase_angle, pcitamax, omega4, &
        omega3, omega2, omega1, nblocks, mu_f, l_c, itamax, ita1, ita, istart, &
        intflines, inor, freq, epsi, dxmin, dt_order, disp, deltat, char_f, &
-       blk_start, aoa, alpha_m1, alpha_m, alpha, line, intfr, Interfaces
+       blk_start, aoa, alpha_m1, alpha_m, alpha, intfr, Interfaces
   use biocfd_blocks,only : Blocks
   implicit none
 
@@ -308,11 +308,10 @@ module biocfd_read_input
       SUBROUTINE readSurfaceMeshGmsh(blk)
        type(Blocks), intent(inout) :: blk
        INTEGER(int64) :: n, i1, i2, i3, i5
-       CHARACTER (LEN = 72) :: cLine
 
        OPEN(121, FILE ='geometries/butterflyMedium.msh', form = 'formatted')               !READ SURFACE MESH FILE
         DO n = 1, 4
-           READ (121,*) cLine
+           READ (121,*)
         END DO
         READ (121,*) blk%ibNodes  !nsurf=total no. of points in file
         ALLOCATE(blk%ibNodeId(blk%ibNodes), blk%xnode(blk%ibNodes), &
@@ -325,11 +324,11 @@ module biocfd_read_input
            blk%znode(n)=blk%znode(n)*0.001_dp
         END DO
         DO n = 1, 2
-          READ (121,*) line
+          READ (121,*)
         END DO
         READ (121,*) blk%ibElems   !no. of elements
         DO n = 1, surGeoPoints
-          READ (121,*) cLine
+          READ (121,*)
         END DO
         blk%ibElems = blk%ibElems-surGeoPoints
         ALLOCATE(blk%ibSurfId(blk%ibElems), blk%ibElP1(blk%ibElems), &
