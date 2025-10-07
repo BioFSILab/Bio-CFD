@@ -2,7 +2,7 @@ module biocfd_read_input
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, uc, u_tip, u0, totime, theta_m1, theta_m, &
        rho_f, re, piv_pt, pi, phase_angle, pcitamax, omega4, &
-       omega3, omega2, omega1, nblocks, mu_f, l_c, itamax, ita1, ita, istart, &
+       omega3, omega2, omega1, nblocks, mu_f, l_c, itamax, ita1, ita, &
        intflines, inor, freq, epsi, dxmin, disp, deltat, &
        blk_start, aoa, alpha_m1, alpha_m, alpha, intfr, Interfaces
   use biocfd_blocks,only : Blocks
@@ -14,11 +14,12 @@ module biocfd_read_input
 
   contains
 
-      SUBROUTINE readInput(surGeoPoints,char_f)
+      SUBROUTINE readInput(surGeoPoints,char_f,istart)
        INTEGER (int64) :: i, g,io
        CHARACTER(len=160)  :: filename1
        INTEGER (int64),INTENT(OUT)   :: surGeoPoints
        CHARACTER (LEN = 3), INTENT(OUT)  :: char_f
+       INTEGER,INTENT(OUT)               :: istart
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
        !     not dependent on diff for checking code changes don't break code
        !     Variables removed from Blocks 'xstart, xend, ystart, yend, zstart, zend'
