@@ -27,7 +27,7 @@ MODULE global
         type(Blocks),allocatable ::block(:)
         type(Interfaces),allocatable ::intfr(:)
 
-       REAL (dp)    :: phase_angle,aoa,piv_pt, aoa1,aoa2,ang_theta
+       REAL (dp)    :: phase_angle,aoa,piv_pt, aoa1,aoa2
        INTEGER (int64)   :: surGeoPoints
 END MODULE global
 
