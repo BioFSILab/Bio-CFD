@@ -1,6 +1,6 @@
 ! allow(missing-accessibility-statement) - TODO: Attempt to remove in future
 MODULE global
-       use, intrinsic :: iso_fortran_env, only: dp => real64, sp => real32, int32, int64
+       use, intrinsic :: iso_fortran_env, only: dp => real64, int64
        use biocfd_blocks,only : Blocks
        use biocfd_interfaces, only : Interfaces
        IMPLICIT NONE
