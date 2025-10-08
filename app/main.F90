@@ -32,8 +32,8 @@
         INTEGER (int64)   :: surGeoPoints
         CHARACTER (LEN = 3)   :: char_f
         INTEGER               :: istart
-        INTEGER (int64)   :: itamax
-        CALL readInput(surGeoPoints,char_f,istart,itamax)
+        INTEGER (int64)   :: itamax, pcItaMax
+        CALL readInput(surGeoPoints,char_f,istart,itamax,pcItaMax)
         CALL readBlockInterface
         do g=blk_start, size(block)
           CALL readSurfaceMeshGmsh(block(g),surGeoPoints)
@@ -116,7 +116,7 @@
            CALL velocityForcing1(block(g))
         end do
         CALL velocityBC(block(1))
-        CALL poissonSolver
+        CALL poissonSolver(pcItaMax)
         print *,7
         do g=blk_start, size(block)
            CALL pressureForcing1(block(g))
