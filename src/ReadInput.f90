@@ -95,8 +95,7 @@ module biocfd_read_input
         rho_f = rho_f
         l_c = 0.001_dp*l_c
         u0 = re*mu_f/(rho_f*l_c)
-        u0 = u0*1
-        uc=u0*1
+        uc = u0
         re = rho_f/mu_f
         pi = 4.D0*ATAN(1.D0)
         freq = freq*u0/l_c
