@@ -2,7 +2,7 @@
       PROGRAM main
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, &
-             ita, ita1, itamax, nblocks, totaltime, totime,alpha_m, &
+             ita, ita1, nblocks, totaltime, totime,alpha_m, &
              aoa,aoa1,aoa2,phase_angle,pi,theta_m, uc
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
@@ -32,7 +32,8 @@
         INTEGER (int64)   :: surGeoPoints
         CHARACTER (LEN = 3)   :: char_f
         INTEGER               :: istart
-        CALL readInput(surGeoPoints,char_f,istart)
+        INTEGER (int64)   :: itamax
+        CALL readInput(surGeoPoints,char_f,istart,itamax)
         CALL readBlockInterface
         do g=blk_start, size(block)
           CALL readSurfaceMeshGmsh(block(g),surGeoPoints)
