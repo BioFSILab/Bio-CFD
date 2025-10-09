@@ -1,6 +1,6 @@
 module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, pcitamax, &
+  use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, &
        ita, nblocks, totaltime, &
        totime
 #ifdef _OPENMP
@@ -19,9 +19,10 @@ module biocfd_pcor_vcor
 
   contains
 
-      SUBROUTINE poissonSolver
+      SUBROUTINE poissonSolver(pcItaMax)
 
         INTEGER(int64) :: i, j,k, n, g
+        INTEGER (int64),INTENT(IN)   :: pcItaMax
         REAL (dp)    :: max_derr1, max_derr2, max_div, max_derrStdSt
         REAL (dp)    :: er_dudt, er_dvdt, er_dwdt, err_ds
         INTEGER(int64) :: max_nIterPcor
@@ -84,7 +85,7 @@ module biocfd_pcor_vcor
 
         !$omp parallel num_threads(omp_threads) default(none) &
         !$omp& private(g) &
-        !$omp& shared(nblocks, acc_devices) firstprivate(omp_thread_num)
+        !$omp& shared(nblocks, acc_devices, pcItaMax) firstprivate(omp_thread_num)
 
 #ifdef _OPENMP
         omp_thread_num = omp_get_thread_num()
@@ -98,7 +99,7 @@ module biocfd_pcor_vcor
         DO g=1,nblocks
            CALL computeDiv(g)    !divergence vector
            ! Do not compute Red/Black here for block 1
-           if (g /= 1)  CALL REDBLACKSOR_linear(g)
+           if (g /= 1)  CALL REDBLACKSOR_linear(g,pcItaMax)
 
         end do
         !$omp end do
@@ -106,12 +107,12 @@ module biocfd_pcor_vcor
         !$omp single
         CALL coarseUpdate_pc
         g=1
-        CALL REDBLACKSOR_linear(g)
+        CALL REDBLACKSOR_linear(g,pcItaMax)
         call fineUpdate_pc_bd
         !$omp end single
         !$omp do
         DO g=2,nblocks
-         CALL REDBLACKSOR_linear(g)
+         CALL REDBLACKSOR_linear(g,pcItaMax)
         end do
         !$omp end do
         !$omp single
@@ -257,8 +258,8 @@ module biocfd_pcor_vcor
          !$acc end parallel loop
       END SUBROUTINE correctVelocity
 
-      SUBROUTINE REDBLACKSOR_linear(g)
-
+      SUBROUTINE REDBLACKSOR_linear(g,pcItaMax)
+         INTEGER (int64),INTENT(IN)   :: pcItaMax
          INTEGER(int64) :: n, i, j, k, gg, nx_var, ny_var,nz_var,nxy
          REAL (dp) :: errSum,var,derr4
          INTEGER(int64),INTENT(IN) ::g
@@ -371,3 +372,4 @@ module biocfd_pcor_vcor
 
       END SUBROUTINE updateVelocity_newv
 end module biocfd_pcor_vcor
+

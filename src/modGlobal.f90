@@ -1,21 +1,17 @@
 ! allow(missing-accessibility-statement) - TODO: Attempt to remove in future
 MODULE global
-       use, intrinsic :: iso_fortran_env, only: dp => real64, sp => real32, int32, int64
+       use, intrinsic :: iso_fortran_env, only: dp => real64, int64
        use biocfd_blocks,only : Blocks
        use biocfd_interfaces, only : Interfaces
        IMPLICIT NONE
-       CHARACTER (LEN = 128) :: line
-       CHARACTER (LEN = 3)   :: char_f
-       INTEGER               :: istart
-       INTEGER (int64)   :: itamax, pcItaMax,      &
-                                ita, ita1,ita2,    &
+       INTEGER (int64)   ::     ita, ita1,   &
                                 inor,blk_start, coarse_flcnt_check
        REAL (dp)        ::      dt_order,  &
                                 omega,omega1,omega2,omega3,omega4,  &
                                 dxmin, &
                                 freq, &
                                 u0, &
-                                epsi, re, rev, &
+                                epsi, re, &
                                 alpha, &
                                 deltat, totime, totalTime, &
                                 pi, uc
@@ -27,7 +23,6 @@ MODULE global
         type(Blocks),allocatable ::block(:)
         type(Interfaces),allocatable ::intfr(:)
 
-       REAL (dp)    :: phase_angle,aoa,piv_pt, aoa1,aoa2,ang_theta
-       INTEGER (int64)   :: surGeoPoints
+       REAL (dp)    :: phase_angle,aoa,piv_pt, aoa1,aoa2
 END MODULE global
 
