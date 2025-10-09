@@ -6,7 +6,8 @@ MODULE global
        IMPLICIT NONE
        INTEGER (int64)   ::     ita, ita1,   &
                                 inor,blk_start, coarse_flcnt_check
-       REAL (dp)        ::      omega,omega1,omega2,omega3,omega4,  &
+       REAL (dp)        ::      dt_order,  &
+                                omega,omega1,omega2,omega3,omega4,  &
                                 dxmin, &
                                 freq, &
                                 u0, &

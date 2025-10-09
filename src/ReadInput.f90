@@ -3,7 +3,7 @@ module biocfd_read_input
   use global, only : block, uc, u_tip, u0, totime, theta_m1, theta_m, &
        rho_f, re, piv_pt, pi, phase_angle, omega4, &
        omega3, omega2, omega1, nblocks, mu_f, l_c, ita1, ita, &
-       intflines, inor, freq, epsi, dxmin, disp, deltat, &
+       intflines, inor, freq, epsi, dxmin, dt_order, disp, deltat, &
        blk_start, aoa, alpha_m1, alpha_m, alpha, intfr, Interfaces
   use biocfd_blocks,only : Blocks
   implicit none
@@ -31,7 +31,7 @@ module biocfd_read_input
                    re,rho_f, mu_f, l_c, &
                    u0,  &
                    surGeoPoints, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
-                   istart, inor, dxmin
+                   istart, dt_order,  inor, dxmin
 
   open(newunit=io, file="input_data.nml", status="old", action="read")
   read(io, NML=input_data)
@@ -99,6 +99,7 @@ module biocfd_read_input
         re = rho_f/mu_f
         pi = 4.D0*ATAN(1.D0)
         freq = freq*u0/l_c
+        deltat = 1._dp/(4._dp*freq*dt_order)  !0.00041666666666_dp! *5e-4
         disp = block(blk_start)%a0*cos(2*pi*freq*deltat)
         alpha  = 1._dp
        u_tip=4*((pi*45)/180)*l_c*freq
