@@ -1475,202 +1475,123 @@ blk%fluidCellCount = flcnt
 
         SUBROUTINE change_block_interface
 
-        INTEGER(int64) :: i,j,g, a_blk_no, b_blk_no, factor
-
-
+        INTEGER(int64) :: i,j,g, a_blk_no, b_blk_no, factor,k,increment
 
         DO g=1,intflines
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
-         factor=intfr(g)%b_msh/intfr(g)%a_msh
+        factor=intfr(g)%b_msh/intfr(g)%a_msh
+        increment = block(b_blk_no)%move_amtx/factor
         if ( block(b_blk_no)% move_check == 1) then
-        DO j=1,intfr(g)%counterxp
 
-        intfr(g)%px_interface_det(1,j) = intfr(g)%px_interface_det(1,j) &
-                                         + (block(b_blk_no)%move_amtx/factor)
-        ENDDO
-        DO j=1,intfr(g)%counterxu
+        intfr(g)%px_interface_det(1,1:intfr(g)%counterxp) =&
+              intfr(g)%px_interface_det(1,1:intfr(g)%counterxp) + increment
 
-        intfr(g)%ux_interface_det(1,j) = intfr(g)%ux_interface_det(1,j) &
-                                         + (block(b_blk_no)%move_amtx/factor)
+        intfr(g)%ux_interface_det(1,1:intfr(g)%counterxu) =&
+              intfr(g)%ux_interface_det(1,1:intfr(g)%counterxu) + increment
 
-        ENDDO
-        DO j=1,intfr(g)%counterxv
+        intfr(g)%vx_interface_det(1,1:intfr(g)%counterxv) =&
+              intfr(g)%vx_interface_det(1,1:intfr(g)%counterxv) + increment
 
-        intfr(g)%vx_interface_det(1,j) = intfr(g)%vx_interface_det(1,j) &
-                                         + (block(b_blk_no)%move_amtx/factor)
+        intfr(g)%wx_interface_det(1,1:intfr(g)%counterxw) =&
+              intfr(g)%wx_interface_det(1,1:intfr(g)%counterxw) + increment
 
-        ENDDO
-        DO j=1,intfr(g)%counterxw
+        intfr(g)%py_interface_det(1,1:intfr(g)%counteryp) =&
+              intfr(g)%py_interface_det(1,1:intfr(g)%counteryp) + increment
 
-        intfr(g)%wx_interface_det(1,j) = intfr(g)%wx_interface_det(1,j) &
-                                         + (block(b_blk_no)%move_amtx/factor)
+        intfr(g)%uy_interface_det(1,1:intfr(g)%counteryu) =&
+              intfr(g)%uy_interface_det(1,1:intfr(g)%counteryu) + increment
 
-        ENDDO
+        intfr(g)%vy_interface_det(1,1:intfr(g)%counteryv) =&
+              intfr(g)%vy_interface_det(1,1:intfr(g)%counteryv) + increment
 
-        DO j=1,intfr(g)%counteryp
+        intfr(g)%wy_interface_det(1,1:intfr(g)%counteryw) =&
+              intfr(g)%wy_interface_det(1,1:intfr(g)%counteryw) + increment
 
-        intfr(g)%py_interface_det(1,j) = intfr(g)%py_interface_det(1,j) &
-                                         + (block(b_blk_no)%move_amty/factor)
-        ENDDO
-        DO j=1,intfr(g)%counteryu
+        intfr(g)%pz_interface_det(1,1:intfr(g)%counterzp) =&
+              intfr(g)%pz_interface_det(1,1:intfr(g)%counterzp) + increment
 
-        intfr(g)%uy_interface_det(1,j) = intfr(g)%uy_interface_det(1,j) &
-                                         + (block(b_blk_no)%move_amty/factor)
+        intfr(g)%uz_interface_det(1,1:intfr(g)%counterzu) =&
+              intfr(g)%uz_interface_det(1,1:intfr(g)%counterzu) + increment
 
-        ENDDO
-        DO j=1,intfr(g)%counteryv
+        intfr(g)%vz_interface_det(1,1:intfr(g)%counterzv) =&
+              intfr(g)%vz_interface_det(1,1:intfr(g)%counterzv) + increment
 
-        intfr(g)%vy_interface_det(1,j) = intfr(g)%vy_interface_det(1,j) &
-                                         + (block(b_blk_no)%move_amty/factor)
+        intfr(g)%wz_interface_det(1,1:intfr(g)%counterzw) =&
+              intfr(g)%wz_interface_det(1,1:intfr(g)%counterzw) + increment
 
-        ENDDO
-        DO j=1,intfr(g)%counteryw
-
-        intfr(g)%wy_interface_det(1,j) = intfr(g)%wy_interface_det(1,j) &
-                                         + (block(b_blk_no)%move_amty/factor)
-
-        ENDDO
-        DO j=1,intfr(g)%counterzp
-
-        intfr(g)%pz_interface_det(1,j) = intfr(g)%pz_interface_det(1,j) &
-                                         + (block(b_blk_no)%move_amtz/factor)
-        ENDDO
-        DO j=1,intfr(g)%counterzu
-
-        intfr(g)%uz_interface_det(1,j) = intfr(g)%uz_interface_det(1,j) &
-                                         + (block(b_blk_no)%move_amtz/factor)
-
-        ENDDO
-        DO j=1,intfr(g)%counterzv
-
-        intfr(g)%vz_interface_det(1,j) = intfr(g)%vz_interface_det(1,j) &
-                                         + (block(b_blk_no)%move_amtz/factor)
-
-        ENDDO
-        DO j=1,intfr(g)%counterzw
-
-        intfr(g)%wz_interface_det(1,j) = intfr(g)%wz_interface_det(1,j) &
-                                         + (block(b_blk_no)%move_amtz/factor)
-
-        ENDDO
         DO j=1,intflines
         print*,'**********************px***************************'
         DO i=1,intfr(j)%counterxp
-        WRITE(*,33) 'px', i, &
-                     intfr(j)%px_interface_det(1,i), &
-                     intfr(j)%px_interface_det(2,i), &
-                     intfr(j)%px_interface_det(3,i), &
-                     block(a_blk_no)%xp(intfr(j)%px_interface_det(1,i)), &
-                     block(b_blk_no)%xp(intfr(j)%px_interface_det(2,i)), &
-                     block(b_blk_no)%xp(intfr(j)%px_interface_det(3,i))
- 33       FORMAT(A3,I5,3I5,3F8.5)
+          WRITE(*,'(A3,I5,3I5,3F8.5)') 'px', i, (intfr(j)%px_interface_det(k,i), k=1,3),&
+                                      block(a_blk_no)%xp(intfr(j)%px_interface_det(1,i)), &
+                                      (block(b_blk_no)%xp(intfr(j)%px_interface_det(k,i)), k=2,3)
         end do
         end do
         DO j=1,intfLines
         print*,'**********************py***************************'
         DO i=1,intfr(j)%counteryp
-        WRITE(*,133) 'py', i, &
-                     intfr(j)%py_interface_det(1,i), &
-                     intfr(j)%py_interface_det(2,i), &
-                     intfr(j)%py_interface_det(3,i), &
-                     block(a_blk_no)%yp(intfr(j)%py_interface_det(1,i)), &
-                     block(b_blk_no)%yp(intfr(j)%py_interface_det(2,i)), &
-                     block(b_blk_no)%yp(intfr(j)%py_interface_det(3,i))
- 133       FORMAT(A3,I5,3I5,3F8.5)
+          WRITE(*,'(A3,I5,3I5,3F8.5)') 'py', i, (intfr(j)%py_interface_det(k,i), k=1,3), &
+                                      block(a_blk_no)%yp(intfr(j)%py_interface_det(1,i)), &
+                                      (block(b_blk_no)%yp(intfr(j)%py_interface_det(k,i)), k=2,3)
         end do
         end do
         DO j=1,intflines
         print*,'**********************pz***************************'
         DO i=1,intfr(j)%counterzp
-        WRITE(*,933) 'pz', i, &
-                     intfr(j)%pz_interface_det(1,i), &
-                     intfr(j)%pz_interface_det(2,i), &
-                     intfr(j)%pz_interface_det(3,i), &
-                     block(a_blk_no)%zp(intfr(j)%pz_interface_det(1,i)), &
-                     block(b_blk_no)%zp(intfr(j)%pz_interface_det(2,i)), &
-                     block(b_blk_no)%zp(intfr(j)%pz_interface_det(3,i))
- 933       FORMAT(A3,I5,3I5,3F8.5)
+          WRITE(*,'(A3,I5,3I5,3F8.5)') 'pz', i, (intfr(j)%pz_interface_det(k,i), k=1,3), &
+                                      block(a_blk_no)%zp(intfr(j)%pz_interface_det(1,i)), &
+                                      (block(b_blk_no)%zp(intfr(j)%pz_interface_det(k,i)), k=2,3)
         end do
         end do
 
         DO j=1,intflines
         print*,'**********************ux***************************'
         DO i=1,intfr(j)%counterxu
-        WRITE(*,331) 'ux', i, &
-                     intfr(j)%ux_interface_det(1,i), &
-                     intfr(j)%ux_interface_det(2,i), &
-                     intfr(j)%ux_interface_det(3,i),  &
-                     block(a_blk_no)%xu(intfr(j)%ux_interface_det(1,i)), &
-                     block(b_blk_no)%xu(intfr(j)%ux_interface_det(2,i)), &
-                     block(b_blk_no)%xu(intfr(j)%ux_interface_det(3,i))
- 331       FORMAT(A3,I5,3I5,3F8.5)
+          WRITE(*,'(A3,I5,3I5,3F8.5)') 'ux', i, (intfr(j)%ux_interface_det(k,i), k=1,3), &
+                                      block(a_blk_no)%xu(intfr(j)%ux_interface_det(1,i)), &
+                                      (block(b_blk_no)%xu(intfr(j)%ux_interface_det(k,i)), k=2,3)
         end do
         end do
         DO j=1,intfLines
         print*,'**********************uy***************************'
         DO i=1,intfr(j)%counteryu
-        WRITE(*,1331) 'uy', i, &
-                     intfr(j)%uy_interface_det(1,i), &
-                     intfr(j)%uy_interface_det(2,i), &
-                     intfr(j)%uy_interface_det(3,i),  &
-                     block(a_blk_no)%yu(intfr(j)%uy_interface_det(1,i)), &
-                     block(b_blk_no)%yu(intfr(j)%uy_interface_det(2,i)), &
-                     block(b_blk_no)%yu(intfr(j)%uy_interface_det(3,i))
- 1331       FORMAT(A3,I5,3I5,3F8.5)
+          WRITE(*,'(A3,I5,3I5,3F8.5)') 'uy', i, (intfr(j)%uy_interface_det(k,i), k=1,3), &
+                                      block(a_blk_no)%yu(intfr(j)%uy_interface_det(1,i)), &
+                                      (block(b_blk_no)%yu(intfr(j)%uy_interface_det(k,i)), k=2,3)
         end do
         end do
         DO j=1,intfLines
         print*,'**********************uz***************************'
         DO i=1,intfr(j)%counterzu
-        WRITE(*,91331) 'uz', i, &
-                     intfr(j)%uz_interface_det(1,i), &
-                     intfr(j)%uz_interface_det(2,i), &
-                     intfr(j)%uz_interface_det(3,i),  &
-                     block(a_blk_no)%zu(intfr(j)%uz_interface_det(1,i)), &
-                     block(b_blk_no)%zu(intfr(j)%uz_interface_det(2,i)), &
-                     block(b_blk_no)%zu(intfr(j)%uz_interface_det(3,i))
-91331       FORMAT(A3,I5,3I5,3F8.5)
+          WRITE(*,'(A3,I5,3I5,3F8.5)') 'uz', i, (intfr(j)%uz_interface_det(k,i), k=1,3), &
+                                      block(a_blk_no)%zu(intfr(j)%uz_interface_det(1,i)), &
+                                      (block(b_blk_no)%zu(intfr(j)%uz_interface_det(k,i)), k=2,3)
         end do
         end do
 
         DO j=1,intflines
         print*,'**********************vx***************************'
         DO i=1,intfr(j)%counterxv
-        WRITE(*,332) 'vx', i, &
-                     intfr(j)%vx_interface_det(1,i), &
-                     intfr(j)%vx_interface_det(2,i), &
-                     intfr(j)%vx_interface_det(3,i),  &
-                     block(a_blk_no)%xv(intfr(j)%vx_interface_det(1,i)), &
-                     block(b_blk_no)%xv(intfr(j)%vx_interface_det(2,i)), &
-                     block(b_blk_no)%xv(intfr(j)%vx_interface_det(3,i))
- 332       FORMAT(A3,I5,3I5,3F8.5)
+          WRITE(*,'(A3,I5,3I5,3F8.5)') 'vx', i, (intfr(j)%vx_interface_det(k,i), k=1,3), &
+                                      block(a_blk_no)%xv(intfr(j)%vx_interface_det(1,i)), &
+                                      (block(b_blk_no)%xv(intfr(j)%vx_interface_det(k,i)), k=2,3)
         end do
         end do
         DO j=1,intfLines
         print*,'**********************vy***************************'
         DO i=1,intfr(j)%counteryv
-        WRITE(*,1332) 'vy', i, &
-                     intfr(j)%vy_interface_det(1,i), &
-                     intfr(j)%vy_interface_det(2,i), &
-                     intfr(j)%vy_interface_det(3,i),  &
-                     block(a_blk_no)%yv(intfr(j)%vy_interface_det(1,i)), &
-                     block(b_blk_no)%yv(intfr(j)%vy_interface_det(2,i)), &
-                     block(b_blk_no)%yv(intfr(j)%vy_interface_det(3,i))
- 1332       FORMAT(A3,I5,3I5,3F8.5)
+          WRITE(*,'(A3,I5,3I5,3F8.5)') 'vy', i, (intfr(j)%vy_interface_det(k,i), k=1,3), &
+                                      block(a_blk_no)%yv(intfr(j)%vy_interface_det(1,i)), &
+                                      (block(b_blk_no)%yv(intfr(j)%vy_interface_det(k,i)), k=2,3)
         end do
         end do
         DO j=1,intfLines
         print*,'**********************vz***************************'
         DO i=1,intfr(j)%counterzv
-        WRITE(*,91332) 'vz', i, &
-                     intfr(j)%vz_interface_det(1,i), &
-                     intfr(j)%vz_interface_det(2,i), &
-                     intfr(j)%vz_interface_det(3,i),  &
-                     block(a_blk_no)%zv(intfr(j)%vz_interface_det(1,i)), &
-                     block(b_blk_no)%zv(intfr(j)%vz_interface_det(2,i)), &
-                     block(b_blk_no)%zv(intfr(j)%vz_interface_det(3,i))
-91332       FORMAT(A3,I5,3I5,3F8.5)
+          WRITE(*,'(A3,I5,3I5,3F8.5)') 'vz', i, (intfr(j)%vz_interface_det(k,i), k=1,3), &
+                                      block(a_blk_no)%zv(intfr(j)%vz_interface_det(1,i)), &
+                                      (block(b_blk_no)%zv(intfr(j)%vz_interface_det(k,i)), k=2,3)
         end do
         end do
 
@@ -1678,40 +1599,25 @@ blk%fluidCellCount = flcnt
         DO j=1,intflines
         print*,'**********************wx***************************'
         DO i=1,intfr(j)%counterxw
-        WRITE(*,3329) 'wx', i, &
-                      intfr(j)%wx_interface_det(1,i), &
-                      intfr(j)%wx_interface_det(2,i), &
-                      intfr(j)%wx_interface_det(3,i), &
-                      block(a_blk_no)%xw(intfr(j)%wx_interface_det(1,i)), &
-                      block(b_blk_no)%xw(intfr(j)%wx_interface_det(2,i)), &
-                      block(b_blk_no)%xw(intfr(j)%wx_interface_det(3,i))
- 3329       FORMAT(A3,I5,3I5,3F8.5)
+          WRITE(*,'(A3,I5,3I5,3F8.5)') 'wx', i, (intfr(j)%wx_interface_det(k,i), k=1,3), &
+                                      block(a_blk_no)%xw(intfr(j)%wx_interface_det(1,i)), &
+                                      (block(b_blk_no)%xw(intfr(j)%wx_interface_det(k,i)), k=2,3)
         end do
         end do
         DO j=1,intfLines
         print*,'**********************wy***************************'
         DO i=1,intfr(j)%counteryw
-        WRITE(*,13329) 'wy', i, &
-                      intfr(j)%wy_interface_det(1,i), &
-                      intfr(j)%wy_interface_det(2,i), &
-                      intfr(j)%wy_interface_det(3,i), &
-                      block(a_blk_no)%yw(intfr(j)%wy_interface_det(1,i)), &
-                      block(b_blk_no)%yw(intfr(j)%wy_interface_det(2,i)), &
-                      block(b_blk_no)%yw(intfr(j)%wy_interface_det(3,i))
-13329       FORMAT(A3,I5,3I5,3F8.5)
+          WRITE(*,'(A3,I5,3I5,3F8.5)') 'wy', i, (intfr(j)%wy_interface_det(k,i), k=1,3), &
+                                      block(a_blk_no)%yw(intfr(j)%wy_interface_det(1,i)), &
+                                      (block(b_blk_no)%yw(intfr(j)%wy_interface_det(k,i)), k=2,3)
         end do
         end do
         DO j=1,intfLines
         print*,'**********************wz***************************'
         DO i=1,intfr(j)%counterzw
-        WRITE(*,93329) 'wz', i, &
-                      intfr(j)%wz_interface_det(1,i), &
-                      intfr(j)%wz_interface_det(2,i), &
-                      intfr(j)%wz_interface_det(3,i), &
-                      block(a_blk_no)%zw(intfr(j)%wz_interface_det(1,i)), &
-                      block(b_blk_no)%zw(intfr(j)%wz_interface_det(2,i)), &
-                      block(b_blk_no)%zw(intfr(j)%wz_interface_det(3,i))
-93329       FORMAT(A3,I5,3I5,3F8.5)
+          WRITE(*,'(A3,I5,3I5,3F8.5)') 'wz', i, (intfr(j)%wz_interface_det(k,i), k=1,3), &
+                                      block(a_blk_no)%zw(intfr(j)%wz_interface_det(1,i)), &
+                                      (block(b_blk_no)%zw(intfr(j)%wz_interface_det(k,i)), k=2,3)
         end do
         end do
         endif
