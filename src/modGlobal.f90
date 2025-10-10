@@ -17,7 +17,7 @@ MODULE global
                                 uc
        real(dp), parameter :: pi = 4._dp * atan(1._dp)
 
-       REAL (dp)       :: u_tip, disp
+       REAL (dp)       ::  disp
 
         INTEGER (int64) ::nblocks, intflines
 
