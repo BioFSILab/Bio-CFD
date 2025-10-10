@@ -115,7 +115,7 @@
         do g=blk_start, size(block)
            CALL velocityForcing1(block(g))
         end do
-        CALL velocityBC(block(1))
+        CALL velocityBC(block(1),deltat,uc)
         CALL poissonSolver(pcItaMax)
         print *,7
         do g=blk_start, size(block)
