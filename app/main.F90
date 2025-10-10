@@ -28,7 +28,7 @@
              velocityforcing1, velocityforcingfield, velocityforcingghost
         IMPLICIT NONE
 
-        INTEGER (int64) :: g
+        INTEGER (int64) :: g,m
         INTEGER (int64)   :: surGeoPoints
         CHARACTER (LEN = 3)   :: char_f
         INTEGER               :: istart
@@ -154,9 +154,9 @@
            CALL block_move_check
            DO g=blk_start, size(block)
               CALL change_block_coords(block(g))
-           END DO
-           DO g=1,intflines
-              CALL change_block_coords_interfaces(intfr(g),block(intfr(g)%b_blk))
+              DO m=1,intflines
+                CALL change_block_coords_interfaces(intfr(g),block(intfr(g)%b_blk))
+              END DO
            END DO
            CALL change_block_interface
           CALL fine_block_cell
