@@ -81,7 +81,14 @@
            end do
            print*, 'initial'
         end if
-        IF (iStart==1) CALL lastConditions
+        IF (iStart==1) then
+           WRITE(*,*) 'Enter lastconditions'
+           ita = 0
+           ita1 = 0
+           do g=1, size(block)
+              call lastConditions(block(g), g, re)
+           end do
+        end if
         do g=blk_start, size(block)
            CALL computeNormDistance(block(g))
         end do
