@@ -79,7 +79,6 @@ module biocfd_read_input
         if ( alpha_m /= 0 .and. theta_m ==0 ) then
                 char_f = 'ang'
         end if
-        pi = 4.D0*ATAN(1.D0)
         blk_start=2
         alpha_m1=abs(alpha_m)
         theta_m1=abs(theta_m)
@@ -97,7 +96,6 @@ module biocfd_read_input
         u0 = re*mu_f/(rho_f*l_c)
         uc = u0
         re = rho_f/mu_f
-        pi = 4.D0*ATAN(1.D0)
         freq = freq*u0/l_c
         deltat = 1._dp/(4._dp*freq*dt_order)  !0.00041666666666_dp! *5e-4
         disp = block(blk_start)%a0*cos(2*pi*freq*deltat)
