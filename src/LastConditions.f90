@@ -1,6 +1,6 @@
 module biocfd_last_conditions
   use, intrinsic :: iso_fortran_env, only : dp => real64
-  use global, only : block, ita, ita1, ita2, nblocks, re, totime
+  use global, only : block, ita, ita1, nblocks, re, totime
   implicit none
   private
 
@@ -17,7 +17,6 @@ module biocfd_last_conditions
         ! SIGNWSS = 0._dp           !SIGNWSS global real array(nsurf)
         ita = 0
         ita1 = 0
-        ita2 = 0
 
 
         DO g=1,nblocks

@@ -2,7 +2,7 @@ module biocfd_search
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64, int32
   use global, only: block, nblocks, blk_start, totime, &
        theta_m, piv_pt, pi, phase_angle, ita, dxmin, deltat, aoa2, aoa1, aoa, &
-       ang_theta, alpha_m, re, freq, inor, char_f, &
+       alpha_m, re, freq, inor, &
        intflines, coarse_flcnt_check, intfr
   use biocfd_fine_interp, only: fineUpdate_mv
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
@@ -77,13 +77,13 @@ module biocfd_search
 
         blk%thetaDot  =  0.
         blk% thetaDDot =  0._dp
-        blk% thetaDot   =  0.  !ang_theta*a0*cos(2._dp*pi*freq*totime + phase_angle)
+        blk% thetaDot   =  0.
         blk%thetaDot1  = 0.
         blk% thetaDot2  = 0.
         blk% alphaDot  = 0.
         blk% thetaDDot1 = 0.
         blk%thetaDDot2 = 0.
-        blk% thetaDDot  = 0.  !-ang_theta*ang_theta*a0*sin(2._dp*pi*freq*totime + phase_angle)
+        blk% thetaDDot  = 0.
         blk%yt         =  bdy*sin(2*pi*bdfr*totime )
         blk%ydot       =  angt*bdy*cos(2*pi*bdfr*totime)
         blk%yddot      =  -angt*angt*bdy*sin(2*pi*bdfr*totime)
@@ -127,6 +127,7 @@ module biocfd_search
         REAL(dp)      ::  xr1, yr1, zr1
         REAL(dp)      :: angg, angt
         REAL(dp)      :: bdy,bdfr
+        REAL(dp)      :: ang_theta
         CHARACTER(len=150) :: filename1
 
         angg=90

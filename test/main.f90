@@ -4,6 +4,7 @@ program tester
   use test_search, only : collect_search
   use test_interpolation, only: collect_interpolation
   use test_allocate, only: collect_allocate_arrays
+  use test_pcor_vcor, only: collect_pcor_vcor
   implicit none
   integer :: stat, is
   type(testsuite_type), allocatable :: testsuites(:)
@@ -14,7 +15,8 @@ program tester
   testsuites = [ &
     new_testsuite("search", collect_search), &
     new_testsuite("interpolation", collect_interpolation), &
-    new_testsuite("allocate_arrays", collect_allocate_arrays) &
+    new_testsuite("allocate_arrays", collect_allocate_arrays), &
+    new_testsuite("pcor_vcor", collect_pcor_vcor) &
     ]
 
   do is = 1, size(testsuites)
