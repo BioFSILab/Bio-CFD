@@ -94,7 +94,10 @@
            CALL coefficientMatrix(block(g), g == 1)
         end do
         print*, "Coefficient Matrix generated"
-        CALL non_uni_coeff
+        do g=1, size(block)
+           CALL non_uni_coeff(block(g))
+        end do
+        write(*,*)'leaving non_uni_coeff'
         totime = totime + deltat
 #if USE_HDF5 == 1
         CALL write_output_hdf5
@@ -106,7 +109,9 @@
         DO
         ita = ita + 1
         totime = totime + deltat
-        CALL nsMomentum2order
+        do g=1, size(block)
+           CALL nsMomentum2order(block(g))
+        end do
         CALL velocityBC(block(1),deltat,uc)
         do g=blk_start, size(block)
            CALL solidCellBC(block(g))
