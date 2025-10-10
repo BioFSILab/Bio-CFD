@@ -2,7 +2,7 @@
 MODULE global
        use, intrinsic :: iso_fortran_env, only: dp => real64, int64
        use biocfd_blocks,only : Blocks
-       use biocfd_interfaces, only : Interfaces
+       use biocfd_interface_type, only: Interface_t
        IMPLICIT NONE
        INTEGER (int64)   ::     ita, ita1,   &
                                 inor,blk_start, coarse_flcnt_check
@@ -22,7 +22,7 @@ MODULE global
         INTEGER (int64) ::nblocks, intflines
 
         type(Blocks),allocatable ::block(:)
-        type(Interfaces),allocatable ::intfr(:)
+        type(Interface_t), allocatable :: intfr(:)
 
        REAL (dp)    :: phase_angle,aoa,piv_pt, aoa1,aoa2
 END MODULE global

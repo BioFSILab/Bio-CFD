@@ -4,7 +4,8 @@ module biocfd_read_input
        rho_f, re, piv_pt, pi, phase_angle, omega4, &
        omega3, omega2, omega1, nblocks, mu_f, l_c, ita1, ita, &
        intflines, inor, freq, epsi, dxmin, dt_order, disp, deltat, &
-       blk_start, aoa, alpha_m1, alpha_m, alpha, intfr, Interfaces
+       blk_start, aoa, alpha_m1, alpha_m, alpha, intfr
+  use biocfd_interface_type, only: Interface_t
   use biocfd_blocks,only : Blocks
   implicit none
 
@@ -38,7 +39,7 @@ module biocfd_read_input
   close(io)
 
         allocate(Blocks :: block(nblocks))
-        allocate(Interfaces :: intfr(intflines))
+        allocate(Interface_t :: intfr(intflines))
         allocate(xstart_temp(nblocks),xend_temp(nblocks),&
         ystart_temp(nblocks),yend_temp(nblocks),&
         zstart_temp(nblocks),zend_temp(nblocks))
