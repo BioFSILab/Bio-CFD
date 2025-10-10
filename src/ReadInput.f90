@@ -4,7 +4,7 @@ module biocfd_read_input
        re, piv_pt, pi, phase_angle, omega4, &
        omega3, omega2, omega1, nblocks, ita1, ita, &
        intflines, inor, freq, epsi, dxmin, dt_order, deltat, &
-       blk_start, aoa, alpha, intfr
+       blk_start, aoa, intfr
   use biocfd_interface_type, only: Interface_t
   use biocfd_blocks,only : Blocks
   implicit none
@@ -100,7 +100,6 @@ module biocfd_read_input
         freq = freq*u0/l_c
         deltat = 1._dp/(4._dp*freq*dt_order)  !0.00041666666666_dp! *5e-4
         disp = block(blk_start)%a0*cos(2*pi*freq*deltat)
-        alpha  = 1._dp
        u_tip=4*((pi*45)/180)*l_c*freq
 
         Print*, 'dxmin =', dxmin

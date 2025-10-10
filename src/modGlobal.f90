@@ -12,7 +12,6 @@ MODULE global
                                 freq, &
                                 u0, &
                                 epsi, re, &
-                                alpha, &
                                 deltat, totime, totalTime, &
                                 uc
        real(dp), parameter :: pi = 4._dp * atan(1._dp)
