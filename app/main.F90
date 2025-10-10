@@ -3,7 +3,7 @@
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, &
              ita, ita1, nblocks, totaltime, totime, &
-             aoa,aoa1,aoa2,phase_angle,pi,theta_m, uc
+             aoa,aoa1,aoa2,phase_angle,pi,uc
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
@@ -47,7 +47,6 @@
         phase_angle = phase_angle*pi/180_dp
         aoa1 = aoa*pi/180_dp
         aoa2 = -aoa1
-        theta_m = theta_m*pi/180_dp
         do g=blk_start, size(block)
            CALL shiftSurfaceNodesInitial(block(g))
         end do

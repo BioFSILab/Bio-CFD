@@ -1,7 +1,7 @@
 module biocfd_search
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64, int32
   use global, only: block, nblocks, blk_start, totime, &
-       theta_m, piv_pt, pi, phase_angle, ita, dxmin, deltat, aoa2, aoa1, aoa, &
+       piv_pt, pi, phase_angle, ita, dxmin, deltat, aoa2, aoa1, aoa, &
        re, freq, inor, &
        intflines, coarse_flcnt_check, intfr
   use biocfd_fine_interp, only: fineUpdate_mv

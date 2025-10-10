@@ -1,6 +1,6 @@
 module biocfd_read_input
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, uc, u_tip, u0, totime, theta_m1, theta_m, &
+  use global, only : block, uc, u_tip, u0, totime, theta_m1, &
        rho_f, re, piv_pt, pi, phase_angle, omega4, &
        omega3, omega2, omega1, nblocks, mu_f, l_c, ita1, ita, &
        intflines, inor, freq, epsi, dxmin, dt_order, disp, deltat, &
@@ -26,7 +26,7 @@ module biocfd_read_input
        !     Variables removed from Blocks 'xstart, xend, ystart, yend, zstart, zend'
        REAL(dp),ALLOCATABLE,DIMENSION(:) :: xstart_temp,xend_temp,&
        ystart_temp,yend_temp,zstart_temp,zend_temp
-       REAL(dp) :: alpha_m
+       REAL(dp) :: alpha_m,theta_m
        NAMELIST /input_data/ nblocks, intflines,  &
                    itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
                    re,rho_f, mu_f, l_c, &
