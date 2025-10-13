@@ -109,7 +109,9 @@
 #if USE_HDF5 == 1
         CALL write_output_hdf5
 #else
-        CALL write_output_ascii(char_f)
+        do g=1, size(block)
+           CALL write_output_ascii(block(g),g,char_f)
+        end do
 #endif
         coarse_flcnt_check=0
         print*, 'adam'
@@ -136,7 +138,9 @@
 #if USE_HDF5 == 1
         CALL write_output_hdf5
 #else
-        CALL write_output_ascii(char_f)
+        do g=1, size(block)
+           CALL write_output_ascii(block(g),g,char_f)
+        end do
 #endif
         !$acc wait
         CALL writeResult(char_f)
