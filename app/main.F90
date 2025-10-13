@@ -110,7 +110,7 @@
         CALL write_output_hdf5
 #else
         do g=1, size(block)
-           CALL write_output_ascii(block(g),g,block(2)%dx,char_f)
+           CALL write_output_ascii(block(g),g,char_f)
         end do
 #endif
         coarse_flcnt_check=0
@@ -139,7 +139,7 @@
         CALL write_output_hdf5
 #else
         do g=1, size(block)
-           CALL write_output_ascii(block(g),g,block(2)%dx,char_f)
+           CALL write_output_ascii(block(g),g,char_f)
         end do
 #endif
         !$acc wait

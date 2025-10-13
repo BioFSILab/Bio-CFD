@@ -76,10 +76,9 @@ contains
         ENDIF
        END SUBROUTINE write_output_hdf5
 #else
-      SUBROUTINE write_output_ascii(blk,blk_no,dx,char_f)
+      SUBROUTINE write_output_ascii(blk,blk_no,char_f)
        type(Blocks), intent(in) :: blk
        integer (int64), intent(in) :: blk_no
-       real(dp), intent(in) :: dx
        CHARACTER(len=150)  :: filename1
        CHARACTER (LEN = 3),INTENT(IN)   :: char_f
        INTEGER  :: k, i, j
@@ -87,7 +86,7 @@ contains
 
          IF((mod(ita,200_int64) ==0 .or. ita <= 2 ))then
 
-       WRITE(filename1,1)char_f,ita,blk_no,re,dx,nblocks
+       WRITE(filename1,1)char_f,ita,blk_no,re,blk%dx,nblocks
 1     FORMAT('out/',A3,'_butter_fielddata.',i9.9,'.',i3.3,'.',f7.1,'.',f8.6,'.',i3.3,".dat")
            OPEN(UNIT = 786, FILE = filename1, STATUS = 'unknown')
             WRITE(786,*)'variables="x","y","z","u","v","w","p","totime","cellid","cell_n","cell_pr"'
