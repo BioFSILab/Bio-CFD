@@ -2,6 +2,8 @@ module biocfd_fine_interp_bound
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, intfr, intflines
   use biocfd_interpolation, only: bilinear_interpolation, linear_interpolation
+  use biocfd_blocks, only: Blocks
+  use biocfd_interface_type, only: Interface_t
 
   implicit none
 
@@ -19,18 +21,17 @@ SUBROUTINE fineUpdate_bd
 
       end subroutine fineUpdate_bd
 
-        SUBROUTINE fineUpdate_pc_bd
+      SUBROUTINE fineUpdate_pc_bd(local_intfr,blk_a,blk_b)
+        type(Interface_t),intent(in) :: local_intfr
+        type(Blocks), intent(inout) :: blk_b
+        type(Blocks), intent(in) :: blk_a
 
         REAL (dp) :: bl_interp_ans
         INTEGER(int64) :: i,j,k, varx1,varx2, vary1, vary2, tar_x, tar_y, loc_x, &
-             loc_y,g, a_blk_no, b_blk_no
+             loc_y
         INTEGER(int64) :: varz1,varz2, tar_z, loc_z
         !> axis and steps control how the looping is performed over the x, y, and z axes
         integer :: axis, steps(3)
-
-        DO g=1,intflines
-           a_blk_no=intfr(g)%a_blk
-           b_blk_no=intfr(g)%b_blk
 
         ! Loop through the x (1), y (2), and z (3) axes
         DO axis=1, 3
@@ -40,31 +41,31 @@ SUBROUTINE fineUpdate_bd
 
           ! If intfr%counter[xyz]p was a single variable this would be nicer
           if (axis == 1) then
-               steps(1) = intfr(g)%counterxp-1
+               steps(1) = local_intfr%counterxp-1
           else if (axis == 2) then
-               steps(2) = intfr(g)%counteryp-1
+               steps(2) = local_intfr%counteryp-1
           else if (axis == 3) then
-               steps(3) = intfr(g)%counterzp-1
+               steps(3) = local_intfr%counterzp-1
           end if
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ppppppp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         !$acc parallel loop collapse(3) private(varx1, varx2, vary1, vary2, varz1, varz2) &
         !$acc private(loc_x, loc_y, loc_z, bl_interp_ans) &
         !$acc firstprivate(a_blk_no, b_blk_no)
-        DO k=1, intfr(g)%counterzp, steps(3)
-        DO j=1, intfr(g)%counteryp, steps(2)
-        DO i=1, intfr(g)%counterxp, steps(1)
+        DO k=1, local_intfr%counterzp, steps(3)
+        DO j=1, local_intfr%counteryp, steps(2)
+        DO i=1, local_intfr%counterxp, steps(1)
 
-        varx1=intfr(g)%px_interface_det(2,i)
-        varx2=intfr(g)%px_interface_det(3,i)
-        vary1=intfr(g)%py_interface_det(2,j)
-        vary2=intfr(g)%py_interface_det(3,j)
-        varz1=intfr(g)%pz_interface_det(2,k)
-        varz2=intfr(g)%pz_interface_det(3,k)
+        varx1=local_intfr%px_interface_det(2,i)
+        varx2=local_intfr%px_interface_det(3,i)
+        vary1=local_intfr%py_interface_det(2,j)
+        vary2=local_intfr%py_interface_det(3,j)
+        varz1=local_intfr%pz_interface_det(2,k)
+        varz2=local_intfr%pz_interface_det(3,k)
 
-        loc_x=intfr(g)%px_interface_det(1,i)
-        loc_y=intfr(g)%py_interface_det(1,j)
-        loc_z=intfr(g)%pz_interface_det(1,k)
+        loc_x=local_intfr%px_interface_det(1,i)
+        loc_y=local_intfr%py_interface_det(1,j)
+        loc_z=local_intfr%pz_interface_det(1,k)
 
         !$acc loop collapse(3) seq
         DO tar_z=varz1,varz2
@@ -72,13 +73,13 @@ SUBROUTINE fineUpdate_bd
             DO tar_x=varx1,varx2
 
                bl_interp_ans = trilinear_interpolation(&
-                 block(b_blk_no)%xp(tar_x), block(b_blk_no)%yp(tar_y), block(b_blk_no)%zp(tar_z), &
-                 loc_x, loc_y, loc_z, block(a_blk_no)%xp, block(a_blk_no)%yp, block(a_blk_no)%zp, &
-                 0, block(a_blk_no)%pc &
+                 blk_b%xp(tar_x), blk_b%yp(tar_y), blk_b%zp(tar_z), &
+                 loc_x, loc_y, loc_z, blk_a%xp, blk_a%yp, blk_a%zp, &
+                 0, blk_a%pc &
                )
 
-                block(b_blk_no)%pc(tar_x, tar_y, tar_z) = bl_interp_ans
-                block(b_blk_no)%pco(tar_x, tar_y, tar_z) = bl_interp_ans
+                blk_b%pc(tar_x, tar_y, tar_z) = bl_interp_ans
+                blk_b%pco(tar_x, tar_y, tar_z) = bl_interp_ans
 
             ENDDO
           ENDDO
@@ -89,10 +90,7 @@ SUBROUTINE fineUpdate_bd
         ENDDO
         !$acc end parallel loop
 
-
-     end do  ! axes loop
-        ENDDO
-
+        end do  ! axes loop
 
         end subroutine fineUpdate_pc_bd
 

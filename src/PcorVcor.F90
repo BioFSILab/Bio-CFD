@@ -1,8 +1,8 @@
 module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, &
+  use global, only : block, intfr,  deltat, epsi, omega, omega1, omega2, omega3, omega4, &
        ita, nblocks, totaltime, &
-       totime
+       totime,intflines
   use biocfd_blocks, only: Blocks
 #ifdef _OPENMP
   use omp_lib, only: omp_get_max_threads, omp_get_thread_num
@@ -22,7 +22,7 @@ module biocfd_pcor_vcor
 
       SUBROUTINE poissonSolver(pcItaMax)
 
-        INTEGER(int64) :: i, j,k, n, g
+        INTEGER(int64) :: i, j,k, n, g,p
         INTEGER (int64),INTENT(IN)   :: pcItaMax
         REAL (dp)    :: max_derr1, max_derr2, max_div, max_derrStdSt
         REAL (dp)    :: er_dudt, er_dvdt, er_dwdt, err_ds
@@ -109,7 +109,9 @@ module biocfd_pcor_vcor
         CALL coarseUpdate_pc
         g=1
         CALL REDBLACKSOR_linear(g,pcItaMax)
-        call fineUpdate_pc_bd
+        do p=1,intflines
+           call fineUpdate_pc_bd(intfr(p),block(intfr(p)%a_blk),block(intfr(p)%b_blk))
+        end do
         !$omp end single
         !$omp do
         DO g=2,nblocks
