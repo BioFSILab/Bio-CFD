@@ -119,7 +119,7 @@
         do g=1, size(block)
            CALL nsMomentum2order(block(g))
         end do
-        CALL velocityBC(block(1))
+        CALL velocityBC(block(1),deltat,uc)
         do g=blk_start, size(block)
            CALL solidCellBC(block(g))
         end do
@@ -127,7 +127,7 @@
         do g=blk_start, size(block)
            CALL velocityForcing1(block(g))
         end do
-        CALL velocityBC(block(1))
+        CALL velocityBC(block(1),deltat,uc)
         CALL poissonSolver(pcItaMax)
         print *,7
         do g=blk_start, size(block)
