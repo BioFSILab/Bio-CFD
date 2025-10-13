@@ -2,7 +2,7 @@ module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, &
        ita, nblocks, totaltime, &
-       totime
+       totime,intflines
   use biocfd_blocks, only: Blocks
 #ifdef _OPENMP
   use omp_lib, only: omp_get_max_threads, omp_get_thread_num
@@ -10,7 +10,7 @@ module biocfd_pcor_vcor
 #ifdef _OPENACC
   use openacc, only: acc_device_default, acc_get_num_devices, acc_set_device_num
 #endif
-  use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_bd, fineUpdate_pc_bd
+  use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_pc_bd
   use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
   use biocfd_boundary_conditions, only : velocityBC
   implicit none
@@ -190,7 +190,9 @@ module biocfd_pcor_vcor
          END DO
         !$acc end parallel loop
          END DO
-        CALL fineUpdate_bd
+        DO g=1,intflines
+           call fineUpdate_bd_mv(g)
+        ENDDO
         CALL coarseUpdate
       END SUBROUTINE poissonSolver
 
