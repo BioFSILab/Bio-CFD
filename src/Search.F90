@@ -436,6 +436,7 @@ SUBROUTINE tagging_th_core(blk)
      SUBROUTINE findTScells(blk)
        type(Block_t), intent(inout) :: blk
         INTEGER            :: i, j, k, i1, j1, k1, iPt1, m, n, tscnt
+        integer :: idx
         !$acc parallel loop collapse(3) default(present)
                  DO k = 2, blk%nz+1
                  DO j = 2, blk%ny+1
@@ -478,16 +479,21 @@ SUBROUTINE tagging_th_core(blk)
         ALLOCATE(blk%TSIndexPtr(blk%TSCellCount,3))
 
         iPt1 = 0
+        !$acc parallel loop collapse(3) private(idx)
         DO k=1,blk%nz+3
            DO j=1,blk%ny+3
               DO i=1,blk%nx+3
                  IF (blk%cell2(i,j,k)==2) THEN
+                    !$acc atomic capture
                     iPt1 = iPt1 + 1
-                    blk%TSIndexPtr(iPt1, :) = [i, j, k]
+                    idx = iPt1
+                    !$acc end atomic
+                    blk%TSIndexPtr(idx, :) = [i, j, k]
                  ENDIF
               END DO
            END DO
         END DO
+        !$acc end parallel loop
 
         ALLOCATE(&
           blk%u2_ghost(blk%TSCellCount),  &
