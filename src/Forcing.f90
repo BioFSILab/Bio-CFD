@@ -1,7 +1,7 @@
 module biocfd_forcing
   use, intrinsic :: iso_fortran_env, only: dp => real64
   use biocfd_interpolation, only: linear_interpolation, bilinear_interpolation
-  use biocfd_blocks,only : Blocks
+  use biocfd_block_type, only: Block_t
   implicit none
 
   private
@@ -11,7 +11,7 @@ module biocfd_forcing
 
   contains
 SUBROUTINE pressureForcing1(blk)
-      type(Blocks), intent(inout) :: blk
+      type(Block_t), intent(inout) :: blk
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
                    dpdn_e, ac_y, ac_z, at_y, at_z
@@ -98,7 +98,7 @@ SUBROUTINE pressureForcing1(blk)
 END SUBROUTINE pressureForcing1
 
 SUBROUTINE velocityForcing1(blk)
-      type(Blocks), intent(inout) :: blk
+      type(Block_t), intent(inout) :: blk
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1,  &
                          aval, bval, cval, sur2nodeDis, &
@@ -421,7 +421,7 @@ SUBROUTINE velocityForcing1(blk)
 END SUBROUTINE velocityForcing1
 
 SUBROUTINE pressureForcingGhost(blk)
-      type(Blocks), intent(inout) :: blk
+      type(Block_t), intent(inout) :: blk
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, &
                          aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
@@ -517,7 +517,7 @@ SUBROUTINE pressureForcingGhost(blk)
 END SUBROUTINE pressureForcingGhost
 
 SUBROUTINE velocityForcingGhost(blk)
-      type(Blocks), intent(inout) :: blk
+      type(Block_t), intent(inout) :: blk
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1,  &
                          aval, bval, cval, sur2nodeDis, &
@@ -858,7 +858,7 @@ END SUBROUTINE velocityForcingGhost
 !***********************************************************************
 
 SUBROUTINE pressureForcingField(blk)
-      type(Blocks), intent(inout) :: blk
+      type(Block_t), intent(inout) :: blk
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, &
                    aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
@@ -943,7 +943,7 @@ SUBROUTINE pressureForcingField(blk)
 END SUBROUTINE pressureForcingField
 
 SUBROUTINE velocityForcingField(blk)
-      type(Blocks), intent(inout) :: blk
+      type(Block_t), intent(inout) :: blk
       INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1,  &
                          aval, bval, cval, sur2nodeDis, &
