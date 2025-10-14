@@ -2,7 +2,7 @@ module biocfd_write_output_corner1
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, ita, totime, re, nblocks, &
        totime, ita1
-  use biocfd_blocks, only: Blocks
+  use biocfd_block_type, only: Block_t
 #if USE_HDF5 == 1
   use biocfd_hdf5_io, only: hdf5_write_real, hdf5_write_int
 #endif
@@ -77,7 +77,7 @@ contains
        END SUBROUTINE write_output_hdf5
 #else
       SUBROUTINE write_output_ascii(blk,blk_no,char_f)
-       type(Blocks), intent(in) :: blk
+       type(Block_t), intent(in) :: blk
        integer (int64), intent(in) :: blk_no
        CHARACTER(len=150)  :: filename1
        CHARACTER (LEN = 3),INTENT(IN)   :: char_f
