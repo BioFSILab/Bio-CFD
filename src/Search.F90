@@ -739,7 +739,7 @@ blk%fluidCellCount = flcnt
             blk%blackCellIndexPtr(blk%blackCellCount,3))
        ipt1 = 0
        iPt = 0
-       !$acc parallel loop
+       !$acc parallel loop private(idx)
        DO n = 1, blk%fluidCellCount
           if (mod(sum(blk%fluidIndexPtr(n, :)), 2_int64) == 1) then
              !$acc atomic capture
