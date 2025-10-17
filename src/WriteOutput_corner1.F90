@@ -131,27 +131,25 @@ contains
         END IF
       END SUBROUTINE writeResult
 
-         SUBROUTINE body_plot
-         INTEGER(int64) :: inode, ielem, g
+         SUBROUTINE body_plot(blk)
+         type(Blocks), intent(in) :: blk
+         INTEGER(int64) :: inode, ielem
          CHARACTER(len=150) :: filename1
 
-          DO g=1,nblocks
-          if (ita == 1 )then
+          if (ita /= 1 ) return
           WRITE(filename1,108)
   108     FORMAT("out/butterfly.dat")
           OPEN(UNIT=857,FILE=filename1,STATUS='unknown')
           WRITE(857,*) 'TITLE = "FEstressplot"'
           WRITE(857,*) 'VARIABLES= "x", "y", "z","bd_n"'
-          WRITE(857,*) 'ZONE NODES= ',block(g)%ibNodes,',ELEMENTS=',block(g)%ibElems,',DATAPACKING=POINT, ZONETYPE=FETRIANGLE'
-          DO inode = 1, block(g)%ibNodes
-            WRITE(857,*)block(g)%xnode1(inode),block(g)%ynode1(inode),block(g)%znode1(inode), 99
+          WRITE(857,*) 'ZONE NODES= ',blk%ibNodes,',ELEMENTS=',blk%ibElems,',DATAPACKING=POINT, ZONETYPE=FETRIANGLE'
+          DO inode = 1, blk%ibNodes
+            WRITE(857,*) blk%xnode1(inode),blk%ynode1(inode),blk%znode1(inode), 99
           END DO
-          DO ielem = 1, block(g)%ibElems
-            WRITE(857,*) block(g)%ibElP1(ielem), block(g)%ibElP2(ielem), block(g)%ibElP3(ielem)
+          DO ielem = 1, blk%ibElems
+            WRITE(857,*) blk%ibElP1(ielem),blk%ibElP2(ielem),blk%ibElP3(ielem)
           END DO
           CLOSE(857)
-         END IF
-          END DO
         end subroutine body_plot
 
 end module biocfd_write_output_corner1
