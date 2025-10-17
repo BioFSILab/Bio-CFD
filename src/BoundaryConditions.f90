@@ -1,6 +1,5 @@
 module biocfd_boundary_conditions
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : deltat, uc
   use biocfd_blocks,only : Blocks
   implicit none
   private
@@ -9,9 +8,10 @@ module biocfd_boundary_conditions
 
   contains
 
-SUBROUTINE velocityBC(blk)
+SUBROUTINE velocityBC(blk,deltat,uc)
       type(Blocks), intent(inout) :: blk
       INTEGER (int64):: i, j, k
+      REAL(dp), intent(in) :: deltat,uc
 
      !$acc parallel loop gang vector collapse (2) default(present)  &
      !$acc firstprivate (uc, deltat)
