@@ -143,8 +143,10 @@
         !$acc wait
         CALL writeResult(char_f)
         !$acc wait
-        CALL body_plot
-        DO g=blk_start, nblocks
+        do g=1, size(block)
+           CALL body_plot(block(g))
+        end do
+         DO g=blk_start, nblocks
            DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent,block(g)%cosAlpha, &
                 block(g)%cosBeta, block(g)%cosGamma)
             block(g)%blk_mv_tag=0.
