@@ -109,26 +109,26 @@ contains
          ENDIF
       END SUBROUTINE write_output_ascii
 #endif
-      SUBROUTINE writeResult(char_f)
+      SUBROUTINE writeResult(blk,blk_no,char_f)
+        type(Blocks), intent(in) :: blk
+        integer (int64), intent(in) :: blk_no
         INTEGER::  i, j, k,g
         CHARACTER(len=70)  :: filename1
         CHARACTER (LEN = 3),INTENT(IN)   :: char_f
-        IF(mod(ita,500_int64)==0)THEN
-           Do g=1,nblocks
-           WRITE(filename1,22)char_f,g,re,block(2)%dx
+        IF(mod(ita,500_int64)/=0) return
+           WRITE(filename1,22)char_f,blk_no,re,blk%dx
  22          FORMAT('out/Chkpt/',A3,'_butter_chkpt.',i3.3,'.',f6.1,'.',f8.6,".dat")
         OPEN (1,FILE=filename1,FORM='formatted')
-        DO k = 1, block(g)%nz+2
-        DO j = 1, block(g)%ny+2
-        DO i = 1, block(g)%nx+2
-          WRITE(1,*) block(g)%u(i,j,k), block(g)%v(i,j,k), block(g)%w(i,j,k), &
-        block(g)%p(i,j,k), totime, ita, ita1
+        DO k = 1, blk%nz+2
+        DO j = 1, blk%ny+2
+        DO i = 1, blk%nx+2
+          WRITE(1,*) blk%u(i,j,k), blk%v(i,j,k), blk%w(i,j,k), &
+        blk%p(i,j,k), totime, ita, ita1
        END DO
        END DO
        END DO
-        CLOSE(22)
-        END DO
-        END IF
+        CLOSE(1)
+
       END SUBROUTINE writeResult
 
          SUBROUTINE body_plot
