@@ -3,7 +3,7 @@
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, &
              ita, ita1, nblocks, totaltime, totime,alpha_m, &
-             aoa,aoa1,aoa2,phase_angle,pi,theta_m, uc, re, intfr, intflines
+             aoa,aoa1,aoa2,phase_angle,pi,theta_m, uc, re, intfr
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
@@ -28,7 +28,7 @@
              velocityforcing1, velocityforcingfield, velocityforcingghost
         IMPLICIT NONE
 
-        INTEGER (int64) :: g,m
+        INTEGER (int64) :: g
         INTEGER (int64)   :: surGeoPoints
         CHARACTER (LEN = 3)   :: char_f
         INTEGER               :: istart
@@ -154,9 +154,9 @@
            CALL block_move_check
            DO g=blk_start, size(block)
               CALL change_block_coords(block(g))
-              DO m=1,intflines
-                CALL change_block_coords_interfaces(intfr(g),block(intfr(g)%b_blk))
-              END DO
+           END DO
+           DO g=1,size(intfr)
+              CALL change_block_coords_interfaces(intfr(g),block(intfr(g)%b_blk))
            END DO
            CALL change_block_interface
           CALL fine_block_cell

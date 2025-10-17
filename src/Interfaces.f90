@@ -13,11 +13,11 @@ MODULE biocfd_interface_type
                                                         vz_interface_det, wz_interface_det, &
                                                         py_interface_det, uy_interface_det, &
                                                         vy_interface_det, wy_interface_det
-        REAL(dp) :: a_blk, xintf_start, xintf_end, yintf_start, yintf_end, &
+        REAL(dp) :: xintf_start, xintf_end, yintf_start, yintf_end, &
                     zintf_start, zintf_end
         REAL(dp) :: xintf_st_new, xintf_en_new, yintf_st_new, yintf_en_new
         REAL(dp) :: zintf_st_new, zintf_en_new
-        INTEGER(int64) :: b_blk
+        INTEGER :: a_blk, b_blk
         INTEGER(int64) :: a_msh, b_msh, a_intf, b_intf
         INTEGER(int64) :: counterxu,counteryu,counterxp,counteryp,counterxv,counteryv
         INTEGER(int64) :: counterxw,counteryw

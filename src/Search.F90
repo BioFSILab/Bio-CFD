@@ -1309,168 +1309,167 @@ blk%fluidCellCount = flcnt
         ENDDO
         end subroutine block_move_check
 
-        SUBROUTINE change_block_coords(blk)
+      ! This subroutine used to be combined with change_block_coords_interfaces
+      ! and as a result this subroutine must be called just before
+      ! change_block_coords
+      SUBROUTINE change_block_coords(blk)
         type(Blocks), intent(inout) :: blk
         INTEGER(int64) :: i
         REAL(dp) :: change_y_f,change_x_f,change_z_f
 
-        if ( blk%move_check == 1) then
+        if ( blk%move_check /= 1) return
 
-           change_z_f= blk%move_amtz*blk%dz
-           change_y_f= blk%move_amty*blk%dy
-           change_x_f= blk%move_amtx * blk%dx
-           print*, 'chz',blk%move_amtz , blk%dz
-           print*, 'chy',blk%move_amty , blk%dy
-           print*, 'chx',blk%move_amtx , blk%dx
+        change_z_f= blk%move_amtz*blk%dz
+        change_y_f= blk%move_amty*blk%dy
+        change_x_f= blk%move_amtx * blk%dx
+        print*, 'chz',blk%move_amtz , blk%dz
+        print*, 'chy',blk%move_amty , blk%dy
+        print*, 'chx',blk%move_amtx , blk%dx
 
-           DO i = 1, blk%nx+3
-              blk%x1(i) = blk%x1(i) + change_x_f
-           ENDDO
+        DO i = 1, blk%nx+3
+           blk%x1(i) = blk%x1(i) + change_x_f
+        ENDDO
 
-           DO i = 1, blk%ny+3
-              blk%y1(i) = blk%y1(i) + change_y_f
-           ENDDO
+        DO i = 1, blk%ny+3
+           blk%y1(i) = blk%y1(i) + change_y_f
+        ENDDO
 
-           DO i = 1, blk%nz+3
-              blk%z1(i) = blk%z1(i)+ change_z_f
-           ENDDO
+        DO i = 1, blk%nz+3
+           blk%z1(i) = blk%z1(i)+ change_z_f
+        ENDDO
 
-           DO i = 1, blk%nx+3
-              blk%xu(i) = blk%x1(i)
-           ENDDO
+        DO i = 1, blk%nx+3
+           blk%xu(i) = blk%x1(i)
+        ENDDO
 
-           DO i = 1, blk%ny+3
-              blk%yv(i) = blk%y1(i)
-           ENDDO
+        DO i = 1, blk%ny+3
+           blk%yv(i) = blk%y1(i)
+        ENDDO
 
-           DO i = 1, blk%nz+3
-              blk%zw(i) = blk%z1(i)
-           ENDDO
+        DO i = 1, blk%nz+3
+           blk%zw(i) = blk%z1(i)
+        ENDDO
 
-           DO i = 1, blk%ny+2
-              blk%yu(i) = 0.5_dp*(blk%y1(i)+blk%y1(i+1))
-              blk%yw(i) = blk%yu(i)
-              blk%yp(i) = blk%yu(i)
-           END DO
+        DO i = 1, blk%ny+2
+           blk%yu(i) = 0.5_dp*(blk%y1(i)+blk%y1(i+1))
+           blk%yw(i) = blk%yu(i)
+           blk%yp(i) = blk%yu(i)
+        END DO
 
-           DO i = 1, blk%nx+2
-              blk%xv(i) = 0.5_dp*(blk%x1(i)+blk%x1(i+1))
-              blk%xw(i) = blk%xv(i)
-              blk%xp(i) = blk%xv(i)
-           END DO
+        DO i = 1, blk%nx+2
+           blk%xv(i) = 0.5_dp*(blk%x1(i)+blk%x1(i+1))
+           blk%xw(i) = blk%xv(i)
+           blk%xp(i) = blk%xv(i)
+        END DO
 
-           DO i = 1, blk%nz+2
-              blk%zu(i) = 0.5_dp*(blk%z1(i)+blk%z1(i+1))
-              blk%zv(i) = blk%zu(i)
-              blk%zp(i) = blk%zu(i)
-           END DO
-
-        ENDIF
+        DO i = 1, blk%nz+2
+           blk%zu(i) = 0.5_dp*(blk%z1(i)+blk%z1(i+1))
+           blk%zv(i) = blk%zu(i)
+           blk%zp(i) = blk%zu(i)
+        END DO
 
       end subroutine change_block_coords
 
+      ! This subroutine used to be combined with change_block_coords
+      ! and as a result this subroutine must be called straight
+      ! after change_block_coords
       subroutine change_block_coords_interfaces(local_intfr,blk)
         type(Interface_t),intent(inout) :: local_intfr
         type(Blocks), intent(inout) :: blk
         INTEGER(int64) :: k,j,i,countx_st,countz_st,county_st
 
-        if ( blk% move_check == 1) then
-           blk%cell_n=0
-           DO k=1,blk%nz+2
-           DO j=1,blk%ny+2
-           DO i=1,blk%nx+2
-              if( blk%xp(i) > (local_intfr%xintf_st_new  + blk%dx) .and. &
-                  blk%xp(i) < (local_intfr%xintf_en_new  - blk%dx).and. &
-                  blk%zp(k) > (local_intfr%zintf_st_new  + blk%dz) .and. &
-                  blk%zp(k) < (local_intfr%zintf_en_new  - blk%dz).and. &
-                  blk%yp(j) > (local_intfr%yintf_st_new  + blk%dy).and. &
-                  blk%yp(j) < (local_intfr%yintf_en_new  - blk%dy))then
+        if ( blk% move_check /= 1) return
+        blk%cell_n=0
+        DO k=1,blk%nz+2
+        DO j=1,blk%ny+2
+        DO i=1,blk%nx+2
+           if(blk%xp(i) > (local_intfr%xintf_st_new  + blk%dx) .and. &
+              blk%xp(i) < (local_intfr%xintf_en_new  - blk%dx).and. &
+              blk%zp(k) > (local_intfr%zintf_st_new  + blk%dz) .and. &
+              blk%zp(k) < (local_intfr%zintf_en_new  - blk%dz).and. &
+              blk%yp(j) > (local_intfr%yintf_st_new  + blk%dy).and. &
+              blk%yp(j) < (local_intfr%yintf_en_new  - blk%dy))then
+                 blk%cell_n(i,j,k)=1
+           endif
+        ENDDO
+        ENDDO
+        ENDDO
 
-                     blk%cell_n(i,j,k)=1
+        DO i=1,blk%nx+2
+           if(blk%xp(i) > local_intfr%xintf_st_new)then
+                 blk%cpy_x_start_mv=i
+                 print*,'xpst_f',blk%xp(i),'i',i
+                 exit
+           endif
+        ENDDO
 
-              endif
-           ENDDO
-           ENDDO
-           ENDDO
+        DO i=blk%cpy_x_start_mv,blk%nx+2
+           if(blk%xp(i) > local_intfr%xintf_en_new)then
+                 blk%cpy_x_end_mv=i-1
+                 print*,'xpen_f',blk%xp(i-1),'i',i-1
+                 exit
+           endif
+        ENDDO
 
-           DO i=1,blk%nx+2
-              if( blk%xp(i) > local_intfr%xintf_st_new)then
-                  blk%cpy_x_start_mv=i
-                  print*,'xpst_f',blk%xp(i),'i',i
-                  exit
-               endif
-           ENDDO
-
-           DO i=blk%cpy_x_start_mv,blk%nx+2
-              if( blk%xp(i) > local_intfr%xintf_en_new)then
-                  blk%cpy_x_end_mv=i-1
-                  print*,'xpen_f',blk%xp(i-1),'i',i-1
-                  exit
-              endif
-           ENDDO
-
-           DO j=1,blk%ny+2
-              if( blk%yp(j) > local_intfr%yintf_st_new)then
+        DO j=1,blk%ny+2
+           if(blk%yp(j) > local_intfr%yintf_st_new)then
                   blk%cpy_y_start_mv=j
                   print*,'ypst_f',blk%yp(j),'j',j
                   exit
-              endif
-           ENDDO
+           endif
+        ENDDO
 
-           DO j=blk%cpy_y_start_mv,blk%ny+2
-              if( blk%yp(j) > local_intfr%yintf_en_new)then
-                  blk%cpy_y_end_mv=j-1
-                  print*,'ypen_f',blk%yp(j-1),'j',j-1
-                  exit
-              endif
-           ENDDO
+        DO j=blk%cpy_y_start_mv,blk%ny+2
+           if(blk%yp(j) > local_intfr%yintf_en_new)then
+                 blk%cpy_y_end_mv=j-1
+                 print*,'ypen_f',blk%yp(j-1),'j',j-1
+                 exit
+           endif
+        ENDDO
 
-           DO j=1,blk%nz+2
-              if( blk%zp(j) > local_intfr%zintf_st_new)then
-                  blk%cpy_z_start_mv=j
-                  print*,'zpst_f',blk%zp(j),'k',j
-                  exit
-              endif
-           ENDDO
+        DO j=1,blk%nz+2
+           if(blk%zp(j) > local_intfr%zintf_st_new)then
+                 blk%cpy_z_start_mv=j
+                 print*,'zpst_f',blk%zp(j),'k',j
+                 exit
+           endif
+        ENDDO
 
-           DO j=blk%cpy_z_start_mv,blk%nz+2
-              if( blk%zp(j) > local_intfr%zintf_en_new)then
-                  blk%cpy_z_end_mv=j-1
-                  print*,'zpen_f',blk%zp(j-1),'k',j-1
-                  exit
-              endif
-           ENDDO
+        DO j=blk%cpy_z_start_mv,blk%nz+2
+           if(blk%zp(j) > local_intfr%zintf_en_new)then
+                 blk%cpy_z_end_mv=j-1
+                 print*,'zpen_f',blk%zp(j-1),'k',j-1
+                 exit
+           endif
+        ENDDO
 
-           print*,'bef'
+        print*,'bef'
+        countx_st=blk%cpy_x_start
+        county_st=blk%cpy_y_start
+        countz_st=blk%cpy_z_start
+
+        blk%u=0
+        blk%v=0
+        blk%w=0
+        blk%p=0
+        DO k=blk%cpy_z_start_mv,blk%cpy_z_end_mv
            countx_st=blk%cpy_x_start
-           county_st=blk%cpy_y_start
-           countz_st=blk%cpy_z_start
-
-           OPEN(UNIT=12,FILE='log.dat',STATUS='unknown',POSITION='APPEND')
-              blk%u=0
-              blk%v=0
-              blk%w=0
-              blk%p=0
-              DO k=blk%cpy_z_start_mv,blk%cpy_z_end_mv
-                 countx_st=blk%cpy_x_start
-                 DO i=blk%cpy_x_start_mv,blk%cpy_x_end_mv
-                    county_st=blk%cpy_y_start
-                    DO j=blk%cpy_y_start_mv,blk%cpy_y_end_mv
-                       blk%u(i,j,k)=blk%u_dum(countx_st,county_st,countz_st)
-                       blk%v(i,j,k)=blk%v_dum(countx_st,county_st,countz_st)
-                       blk%w(i,j,k)=blk%w_dum(countx_st,county_st,countz_st)
-                       blk%p(i,j,k)=blk%p_dum(countx_st,county_st,countz_st)
-                       county_st=county_st+1
-                    ENDDO
-                    countx_st=countx_st+1
-                 ENDDO
-                 countz_st=countz_st+1
+           DO i=blk%cpy_x_start_mv,blk%cpy_x_end_mv
+              county_st=blk%cpy_y_start
+              DO j=blk%cpy_y_start_mv,blk%cpy_y_end_mv
+                 blk%u(i,j,k)=blk%u_dum(countx_st,county_st,countz_st)
+                 blk%v(i,j,k)=blk%v_dum(countx_st,county_st,countz_st)
+                 blk%w(i,j,k)=blk%w_dum(countx_st,county_st,countz_st)
+                 blk%p(i,j,k)=blk%p_dum(countx_st,county_st,countz_st)
+                 county_st=county_st+1
               ENDDO
-              print*,'aft'
-           close(12)
-        ENDIF
+              countx_st=countx_st+1
+           ENDDO
+           countz_st=countz_st+1
+        ENDDO
+        print*,'aft'
 
-        end subroutine change_block_coords_interfaces
+     end subroutine change_block_coords_interfaces
 
         SUBROUTINE change_block_interface
 
