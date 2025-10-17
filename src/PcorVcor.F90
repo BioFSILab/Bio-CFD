@@ -109,7 +109,7 @@ module biocfd_pcor_vcor
         CALL coarseUpdate_pc
         g=1
         CALL REDBLACKSOR_linear(g,pcItaMax)
-        do p=1,intflines
+        do p=1,size(intfr)
            call fineUpdate_pc_bd(intfr(p),block(intfr(p)%a_blk),block(intfr(p)%b_blk))
         end do
         !$omp end single

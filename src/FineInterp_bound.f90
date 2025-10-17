@@ -51,7 +51,6 @@ SUBROUTINE fineUpdate_bd
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ppppppp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         !$acc parallel loop collapse(3) private(varx1, varx2, vary1, vary2, varz1, varz2) &
         !$acc private(loc_x, loc_y, loc_z, bl_interp_ans) &
-        !$acc firstprivate(a_blk_no, b_blk_no)
         DO k=1, local_intfr%counterzp, steps(3)
         DO j=1, local_intfr%counteryp, steps(2)
         DO i=1, local_intfr%counterxp, steps(1)
