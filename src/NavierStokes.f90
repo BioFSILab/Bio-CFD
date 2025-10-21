@@ -262,11 +262,11 @@ contains
                        w1a,w22,w3,w4,w5,w6,w7,w8,w9,w10,w11,w12,w13,w14,w15,w16,dx2xr, &
                        dx2xl,dy2ye,dy2yw, dxr, dx, dxl, dye, dy, dyw, dzt, dz, dzb, &
                        dz2zt,dz2zb,ddx,ddxr,ddy,ddye,ddz,ddzr,dwudz, &
-                       wu_n,wu_s,w_in_um,vu_e,vu_w,v_in_um,duutdx,dvutdy, &
-                       dwutdz,duudx,dvudy,d2udx2,d2udy2,d2udz2, &
-                       uv_e,uv_w,u_in_vm,wv_n,wv_s,w_in_vm,duvtdx,dvvtdy,dwvtdz, &
+                       wu_n,wu_s,w_in_um,vu_e,vu_w,v_in_um, &
+                       duudx,dvudy,d2udx2,d2udy2,d2udz2, &
+                       uv_e,uv_w,u_in_vm,wv_n,wv_s,w_in_vm, &
                        duvdx,dvvdy,dwvdz,d2vdx2,d2vdy2,d2vdz2,uw_e,uw_w, &
-                       u_in_wm,vw_n,vw_s,v_in_wm,duwtdx,dvwtdy,dwwtdz, &
+                       u_in_wm,vw_n,vw_s,v_in_wm, &
                        duwdx,dvwdy,dwwdz,d2wdx2,d2wdy2,d2wdz2,xtt2,residu,ytt2,residv,&
                           ztt2,residw, temp_u1dotn, temp_u2dotn, temp_v1dotn, temp_v2dotn, &
                           temp_w1dotn, temp_w2dotn, temp_pdotn
@@ -282,11 +282,11 @@ contains
 !$acc		 w1a,w22,w3,w4,w5,w6,w7,w8,w9,w10,w11,w12,w13,w14,w15,w16,dx2xr,             &
 !$acc	        dx2xl,dy2ye,dy2yw,dxr,dx,dxl,dye,dy,dyw,dzt,dz,dzb,                         &
 !$acc		 dz2zt,dz2zb,ddx,ddxr,ddy,ddye,ddz,ddzr,          &
-!$acc		 wu_n,wu_s,w_in_um,vu_e,vu_w,v_in_um,duutdx,dvutdy,           &
-!$acc	        dwutdz,duudx,dvudy,dwudz,d2udx2,d2udy2,d2udz2,         &
-!$acc	        uv_e,uv_w,u_in_vm,wv_n,wv_s,w_in_vm,duvtdx,dvvtdy,dwvtdz,            &
+!$acc		 wu_n,wu_s,w_in_um,vu_e,vu_w,v_in_um,           &
+!$acc	        duudx,dvudy,dwudz,d2udx2,d2udy2,d2udz2,         &
+!$acc	        uv_e,uv_w,u_in_vm,wv_n,wv_s,w_in_vm, &
 !$acc	        duvdx,dvvdy,dwvdz,d2vdx2,d2vdy2,d2vdz2,uw_e,uw_w,             &
-!$acc	        u_in_wm,vw_n,vw_s,v_in_wm,duwtdx,dvwtdy,dwwtdz,        &
+!$acc	        u_in_wm,vw_n,vw_s,v_in_wm, &
 !$acc		 duwdx,dvwdy,dwwdz,d2wdx2,d2wdy2,d2wdz2,xtt2,residu,ytt2,residv,ztt2,residw, &
 !$acc           index_ip1,index_im1,index_jp1,index_jm1,index_kp1,index_km1, &
 !$acc           temp_u2dotn,temp_u1dotn, &
@@ -609,46 +609,22 @@ contains
 
 
 
-       if (do_third_order_upwinding) then
+           if (do_third_order_upwinding) then
 
-           ddy=0.5_dp*(blk%deltay(j)+blk%deltay(j-1))
-       ddye=0.5_dp*(blk%deltay(j)+blk%deltay(j+1))
-       ddz=0.5_dp*(blk%deltaz(k)+blk%deltaz(k-1))
-       ddzr=0.5_dp*(blk%deltaz(k)+blk%deltaz(k+1))
+              ddy=0.5_dp*(blk%deltay(j)+blk%deltay(j-1))
+              ddye=0.5_dp*(blk%deltay(j)+blk%deltay(j+1))
+              ddz=0.5_dp*(blk%deltaz(k)+blk%deltaz(k-1))
+              ddzr=0.5_dp*(blk%deltaz(k)+blk%deltaz(k+1))
 
-       duutdx=blk%u(i,j,k)*(blk%ca_uu(1, i)*blk%u(i+2,j,k)+&
-              blk%ca_uu(2, i)*blk%u(i+1,j,k) &
-             +blk%ca_uu(3, i)*blk%u(i,j,k)+blk%ca_uu(4, i)&
-             *blk%u(i-1,j,k)+blk%ca_uu(5, i)*&
-      blk%u(i-2,j,k))/(blk%ca_uu(6, i)*blk%deltax(i+1))+dabs(blk%u(i,j,k))* &
-      (blk%ck_uu(1, i)*blk%u(i+2,j,k)+blk%ck_uu(2, i)*blk%u(i+1,j,k) &
-             +blk%ck_uu(3, i)*blk%u(i,j,k)+blk%ck_uu(4, i)&
-             *blk%u(i-1,j,k)+blk%ck_uu(5, i)*&
-      blk%u(i-2,j,k))/(2.0_dp*blk%ck_uu(6, i)*blk%deltax(i))
+              duudx = third_order_upwinding(blk%u(i, j, k), blk%u(i+2:i-2:-1, j, k), &
+                                            blk%ca_uu(:, i), blk%ck_uu(:, i), &
+                                            blk%deltax(i+1), blk%deltax(i))
 
-       dvutdy=v_in_um*(blk%ca_vu(1, j)*blk%u(i,j+2,k)+&
-            blk%ca_vu(2, j)*blk%u(i,j+1,k) &
-            +blk%ca_vu(3, j)*blk%u(i,j,k)+blk%ca_vu(4, j)*&
-            blk%u(i,j-1,k)+blk%ca_vu(5, j)* &
-      blk%u(i,j-2,k))/(blk%ca_vu(6, j)*ddye)+dabs(v_in_um)* &
-      (blk%ck_vu(1, j)*blk%u(i,j+2,k)+blk%ck_vu(2, j)*blk%u(i,j+1,k) &
-      +blk%ck_vu(3, j)*blk%u(i,j,k)+blk%ck_vu(4, j)*&
-      blk%u(i,j-1,k)+blk%ck_vu(5, j)* &
-      blk%u(i,j-2,k))/(2.0_dp*blk%ck_vu(6, j)*ddy)
+              dvudy = third_order_upwinding(v_in_um, blk%u(i, j+2:j-2:-1, k), &
+                                            blk%ca_vu(:, j), blk%ck_vu(:, j), ddye, ddy)
 
-       dwutdz=w_in_um*(blk%ca_wu(1, k)*blk%u(i,j,k+2)+&
-            blk%ca_wu(2, k)*blk%u(i,j,k+1) &
-            +blk%ca_wu(3, k)*blk%u(i,j,k)+blk%ca_wu(4, k)*&
-            blk%u(i,j,k-1)+blk%ca_wu(5, k)* &
-      blk%u(i,j,k-2))/(blk%ca_wu(6, k)*ddzr)+dabs(w_in_um)* &
-      (blk%ck_wu(1, k)*blk%u(i,j,k+2)+blk%ck_wu(2, k)*blk%u(i,j,k+1) &
-      +blk%ck_wu(3, k)*blk%u(i,j,k)+blk%ck_wu(4, k)*blk%u(i,j,k-1)+&
-      blk%ck_wu(5, k)* &
-      blk%u(i,j,k-2))/(2.0_dp*blk%ck_wu(6, k)*ddz)
-
-            duudx=duutdx
-       dvudy=dvutdy
-       dwudz=dwutdz
+              dwudz = third_order_upwinding(w_in_um, blk%u(i, j, k+2:k-2:-1), &
+                                            blk%ca_wu(:, k), blk%ck_wu(:, k), ddzr, ddz)
 
        else
  !cccccccccccccc---First Order Upwinding ----ccccccccccccccccccccccccccccc
@@ -702,46 +678,17 @@ contains
        ddz=0.5_dp*(blk%deltaz(k)+blk%deltaz(k-1))
        ddzr=0.5_dp*(blk%deltaz(k)+blk%deltaz(k+1))
 
-       ! TODO: Note that this calculation, which is duvt/dx, is using
+       ! TODO: Note that this calculation, which is duv/dx, is using
        ! ca_uw not ca_uv... ca_uw == ca_uv, however, I think for
        ! completeness it would make more sense to use e.g. ca_uv
        ! (which isn't used anywhere except assignment)
-     duvtdx=u_in_vm*(blk%ca_uw(1, i)*blk%v(i+2,j,k)&
-           +blk%ca_uw(2, i)*blk%v(i+1,j,k) &
-           +blk%ca_uw(3, i)*blk%v(i,j,k)+blk%ca_uw(4, i)&
-           *blk%v(i-1,j,k)+blk%ca_uw(5, i)* &
-      blk%v(i-2,j,k))/(blk%ca_uw(6, i)*ddxr)+dabs(u_in_vm)* &
-      (blk%ck_uw(1, i)*blk%v(i+2,j,k)+blk%ck_uw(2, i)*blk%v(i+1,j,k) &
-      +blk%ck_uw(3, i)*blk%v(i,j,k)+blk%ck_uw(4, i)*blk%v(i-1,j,k)&
-      +blk%ck_uw(5, i)* &
-      blk%v(i-2,j,k))/(2.0_dp*blk%ck_uw(6, i)*ddx)
-
-     dvvtdy=blk%v(i,j,k)*(blk%ca_vv(1, j)*blk%v(i,j+2,k)+&
-          blk%ca_vv(2, j)*blk%v(i,j+1,k) &
-          +blk%ca_vv(3, j)*blk%v(i,j,k)+blk%ca_vv(4, j)*blk%v(i,j-1,k)+&
-          blk%ca_vv(5, j)* &
-      blk%v(i,j-2,k))/(blk%ca_vv(6, j)*blk%deltay(j+1))+dabs(blk%v(i,j,k))* &
-      (blk%ck_vv(1, j)*blk%v(i,j+2,k)+blk%ck_vv(2, j)*blk%v(i,j+1,k) &
-      +blk%ck_vv(3, j)*blk%v(i,j,k)+blk%ck_vv(4, j)*blk%v(i,j-1,k)+&
-      blk%ck_vv(5, j)* &
-      blk%v(i,j-2,k))/(2.0_dp*blk%ck_vv(6, j)*blk%deltay(j))
-
-       ! See TODO about mismatch of variables... this is dwv but is
-       ! using e.g. ca_wu rather than wv
-     dwvtdz=w_in_vm*(blk%ca_wu(1, k)*blk%v(i,j,k+2)+blk%ca_wu(2, k)&
-           *blk%v(i,j,k+1) &
-           +blk%ca_wu(3, k)*blk%v(i,j,k)+blk%ca_wu(4, k)&
-           *blk%v(i,j,k-1)+blk%ca_wu(5, k)* &
-      blk%v(i,j,k-2))/(blk%ca_wu(6, k)*ddzr)+dabs(w_in_vm)* &
-      (blk%ck_wu(1, k)*blk%v(i,j,k+2)+blk%ck_wu(2, k)*blk%v(i,j,k+1) &
-      +blk%ck_wu(3, k)*blk%v(i,j,k)+blk%ck_wu(4, k)*blk%v(i,j,k-1)+&
-      blk%ck_wu(5, k)* &
-      blk%v(i,j,k-2))/(2.0_dp*blk%ck_wu(6, k)*ddz)
-
-       duvdx=duvtdx
-       dvvdy=dvvtdy
-       dwvdz=dwvtdz
-
+       duvdx = third_order_upwinding(u_in_vm, blk%v(i+2:i-2:-1, j, k), &
+                                     blk%ca_uw(:, i), blk%ck_uw(:, i), ddxr, ddx)
+       dvvdy = third_order_upwinding(blk%v(i,j,k), blk%v(i,j+2:j-2:-1,k), &
+                                     blk%ca_vv(:, j), blk%ck_vv(:, j), blk%deltay(j+1), &
+                                     blk%deltay(j))
+       dwvdz = third_order_upwinding(w_in_vm, blk%v(i, j, k+2:k-2:-1), &
+                                     blk%ca_wu(:, k), blk%ck_wu(:, k), ddzr, ddz)
        else
 !cccccccccccccc---First Order Upwinding ----ccccccccccccccccccccccccccccc
       duvdx = -0.25_dp*(u13*v3 + alpha*dabs(u13)*v4- u14*v5 - alpha*dabs(u14)*v6)/blk%deltax(i)
@@ -794,40 +741,13 @@ contains
        ddy=0.5_dp*(blk%deltay(j)+blk%deltay(j-1))
        ddye=0.5_dp*(blk%deltay(j)+blk%deltay(j+1))
 
-       duwtdx=u_in_wm*(blk%ca_uw(1, i)*blk%w(i+2,j,k)+blk%ca_uw(2, i)*&
-            blk%w(i+1,j,k) &
-            +blk%ca_uw(3, i)*blk%w(i,j,k)+blk%ca_uw(4, i)*blk%w(i-1,j,k)+&
-            blk%ca_uw(5, i)* &
-      blk%w(i-2,j,k))/(blk%ca_uw(6, i)*ddxr)+dabs(u_in_wm)* &
-      (blk%ck_uw(1, i)*blk%w(i+2,j,k)+blk%ck_uw(2, i)*blk%w(i+1,j,k) &
-      +blk%ck_uw(3, i)*blk%w(i,j,k)+blk%ck_uw(4, i)*blk%w(i-1,j,k)+&
-      blk%ck_uw(5, i)* &
-      blk%w(i-2,j,k))/(2.0_dp*blk%ck_uw(6, i)*ddx)
-
-       dvwtdy=v_in_wm*(blk%ca_vw(1, j)*blk%w(i,j+2,k)+blk%ca_vw(2, j)*&
-            blk%w(i,j+1,k) &
-            +blk%ca_vw(3, j)*blk%w(i,j,k)+blk%ca_vw(4, j)*blk%w(i,j-1,k)+&
-            blk%ca_vw(5, j)* &
-      blk%w(i,j-2,k))/(blk%ca_vw(6, j)*ddye)+dabs(v_in_wm)* &
-      (blk%ck_vw(1, j)*blk%w(i,j+2,k)+blk%ck_vw(2, j)*blk%w(i,j+1,k) &
-      +blk%ck_vw(3, j)*blk%w(i,j,k)+blk%ck_vw(4, j)*blk%w(i,j-1,k)+&
-       blk%ck_vw(5, j)* &
-      blk%w(i,j-2,k))/(2.0_dp*blk%ck_vw(6, j)*ddy)
-
-       dwwtdz=blk%w(i,j,k)*(blk%ca_ww(1, k)*blk%w(i,j,k+2)+blk%ca_ww(2, k)*&
-            blk%w(i,j,k+1) &
-            +blk%ca_ww(3, k)*blk%w(i,j,k)+blk%ca_ww(4, k)*blk%w(i,j,k-1)+&
-            blk%ca_ww(5, k)* &
-      blk%w(i,j,k-2))/(blk%ca_ww(6, k)*blk%deltaz(k+1))+dabs(blk%w(i,j,k))* &
-      (blk%ck_ww(1, k)*blk%w(i,j,k+2)+blk%ck_ww(2, k)*blk%w(i,j,k+1) &
-      +blk%ck_ww(3, k)*blk%w(i,j,k)+blk%ck_ww(4, k)*blk%w(i,j,k-1)+&
-      blk%ck_ww(5, k)* &
-      blk%w(i,j,k-2))/(2.0_dp*blk%ck_ww(6, k)*blk%deltaz(k))
-
-            duwdx=duwtdx
-       dvwdy=dvwtdy
-       dwwdz=dwwtdz
-
+       duwdx = third_order_upwinding(u_in_wm, blk%w(i+2:i-2:-1, j, k), &
+                                     blk%ca_uw(:, i), blk%ck_uw(:, i), ddxr, ddx)
+       dvwdy = third_order_upwinding(v_in_wm, blk%w(i, j+2:j-2:-1, k), &
+                                    blk%ca_vw(:, j), blk%ck_vw(:, j), ddye, ddy)
+       dwwdz = third_order_upwinding(blk%w(i,j,k), blk%w(i, j, k+2:k-2:-1), &
+                                    blk%ca_ww(:, k), blk%ck_ww(:, k), &
+                                    blk%deltaz(k+1), blk%deltaz(k))
        else
 !cccccccccccccc---First Order Upwinding ----cccccccccccccccccccccccccccc
 
@@ -1020,4 +940,18 @@ END IF
 
       out = .true.
     end function check_adjacent_cell
+
+    !> Perform third-order upwinding - add reference here?
+    pure function third_order_upwinding(x_0, xvec, ca, ck, delta1, delta2) result(out)
+      real(dp), intent(in) :: x_0
+      real(dp), intent(in) :: xvec(5)
+      real(dp), intent(in) :: ca(6), ck(6)
+      real(dp), intent(in) :: delta1, delta2
+
+      real(dp) :: out
+
+      out = x_0 * dot_product(ca(1:5), xvec) / (ca(6) * delta1) &
+          + abs(x_0) * dot_product(ck(1:5), xvec) / (2 * ck(6) * delta2)
+
+    end function third_order_upwinding
 end module biocfd_navier_stokes
