@@ -86,7 +86,7 @@
            ita = 0
            ita1 = 0
            do g=1, size(block)
-              call lastConditions(block(g), g, re)
+              call lastConditions(block(g), g, re,totime,ita,ita1)
            end do
         end if
         do g=blk_start, size(block)
