@@ -1,7 +1,7 @@
 module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, &
-       ita, nblocks, totaltime,totime,uc
+       ita, totaltime,totime,uc
   use biocfd_block_type, only: Block_t
 #ifdef _OPENMP
   use omp_lib, only: omp_get_max_threads, omp_get_thread_num
@@ -63,7 +63,7 @@ module biocfd_pcor_vcor
 #endif
 
 
-        DO g=1,nblocks
+        DO g=1,size(block)
         !$acc parallel loop gang vector collapse (3) default(present)
         DO k = 1, block(g)%nz+2
         DO j = 1, block(g)%ny+2
@@ -85,7 +85,7 @@ module biocfd_pcor_vcor
 
         !$omp parallel num_threads(omp_threads) default(none) &
         !$omp& private(g) &
-        !$omp& shared(nblocks, acc_devices, pcItaMax) firstprivate(omp_thread_num)
+        !$omp& shared(acc_devices, pcItaMax) firstprivate(omp_thread_num)
 
 #ifdef _OPENMP
         omp_thread_num = omp_get_thread_num()
@@ -96,7 +96,7 @@ module biocfd_pcor_vcor
 #endif
 
         !$omp do
-        DO g=1,nblocks
+        DO g=1,size(block)
            CALL computeDiv(g)    !divergence vector
            ! Do not compute Red/Black here for block 1
            if (g /= 1)  CALL REDBLACKSOR_linear(g,pcItaMax)
@@ -111,7 +111,7 @@ module biocfd_pcor_vcor
         call fineUpdate_pc_bd
         !$omp end single
         !$omp do
-        DO g=2,nblocks
+        DO g=2,size(block)
          CALL REDBLACKSOR_linear(g,pcItaMax)
         end do
         !$omp end do
@@ -120,7 +120,7 @@ module biocfd_pcor_vcor
         !$omp end single
 
        !$omp do
-       DO g=1,nblocks
+       DO g=1,size(block)
                CALL correctPressure(g)  !pressure correction
                CALL correctVelocity(g)  !velocity correction
         END DO
@@ -128,7 +128,7 @@ module biocfd_pcor_vcor
         !$omp end parallel
          CALL velocityBC(block(1),deltat,uc)      !correct velocity at boundaries
 
-         DO g=1,nblocks
+         DO g=1,size(block)
          err_ds=0.
         !$acc parallel loop gang vector firstprivate (deltat)   &
         !$acc private (i, j, k, er_dudt, er_dvdt, er_dwdt)               &
@@ -150,7 +150,7 @@ module biocfd_pcor_vcor
 
 
 
-        DO i=1,nblocks
+        DO i=1,size(block)
                if ( block(i)%derr2 >max_derr2)then
                   max_derr2=block(i)%derr2
                end if
@@ -176,7 +176,7 @@ module biocfd_pcor_vcor
  16      FORMAT(' ',I8, I10, 4E15.6)
          CLOSE(111)
 
-         DO g=1,nblocks
+         DO g=1,size(block)
         !$acc parallel loop gang vector default(present) collapse (3)
          DO k = 1, block(g)%nz+2
          DO j = 1, block(g)%ny+2
