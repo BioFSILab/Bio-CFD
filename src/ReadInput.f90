@@ -3,7 +3,7 @@ module biocfd_read_input
   use global, only : block, uc, u0, totime, &
        re, piv_pt, pi, phase_angle, omega4, &
        omega3, omega2, omega1, nblocks, ita1, ita, &
-       intflines, inor, freq, epsi, dxmin, dt_order, deltat, &
+       inor, freq, epsi, dxmin, dt_order, deltat, &
        blk_start, aoa, alpha, intfr
   use biocfd_interface_type, only: Interface_t
   use biocfd_block_type,only : Block_t
@@ -27,6 +27,7 @@ module biocfd_read_input
        REAL(dp),ALLOCATABLE,DIMENSION(:) :: xstart_temp,xend_temp,&
        ystart_temp,yend_temp,zstart_temp,zend_temp
        REAL(dp) :: alpha_m,theta_m,alpha_m1,theta_m1,mu_f,rho_f,l_c,u_tip,disp
+       INTEGER (int64) :: intflines
        NAMELIST /input_data/ nblocks, intflines,  &
                    itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
                    re,rho_f, mu_f, l_c, &
@@ -372,7 +373,7 @@ module biocfd_read_input
 
          print*,'Inside readBlockInterface'
         OPEN(51, FILE = 'interface_details.dat', FORM = 'formatted')
-        DO i=1, intflines
+        DO i=1, size(intfr)
         READ(51,*) intfr(i)%a_blk, intfr(i)%a_msh, intfr(i)%a_intf, &
                    intfr(i)%b_blk, intfr(i)%b_msh, intfr(i)%b_intf, &
                    intfr(i)%xintf_start, intfr(i)%xintf_end, &
