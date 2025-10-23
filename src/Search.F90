@@ -385,6 +385,7 @@ SUBROUTINE tagging_th_core(blk)
        INTEGER(int64), intent(in)  :: blk_no
        CHARACTER(LEN=120) :: filename1
 
+        call tagging_th_core(blk)
                WRITE(filename1,1) blk_no
   1      FORMAT('butter_f.',i3.3,".dat")
           OPEN(11,FILE=filename1,status='unknown')
@@ -420,7 +421,7 @@ SUBROUTINE tagging_th_core(blk)
         b_blk_no=intfr(g)%b_blk
 
         if ( block(b_blk_no)%move_check == 1)then
-      call fineUpdate_mv(g)
+       call fineUpdate_mv(g)
        call fineUpdate_bd_mv(g)
         endif
         ENDDO
