@@ -73,7 +73,7 @@ contains
             call hdf5_write_int(filename=filename1,&
                                 array_input_3d=blk%cell_pr,key='cell_pr',group=dummy_1)
             deallocate(u1,v1,w1)
-         end do
+
        END SUBROUTINE write_output_hdf5
 #else
       SUBROUTINE write_output_ascii(blk,blk_no,char_f)
