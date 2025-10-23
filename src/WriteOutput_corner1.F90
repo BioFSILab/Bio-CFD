@@ -28,7 +28,7 @@ contains
        character (len=11) :: dummy_1
        character (len=5) ::dummy_2
 
-         IF((mod(ita,200_int64) ==0 .or. ita <= 2 )) return 
+         IF((mod(ita,200_int64) /=0 .or. ita /= 1 .or. ita /=2 )) return 
             write(dummy_1,'(A6,I5.5)') 'block_',blk_no
             write(dummy_2,'(I5.5)') ita
             allocate(u1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1),&
