@@ -72,21 +72,22 @@ SUBROUTINE pressureForcingCore(blk, is_field)
          pos1_y = blk%yp(j) + pt1*blk%cosBeta(blk%nelp(n))
          pos1_z = blk%zp(k) + pt1*blk%cosGamma(blk%nelp(n))
 
-         low = merge(i - 7_int64, 1_int64, is_field)
+         low = merge(i - 7, 1, is_field)
+         ! See issue GH204 for why this has to be int64
          high = merge(i + 7_int64, blk%nx + 1, is_field)
           !$acc loop seq
          DO il = low, high
             if(pos1_x>=blk%xp(il).and.pos1_x<blk%xp(il+1)) i_x1 = il
          END DO
 
-         low = merge(j - 7_int64, 1_int64, is_field)
+         low = merge(j - 7, 1, is_field)
          high = merge(j + 7_int64, blk%ny + 1, is_field)
          !$acc loop seq
          DO jl = low, high
             if(pos1_y>=blk%yp(jl).and.pos1_y<blk%yp(jl+1)) i_y1 = jl
          END DO
 
-         low = merge(k - 7_int64, 1_int64, is_field)
+         low = merge(k - 7, 1, is_field)
          high = merge(k + 7_int64, blk%nz + 1, is_field)
           !$acc loop seq
          DO kl = low, high
