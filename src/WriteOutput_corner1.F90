@@ -28,7 +28,7 @@ contains
        character (len=11) :: dummy_1
        character (len=5) ::dummy_2
 
-         IF((mod(ita,200_int64) /=0 .or. ita /= 1 .or. ita /=2 )) return 
+         if (mod(ita,200_int64) /=0 .and. ita > 2) return
             write(dummy_1,'(A6,I5.5)') 'block_',blk_no
             write(dummy_2,'(I5.5)') ita
             allocate(u1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1),&
@@ -51,11 +51,11 @@ contains
             call hdf5_write_real(filename=filename1,&
                                  array_input_3d=w1,key='w1',group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_1d=blk%xp,key='xp',group=dummy_1)
+                                 array_input_1d=blk%xp(2:blk%nx+1), key='xp', group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_1d=blk%yp,key='yp',group=dummy_1)
+                                 array_input_1d=blk%yp(2:blk%ny+1), key='yp',group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_1d=blk%zp,key='zp',group=dummy_1)
+                                 array_input_1d=blk%zp(2:blk%nz+1), key='zp',group=dummy_1)
             call hdf5_write_int(filename=filename1,&
                                 scalar_input=blk%nx,key='zonei',group=dummy_1)
             call hdf5_write_int(filename=filename1,&
@@ -63,15 +63,19 @@ contains
             call hdf5_write_int(filename=filename1,&
                                 scalar_input=blk%nz,key='zonek',group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_3d=blk%p,key='p',group=dummy_1)
+                                 array_input_3d=blk%p(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
+                                 key='p',group=dummy_1)
             call hdf5_write_real(filename=filename1,&
                                  scalar_input=totime,key='totime',group=dummy_1)
             call hdf5_write_int(filename=filename1,&
-                                array_input_3d=blk%cell,key='cell',group=dummy_1)
+                                array_input_3d=blk%cell(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
+                                key='cell',group=dummy_1)
             call hdf5_write_int(filename=filename1,&
-                                array_input_3d=blk%cell_n,key='cell_n',group=dummy_1)
+                                array_input_3d=blk%cell_n(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
+                                key='cell_n',group=dummy_1)
             call hdf5_write_int(filename=filename1,&
-                                array_input_3d=blk%cell_pr,key='cell_pr',group=dummy_1)
+                                array_input_3d=blk%cell_pr(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
+                                key='cell_pr',group=dummy_1)
             deallocate(u1,v1,w1)
 
        END SUBROUTINE write_output_hdf5
