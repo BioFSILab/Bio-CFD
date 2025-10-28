@@ -110,7 +110,7 @@ contains
       END SUBROUTINE write_output_ascii
 #endif
       SUBROUTINE writeResult(blk,blk_no,char_f)
-        type(Blocks), intent(in) :: blk
+        type(Block_t), intent(in) :: blk
         integer (int64), intent(in) :: blk_no
         INTEGER::  i, j, k,g
         CHARACTER(len=70)  :: filename1
