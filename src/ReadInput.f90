@@ -6,7 +6,7 @@ module biocfd_read_input
        intflines, inor, freq, epsi, dxmin, dt_order, deltat, &
        blk_start, aoa, alpha, intfr
   use biocfd_interface_type, only: Interface_t
-  use biocfd_blocks,only : Blocks
+  use biocfd_block_type,only : Block_t
   implicit none
 
   private
@@ -38,7 +38,7 @@ module biocfd_read_input
   read(io, NML=input_data)
   close(io)
 
-        allocate(Blocks :: block(nblocks))
+        allocate(Block_t :: block(nblocks))
         allocate(Interface_t :: intfr(intflines))
         allocate(xstart_temp(nblocks),xend_temp(nblocks),&
         ystart_temp(nblocks),yend_temp(nblocks),&
@@ -306,7 +306,7 @@ module biocfd_read_input
       END SUBROUTINE readInput
 
       SUBROUTINE readSurfaceMeshGmsh(blk,surGeoPoints)
-       type(Blocks), intent(inout) :: blk
+       type(Block_t), intent(inout) :: blk
        INTEGER(int64) :: n, i1, i2, i3, i5
        INTEGER (int64),INTENT(IN)   :: surGeoPoints
 
