@@ -20,7 +20,7 @@ contains
 
 #if USE_HDF5 == 1
       SUBROUTINE write_output_hdf5(blk,blk_no)
-       type(Blocks), intent(in) :: blk
+       type(Block_t), intent(in) :: blk
        integer (int64), intent(in) :: blk_no
        CHARACTER(len=150)  :: filename1
        INTEGER  :: k, i, j
