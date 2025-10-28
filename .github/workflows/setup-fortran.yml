@@ -27,19 +27,22 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         toolchain:
+          # Compile with OpenACC and OpenMP as the default
           - compiler: gcc
             version: 14
-            FPM_FFLAGS: "-Werror=unused -Werror=unused-parameter --coverage -pedantic-errors -std=f2008"
-          - {compiler: intel, version: '2025.0'}
-          - {compiler: intel-classic, version: '2021.10'}
-          # Separate nvidia compilations removed because using up all our CI minutes!
-          # The code now supports OpenMP+OpenACC anyway, so it makes sense to just compile once
+            FPM_FFLAGS: "-Werror=unused -Werror=unused-parameter --coverage -pedantic-errors -std=f2008 -fopenmp -fopenacc"
+          # As far as we can remember we haven't hit any issues picked
+          # up by intel but not by the other compilers, while minutes
+          # are limited we will not run these
+          # - {compiler: intel, version: '2025.0'}
+          # - {compiler: intel-classic, version: '2021.10'}
+
+          # Separate nvidia compilations removed because using up all
+          # our CI minutes!  The code now supports OpenMP+OpenACC
+          # anyway, so it makes sense to just compile once
           - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS: "-mp -acc=multicore"}
-          # Compile with OpenMP since there are some directives
-          - {compiler: gcc, version: 14, FPM_FFLAGS: "-fopenmp", tag: "-openmp"}
-          # Compile with OpenACC since there are some directives
-          - {compiler: gcc, version: 14, FPM_FFLAGS: "-fopenacc", tag: "-openacc"}
-          # Cannot currently support lfortran due to it not supporting namelists (issue number 1999 lfortran)
+          # Cannot currently support lfortran due to it not supporting
+          # namelists (issue number 1999 lfortran)
           # - {compiler: lfortran, version: '0.55.0'}
     steps:
       - uses: actions/checkout@v4
@@ -65,7 +68,7 @@ jobs:
       - name: Generate code coverage report
         if: ${{ contains(matrix.toolchain.FPM_FFLAGS, 'coverage') }}
         run: |
-          gcov ./build/gfortran*/Bio-CFD/*.gcda -r 
+          gcov ./build/gfortran*/Bio-CFD/*.gcda -r
 
       - name: Setup LCOV
         if: ${{ contains(matrix.toolchain.FPM_FFLAGS, 'coverage') }}
