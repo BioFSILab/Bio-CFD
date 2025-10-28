@@ -2,7 +2,7 @@
       PROGRAM main
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, &
-             ita, ita1, nblocks, totaltime, totime, &
+             ita, ita1, totaltime, totime, &
              aoa,aoa1,aoa2,phase_angle,pi,uc,re
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
@@ -104,13 +104,13 @@
         end do
         write(*,*)'leaving non_uni_coeff'
         totime = totime + deltat
-#if USE_HDF5 == 1
-        CALL write_output_hdf5
-#else
         do g=1, size(block)
-           CALL write_output_ascii(block(g),g,char_f)
-        end do
+#if USE_HDF5 == 1
+        CALL write_output_hdf5(block(g),g)
+#else
+        CALL write_output_ascii(block(g),g,char_f)
 #endif
+        end do
         coarse_flcnt_check=0
         print*, 'adam'
         DO
@@ -133,24 +133,24 @@
         do g=blk_start, size(block)
            CALL pressureForcing1(block(g))
         end do
-#if USE_HDF5 == 1
-        CALL write_output_hdf5
-#else
         do g=1, size(block)
-           CALL write_output_ascii(block(g),g,char_f)
-        end do
+#if USE_HDF5 == 1
+        CALL write_output_hdf5(block(g),g)
+#else
+        CALL write_output_ascii(block(g),g,char_f)
 #endif
+        end do
         !$acc wait
         CALL writeResult(char_f)
         !$acc wait
         CALL body_plot
-        DO g=blk_start, nblocks
+        DO g=blk_start, size(block)
            DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent,block(g)%cosAlpha, &
                 block(g)%cosBeta, block(g)%cosGamma)
             block(g)%blk_mv_tag=0.
         END DO
         print *,10
-        DO g=blk_start, nblocks
+        DO g=blk_start, size(block)
            CALL computeSurfaceVariables(block(g),g)
         END DO
            CALL block_move_check
@@ -167,7 +167,7 @@
         do g=blk_start, size(block)
            CALL selectiveRetagging_th(block(g))
         end do
-        DO g=blk_start, nblocks
+        DO g=blk_start, size(block)
             block(g)%blk_mv_tag=0.
               DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,&
                    block(g)% pNormDis,block(g)% nelp,block(g)% nelu1,block(g)% nelu2,&
