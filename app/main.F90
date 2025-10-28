@@ -2,7 +2,7 @@
       PROGRAM main
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, &
-             ita, ita1, nblocks, totaltime, totime, &
+             ita, ita1, totaltime, totime, &
              pi,uc,re
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
@@ -145,13 +145,13 @@
         CALL writeResult(char_f)
         !$acc wait
         CALL body_plot
-        DO g=blk_start, nblocks
+        DO g=blk_start, size(block)
            DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent,block(g)%cosAlpha, &
                 block(g)%cosBeta, block(g)%cosGamma)
             block(g)%blk_mv_tag=0.
         END DO
         print *,10
-        DO g=blk_start, nblocks
+        DO g=blk_start, size(block)
            CALL computeSurfaceVariables(block(g),g,phase_angle,piv_pt)
         END DO
            CALL block_move_check
@@ -168,7 +168,7 @@
         do g=blk_start, size(block)
            CALL selectiveRetagging_th(block(g))
         end do
-        DO g=blk_start, nblocks
+        DO g=blk_start, size(block)
             block(g)%blk_mv_tag=0.
               DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,&
                    block(g)% pNormDis,block(g)% nelp,block(g)% nelu1,block(g)% nelu2,&
