@@ -2,7 +2,7 @@ module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, &
        ita, nblocks, totaltime,totime,uc
-  use biocfd_blocks, only: Blocks
+  use biocfd_block_type, only: Block_t
 #ifdef _OPENMP
   use omp_lib, only: omp_get_max_threads, omp_get_thread_num
 #endif
@@ -354,7 +354,7 @@ module biocfd_pcor_vcor
 
       SUBROUTINE updateVelocity_newv(blk)
 
-        type(Blocks), intent(inout) :: blk
+        type(Block_t), intent(inout) :: blk
         INTEGER ::  i, j, k
         if (blk%move_check == 1) then
            !$acc parallel loop gang vector collapse(3) default(present)

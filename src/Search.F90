@@ -6,7 +6,7 @@ module biocfd_search
        intflines, coarse_flcnt_check, intfr
   use biocfd_fine_interp, only: fineUpdate_mv
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
-  use biocfd_blocks, only: Blocks
+  use biocfd_block_type, only: Block_t
   implicit NONE
 
   private
@@ -20,7 +20,7 @@ module biocfd_search
 
   contains
     SUBROUTINE findDistnode(blk)
-      type(Blocks), intent(inout) :: blk
+      type(Block_t), intent(inout) :: blk
         REAL(dp)      ::  dist, dist1, dist2
         INTEGER(int64) ::  i
 
@@ -48,7 +48,7 @@ module biocfd_search
         end subroutine findDistnode
 
         SUBROUTINE shiftSurfaceNodesInitial(blk,aoa1,aoa2,piv_pt)
-        type(Blocks), intent(inout) :: blk
+        type(Block_t), intent(inout) :: blk
         real(dp),intent(in) :: aoa1, aoa2, piv_pt
         INTEGER(int64) ::  i
         REAL(dp)      ::  xr1, yr1, zr1, angt
@@ -122,7 +122,7 @@ module biocfd_search
       END SUBROUTINE shiftSurfaceNodesInitial
 
       SUBROUTINE computeSurfaceVariables(blk,g,phase_angle,piv_pt)
-        type(Blocks), intent(inout) :: blk
+        type(Block_t), intent(inout) :: blk
         real(dp),intent(in) :: phase_angle,piv_pt
         real(dp) :: aoa1,aoa2
         INTEGER(int64) ::  i
@@ -205,7 +205,7 @@ module biocfd_search
       END SUBROUTINE computeSurfaceVariables
 
       SUBROUTINE computeSurfaceNorm(blk)
-        type(Blocks), intent(inout) :: blk
+        type(Block_t), intent(inout) :: blk
         INTEGER(int64) ::  n  !c1, c2, c3, c4
         REAL(dp)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL
         REAL(dp)      :: var_xcent, var_ycent, var_zcent
@@ -256,7 +256,7 @@ module biocfd_search
      END SUBROUTINE computeSurfaceNorm
 
      SUBROUTINE tagging_th(blk,blk_no)
-       type(Blocks), intent(inout) :: blk
+       type(Block_t), intent(inout) :: blk
        INTEGER(int64), intent(in)  :: blk_no
        INTEGER(int64) :: m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
         REAL(dp)      :: minDis1, minDis, &
@@ -531,7 +531,7 @@ module biocfd_search
      END SUBROUTINE tagging_th_move
 
      SUBROUTINE findTScells(blk)
-       type(Blocks), intent(inout) :: blk
+       type(Block_t), intent(inout) :: blk
         INTEGER            :: i, j, k, i1, j1, k1, iPt1, m, n, tscnt
         !$acc parallel loop collapse(3) default(present)
                  DO k = 2, blk%nz+1
@@ -636,7 +636,7 @@ module biocfd_search
              END SUBROUTINE findTScells
 
      SUBROUTINE selectiveRetagging_th(blk)
-       type(Blocks), intent(inout) :: blk
+       type(Block_t), intent(inout) :: blk
         INTEGER(int64) ::  n, m, i, j, k, i1, j1, k1, nn, &
                                nel2Pnt, nel2Cen, sumNodeID
         INTEGER            :: flcnt, sdcnt, ibcnt
@@ -770,7 +770,7 @@ blk%fluidCellCount = flcnt
 
      SUBROUTINE cellCount_solid(blk)
 
-       type(Blocks), intent(inout) :: blk
+       type(Block_t), intent(inout) :: blk
        INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k
        INTEGER (int64) :: cell_val
        integer :: red_count, black_count
@@ -857,7 +857,7 @@ blk%fluidCellCount = flcnt
      END SUBROUTINE cellCount_solid
 
      SUBROUTINE computeNormDistance(blk)
-       type(Blocks), intent(inout) :: blk
+       type(Block_t), intent(inout) :: blk
         INTEGER            ::  nel2u1, nel2u2, nel2v1, nel2v2, nel2w1, nel2w2
         INTEGER            :: k, nel2p, ibxx, m
         REAL(dp) :: n1x, n2x, n3x, n1y, n2y, n3y, n1z, n2z, n3z, &
@@ -1724,7 +1724,7 @@ blk%fluidCellCount = flcnt
 
         SUBROUTINE cellCount_solid_coarse(blk)
 
-        type(Blocks), intent(inout) :: blk
+        type(Block_t), intent(inout) :: blk
         INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k
 
          blk%fluidCellCount=0
