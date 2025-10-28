@@ -20,11 +20,11 @@ contains
 
   subroutine test_allocate_arrays(error)
     use biocfd_allocate_arrays, only: allocateArrays
-    use biocfd_blocks, only: Blocks
+    use biocfd_block_type, only: Block_t
     ! Error handling
     type(error_type), allocatable, intent(out) :: error
 
-    type(Blocks) :: blk
+    type(Block_t) :: blk
 
     blk%nx = 5
     blk%ny = 5

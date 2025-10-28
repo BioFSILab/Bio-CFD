@@ -23,12 +23,12 @@ contains
   !> and w, are correctly copied to ut, vt, and wt, when move_check is
   !> 1
   subroutine test_update_velocity_newv(error)
-    use biocfd_blocks, only: Blocks
+    use biocfd_block_type, only: Block_t
     use biocfd_pcor_vcor, only: updateVelocity_newv
     !> Error handling
     type(error_type), allocatable, intent(out) :: error
 
-    type(Blocks) :: blk
+    type(Block_t) :: blk
 
     blk%nx = 5
     blk%ny = 5
