@@ -142,7 +142,9 @@
 #endif
         end do
         !$acc wait
-        CALL writeResult(char_f)
+        do g=1, size(block)
+          CALL writeResult(block(g),g,char_f)
+        end do
         !$acc wait
         do g=1, size(block)
            CALL body_plot(block(g))
