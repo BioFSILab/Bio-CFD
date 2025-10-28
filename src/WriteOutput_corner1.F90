@@ -132,7 +132,7 @@ contains
       END SUBROUTINE writeResult
 
          SUBROUTINE body_plot(blk)
-         type(Blocks), intent(in) :: blk
+         type(Block_t), intent(in) :: blk
          INTEGER(int64) :: inode, ielem
          CHARACTER(len=150) :: filename1
 
