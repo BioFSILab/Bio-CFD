@@ -1,9 +1,11 @@
 module biocfd_navier_stokes
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : alpha, deltat, re
-  use biocfd_block_type, only: Block_t
+  use global, only : deltat, re
+  use biocfd_blocks, only: Block_t
   implicit none
   private
+
+  real(dp), parameter :: alpha = 1._dp
 
   public :: non_uni_coeff, nsmomentum2order
 
