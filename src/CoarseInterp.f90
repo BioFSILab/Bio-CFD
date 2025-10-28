@@ -1,6 +1,6 @@
 module biocfd_coarse_update
   use, intrinsic :: iso_fortran_env, only: dp => real64
-  use global, only : block, intfr, intflines
+  use global, only : block, intfr
   use biocfd_interpolation, only: bilinear_interpolation, linear_interpolation
 
   implicit none
@@ -15,7 +15,7 @@ subroutine coarseUpdate
         INTEGER :: st_idy, en_idy
         INTEGER :: st_idz, en_idz
 
-        DO g=1,intflines
+        DO g=1,size(intfr)
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
         st_idx=block(b_blk_no)%cintp
@@ -136,7 +136,7 @@ subroutine coarseUpdate
         INTEGER :: st_idy, en_idy
         INTEGER :: st_idz, en_idz
 
-        DO g=1,intflines
+        DO g=1,size(intfr)
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
         st_idx=block(b_blk_no)%cintp
@@ -231,7 +231,7 @@ subroutine coarseUpdate
         INTEGER :: st_idz, en_idz
 
 
-        DO g=1,intflines
+        DO g=1,size(intfr)
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
         st_idx=block(b_blk_no)%cintp

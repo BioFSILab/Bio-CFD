@@ -19,26 +19,27 @@ module biocfd_write_output_corner1
 contains
 
 #if USE_HDF5 == 1
-      SUBROUTINE write_output_hdf5
+      SUBROUTINE write_output_hdf5(blk,blk_no)
+       type(Block_t), intent(in) :: blk
+       integer (int64), intent(in) :: blk_no
        CHARACTER(len=150)  :: filename1
-       INTEGER  :: k, i, j, g
+       INTEGER  :: k, i, j
        REAL (dp), allocatable :: u1(:,:,:), v1(:,:,:), w1(:,:,:)
        character (len=11) :: dummy_1
        character (len=5) ::dummy_2
 
-         IF((mod(ita,200_int64) ==0 .or. ita <= 2 ))then
-         do g=1,size(block)
-            write(dummy_1,'(A6,I5.5)') 'block_',g
+         if (mod(ita,200_int64) /=0 .and. ita > 2) return
+            write(dummy_1,'(A6,I5.5)') 'block_',blk_no
             write(dummy_2,'(I5.5)') ita
-            allocate(u1(2:block(g)%nx+1,2:block(g)%ny+1,2:block(g)%nz+1),&
-                     v1(2:block(g)%nx+1,2:block(g)%ny+1,2:block(g)%nz+1),&
-                     w1(2:block(g)%nx+1,2:block(g)%ny+1,2:block(g)%nz+1))
-            DO k = 2, block(g)%nz+1
-            DO j = 2, block(g)%ny+1
-            DO i = 2, block(g)%nx+1
-               u1(i,j,k) = 0.5_dp*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))
-               v1(i,j,k) = 0.5_dp*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
-               w1(i,j,k) = 0.5_dp*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
+            allocate(u1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1),&
+                     v1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1),&
+                     w1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1))
+            DO k = 2, blk%nz+1
+            DO j = 2, blk%ny+1
+            DO i = 2, blk%nx+1
+               u1(i,j,k) = 0.5_dp*(blk%u(i,j,k)+blk%u(i-1,j,k))
+               v1(i,j,k) = 0.5_dp*(blk%v(i,j,k)+blk%v(i,j-1,k))
+               w1(i,j,k) = 0.5_dp*(blk%w(i,j,k)+blk%w(i,j,k-1))
             END DO
             END DO
             END DO
@@ -50,30 +51,33 @@ contains
             call hdf5_write_real(filename=filename1,&
                                  array_input_3d=w1,key='w1',group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_1d=block(g)%xp,key='xp',group=dummy_1)
+                                 array_input_1d=blk%xp(2:blk%nx+1), key='xp', group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_1d=block(g)%yp,key='yp',group=dummy_1)
+                                 array_input_1d=blk%yp(2:blk%ny+1), key='yp',group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_1d=block(g)%zp,key='zp',group=dummy_1)
+                                 array_input_1d=blk%zp(2:blk%nz+1), key='zp',group=dummy_1)
             call hdf5_write_int(filename=filename1,&
-                                scalar_input=block(g)%nx,key='zonei',group=dummy_1)
+                                scalar_input=blk%nx,key='zonei',group=dummy_1)
             call hdf5_write_int(filename=filename1,&
-                                scalar_input=block(g)%nx,key='zonej',group=dummy_1)
+                                scalar_input=blk%nx,key='zonej',group=dummy_1)
             call hdf5_write_int(filename=filename1,&
-                                scalar_input=block(g)%nz,key='zonek',group=dummy_1)
+                                scalar_input=blk%nz,key='zonek',group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_3d=block(g)%p,key='p',group=dummy_1)
+                                 array_input_3d=blk%p(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
+                                 key='p',group=dummy_1)
             call hdf5_write_real(filename=filename1,&
                                  scalar_input=totime,key='totime',group=dummy_1)
             call hdf5_write_int(filename=filename1,&
-                                array_input_3d=block(g)%cell,key='cell',group=dummy_1)
+                                array_input_3d=blk%cell(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
+                                key='cell',group=dummy_1)
             call hdf5_write_int(filename=filename1,&
-                                array_input_3d=block(g)%cell_n,key='cell_n',group=dummy_1)
+                                array_input_3d=blk%cell_n(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
+                                key='cell_n',group=dummy_1)
             call hdf5_write_int(filename=filename1,&
-                                array_input_3d=block(g)%cell_pr,key='cell_pr',group=dummy_1)
+                                array_input_3d=blk%cell_pr(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
+                                key='cell_pr',group=dummy_1)
             deallocate(u1,v1,w1)
-         end do
-        ENDIF
+
        END SUBROUTINE write_output_hdf5
 #else
       SUBROUTINE write_output_ascii(blk,blk_no,char_f)
