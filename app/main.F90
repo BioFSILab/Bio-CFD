@@ -104,13 +104,13 @@
         end do
         write(*,*)'leaving non_uni_coeff'
         totime = totime + deltat
-#if USE_HDF5 == 1
-        CALL write_output_hdf5
-#else
         do g=1, size(block)
-           CALL write_output_ascii(block(g),g,char_f)
-        end do
+#if USE_HDF5 == 1
+        CALL write_output_hdf5(block(g),g)
+#else
+        CALL write_output_ascii(block(g),g,char_f)
 #endif
+        end do
         coarse_flcnt_check=0
         print*, 'adam'
         DO
@@ -133,13 +133,13 @@
         do g=blk_start, size(block)
            CALL pressureForcing1(block(g))
         end do
-#if USE_HDF5 == 1
-        CALL write_output_hdf5
-#else
         do g=1, size(block)
-           CALL write_output_ascii(block(g),g,char_f)
-        end do
+#if USE_HDF5 == 1
+        CALL write_output_hdf5(block(g),g)
+#else
+        CALL write_output_ascii(block(g),g,char_f)
 #endif
+        end do
         !$acc wait
         CALL writeResult(char_f)
         !$acc wait
