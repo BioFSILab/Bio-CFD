@@ -1,7 +1,7 @@
 module biocfd_last_conditions
   use, intrinsic :: iso_fortran_env, only : dp => real64, int64
   use global, only: ita, ita1, totime
-  use biocfd_blocks, only: Blocks
+  use biocfd_block_type, only: Block_t
   implicit none
   private
 
@@ -11,7 +11,7 @@ contains
   SUBROUTINE lastConditions(blk, id, re)
 
     !> The Block that we want to setup
-    type(Blocks), intent(inout) :: blk
+    type(Block_t), intent(inout) :: blk
     !> The ID number of the block, usually 1 for the coarse block and
     !> >=2 for the fine blocks
     integer(int64), intent(in) :: id

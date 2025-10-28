@@ -3,7 +3,7 @@ module biocfd_allocate_arrays
     !  the program. Note that not all of the arrays are allocated
     !  here, several are allocated in other subroutines
     use, intrinsic :: iso_fortran_env, only: int64
-    use biocfd_blocks, only: Blocks
+    use biocfd_block_type, only: Block_t
     implicit none
     private
 
@@ -13,7 +13,7 @@ module biocfd_allocate_arrays
 
     SUBROUTINE allocateArrays(blk)
 
-        type(Blocks), intent(inout) :: blk
+        type(Block_t), intent(inout) :: blk
         integer(int64) :: nx, ny, nz
 
         nx = blk%nx

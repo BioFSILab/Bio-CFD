@@ -1,6 +1,6 @@
 module biocfd_boundary_conditions
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use biocfd_blocks,only : Blocks
+  use biocfd_block_type,only : Block_t
   implicit none
   private
 
@@ -9,7 +9,7 @@ module biocfd_boundary_conditions
   contains
 
 SUBROUTINE velocityBC(blk,deltat,uc)
-      type(Blocks), intent(inout) :: blk
+      type(Block_t), intent(inout) :: blk
       INTEGER (int64):: i, j, k
       REAL(dp), intent(in) :: deltat,uc
 
@@ -74,7 +74,7 @@ SUBROUTINE velocityBC(blk,deltat,uc)
       END SUBROUTINE velocityBC
 
       SUBROUTINE solidCellBC(blk)
-        type(Blocks), intent(inout) :: blk
+        type(Block_t), intent(inout) :: blk
         INTEGER (int64):: i, j, k, n
         !$acc parallel loop gang vector &
         !$acc default(present) &
@@ -92,7 +92,7 @@ SUBROUTINE velocityBC(blk,deltat,uc)
       END SUBROUTINE solidCellBC
 
       SUBROUTINE solidCellBC_move(blk)
-        type(Blocks), intent(inout) :: blk
+        type(Block_t), intent(inout) :: blk
         INTEGER (int64):: i, j, k,n
 
          if (blk%move_check == 1) then
