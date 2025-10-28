@@ -2,7 +2,7 @@ module biocfd_read_input
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, uc, u0, totime, &
        re, pi, omega4, &
-       omega3, omega2, omega1, nblocks, ita1, ita, &
+       omega3, omega2, omega1, ita1, ita, &
        intflines, inor, freq, epsi, dxmin, dt_order, deltat, &
        blk_start, alpha, intfr
   use biocfd_interface_type, only: Interface_t
