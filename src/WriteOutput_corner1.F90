@@ -1,8 +1,8 @@
 module biocfd_write_output_corner1
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, ita, totime, re, nblocks, &
+  use global, only : block, ita, totime, re, &
        totime, ita1
-  use biocfd_blocks, only: Blocks
+  use biocfd_block_type, only: Block_t
 #if USE_HDF5 == 1
   use biocfd_hdf5_io, only: hdf5_write_real, hdf5_write_int
 #endif
@@ -81,7 +81,7 @@ contains
        END SUBROUTINE write_output_hdf5
 #else
       SUBROUTINE write_output_ascii(blk,blk_no,char_f)
-       type(Blocks), intent(in) :: blk
+       type(Block_t), intent(in) :: blk
        integer (int64), intent(in) :: blk_no
        CHARACTER(len=150)  :: filename1
        CHARACTER (LEN = 3),INTENT(IN)   :: char_f
@@ -90,7 +90,7 @@ contains
 
          IF((mod(ita,200_int64) ==0 .or. ita <= 2 ))then
 
-       WRITE(filename1,1)char_f,ita,blk_no,re,blk%dx,nblocks
+       WRITE(filename1,1)char_f,ita,blk_no,re,blk%dx,size(block)
 1     FORMAT('out/',A3,'_butter_fielddata.',i9.9,'.',i3.3,'.',f7.1,'.',f8.6,'.',i3.3,".dat")
            OPEN(UNIT = 786, FILE = filename1, STATUS = 'unknown')
             WRITE(786,*)'variables="x","y","z","u","v","w","p","totime","cellid","cell_n","cell_pr"'
@@ -118,7 +118,7 @@ contains
         CHARACTER(len=70)  :: filename1
         CHARACTER (LEN = 3),INTENT(IN)   :: char_f
         IF(mod(ita,500_int64)==0)THEN
-           Do g=1,nblocks
+           Do g=1,size(block)
            WRITE(filename1,22)char_f,g,re,block(2)%dx
  22          FORMAT('out/Chkpt/',A3,'_butter_chkpt.',i3.3,'.',f6.1,'.',f8.6,".dat")
         OPEN (1,FILE=filename1,FORM='formatted')
@@ -139,7 +139,7 @@ contains
          INTEGER(int64) :: inode, ielem, g
          CHARACTER(len=150) :: filename1
 
-          DO g=1,nblocks
+          DO g=1,size(block)
           if (ita == 1 )then
           WRITE(filename1,108)
   108     FORMAT("out/butterfly.dat")

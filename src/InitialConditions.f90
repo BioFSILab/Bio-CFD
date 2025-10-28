@@ -1,6 +1,6 @@
 module biocfd_initial_conditions
   use, intrinsic :: iso_fortran_env, only : dp => real64
-  use biocfd_blocks, only: Blocks
+  use biocfd_block_type, only: Block_t
   implicit none
   private
 
@@ -9,7 +9,7 @@ module biocfd_initial_conditions
 contains
   SUBROUTINE initialConditions(blk, uc)
 
-    type(Blocks), intent(inout) :: blk
+    type(Block_t), intent(inout) :: blk
     real(dp), intent(in) :: uc
     integer :: i, j, k, n
     !cell variables
