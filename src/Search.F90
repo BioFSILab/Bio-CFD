@@ -3,7 +3,7 @@ module biocfd_search
   use global, only: block, blk_start, totime, &
        piv_pt, pi, phase_angle, ita, dxmin, deltat, aoa2, aoa1, aoa, &
        re, freq, inor, &
-       intflines, coarse_flcnt_check, intfr
+       coarse_flcnt_check, intfr
   use biocfd_fine_interp, only: fineUpdate_mv
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
   use biocfd_block_type, only: Block_t
@@ -417,7 +417,7 @@ SUBROUTINE tagging_th_core(blk)
            call tagging_th_core(block(g))
         endif
         ENDDO
-        DO g=1,intflines
+        DO g=1,size(intfr)
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
 
@@ -883,7 +883,7 @@ blk%fluidCellCount = flcnt
         block(1)%cell=0
         block(1)%cell_pr=0
 
-        DO g=1, intflines
+        DO g=1, size(intfr)
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
            factor=intfr(g)%b_msh/intfr(g)%a_msh
@@ -1010,7 +1010,7 @@ blk%fluidCellCount = flcnt
         REAL(dp) :: ydisp1, xdisp1, zdisp1, mg1
         REAL(dp) :: marginx, marginy, marginz, yval_up, yval_dw, xval_lt, xval_rt
 
-        DO g=1,intflines
+        DO g=1,size(intfr)
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
         mg1=block(b_blk_no)%cintp*block(1)%dx
@@ -1274,7 +1274,7 @@ blk%fluidCellCount = flcnt
 
         ENDDO
 
-        DO g=1,intflines
+        DO g=1,size(intfr)
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
         if ( block(b_blk_no)% move_check == 1) then
@@ -1380,7 +1380,7 @@ blk%fluidCellCount = flcnt
 
 
 
-        DO g=1,intflines
+        DO g=1,size(intfr)
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
          factor=intfr(g)%b_msh/intfr(g)%a_msh
@@ -1455,7 +1455,7 @@ blk%fluidCellCount = flcnt
                                          + (block(b_blk_no)%move_amtz/factor)
 
         ENDDO
-        DO j=1,intflines
+        DO j=1,size(intfr)
         print*,'**********************px***************************'
         DO i=1,intfr(j)%counterxp
         WRITE(*,33) 'px', i, &
@@ -1468,7 +1468,7 @@ blk%fluidCellCount = flcnt
  33       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************py***************************'
         DO i=1,intfr(j)%counteryp
         WRITE(*,133) 'py', i, &
@@ -1481,7 +1481,7 @@ blk%fluidCellCount = flcnt
  133       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intflines
+        DO j=1,size(intfr)
         print*,'**********************pz***************************'
         DO i=1,intfr(j)%counterzp
         WRITE(*,933) 'pz', i, &
@@ -1495,7 +1495,7 @@ blk%fluidCellCount = flcnt
         end do
         end do
 
-        DO j=1,intflines
+        DO j=1,size(intfr)
         print*,'**********************ux***************************'
         DO i=1,intfr(j)%counterxu
         WRITE(*,331) 'ux', i, &
@@ -1508,7 +1508,7 @@ blk%fluidCellCount = flcnt
  331       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************uy***************************'
         DO i=1,intfr(j)%counteryu
         WRITE(*,1331) 'uy', i, &
@@ -1521,7 +1521,7 @@ blk%fluidCellCount = flcnt
  1331       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************uz***************************'
         DO i=1,intfr(j)%counterzu
         WRITE(*,91331) 'uz', i, &
@@ -1535,7 +1535,7 @@ blk%fluidCellCount = flcnt
         end do
         end do
 
-        DO j=1,intflines
+        DO j=1,size(intfr)
         print*,'**********************vx***************************'
         DO i=1,intfr(j)%counterxv
         WRITE(*,332) 'vx', i, &
@@ -1548,7 +1548,7 @@ blk%fluidCellCount = flcnt
  332       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************vy***************************'
         DO i=1,intfr(j)%counteryv
         WRITE(*,1332) 'vy', i, &
@@ -1561,7 +1561,7 @@ blk%fluidCellCount = flcnt
  1332       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************vz***************************'
         DO i=1,intfr(j)%counterzv
         WRITE(*,91332) 'vz', i, &
@@ -1576,7 +1576,7 @@ blk%fluidCellCount = flcnt
         end do
 
 
-        DO j=1,intflines
+        DO j=1,size(intfr)
         print*,'**********************wx***************************'
         DO i=1,intfr(j)%counterxw
         WRITE(*,3329) 'wx', i, &
@@ -1589,7 +1589,7 @@ blk%fluidCellCount = flcnt
  3329       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************wy***************************'
         DO i=1,intfr(j)%counteryw
         WRITE(*,13329) 'wy', i, &
@@ -1602,7 +1602,7 @@ blk%fluidCellCount = flcnt
 13329       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************wz***************************'
         DO i=1,intfr(j)%counterzw
         WRITE(*,93329) 'wz', i, &
