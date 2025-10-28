@@ -1,7 +1,8 @@
 module biocfd_write_output_corner1
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, ita, totime, re, nblocks, char_f, &
+  use global, only : block, ita, totime, re, nblocks, &
        totime, ita1
+  use biocfd_blocks, only: Blocks
 #if USE_HDF5 == 1
   use biocfd_hdf5_io, only: hdf5_write_real, hdf5_write_int
 #endif
@@ -75,41 +76,43 @@ contains
         ENDIF
        END SUBROUTINE write_output_hdf5
 #else
-      SUBROUTINE write_output_ascii
+      SUBROUTINE write_output_ascii(blk,blk_no,char_f)
+       type(Blocks), intent(in) :: blk
+       integer (int64), intent(in) :: blk_no
        CHARACTER(len=150)  :: filename1
-       INTEGER  :: k, i, j, g
+       CHARACTER (LEN = 3),INTENT(IN)   :: char_f
+       INTEGER  :: k, i, j
        REAL (dp) :: u1, v1, w1
 
          IF((mod(ita,200_int64) ==0 .or. ita <= 2 ))then
 
-           Do g=1,nblocks
-       WRITE(filename1,1)char_f,ita,g,re,block(2)%dx,nblocks
+       WRITE(filename1,1)char_f,ita,blk_no,re,blk%dx,nblocks
 1     FORMAT('out/',A3,'_butter_fielddata.',i9.9,'.',i3.3,'.',f7.1,'.',f8.6,'.',i3.3,".dat")
            OPEN(UNIT = 786, FILE = filename1, STATUS = 'unknown')
             WRITE(786,*)'variables="x","y","z","u","v","w","p","totime","cellid","cell_n","cell_pr"'
-            WRITE(786,*) 'zone, ', 'i = ', block(g)%nx,' j = ', block(g)%ny, ' k = ', block(g)%nz
+            WRITE(786,*) 'zone, ', 'i = ', blk%nx,' j = ', blk%ny, ' k = ', blk%nz
 
-            DO k = 2, block(g)%nz+1
-            DO j = 2, block(g)%ny+1
-            DO i = 2, block(g)%nx+1
-               u1 = 0.5_dp*(block(g)%u(i,j,k)+block(g)%u(i-1,j,k))
-               v1 = 0.5_dp*(block(g)%v(i,j,k)+block(g)%v(i,j-1,k))
-               w1 = 0.5_dp*(block(g)%w(i,j,k)+block(g)%w(i,j,k-1))
-               WRITE(786,*) block(g)%xp(i), block(g)%yp(j), block(g)%zp(k), u1, v1, w1, &
-                            block(g)%p(i,j,k), totime, block(g)%cell(i,j,k) , &
-                            block(g)%cell_n(i,j,k) , block(g)%cell_pr(i,j,k)
+            DO k = 2, blk%nz+1
+            DO j = 2, blk%ny+1
+            DO i = 2, blk%nx+1
+               u1 = 0.5_dp*(blk%u(i,j,k)+blk%u(i-1,j,k))
+               v1 = 0.5_dp*(blk%v(i,j,k)+blk%v(i,j-1,k))
+               w1 = 0.5_dp*(blk%w(i,j,k)+blk%w(i,j,k-1))
+               WRITE(786,*) blk%xp(i),blk%yp(j),blk%zp(k), u1, v1, w1, &
+                            blk%p(i,j,k),totime,blk%cell(i,j,k) , &
+                            blk%cell_n(i,j,k),blk%cell_pr(i,j,k)
             END DO
             END DO
             END DO
             CLOSE(786)
-        end do
         !$acc wait
          ENDIF
       END SUBROUTINE write_output_ascii
 #endif
-      SUBROUTINE writeResult
+      SUBROUTINE writeResult(char_f)
         INTEGER::  i, j, k,g
         CHARACTER(len=70)  :: filename1
+        CHARACTER (LEN = 3),INTENT(IN)   :: char_f
         IF(mod(ita,500_int64)==0)THEN
            Do g=1,nblocks
            WRITE(filename1,22)char_f,g,re,block(2)%dx

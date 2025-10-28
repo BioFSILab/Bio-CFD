@@ -1,11 +1,11 @@
-MODULE biocfd_interfaces
+MODULE biocfd_interface_type
        use, intrinsic :: iso_fortran_env, only: dp => real64, int64
        IMPLICIT NONE
        private
 
-       public :: Interfaces
+       public :: Interface_t
 
-        type Interfaces
+        type Interface_t
 
         INTEGER(int64), ALLOCATABLE, DIMENSION (:,:) :: px_interface_det, ux_interface_det, &
                                                         vx_interface_det, wx_interface_det, &
@@ -21,7 +21,7 @@ MODULE biocfd_interfaces
         INTEGER(int64) :: counterxu,counteryu,counterxp,counteryp,counterxv,counteryv
         INTEGER(int64) :: counterxw,counteryw
         INTEGER(int64) :: counterzu,counterzp,counterzv, counterzw
-        end type Interfaces
+        end type Interface_t
 
-END MODULE biocfd_interfaces
+END MODULE biocfd_interface_type
 

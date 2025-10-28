@@ -1,10 +1,11 @@
 module biocfd_read_input
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, uc, u_tip, u0, totime, theta_m1, theta_m, &
-       surgeopoints, rho_f, rev, re, piv_pt, pi, phase_angle, pcitamax, omega4, &
-       omega3, omega2, omega1, nblocks, mu_f, l_c, itamax, ita1, ita, istart, &
-       intflines, inor, freq, epsi, dxmin, dt_order, disp, deltat, char_f, &
-       blk_start, aoa, alpha_m1, alpha_m, alpha, line, intfr, Interfaces
+  use global, only : block, uc, u0, totime, &
+       re, piv_pt, pi, phase_angle, omega4, &
+       omega3, omega2, omega1, nblocks, ita1, ita, &
+       intflines, inor, freq, epsi, dxmin, dt_order, deltat, &
+       blk_start, aoa, alpha, intfr
+  use biocfd_interface_type, only: Interface_t
   use biocfd_blocks,only : Blocks
   implicit none
 
@@ -14,28 +15,31 @@ module biocfd_read_input
 
   contains
 
-      SUBROUTINE readInput
+      SUBROUTINE readInput(surGeoPoints,char_f,istart,itamax,pcItaMax)
        INTEGER (int64) :: i, g,io
-        CHARACTER(len=160)  :: filename1
+       CHARACTER(len=160)  :: filename1
+       INTEGER (int64),INTENT(OUT)   :: surGeoPoints, itamax,pcItaMax
+       CHARACTER (LEN = 3), INTENT(OUT)  :: char_f
+       INTEGER,INTENT(OUT)               :: istart
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
        !     not dependent on diff for checking code changes don't break code
        !     Variables removed from Blocks 'xstart, xend, ystart, yend, zstart, zend'
        REAL(dp),ALLOCATABLE,DIMENSION(:) :: xstart_temp,xend_temp,&
        ystart_temp,yend_temp,zstart_temp,zend_temp
-
+       REAL(dp) :: alpha_m,theta_m,alpha_m1,theta_m1,mu_f,rho_f,l_c,u_tip,disp
        NAMELIST /input_data/ nblocks, intflines,  &
                    itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
                    re,rho_f, mu_f, l_c, &
                    u0,  &
                    surGeoPoints, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
-                   istart, dt_order, inor, dxmin
+                   istart, dt_order,  inor, dxmin
 
   open(newunit=io, file="input_data.nml", status="old", action="read")
   read(io, NML=input_data)
   close(io)
 
         allocate(Blocks :: block(nblocks))
-        allocate(Interfaces :: intfr(intflines))
+        allocate(Interface_t :: intfr(intflines))
         allocate(xstart_temp(nblocks),xend_temp(nblocks),&
         ystart_temp(nblocks),yend_temp(nblocks),&
         zstart_temp(nblocks),zend_temp(nblocks))
@@ -76,7 +80,6 @@ module biocfd_read_input
         if ( alpha_m /= 0 .and. theta_m ==0 ) then
                 char_f = 'ang'
         end if
-        pi = 4.D0*ATAN(1.D0)
         blk_start=2
         alpha_m1=abs(alpha_m)
         theta_m1=abs(theta_m)
@@ -91,12 +94,9 @@ module biocfd_read_input
         mu_f = mu_f*1e-5_dp
         rho_f = rho_f
         l_c = 0.001_dp*l_c
-        rev = rho_f/(mu_f)
-        u0 = re/(rev*l_c)
-        u0 = u0*1
-        uc=u0*1
-        re = rev
-        pi = 4.D0*ATAN(1.D0)
+        u0 = re*mu_f/(rho_f*l_c)
+        uc = u0
+        re = rho_f/mu_f
         freq = freq*u0/l_c
         deltat = 1._dp/(4._dp*freq*dt_order)  !0.00041666666666_dp! *5e-4
         disp = block(blk_start)%a0*cos(2*pi*freq*deltat)
@@ -305,14 +305,14 @@ module biocfd_read_input
 
       END SUBROUTINE readInput
 
-      SUBROUTINE readSurfaceMeshGmsh(blk)
+      SUBROUTINE readSurfaceMeshGmsh(blk,surGeoPoints)
        type(Blocks), intent(inout) :: blk
        INTEGER(int64) :: n, i1, i2, i3, i5
-       CHARACTER (LEN = 72) :: cLine
+       INTEGER (int64),INTENT(IN)   :: surGeoPoints
 
        OPEN(121, FILE ='geometries/butterflyMedium.msh', form = 'formatted')               !READ SURFACE MESH FILE
         DO n = 1, 4
-           READ (121,*) cLine
+           READ (121,*)
         END DO
         READ (121,*) blk%ibNodes  !nsurf=total no. of points in file
         ALLOCATE(blk%ibNodeId(blk%ibNodes), blk%xnode(blk%ibNodes), &
@@ -325,11 +325,11 @@ module biocfd_read_input
            blk%znode(n)=blk%znode(n)*0.001_dp
         END DO
         DO n = 1, 2
-          READ (121,*) line
+          READ (121,*)
         END DO
         READ (121,*) blk%ibElems   !no. of elements
         DO n = 1, surGeoPoints
-          READ (121,*) cLine
+          READ (121,*)
         END DO
         blk%ibElems = blk%ibElems-surGeoPoints
         ALLOCATE(blk%ibSurfId(blk%ibElems), blk%ibElP1(blk%ibElems), &

@@ -1,8 +1,8 @@
 module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, pcitamax, &
-       ita, nblocks, totaltime, &
-       totime
+  use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, &
+       ita, nblocks, totaltime,totime,uc
+  use biocfd_blocks, only: Blocks
 #ifdef _OPENMP
   use omp_lib, only: omp_get_max_threads, omp_get_thread_num
 #endif
@@ -19,9 +19,10 @@ module biocfd_pcor_vcor
 
   contains
 
-      SUBROUTINE poissonSolver
+      SUBROUTINE poissonSolver(pcItaMax)
 
         INTEGER(int64) :: i, j,k, n, g
+        INTEGER (int64),INTENT(IN)   :: pcItaMax
         REAL (dp)    :: max_derr1, max_derr2, max_div, max_derrStdSt
         REAL (dp)    :: er_dudt, er_dvdt, er_dwdt, err_ds
         INTEGER(int64) :: max_nIterPcor
@@ -84,7 +85,7 @@ module biocfd_pcor_vcor
 
         !$omp parallel num_threads(omp_threads) default(none) &
         !$omp& private(g) &
-        !$omp& shared(nblocks, acc_devices) firstprivate(omp_thread_num)
+        !$omp& shared(nblocks, acc_devices, pcItaMax) firstprivate(omp_thread_num)
 
 #ifdef _OPENMP
         omp_thread_num = omp_get_thread_num()
@@ -98,7 +99,7 @@ module biocfd_pcor_vcor
         DO g=1,nblocks
            CALL computeDiv(g)    !divergence vector
            ! Do not compute Red/Black here for block 1
-           if (g /= 1)  CALL REDBLACKSOR_linear(g)
+           if (g /= 1)  CALL REDBLACKSOR_linear(g,pcItaMax)
 
         end do
         !$omp end do
@@ -106,12 +107,12 @@ module biocfd_pcor_vcor
         !$omp single
         CALL coarseUpdate_pc
         g=1
-        CALL REDBLACKSOR_linear(g)
+        CALL REDBLACKSOR_linear(g,pcItaMax)
         call fineUpdate_pc_bd
         !$omp end single
         !$omp do
         DO g=2,nblocks
-         CALL REDBLACKSOR_linear(g)
+         CALL REDBLACKSOR_linear(g,pcItaMax)
         end do
         !$omp end do
         !$omp single
@@ -125,7 +126,7 @@ module biocfd_pcor_vcor
         END DO
         !$omp end do
         !$omp end parallel
-         CALL velocityBC(block(1))      !correct velocity at boundaries
+         CALL velocityBC(block(1),deltat,uc)      !correct velocity at boundaries
 
          DO g=1,nblocks
          err_ds=0.
@@ -257,8 +258,8 @@ module biocfd_pcor_vcor
          !$acc end parallel loop
       END SUBROUTINE correctVelocity
 
-      SUBROUTINE REDBLACKSOR_linear(g)
-
+      SUBROUTINE REDBLACKSOR_linear(g,pcItaMax)
+         INTEGER (int64),INTENT(IN)   :: pcItaMax
          INTEGER(int64) :: n, i, j, k, gg, nx_var, ny_var,nz_var,nxy
          REAL (dp) :: errSum,var,derr4
          INTEGER(int64),INTENT(IN) ::g
@@ -351,23 +352,24 @@ module biocfd_pcor_vcor
          IF (derr4>=epsi .and. block(g)%nIterPcor <= pcItaMax) GOTO 3
       END SUBROUTINE REDBLACKSOR_linear
 
-      SUBROUTINE updateVelocity_newv(g)
+      SUBROUTINE updateVelocity_newv(blk)
 
+        type(Blocks), intent(inout) :: blk
         INTEGER ::  i, j, k
-         INTEGER (int64), INTENT(IN) :: g
-        if (block(g)%move_check == 1) then
-        !$acc parallel loop gang vector collapse(2) default(present)
-        DO k = 1, block(g)%nz+2
-        DO j = 1, block(g)%ny+2
-        DO i = 1, block(g)%nx+2
-           block(g)%ut(i,j,k) = block(g)%u(i,j,k)
-           block(g)%vt(i,j,k) = block(g)%v(i,j,k)
-           block(g)%wt(i,j,k) = block(g)%w(i,j,k)
-       END DO
-       END DO
-       END DO
-       !$acc end parallel loop
+        if (blk%move_check == 1) then
+           !$acc parallel loop gang vector collapse(3) default(present)
+           DO k = 1, blk%nz+2
+              DO j = 1, blk%ny+2
+                 DO i = 1, blk%nx+2
+                    blk%ut(i,j,k) = blk%u(i,j,k)
+                    blk%vt(i,j,k) = blk%v(i,j,k)
+                    blk%wt(i,j,k) = blk%w(i,j,k)
+                 END DO
+              END DO
+           END DO
+           !$acc end parallel loop
         endif
 
       END SUBROUTINE updateVelocity_newv
 end module biocfd_pcor_vcor
+
