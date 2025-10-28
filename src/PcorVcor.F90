@@ -85,7 +85,7 @@ module biocfd_pcor_vcor
 
         !$omp parallel num_threads(omp_threads) default(none) &
         !$omp& private(g) &
-        !$omp& shared(acc_devices, pcItaMax) firstprivate(omp_thread_num)
+        !$omp& shared(acc_devices, pcItaMax, block) firstprivate(omp_thread_num)
 
 #ifdef _OPENMP
         omp_thread_num = omp_get_thread_num()
