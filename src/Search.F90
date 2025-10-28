@@ -384,7 +384,7 @@ SUBROUTINE tagging_th_core(blk)
        type(Block_t), intent(inout) :: blk
        INTEGER(int64), intent(in)  :: blk_no
        CHARACTER(LEN=120) :: filename1
-       INTEGER(int64) :: i, j, k 
+       INTEGER(int64) :: i, j, k
 
         call tagging_th_core(blk)
                WRITE(filename1,1) blk_no
