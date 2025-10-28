@@ -21,14 +21,14 @@ contains
 
 
   subroutine test_find_dist_node(error)
-    use biocfd_blocks, only : Blocks
+    use biocfd_block_type, only : Block_t
     use biocfd_search, only : findDistnode
     !> Error handling
     type(error_type), allocatable, intent(out) :: error
 
     integer(int64) :: expected
     integer :: ibnodes
-    type(Blocks) :: blk
+    type(Block_t) :: blk
 
     ! Setup the required block variables
     ibnodes = 6
@@ -56,12 +56,12 @@ contains
   end subroutine test_find_dist_node
 
   subroutine test_cell_count_solid_coarse(error)
-    use biocfd_blocks, only: Blocks
+    use biocfd_block_type, only: Block_t
     use biocfd_search, only: cellCount_solid_coarse
     !> Error handling
     type(error_type), allocatable, intent(out) :: error
 
-    type(Blocks) :: blk
+    type(Block_t) :: blk
     integer(int64) :: expected
 
     blk%nx = 5

@@ -1,7 +1,7 @@
 ! allow(missing-accessibility-statement) - TODO: Attempt to remove in future
 MODULE global
        use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-       use biocfd_blocks,only : Blocks
+       use biocfd_block_type, only: Block_t
        use biocfd_interface_type, only: Interface_t
        IMPLICIT NONE
        INTEGER (int64)   ::     ita, ita1,   &
@@ -17,9 +17,9 @@ MODULE global
                                 uc
        real(dp), parameter :: pi = 4._dp * atan(1._dp)
 
-        INTEGER (int64) ::nblocks, intflines
+        INTEGER (int64) :: intflines
 
-        type(Blocks),allocatable ::block(:)
+        type(Block_t),allocatable ::block(:)
         type(Interface_t), allocatable :: intfr(:)
 
        REAL (dp)    :: phase_angle,aoa,piv_pt, aoa1,aoa2

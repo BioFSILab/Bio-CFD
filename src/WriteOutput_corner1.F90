@@ -1,8 +1,8 @@
 module biocfd_write_output_corner1
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, ita, totime, re, nblocks, &
+  use global, only : block, ita, totime, re, &
        totime, ita1
-  use biocfd_blocks, only: Blocks
+  use biocfd_block_type, only: Block_t
 #if USE_HDF5 == 1
   use biocfd_hdf5_io, only: hdf5_write_real, hdf5_write_int
 #endif
@@ -27,7 +27,7 @@ contains
        character (len=5) ::dummy_2
 
          IF((mod(ita,200_int64) ==0 .or. ita <= 2 ))then
-         do g=1,nblocks
+         do g=1,size(block)
             write(dummy_1,'(A6,I5.5)') 'block_',g
             write(dummy_2,'(I5.5)') ita
             allocate(u1(2:block(g)%nx+1,2:block(g)%ny+1,2:block(g)%nz+1),&
@@ -77,7 +77,7 @@ contains
        END SUBROUTINE write_output_hdf5
 #else
       SUBROUTINE write_output_ascii(blk,blk_no,char_f)
-       type(Blocks), intent(in) :: blk
+       type(Block_t), intent(in) :: blk
        integer (int64), intent(in) :: blk_no
        CHARACTER(len=150)  :: filename1
        CHARACTER (LEN = 3),INTENT(IN)   :: char_f
@@ -86,7 +86,7 @@ contains
 
          IF((mod(ita,200_int64) ==0 .or. ita <= 2 ))then
 
-       WRITE(filename1,1)char_f,ita,blk_no,re,blk%dx,nblocks
+       WRITE(filename1,1)char_f,ita,blk_no,re,blk%dx,size(block)
 1     FORMAT('out/',A3,'_butter_fielddata.',i9.9,'.',i3.3,'.',f7.1,'.',f8.6,'.',i3.3,".dat")
            OPEN(UNIT = 786, FILE = filename1, STATUS = 'unknown')
             WRITE(786,*)'variables="x","y","z","u","v","w","p","totime","cellid","cell_n","cell_pr"'
@@ -135,7 +135,7 @@ contains
          INTEGER(int64) :: inode, ielem, g
          CHARACTER(len=150) :: filename1
 
-          DO g=1,nblocks
+          DO g=1,size(block)
           if (ita == 1 )then
           WRITE(filename1,108)
   108     FORMAT("out/butterfly.dat")
