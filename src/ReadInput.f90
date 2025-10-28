@@ -4,7 +4,7 @@ module biocfd_read_input
        re, pi, omega4, &
        omega3, omega2, omega1, ita1, ita, &
        intflines, inor, freq, epsi, dxmin, dt_order, deltat, &
-       blk_start, aoa, intfr
+       blk_start, intfr
   use biocfd_interface_type, only: Interface_t
   use biocfd_block_type,only : Block_t
   implicit none
