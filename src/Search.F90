@@ -1,6 +1,6 @@
 module biocfd_search
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64, int32
-  use global, only: block, nblocks, blk_start, totime, &
+  use global, only: block, blk_start, totime, &
        piv_pt, pi, phase_angle, ita, dxmin, deltat, aoa2, aoa1, aoa, &
        re, freq, inor, &
        coarse_flcnt_check, intfr
@@ -409,7 +409,7 @@ module biocfd_search
         REAL(dp)      :: n1x, n1y, n1z, n2x,n2y,n2z, minDis1, minDis, &
                               n2dotn, cent_x, cent_y, cent_z, dis_cen, dis_pnt
 
-        DO g=blk_start,nblocks
+        DO g=blk_start,size(block)
         if ( block(g)%move_check == 1)then
             block(g)% ibCellCount = 0
         block(g)%fluidCellCount = 0
@@ -1314,7 +1314,7 @@ blk%fluidCellCount = flcnt
         INTEGER(int64) :: i,j,k,g, a_blk_no, b_blk_no,countx_st,countz_st,county_st
         REAL(dp) :: change_y_f,change_x_f
         REAL(dp) :: change_z_f
-        DO g=blk_start,nblocks
+        DO g=blk_start,size(block)
 
         if ( block(g)% move_check == 1) then
 
