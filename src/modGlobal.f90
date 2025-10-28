@@ -19,6 +19,5 @@ MODULE global
         type(Block_t),allocatable ::block(:)
         type(Interface_t), allocatable :: intfr(:)
 
-       REAL (dp)    :: phase_angle,aoa,piv_pt, aoa1,aoa2
 END MODULE global
 

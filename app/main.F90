@@ -3,7 +3,7 @@
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, &
              ita, ita1, totaltime, totime, &
-             aoa,aoa1,aoa2,phase_angle,pi,uc,re
+             pi,uc,re
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
@@ -33,7 +33,8 @@
         CHARACTER (LEN = 3)   :: char_f
         INTEGER               :: istart
         INTEGER (int64)   :: itamax, pcItaMax
-        CALL readInput(surGeoPoints,char_f,istart,itamax,pcItaMax)
+        real(dp) :: aoa,aoa1,aoa2,phase_angle,piv_pt
+        CALL readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt)
         CALL readBlockInterface
         do g=blk_start, size(block)
           CALL readSurfaceMeshGmsh(block(g),surGeoPoints)
@@ -48,7 +49,7 @@
         aoa1 = aoa*pi/180_dp
         aoa2 = -aoa1
         do g=blk_start, size(block)
-           CALL shiftSurfaceNodesInitial(block(g))
+           CALL shiftSurfaceNodesInitial(block(g),aoa1,aoa2,piv_pt)
         end do
         do g=blk_start, size(block)
            CALL computeSurfaceNorm(block(g))
@@ -151,7 +152,7 @@
         END DO
         print *,10
         DO g=blk_start, size(block)
-           CALL computeSurfaceVariables(block(g),g)
+           CALL computeSurfaceVariables(block(g),g,phase_angle,piv_pt)
         END DO
            CALL block_move_check
            CALL change_block_coords

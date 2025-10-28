@@ -1,7 +1,7 @@
 module biocfd_search
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64, int32
   use global, only: block, blk_start, totime, &
-       piv_pt, pi, phase_angle, ita, dxmin, deltat, aoa2, aoa1, aoa, &
+       pi, ita, dxmin, deltat, &
        re, freq, inor, &
        coarse_flcnt_check, intfr
   use biocfd_fine_interp, only: fineUpdate_mv
@@ -47,8 +47,9 @@ module biocfd_search
         ENDDO
         end subroutine findDistnode
 
-        SUBROUTINE shiftSurfaceNodesInitial(blk)
+        SUBROUTINE shiftSurfaceNodesInitial(blk,aoa1,aoa2,piv_pt)
         type(Block_t), intent(inout) :: blk
+        real(dp),intent(in) :: aoa1, aoa2, piv_pt
         INTEGER(int64) ::  i
         REAL(dp)      ::  xr1, yr1, zr1, angt
         REAL(dp)      :: bdy,bdfr
@@ -120,8 +121,10 @@ module biocfd_search
 
       END SUBROUTINE shiftSurfaceNodesInitial
 
-      SUBROUTINE computeSurfaceVariables(blk,g)
+      SUBROUTINE computeSurfaceVariables(blk,g,phase_angle,piv_pt)
         type(Block_t), intent(inout) :: blk
+        real(dp),intent(in) :: phase_angle,piv_pt
+        real(dp) :: aoa1,aoa2
         INTEGER(int64) ::  i
         INTEGER(int64), intent(in) :: g
         REAL(dp)      ::  xr1, yr1, zr1
