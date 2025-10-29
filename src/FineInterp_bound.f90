@@ -1,6 +1,6 @@
 module biocfd_fine_interp_bound
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, intfr, intflines
+  use global, only : block, intfr
   use biocfd_interpolation, only: bilinear_interpolation, linear_interpolation
 
   implicit none
@@ -13,7 +13,7 @@ module biocfd_fine_interp_bound
 SUBROUTINE fineUpdate_bd
         INTEGER(int64) :: g
 
-        DO g=1,intflines
+        DO g=1,size(intfr)
            call fineUpdate_bd_mv(g)
         ENDDO
 
@@ -28,7 +28,7 @@ SUBROUTINE fineUpdate_bd
         !> axis and steps control how the looping is performed over the x, y, and z axes
         integer :: axis, steps(3)
 
-        DO g=1,intflines
+        DO g=1,size(intfr)
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
 
@@ -105,7 +105,7 @@ SUBROUTINE fineUpdate_bd
         integer :: axis, steps(3)
 
 
-        DO g=1,intflines
+        DO g=1,size(intfr)
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
 

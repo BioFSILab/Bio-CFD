@@ -1,9 +1,9 @@
 module biocfd_search
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64, int32
-  use global, only: block, nblocks, blk_start, totime, &
-       piv_pt, pi, phase_angle, ita, dxmin, deltat, aoa2, aoa1, aoa, &
+  use global, only: block, blk_start, totime, &
+       pi, ita, dxmin, deltat, &
        re, freq, inor, &
-       intflines, coarse_flcnt_check, intfr
+       coarse_flcnt_check, intfr
   use biocfd_fine_interp, only: fineUpdate_mv
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
   use biocfd_block_type, only: Block_t
@@ -47,8 +47,9 @@ module biocfd_search
         ENDDO
         end subroutine findDistnode
 
-        SUBROUTINE shiftSurfaceNodesInitial(blk)
+        SUBROUTINE shiftSurfaceNodesInitial(blk,aoa1,aoa2,piv_pt)
         type(Block_t), intent(inout) :: blk
+        real(dp),intent(in) :: aoa1, aoa2, piv_pt
         INTEGER(int64) ::  i
         REAL(dp)      ::  xr1, yr1, zr1, angt
         REAL(dp)      :: bdy,bdfr
@@ -120,8 +121,10 @@ module biocfd_search
 
       END SUBROUTINE shiftSurfaceNodesInitial
 
-      SUBROUTINE computeSurfaceVariables(blk,g)
+      SUBROUTINE computeSurfaceVariables(blk,g,phase_angle,piv_pt)
         type(Block_t), intent(inout) :: blk
+        real(dp),intent(in) :: phase_angle,piv_pt
+        real(dp) :: aoa1,aoa2
         INTEGER(int64) ::  i
         INTEGER(int64), intent(in) :: g
         REAL(dp)      ::  xr1, yr1, zr1
@@ -252,14 +255,12 @@ module biocfd_search
 
      END SUBROUTINE computeSurfaceNorm
 
-     SUBROUTINE tagging_th(blk,blk_no)
+SUBROUTINE tagging_th_core(blk)
        type(Block_t), intent(inout) :: blk
-       INTEGER(int64), intent(in)  :: blk_no
        INTEGER(int64) :: m, i, j, k,  nel2Cen, nel2Pnt, sumNodeId
         REAL(dp)      :: minDis1, minDis, &
                          n2dotn, dis_cen, dis_pnt
 
-        CHARACTER(LEN=120) :: filename1
         blk%ibCellCount = 0
         blk%fluidCellCount = 0
         blk%solidCellCount = 0
@@ -283,7 +284,7 @@ module biocfd_search
 #ifndef _OPENACC
         !$omp parallel do default(none) private(minDis, minDis1) &
         !$omp& private(dis_cen, dis_pnt, nel2Cen, nel2Pnt, n2dotn) &
-        !$omp& shared(blk_no, blk)
+        !$omp& shared(blk)
 #endif
         DO k = blk%k_startSearch, blk%k_endSearch
         DO j = blk%j_startSearch, blk%j_endSearch
@@ -359,21 +360,6 @@ module biocfd_search
            END DO
 !$acc end parallel loop
 
-
-         WRITE(filename1,1) blk_no
-  1      FORMAT('butter_f.',i3.3,".dat")
-          OPEN(11,FILE=filename1,status='unknown')
-        DO k = 1, blk%nz+2
-        DO j = 1, blk%ny+2
-        DO i = 1, blk%nx+2
-        WRITE(11,*) blk%cell(i,j,k), blk%nodeIdTag(i,j,k)
-        END DO
-        END DO
-        END DO
-        CLOSE(11)
-
-
-
          blk%ibCellCount = 0
          blk%solidCellCount = 0
          blk%fluidCellCount = 0
@@ -391,132 +377,50 @@ module biocfd_search
          END DO
          END DO
 
+         print*, 'search done'
+         Print*, 'imms. cells=', blk%ibCellCount
+        Print*, 'fluid cells=',blk%fluidCellCount
+        Print*, 'solid cells=', blk%solidCellCount
+     END SUBROUTINE tagging_th_core
+
+     SUBROUTINE tagging_th(blk,blk_no)
+       type(Block_t), intent(inout) :: blk
+       INTEGER(int64), intent(in)  :: blk_no
+       CHARACTER(LEN=120) :: filename1
+       INTEGER(int64) :: i, j, k
+
+        call tagging_th_core(blk)
+               WRITE(filename1,1) blk_no
+  1      FORMAT('butter_f.',i3.3,".dat")
+          OPEN(11,FILE=filename1,status='unknown')
+        DO k = 1, blk%nz+2
+        DO j = 1, blk%ny+2
+        DO i = 1, blk%nx+2
+        WRITE(11,*) blk%cell(i,j,k), blk%nodeIdTag(i,j,k)
+        END DO
+        END DO
+        END DO
+        CLOSE(11)
+
          WRITE(filename1,2) blk_no
  2       FORMAT('butter_cellcount_f.',i3.3,".dat")
          OPEN(12,FILE=filename1,FORM='formatted')
         WRITE(12,*) blk%solidCellCount, blk%fluidCellCount, blk%ibCellCount
         CLOSE(12)
-         print*, 'search done'
-         Print*, 'imms. cells=', blk%ibCellCount
-        Print*, 'fluid cells=',blk%fluidCellCount
-        Print*, 'solid cells=', blk%solidCellCount
+
      END SUBROUTINE tagging_th
 
      SUBROUTINE tagging_th_move
 
-        INTEGER(int64) :: g, m, i, j, k, nel2Cen, nel2Pnt, sumNodeId
+        INTEGER(int64) :: g
         INTEGER            :: a_blk_no, b_blk_no
-        REAL(dp)      :: n1x, n1y, n1z, n2x,n2y,n2z, minDis1, minDis, &
-                              n2dotn, cent_x, cent_y, cent_z, dis_cen, dis_pnt
 
-        DO g=blk_start,nblocks
+        DO g=blk_start,size(block)
         if ( block(g)%move_check == 1)then
-            block(g)% ibCellCount = 0
-        block(g)%fluidCellCount = 0
-        block(g)% solidCellCount = 0
-        block(g)%cell = 0
-        block(g)%cell2 = 0
-        block(g)%nodeIdTag = 0
-        n2dotn = 0
-
-!$acc parallel loop collapse(3) default(present)
-        DO k = block(g)%k_startSearch, block(g)%k_endSearch
-        DO j = block(g)%j_startSearch, block(g)%j_endSearch
-        DO i = block(g)%i_startSearch, block(g)%i_endSearch
-            minDis  = 1e14_dp
-            minDis1 = 1e14_dp
-
-            n1x = block(g)%xp(i)
-            n1y = block(g)%yp(j)
-            n1z = block(g)%zp(k)
-
-            n2x = block(g)%x1(i)
-            n2y = block(g)%y1(j)
-            n2z = block(g)%z1(k)
-
-            !$acc loop seq
-            DO m = 1, block(g)%ibElems
-            cent_x = block(g)%xcent(m)
-            cent_y = block(g)%ycent(m)
-            cent_z = block(g)%zcent(m)
-               dis_cen  = dsqrt( (n1y-cent_y)**2 + (n1x-cent_x)**2  + (n1z-cent_z)**2)
-               dis_pnt  = dsqrt( (n2y-cent_y)**2 + (n2x-cent_x)**2  + (n2z-cent_z)**2)
-               IF (dis_cen<minDis) THEN
-                  minDis    = dis_cen
-                  nel2Cen   = m
-               ENDIF
-               IF (dis_pnt<minDis1) THEN
-                  minDis1   = dis_pnt
-                  nel2Pnt   = m
-               ENDIF
-            ENDDO
-            IF((block(g)%x1(i)<=block(g)%xcent(nel2Cen).AND. &
-                block(g)%x1(i+1)>=block(g)%xcent(nel2Cen)).AND. &
-               (block(g)%y1(j)<=block(g)%ycent(nel2Cen).AND. &
-                block(g)%y1(j+1)>=block(g)%ycent(nel2Cen)).AND. &
-               (block(g)%z1(k)<=block(g)%zcent(nel2Cen).AND. &
-                block(g)%z1(k+1)>=block(g)%zcent(nel2Cen))) THEN
-               block(g)%cell(i,j,k) = 2
-
-            ENDIF
-
-                        n2dotn  = (n2x - block(g)%xcent(nel2Pnt))*block(g)%cosAlpha(nel2Pnt) + &
-                           (n2y - block(g)%ycent(nel2Pnt))*block(g)%cosBeta(nel2Pnt)  + &
-                           (n2z - block(g)%zcent(nel2Pnt))*block(g)%cosGamma(nel2Pnt)
-
-            IF (n2dotn>=-1e-16_dp) THEN
-               block(g)%nodeIdTag(i,j,k) = 0
-            ELSE
-               block(g)%nodeIdTag(i,j,k) = 1
-            ENDIF
-         END DO
-         END DO
-         END DO
-!$acc end parallel loop
-
-!$acc parallel loop collapse(3) default(present)
-           DO k = block(g)%k_startSearch, block(g)%k_endSearch
-           DO j = block(g)%j_startSearch, block(g)%j_endSearch
-           DO i = block(g)%i_startSearch, block(g)%i_endSearch
-               IF (block(g)%cell(i,j,k)/=2) THEN
-                  sumNodeId = 0
-                  sumNodeId = block(g)%nodeIdTag(i,j,k)      + block(g)%nodeIdTag(i+1,j,k)     &
-                              + block(g)%nodeIdTag(i,j+1,k)    + block(g)%nodeIdTag(i+1,j+1,k)   &
-                              + block(g)%nodeIdTag(i,j,k+1)    + block(g)%nodeIdTag(i+1,j,k+1)     &
-                              + block(g)%nodeIdTag(i,j+1,k+1)  + block(g)%nodeIdTag(i+1,j+1,k+1)
-                  IF (sumNodeId==8) THEN
-                     block(g)%cell(i,j,k) = 1
-                  ENDIF
-               ENDIF
-           END DO
-           END DO
-           END DO
-!$acc end parallel loop
-
-        block(g)%ibCellCount = 0
-         block(g)%solidCellCount = 0
-         block(g)%fluidCellCount = 0
-         DO k = 2, block(g)%nz+1
-         DO j = 2, block(g)%ny+1
-         DO i = 2, block(g)%nx+1
-            IF (block(g)%cell(i,j,k)==1) THEN
-                block(g)%solidCellCount = block(g)%solidCellCount + 1
-            ELSEIF (block(g)%cell(i,j,k)==0) THEN
-               block(g)%fluidCellCount  = block(g)%fluidCellCount + 1
-            ELSEIF (block(g)%cell(i,j,k)==2) THEN
-                block(g)%ibCellCount = block(g)%ibCellCount + 1
-            ENDIF
-         END DO
-         END DO
-         END DO
-
-         print*, 'search done'
-         Print*, 'imms. cells=', block(g)%ibCellCount
-        Print*, 'fluid cells=',block(g)%fluidCellCount
-        Print*, 'solid cells=', block(g)%solidCellCount
+           call tagging_th_core(block(g))
         endif
         ENDDO
-        DO g=1,intflines
+        DO g=1,size(intfr)
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
 
@@ -982,7 +886,7 @@ blk%fluidCellCount = flcnt
         block(1)%cell=0
         block(1)%cell_pr=0
 
-        DO g=1, intflines
+        DO g=1, size(intfr)
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
            factor=intfr(g)%b_msh/intfr(g)%a_msh
@@ -1109,7 +1013,7 @@ blk%fluidCellCount = flcnt
         REAL(dp) :: ydisp1, xdisp1, zdisp1, mg1
         REAL(dp) :: marginx, marginy, marginz, yval_up, yval_dw, xval_lt, xval_rt
 
-        DO g=1,intflines
+        DO g=1,size(intfr)
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
         mg1=block(b_blk_no)%cintp*block(1)%dx
@@ -1305,7 +1209,7 @@ blk%fluidCellCount = flcnt
         REAL(dp) :: change_y_f,change_x_f
         REAL(dp) :: change_z_f
         REAL (dp), ALLOCATABLE, DIMENSION (:, :, :) :: u_dum,v_dum,w_dum,p_dum
-        DO g=blk_start,nblocks
+        DO g=blk_start,size(block)
 
         if ( block(g)% move_check == 1) then
 
@@ -1380,7 +1284,7 @@ blk%fluidCellCount = flcnt
 
         ENDDO
 
-        DO g=1,intflines
+        DO g=1,size(intfr)
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
         if ( block(b_blk_no)% move_check == 1) then
@@ -1487,7 +1391,7 @@ blk%fluidCellCount = flcnt
 
 
 
-        DO g=1,intflines
+        DO g=1,size(intfr)
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
          factor=intfr(g)%b_msh/intfr(g)%a_msh
@@ -1562,7 +1466,7 @@ blk%fluidCellCount = flcnt
                                          + (block(b_blk_no)%move_amtz/factor)
 
         ENDDO
-        DO j=1,intflines
+        DO j=1,size(intfr)
         print*,'**********************px***************************'
         DO i=1,intfr(j)%counterxp
         WRITE(*,33) 'px', i, &
@@ -1575,7 +1479,7 @@ blk%fluidCellCount = flcnt
  33       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************py***************************'
         DO i=1,intfr(j)%counteryp
         WRITE(*,133) 'py', i, &
@@ -1588,7 +1492,7 @@ blk%fluidCellCount = flcnt
  133       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intflines
+        DO j=1,size(intfr)
         print*,'**********************pz***************************'
         DO i=1,intfr(j)%counterzp
         WRITE(*,933) 'pz', i, &
@@ -1602,7 +1506,7 @@ blk%fluidCellCount = flcnt
         end do
         end do
 
-        DO j=1,intflines
+        DO j=1,size(intfr)
         print*,'**********************ux***************************'
         DO i=1,intfr(j)%counterxu
         WRITE(*,331) 'ux', i, &
@@ -1615,7 +1519,7 @@ blk%fluidCellCount = flcnt
  331       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************uy***************************'
         DO i=1,intfr(j)%counteryu
         WRITE(*,1331) 'uy', i, &
@@ -1628,7 +1532,7 @@ blk%fluidCellCount = flcnt
  1331       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************uz***************************'
         DO i=1,intfr(j)%counterzu
         WRITE(*,91331) 'uz', i, &
@@ -1642,7 +1546,7 @@ blk%fluidCellCount = flcnt
         end do
         end do
 
-        DO j=1,intflines
+        DO j=1,size(intfr)
         print*,'**********************vx***************************'
         DO i=1,intfr(j)%counterxv
         WRITE(*,332) 'vx', i, &
@@ -1655,7 +1559,7 @@ blk%fluidCellCount = flcnt
  332       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************vy***************************'
         DO i=1,intfr(j)%counteryv
         WRITE(*,1332) 'vy', i, &
@@ -1668,7 +1572,7 @@ blk%fluidCellCount = flcnt
  1332       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************vz***************************'
         DO i=1,intfr(j)%counterzv
         WRITE(*,91332) 'vz', i, &
@@ -1683,7 +1587,7 @@ blk%fluidCellCount = flcnt
         end do
 
 
-        DO j=1,intflines
+        DO j=1,size(intfr)
         print*,'**********************wx***************************'
         DO i=1,intfr(j)%counterxw
         WRITE(*,3329) 'wx', i, &
@@ -1696,7 +1600,7 @@ blk%fluidCellCount = flcnt
  3329       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************wy***************************'
         DO i=1,intfr(j)%counteryw
         WRITE(*,13329) 'wy', i, &
@@ -1709,7 +1613,7 @@ blk%fluidCellCount = flcnt
 13329       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************wz***************************'
         DO i=1,intfr(j)%counterzw
         WRITE(*,93329) 'wz', i, &

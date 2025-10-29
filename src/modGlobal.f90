@@ -12,16 +12,12 @@ MODULE global
                                 freq, &
                                 u0, &
                                 epsi, re, &
-                                alpha, &
                                 deltat, totime, totalTime, &
                                 uc
        real(dp), parameter :: pi = 4._dp * atan(1._dp)
 
-        INTEGER (int64) ::nblocks, intflines
-
         type(Block_t),allocatable ::block(:)
         type(Interface_t), allocatable :: intfr(:)
 
-       REAL (dp)    :: phase_angle,aoa,piv_pt, aoa1,aoa2
 END MODULE global
 
