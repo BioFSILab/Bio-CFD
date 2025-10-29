@@ -1471,6 +1471,7 @@ blk%fluidCellCount = flcnt
         ENDDO
                 countz_st=countz_st+1
         ENDDO
+        DEALLOCATE(u_dum, v_dum, w_dum, p_dum)
         print*,'aft'
         close(12)
         ENDIF
