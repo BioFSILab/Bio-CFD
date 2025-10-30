@@ -116,7 +116,7 @@ contains
       SUBROUTINE writeResult(blk,blk_no,char_f)
         type(Block_t), intent(in) :: blk
         integer (int64), intent(in) :: blk_no
-        INTEGER::  i, j, k,g
+        INTEGER::  i, j, k
         CHARACTER(len=70)  :: filename1
         CHARACTER (LEN = 3),INTENT(IN)   :: char_f
         IF(mod(ita,500_int64)/=0) return
