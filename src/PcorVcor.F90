@@ -189,7 +189,7 @@ module biocfd_pcor_vcor
          END DO
         !$acc end parallel loop
          END DO
-        DO g=1,intflines
+        DO g=1,size(intfr)
            call fineUpdate_bd_mv(g)
         ENDDO
         CALL coarseUpdate
@@ -374,4 +374,5 @@ module biocfd_pcor_vcor
 
       END SUBROUTINE updateVelocity_newv
 end module biocfd_pcor_vcor
+
 
