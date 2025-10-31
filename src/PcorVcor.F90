@@ -1,7 +1,7 @@
 module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, &
-       ita, totaltime,totime,uc
+       ita, totaltime,totime,uc, intfr
   use biocfd_block_type, only: Block_t
 #ifdef _OPENMP
   use omp_lib, only: omp_get_max_threads, omp_get_thread_num
@@ -374,5 +374,6 @@ module biocfd_pcor_vcor
 
       END SUBROUTINE updateVelocity_newv
 end module biocfd_pcor_vcor
+
 
 
