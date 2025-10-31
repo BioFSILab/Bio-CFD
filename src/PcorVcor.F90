@@ -9,7 +9,7 @@ module biocfd_pcor_vcor
 #ifdef _OPENACC
   use openacc, only: acc_device_default, acc_get_num_devices, acc_set_device_num
 #endif
-  use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_pc_bd,fineupdate_bd_mv
+  use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_pc_bd, fineupdate_bd_mv
   use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
   use biocfd_boundary_conditions, only : velocityBC
   implicit none
