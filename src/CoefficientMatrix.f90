@@ -1,6 +1,6 @@
 module biocfd_coefficient_matrix
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use biocfd_blocks, only: Blocks
+  use biocfd_block_type, only: Block_t
   implicit NONE
   private
 
@@ -10,7 +10,7 @@ contains
   SUBROUTINE coefficientMatrix(blk, is_coarse)
 
     !> The block to construct the coefficient matrix for
-    type(Blocks), intent(inout) :: blk
+    type(Block_t), intent(inout) :: blk
     logical, intent(in) :: is_coarse
     INTEGER (int64) :: i, j, nx_var, ny_var, nz_var
     REAL (dp):: rx1, rx2, rxsum, ry1, ry2, rysum, rz1, rz2, rzsum
