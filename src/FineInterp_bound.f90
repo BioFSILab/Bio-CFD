@@ -7,17 +7,9 @@ module biocfd_fine_interp_bound
 
   private
 
-  public :: fineUpdate_bd, fineUpdate_pc_bd, fineUpdate_newv_bd, fineUpdate_bd_mv
+  public :: fineUpdate_pc_bd, fineUpdate_newv_bd, fineUpdate_bd_mv
 
   contains
-SUBROUTINE fineUpdate_bd
-        INTEGER(int64) :: g
-
-        DO g=1,size(intfr)
-           call fineUpdate_bd_mv(g)
-        ENDDO
-
-      end subroutine fineUpdate_bd
 
         SUBROUTINE fineUpdate_pc_bd
 
