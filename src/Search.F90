@@ -1522,7 +1522,7 @@ blk%fluidCellCount = flcnt
  1331       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************uz***************************'
         DO i=1,intfr(j)%counterzu
         WRITE(*,91331) 'uz', i, &
@@ -1536,7 +1536,7 @@ blk%fluidCellCount = flcnt
         end do
         end do
 
-        DO j=1,intflines
+        DO j=1,size(intfr)
         print*,'**********************vx***************************'
         DO i=1,intfr(j)%counterxv
         WRITE(*,332) 'vx', i, &
@@ -1549,7 +1549,7 @@ blk%fluidCellCount = flcnt
  332       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************vy***************************'
         DO i=1,intfr(j)%counteryv
         WRITE(*,1332) 'vy', i, &
@@ -1562,7 +1562,7 @@ blk%fluidCellCount = flcnt
  1332       FORMAT(A3,I5,3I5,3F8.5)
         end do
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
         print*,'**********************vz***************************'
         DO i=1,intfr(j)%counterzv
         WRITE(*,91332) 'vz', i, &
