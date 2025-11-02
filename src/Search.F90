@@ -1279,7 +1279,7 @@ blk%fluidCellCount = flcnt
       ! after change_block_coords
       subroutine change_block_coords_interfaces(local_intfr,blk)
         type(Interface_t),intent(inout) :: local_intfr
-        type(Blocks), intent(inout) :: blk
+        type(Block_t), intent(inout) :: blk
         INTEGER(int64) :: k,j,i,countx_st,countz_st,county_st
 
         if ( blk% move_check /= 1) return
