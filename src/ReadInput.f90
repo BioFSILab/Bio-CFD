@@ -1,10 +1,10 @@
 module biocfd_read_input
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, uc, u0, totime, &
-       re, piv_pt, pi, phase_angle, omega4, &
+       re, pi, omega4, &
        omega3, omega2, omega1, ita1, ita, &
-       intflines, inor, freq, epsi, dxmin, dt_order, deltat, &
-       blk_start, aoa, alpha, intfr
+       inor, freq, epsi, dxmin, dt_order, deltat, &
+       blk_start, intfr
   use biocfd_interface_type, only: Interface_t
   use biocfd_block_type,only : Block_t
   implicit none
@@ -15,10 +15,11 @@ module biocfd_read_input
 
   contains
 
-      SUBROUTINE readInput(surGeoPoints,char_f,istart,itamax,pcItaMax)
+      SUBROUTINE readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt)
        INTEGER (int64) :: i, g,io
        CHARACTER(len=160)  :: filename1
        INTEGER (int64),INTENT(OUT)   :: surGeoPoints, itamax,pcItaMax
+       REAL(dp),intent(out) :: aoa,phase_angle,piv_pt
        CHARACTER (LEN = 3), INTENT(OUT)  :: char_f
        INTEGER,INTENT(OUT)               :: istart
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
@@ -27,7 +28,7 @@ module biocfd_read_input
        REAL(dp),ALLOCATABLE,DIMENSION(:) :: xstart_temp,xend_temp,&
        ystart_temp,yend_temp,zstart_temp,zend_temp
        REAL(dp) :: alpha_m,theta_m,alpha_m1,theta_m1,mu_f,rho_f,l_c,u_tip,disp
-       INTEGER (int64) :: nblocks
+       INTEGER (int64) :: intflines, nblocks
        NAMELIST /input_data/ nblocks, intflines,  &
                    itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
                    re,rho_f, mu_f, l_c, &
@@ -101,7 +102,6 @@ module biocfd_read_input
         freq = freq*u0/l_c
         deltat = 1._dp/(4._dp*freq*dt_order)  !0.00041666666666_dp! *5e-4
         disp = block(blk_start)%a0*cos(2*pi*freq*deltat)
-        alpha  = 1._dp
        u_tip=4*((pi*45)/180)*l_c*freq
 
         Print*, 'dxmin =', dxmin
@@ -373,7 +373,7 @@ module biocfd_read_input
 
          print*,'Inside readBlockInterface'
         OPEN(51, FILE = 'interface_details.dat', FORM = 'formatted')
-        DO i=1, intflines
+        DO i=1, size(intfr)
         READ(51,*) intfr(i)%a_blk, intfr(i)%a_msh, intfr(i)%a_intf, &
                    intfr(i)%b_blk, intfr(i)%b_msh, intfr(i)%b_intf, &
                    intfr(i)%xintf_start, intfr(i)%xintf_end, &
