@@ -54,7 +54,7 @@ module biocfd_stress_calculation
        viscousLift = 0.
        PressureLift = 0.
        surf_area = 0.
-	area_Sx = 0.
+       area_Sx = 0.
        area_Sy = 0
         !$acc parallel loop gang vector reduction(+: pressureDrag, viscousDrag, viscousLift, pressureLift, area_Sx, area_Sy, surf_area)  &
         !$acc private (i_x1, i_y1, i_z1, i_cell, j_cell, k_cell, diagdis, normdis,                    &
@@ -103,16 +103,16 @@ module biocfd_stress_calculation
        ysurf = block(g)%ycent(ielem)
        zsurf = block(g)%zcent(ielem)
 
-	del_X = block(g)%x1(i_cell+1)-block(g)%x1(i_cell)
+       del_X = block(g)%x1(i_cell+1)-block(g)%x1(i_cell)
        del_Y = block(g)%y1(j_cell+1)-block(g)%y1(j_cell)
        del_Z = block(g)%z1(k_cell+1)-block(g)%z1(k_cell)
 
        diagdis = dsqrt(del_X**2 + del_Y**2 + del_Z**2)
 
        normdis = diagdis
-	pos1_x = xsurf + normdis*block(g)%cosAlpha(ielem)
-	pos1_y = ysurf + normdis*block(g)%cosBeta(ielem)
-	pos1_z = zsurf + normdis*block(g)%cosGamma(ielem)
+       pos1_x = xsurf + normdis*block(g)%cosAlpha(ielem)
+       pos1_y = ysurf + normdis*block(g)%cosBeta(ielem)
+       pos1_z = zsurf + normdis*block(g)%cosGamma(ielem)
 
 !**************************velocity and pressure at the surface**********************
        IF (block(g)%ibSurfID(ielem)==50) THEN
@@ -127,7 +127,7 @@ module biocfd_stress_calculation
          at_y      =  0.  !
        ELSEIF (block(g)%ibSurfID(ielem)==51) THEN
              block(g)% thetaDot  = block(g)% thetaDot1
-	     block(g)% thetaDDot = block(g)% thetaDDot1
+            block(g)% thetaDDot = block(g)% thetaDDot1
              usurf    = 0. + block(g)%xdot
              vsurf    = -block(g)%thetaDot*(block(g)%zcent(ielem) - block(g)%piv_z) + block(g)%ydot
              wsurf    = block(g)%thetaDot*(block(g)%ycent(ielem) - block(g)%piv_y)
@@ -136,8 +136,8 @@ module biocfd_stress_calculation
          at_z      = block(g)% thetaDDot*(block(g)%ycent(ielem)-block(g)% piv_y)
          at_y      = -block(g)%thetaDDot*(block(g)%zcent(ielem)-block(g)% piv_z)
        ELSEIF (block(g)%ibSurfId(ielem)==52) THEN
-	     block(g)% thetaDot  = block(g)% thetaDot2
-	     block(g)% thetaDDot = block(g)% thetaDDot2
+            block(g)% thetaDot  = block(g)% thetaDot2
+            block(g)% thetaDDot = block(g)% thetaDDot2
              usurf = 0. +block(g)%xdot
              vsurf    = -block(g)%thetaDot*(block(g)%zcent(ielem) - block(g)%piv_z)+ block(g)%ydot  ! + ydot
              wsurf    = block(g)%thetaDot*(block(g)%ycent(ielem) - block(g)%piv_y)  ! + ydot
@@ -159,11 +159,11 @@ module biocfd_stress_calculation
        DO i = 2, block(g)%nx+1
        if(pos1_x>=block(g)%xu(i).and.pos1_x<block(g)%xu(i+1)) i_x1 = i
        END DO
-	!$acc loop seq
+       !$acc loop seq
        DO j = 2, block(g)%ny+1
        if(pos1_y>=block(g)%yu(j).and.pos1_y<block(g)%yu(j+1)) i_y1 = j
        END DO
-	!$acc loop seq
+       !$acc loop seq
        DO k = 2, block(g)%nz+1
        if(pos1_z>=block(g)%zu(k).and.pos1_z<block(g)%zu(k+1)) i_z1 = k
        END DO
@@ -219,7 +219,7 @@ module biocfd_stress_calculation
        DO i = 2, block(g)%nx+1
        if(pos1_x>=block(g)%xv(i).and.pos1_x<block(g)%xv(i+1)) i_x1 = i
        END DO
-	!$acc loop seq
+       !$acc loop seq
        DO j = 2, block(g)%ny+1
        if(pos1_y>=block(g)%yv(j).and.pos1_y<block(g)%yv(j+1)) i_y1 = j
        END DO
@@ -273,14 +273,14 @@ module biocfd_stress_calculation
 
          dvdn_e = dvdx_e*block(g)%cosAlpha(ielem) + dvdy_e*block(g)%cosBeta(ielem) +  dvdz_e*block(g)%cosGamma(ielem)
 
-	  dvdn_s = (2./normdis)*(v_pos1 - vsurf) - dvdn_e
+         dvdn_s = (2./normdis)*(v_pos1 - vsurf) - dvdn_e
 
 !******************w velocity interpolation in point 2******************
        !$acc loop seq
        DO i = 2, block(g)%nx+1
        if(pos1_x>=block(g)%xw(i).and.pos1_x<block(g)%xw(i+1)) i_x1 = i
        END DO
-	!$acc loop seq
+       !$acc loop seq
        DO j = 2, block(g)%ny+1
        if(pos1_y>=block(g)%yw(j).and.pos1_y<block(g)%yw(j+1)) i_y1 = j
        END DO
@@ -360,11 +360,11 @@ module biocfd_stress_calculation
        DO i = 2, block(g)%nx+1
        if(pos1_x>=block(g)%xp(i).and.pos1_x<block(g)%xp(i+1)) i_x1 = i
        END DO
-	!$acc loop seq
+       !$acc loop seq
        DO j = 2, block(g)%ny+1
        if(pos1_y>=block(g)%yp(j).and.pos1_y<block(g)%yp(j+1)) i_y1 = j
        END DO
-	!$acc loop seq
+       !$acc loop seq
        DO k = 1, block(g)%nz+2
        if(pos1_z>=block(g)%zp(k).and.pos1_z<block(g)%zp(k+1)) i_z1 = k
        END DO
@@ -425,18 +425,18 @@ module biocfd_stress_calculation
 
         f_surf_y = -f_surf*block(g)%cosBeta(ielem)*rho_f
 
-	f_surf_z = -f_surf*block(g)%cosGamma(ielem)*rho_f
+       f_surf_z = -f_surf*block(g)%cosGamma(ielem)*rho_f
 
 !***********************drag calculation********************************
-	  viscousDrag = viscousDrag + shear_x_force
+         viscousDrag = viscousDrag + shear_x_force
          pressureDrag = pressureDrag + f_surf_x
          viscousLift = viscousLift + shear_y_force
          PressureLift = PressureLift + f_surf_y
          surf_area = surf_area + area
-	  area_Sx = area_Sx + area_xz
+         area_Sx = area_Sx + area_xz
          area_Sy = area_Sy + area_yz
 
-	END DO
+       END DO
         !$acc end parallel
 
         area_Sx= 0.5 * area_Sx
@@ -463,5 +463,5 @@ module biocfd_stress_calculation
 
         END DO
 
-	END SUBROUTINE stressCal1
+       END SUBROUTINE stressCal1
 end module biocfd_stress_calculation
