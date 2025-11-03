@@ -22,7 +22,7 @@ contains
 
     REAL(dp):: diagdis, normdis, aval, bval, cval, stx1, sty1, stz1, del_X, del_Y, del_Z
 
-    REAL(dp):: xsurf, ysurf, zsurf, pos1_x, pos1_y, pos1_z,              &
+    REAL(dp):: pos1_x, pos1_y, pos1_z,              &
          psurf, p_pos1, dpdn, dpdn_e, &
          usurf, u_pos1, vsurf, v_pos1, wsurf, w_pos1, &
          dudn_e, dvdn_e, dwdn_e, &
@@ -53,7 +53,7 @@ contains
     !$acc parallel loop gang vector reduction(+: pressureDrag, viscousDrag, viscousLift, pressureLift, area_Sx, area_Sy, surf_area)  &
     !$acc private (i_x1, i_y1, i_z1, i_cell, j_cell, k_cell, diagdis, normdis,                    &
     !$acc          aval, bval, cval, stx1, sty1, stz1, del_X, del_Y, del_Z,                       &
-    !$acc          xsurf, ysurf, zsurf, pos1_x, pos1_y, pos1_z,                                   &
+    !$acc          pos1_x, pos1_y, pos1_z,                                   &
     !$acc          psurf, p_pos1, dpdn, dpdn_e, &
     !$acc          usurf, u_pos1, vsurf, v_pos1, &
     !$acc          wsurf, w_pos1, &
@@ -87,10 +87,6 @@ contains
           end if
        end do
 
-       xsurf = blk%xcent(ielem)
-       ysurf = blk%ycent(ielem)
-       zsurf = blk%zcent(ielem)
-
        del_X = blk%x1(i_cell+1)-blk%x1(i_cell)
        del_Y = blk%y1(j_cell+1)-blk%y1(j_cell)
        del_Z = blk%z1(k_cell+1)-blk%z1(k_cell)
@@ -98,9 +94,9 @@ contains
        diagdis = dsqrt(del_X**2 + del_Y**2 + del_Z**2)
 
        normdis = diagdis
-       pos1_x = xsurf + normdis*blk%cosAlpha(ielem)
-       pos1_y = ysurf + normdis*blk%cosBeta(ielem)
-       pos1_z = zsurf + normdis*blk%cosGamma(ielem)
+       pos1_x = blk%xcent(ielem) + normdis*blk%cosAlpha(ielem)
+       pos1_y = blk%ycent(ielem) + normdis*blk%cosBeta(ielem)
+       pos1_z = blk%zcent(ielem) + normdis*blk%cosGamma(ielem)
 
        !**************************velocity and pressure at the surface**********************
        IF (blk%ibSurfID(ielem)==50) THEN
