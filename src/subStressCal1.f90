@@ -1,7 +1,13 @@
-!csssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
+module biocfd_stress_calculation
+
+  USE global
+  IMPLICIT NONE
+
+  private
+
+  contains
+
        SUBROUTINE stressCal1
-       USE global
-       IMPLICIT NONE
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
 
        INTEGER:: i, j, k, ielem, inode, i_x1, i_y1, i_z1
@@ -527,3 +533,4 @@
         END DO
 
 	END SUBROUTINE stressCal1
+end module biocfd_stress_calculation
