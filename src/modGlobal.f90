@@ -13,7 +13,7 @@ MODULE global
                                 u0, &
                                 epsi, re, &
                                 deltat, totime, totalTime, &
-                                uc
+                                uc, rho_f, mu_f
        real(dp), parameter :: pi = 4._dp * atan(1._dp)
 
         type(Block_t),allocatable ::block(:)

@@ -45,9 +45,11 @@ module biocfd_stress_calculation
 
         REAL(KIND = 8):: modStressNode, modSIGNWSS
 
+        real(KIND = 8) :: ac_y, ac_z, at_y, at_z
+
         CHARACTER(len=150) :: filename1
 
-       DO g=blk_start,nblocks
+       DO g=blk_start, size(block)
 
        viscousDrag = 0.
        pressureDrag = 0.
@@ -336,11 +338,12 @@ module biocfd_stress_calculation
          dwdn_s = (2./normdis)*(w_pos1 - wsurf) - dwdn_e
 
 !***********************calculate area of the elements******************
-       alen = sqrt(block(g)%alpha3(ielem)**2.+block(g)%beta3(ielem)**2.+ block(g)%gamma3(ielem)**2.)
+       ! alen = sqrt(block(g)%alpha3(ielem)**2.+block(g)%beta3(ielem)**2.+ block(g)%gamma3(ielem)**2.)
+       alen = block(g)%element_length(ielem)
        area = alen/2.
-       area_yz = 0.5*abs(block(g)%alpha3(ielem))
-       area_xz = 0.5*abs(block(g)%beta3(ielem))
-       area_xy = 0.5*abs(block(g)%gamma3(ielem))
+       area_yz = 0.5*abs(alen * block(g)%cosAlpha(ielem))
+       area_xz = 0.5*abs(alen * block(g)%cosBeta(ielem))
+       area_xy = 0.5*abs(alen * block(g)%cosGamma(ielem))
 
 !*********non-dimensional viscous stress & force calculation************
        stx1 = dudn_s - (dudn_s*block(g)%cosAlpha(ielem) + dvdn_s*block(g)%cosBeta(ielem) + dwdn_s*block(g)%cosGamma(ielem))*block(g)%cosAlpha(ielem)

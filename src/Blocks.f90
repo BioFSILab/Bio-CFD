@@ -44,6 +44,7 @@ MODULE biocfd_block_type
        INTEGER (int64), ALLOCATABLE, DIMENSION (:) :: nelp, nelu1, nelu2, nelv1, nelv2, nelw1, nelw2
        REAL (dp), ALLOCATABLE, DIMENSION (:) :: xcent, ycent, zcent, &
                                                 cosAlpha, cosBeta, cosGamma, &
+                                                element_length, &
                                                 pNormDis, u1NormDis, u2NormDis , &
                                                 v1NormDis, v2NormDis, w1NormDis, w2NormDis, &
                                                 p_ghost, pt_ghost, u2_ghost, u2t_ghost, &

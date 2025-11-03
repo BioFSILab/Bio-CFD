@@ -213,7 +213,8 @@ module biocfd_search
         ALLOCATE (blk%xcent(blk%ibElems), blk%ycent(blk%ibElems), &
                   blk%zcent(blk%ibElems), &
                   blk%cosAlpha(blk%ibElems), blk%cosBeta(blk%ibElems), &
-                  blk%cosGamma(blk%ibElems))
+                  blk%cosGamma(blk%ibElems), &
+                  blk%element_length(blk%ibElems))
 
         !compute centroid and direction cosines
        !$acc parallel loop gang vector default(present) &
@@ -246,6 +247,7 @@ module biocfd_search
            blk%cosGamma(n) = (p2x-p1x)*(p3y-p1y)-(p3x-p1x)*(p2y-p1y)
 
            lenEL = dsqrt(blk%cosAlpha(n)**2 + blk%cosBeta(n)**2 + blk%cosGamma(n)**2)   !length of element
+           blk%element_length(n) = lenEL
 
            blk%cosAlpha(n) = inor * blk%cosAlpha(n) / lenEl  ! direction cosine unit normal along x
            blk%cosBeta(n)  = inor * blk%cosBeta(n) / lenEl   ! direction cosine unit normal along y
