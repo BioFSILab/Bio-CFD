@@ -51,11 +51,10 @@ module biocfd_stress_calculation
 
         if (.not. allocated(block(g)%areaElem )) then
          ALLOCATE(block(g)%Elemcell(block(g)%ibElems,3), block(g)%ucell(block(g)%ibElems,3), block(g)%vcell(block(g)%ibElems,3), block(g)%wcell(block(g)%ibElems,3), block(g)%pcell(block(g)%ibElems,3))
-         ALLOCATE(block(g)%areaElem(block(g)%ibElems), block(g)%stressElem(block(g)%ibElems,3))
+         ALLOCATE(block(g)%areaElem(block(g)%ibElems))
         endif
 
        block(g)% areaElem = 0._rk
-       block(g)%stressElem = 0._rk
        viscousDrag = 0.
        pressureDrag = 0.
        viscousLift = 0.
@@ -378,9 +377,6 @@ module biocfd_stress_calculation
        shear_y_force = mu_f*sty1*area
        shear_z_force = mu_f*stz1*area
 
-      block(g)%stressElem(ielem, 1) = mu_f*stx1
-      block(g)%stressElem(ielem, 2) = mu_f*sty1
-      block(g)%stressElem(ielem, 3) = mu_f*stz1
 !************************presssure interpolation************************
 
 !*******************pressure interpolation at point 2*******************
