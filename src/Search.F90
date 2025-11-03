@@ -216,7 +216,9 @@ module biocfd_search
                   blk%cosGamma(blk%ibElems))
 
         !compute centroid and direction cosines
-       !$acc parallel loop gang vector default(present) private (var_xcent, var_ycent, var_zcent,p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL)  firstprivate (inor)
+       !$acc parallel loop gang vector default(present) &
+       !$acc private (var_xcent, var_ycent, var_zcent,p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL) &
+       !$acc firstprivate (inor)
         DO n = 1, blk%ibElems
            p1x = blk%xnode1(blk%ibElP1(n))                       !x coordinate element node 1
            p1y = blk%ynode1(blk%ibElP1(n))                       !y coordinate element node 1
