@@ -8,6 +8,7 @@ module biocfd_forcing
 
   public :: pressureForcing1, pressureforcingfield, pressureforcingghost
   public :: velocityforcing1, velocityforcingfield, velocityforcingghost
+  public :: compute_value_and_derivatives
 
   contains
 SUBROUTINE pressureForcing1(blk)
