@@ -1,5 +1,5 @@
 module biocfd_stress_calculation
-
+  use, intrinsic :: iso_fortran_env, only: dp => real64
   USE global
   IMPLICIT NONE
 
@@ -10,15 +10,14 @@ module biocfd_stress_calculation
   contains
 
        SUBROUTINE stressCal1
-       INTEGER, PARAMETER :: rk = selected_real_kind(8)
 
        INTEGER:: i, j, k, ielem, i_x1, i_y1, i_z1
 
        INTEGER:: i_cell, j_cell, k_cell,g
 
-       REAL(KIND = 8):: diagdis, normdis, aval, bval, cval, stx1, sty1, stz1, del_X, del_Y, del_Z
+       REAL(dp):: diagdis, normdis, aval, bval, cval, stx1, sty1, stz1, del_X, del_Y, del_Z
 
-       REAL(KIND = 8):: xsurf, ysurf, zsurf, pos1_x, pos1_y, pos1_z,              &
+       REAL(dp):: xsurf, ysurf, zsurf, pos1_x, pos1_y, pos1_z,              &
                         psurf, p_pos1, dpdn, p_x1, p_x2, p_y1, p_y2, p_z1, p_z2,  &
                         p_x1_z1, p_x2_z1, p_x1_z2, p_x2_z2, p_z1_x1, p_z2_x1,     &
                         p_z1_x2, p_z2_x2, h1, h2, dpdn_e, dpdx_e, dpdy_e, dpdz_e, &
@@ -32,17 +31,17 @@ module biocfd_stress_calculation
                         v_z1_x2, v_z2_x2, w_x1_z1, w_x2_z1, w_x1_z2, w_x2_z2,     &
                         w_z1_x1, w_z2_x1, w_z1_x2, w_z2_x2, dudn_s, dvdn_s, dwdn_s
 
-       REAL(KIND = 8):: alen, area, area_xz, area_yz, area_xy
+       REAL(dp):: alen, area, area_xz, area_yz, area_xy
 
-       REAL(KIND = 8):: shear_x_force, shear_y_force, shear_z_force,  &
+       REAL(dp):: shear_x_force, shear_y_force, shear_z_force,  &
                         f_surf, f_surf_x, f_surf_y, f_surf_z
 
-       REAL(KIND = 8):: pressureDrag, viscousDrag, viscousLift,                        &
+       REAL(dp):: pressureDrag, viscousDrag, viscousLift,                        &
                         pressureLift, viscousDragcoefficient, pressureDragcoefficient, &
                         viscousLiftcoefficient, PressureLiftcoefficient, area_Sx,      &
                         area_Sy, surf_area
 
-        real(KIND = 8) :: ac_y, ac_z, at_y, at_z
+        real(dp) :: ac_y, ac_z, at_y, at_z
 
         CHARACTER(len=150) :: filename1
 
