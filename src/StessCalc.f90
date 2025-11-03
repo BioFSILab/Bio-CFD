@@ -116,17 +116,17 @@ module biocfd_stress_calculation
        IF (block(g)%ibSurfID(ielem)==50) THEN
         block(g)% thetaDot  =  0.
         block(g)% thetaDDot =  0.
-             usurf = 0. + block(g)%xdot
-             vsurf = 0. + block(g)%ydot
-             wsurf = 0.
-         ac_z      =  0.  !-thetaDot**2*(zcent(nelp(index_ts(n))) - piv_z)
-         ac_y      =  0.  !-thetaDot**2*(ycent(nelp(index_ts(n))) - piv_y)
-         at_z      =  0.  ! thetaDDot*(ycent(nelp(index_ts(n))) - piv_y)
-         at_y      =  0.  !
+             usurf = 0._dp + block(g)%xdot
+             vsurf = 0._dp + block(g)%ydot
+             wsurf = 0._dp
+         ac_z      =  0._dp  !-thetaDot**2*(zcent(nelp(index_ts(n))) - piv_z)
+         ac_y      =  0._dp  !-thetaDot**2*(ycent(nelp(index_ts(n))) - piv_y)
+         at_z      =  0._dp  ! thetaDDot*(ycent(nelp(index_ts(n))) - piv_y)
+         at_y      =  0._dp  !
        ELSEIF (block(g)%ibSurfID(ielem)==51) THEN
              block(g)% thetaDot  = block(g)% thetaDot1
             block(g)% thetaDDot = block(g)% thetaDDot1
-             usurf    = 0. + block(g)%xdot
+             usurf    = 0._dp + block(g)%xdot
              vsurf    = -block(g)%thetaDot*(block(g)%zcent(ielem) - block(g)%piv_z) + block(g)%ydot
              wsurf    = block(g)%thetaDot*(block(g)%ycent(ielem) - block(g)%piv_y)
          ac_z      = -block(g)%thetaDot**2*(block(g)%zcent(ielem) -block(g)% piv_z)
@@ -136,7 +136,7 @@ module biocfd_stress_calculation
        ELSEIF (block(g)%ibSurfId(ielem)==52) THEN
             block(g)% thetaDot  = block(g)% thetaDot2
             block(g)% thetaDDot = block(g)% thetaDDot2
-             usurf = 0. +block(g)%xdot
+             usurf = 0._dp +block(g)%xdot
              vsurf    = -block(g)%thetaDot*(block(g)%zcent(ielem) - block(g)%piv_z)+ block(g)%ydot  ! + ydot
              wsurf    = block(g)%thetaDot*(block(g)%ycent(ielem) - block(g)%piv_y)  ! + ydot
          ac_z      = -block(g)%thetaDot**2*(block(g)%zcent(ielem) -block(g)% piv_z)
@@ -198,19 +198,19 @@ module biocfd_stress_calculation
 
          h2 = dabs(block(g)%xu(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xu(i_x1)   - pos1_x)
-         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudx_e = (h1**2*u_x2 - h2**2*u_x1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yu(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yu(i_y1)   - pos1_y)
-         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudy_e = (h1**2*u_y2 - h2**2*u_y1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zu(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zu(i_z1)   - pos1_z)
-         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dudz_e = (h1**2*u_z2 - h2**2*u_z1 + (h2**2- h1**2)*u_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          dudn_e = dudx_e*block(g)%cosAlpha(ielem) + dudy_e*block(g)%cosBeta(ielem) + dudz_e*block(g)%cosGamma(ielem)
 
-         dudn_s = (2./normdis)*(u_pos1 - usurf) - dudn_e
+         dudn_s = (2._dp/normdis)*(u_pos1 - usurf) - dudn_e
 
 !******************v velocity interpolation in point 2******************
        !$acc loop seq
@@ -258,20 +258,20 @@ module biocfd_stress_calculation
 
          h2 = dabs(block(g)%xv(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xv(i_x1)   - pos1_x)
-         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdx_e = (h1**2*v_x2 - h2**2*v_x1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yv(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yv(i_y1)   - pos1_y)
-         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdy_e = (h1**2*v_y2 - h2**2*v_y1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zv(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zv(i_z1)   - pos1_z)
-         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dvdz_e = (h1**2*v_z2 - h2**2*v_z1 + (h2**2- h1**2)*v_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dvdn_e = dvdx_e*block(g)%cosAlpha(ielem) + dvdy_e*block(g)%cosBeta(ielem) +  dvdz_e*block(g)%cosGamma(ielem)
 
-         dvdn_s = (2./normdis)*(v_pos1 - vsurf) - dvdn_e
+         dvdn_s = (2._dp/normdis)*(v_pos1 - vsurf) - dvdn_e
 
 !******************w velocity interpolation in point 2******************
        !$acc loop seq
@@ -318,28 +318,28 @@ module biocfd_stress_calculation
 
          h2 = dabs(block(g)%xw(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xw(i_x1)   - pos1_x)
-         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdx_e = (h1**2*w_x2 - h2**2*w_x1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yw(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yw(i_y1)   - pos1_y)
-         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdy_e = (h1**2*w_y2 - h2**2*w_y1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zw(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zw(i_z1)   - pos1_z)
-         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dwdz_e = (h1**2*w_z2 - h2**2*w_z1 + (h2**2- h1**2)*w_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
 
          dwdn_e = dwdx_e*block(g)%cosAlpha(ielem) + dwdy_e*block(g)%cosBeta(ielem) +  dwdz_e*block(g)%cosGamma(ielem)
 
-         dwdn_s = (2./normdis)*(w_pos1 - wsurf) - dwdn_e
+         dwdn_s = (2._dp/normdis)*(w_pos1 - wsurf) - dwdn_e
 
 !***********************calculate area of the elements******************
        ! alen = sqrt(block(g)%alpha3(ielem)**2.+block(g)%beta3(ielem)**2.+ block(g)%gamma3(ielem)**2.)
        alen = block(g)%element_length(ielem)
-       area = alen/2.
-       area_yz = 0.5*abs(alen * block(g)%cosAlpha(ielem))
-       area_xz = 0.5*abs(alen * block(g)%cosBeta(ielem))
-       area_xy = 0.5*abs(alen * block(g)%cosGamma(ielem))
+       area = alen/2._dp
+       area_yz = 0.5_dp*abs(alen * block(g)%cosAlpha(ielem))
+       area_xz = 0.5_dp*abs(alen * block(g)%cosBeta(ielem))
+       area_xy = 0.5_dp*abs(alen * block(g)%cosGamma(ielem))
 
 !*********non-dimensional viscous stress & force calculation************
        stx1 = dudn_s - (dudn_s*block(g)%cosAlpha(ielem) + dvdn_s*block(g)%cosBeta(ielem) + dwdn_s*block(g)%cosGamma(ielem))*block(g)%cosAlpha(ielem)
@@ -400,21 +400,21 @@ module biocfd_stress_calculation
 
          h2 = dabs(block(g)%xp(i_x1+1) - pos1_x)
          h1 = dabs(block(g)%xp(i_x1)   - pos1_x)
-         dpdx_e = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dpdx_e = (h1**2*p_x2 - h2**2*p_x1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%yp(i_y1+1) - pos1_y)
          h1 = dabs(block(g)%yp(i_y1)   - pos1_y)
-         dpdy_e = (h1**2*p_y2 - h2**2*p_y1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dpdy_e = (h1**2*p_y2 - h2**2*p_y1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          h2 = dabs(block(g)%zp(i_z1+1) - pos1_z)
          h1 = dabs(block(g)%zp(i_z1)   - pos1_z)
-         dpdz_e = (h1**2*p_z2 - h2**2*p_z1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16)
+         dpdz_e = (h1**2*p_z2 - h2**2*p_z1 + (h2**2- h1**2)*p_pos1)/(h1*h2*(h1+h2)+1e-16_dp)
 
          dpdn_e = dpdx_e*block(g)%cosAlpha(ielem) + dpdy_e*block(g)%cosBeta(ielem) + dpdz_e*block(g)%cosGamma(ielem)
 
          bval = dpdn  !dpdn=-dudt
          aval = (dpdn_e - dpdn)/(2*diagdis)
-         cval = p_pos1 - (dpdn_e + dpdn)*diagdis*.5
+         cval = p_pos1 - (dpdn_e + dpdn)*diagdis*0.5_dp
 
          psurf = cval
 
@@ -438,8 +438,8 @@ module biocfd_stress_calculation
        END DO
         !$acc end parallel
 
-        area_Sx= 0.5 * area_Sx
-        area_Sy= 0.5 * area_Sy
+        area_Sx= 0.5_dp * area_Sx
+        area_Sy= 0.5_dp * area_Sy
        ! area_Sx= 1.!0.5 * area_Sx
        ! area_Sy= 1.!0.5 * area_Sy
         viscousDragcoefficient= 2* (viscousDrag/area_Sx)
