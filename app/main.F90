@@ -173,7 +173,9 @@
             CALL computeSurfaceNorm(block(g))
          end do
            print*,2
-           CALL tagging_th_move
+         do g=blk_start, size(block)
+           CALL tagging_th_move(block(g), g)
+         end do
         do g=blk_start, size(block)
            CALL selectiveRetagging_th(block(g))
         end do

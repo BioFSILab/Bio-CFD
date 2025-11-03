@@ -413,24 +413,28 @@ SUBROUTINE tagging_th_core(blk)
 
      END SUBROUTINE tagging_th
 
-     SUBROUTINE tagging_th_move
+     SUBROUTINE tagging_th_move(blk, id)
 
-        INTEGER(int64) :: g
-        INTEGER            :: a_blk_no, b_blk_no
+        type(Block_t), intent(inout) :: blk
+        INTEGER(int64), intent(in) :: id
+        integer(int64) :: g
 
-        DO g=blk_start,size(block)
-        if ( block(g)%move_check == 1)then
-           call tagging_th_core(block(g))
+        if (blk%move_check == 1) then
+           call tagging_th_core(blk)
         endif
-        ENDDO
-        DO g=1,size(intfr)
-        a_blk_no=intfr(g)%a_blk
-        b_blk_no=intfr(g)%b_blk
 
-        if ( block(b_blk_no)%move_check == 1)then
-       call fineUpdate_mv(g)
-       call fineUpdate_bd_mv(g)
-        endif
+        DO g=1, size(intfr)
+           ! Find the interface which this block corresponds to. There
+           ! is an assumption here that each block only interfaces to
+           ! the coarse block. We check if this is the right interface
+           ! by skipping over interfaces where the b_blk is not this
+           ! one.
+          if (intfr(g)%b_blk /= id) cycle
+
+          if (blk%move_check == 1) then
+            call fineUpdate_mv(g)
+            call fineUpdate_bd_mv(g)
+          endif
         ENDDO
      END SUBROUTINE tagging_th_move
 
