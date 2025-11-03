@@ -15,7 +15,7 @@ module biocfd_read_input
 
   contains
 
-      SUBROUTINE readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt, & 
+      SUBROUTINE readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt, &
                            rho_f, mu_f)
        INTEGER (int64) :: i, g,io
        CHARACTER(len=160)  :: filename1
