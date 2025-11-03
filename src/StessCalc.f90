@@ -1,7 +1,8 @@
 module biocfd_stress_calculation
-  use, intrinsic :: iso_fortran_env, only: dp => real64
+  use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   USE global, only: block, blk_start, mu_f, rho_f, totime
   use biocfd_forcing, only: compute_value_and_derivatives
+  use biocfd_block_type, only: Block_t
   IMPLICIT NONE
 
   private
@@ -10,11 +11,14 @@ module biocfd_stress_calculation
 
   contains
 
-       SUBROUTINE stressCal1
+       SUBROUTINE stressCal1(blk, id)
+
+       type(Block_t), intent(inout) :: blk
+       integer(int64), intent(in) :: id
 
        INTEGER:: i, j, k, ielem, i_x1, i_y1, i_z1
 
-       INTEGER:: i_cell, j_cell, k_cell,g
+       INTEGER:: i_cell, j_cell, k_cell
 
        REAL(dp):: diagdis, normdis, aval, bval, cval, stx1, sty1, stz1, del_X, del_Y, del_Z
 
@@ -39,8 +43,6 @@ module biocfd_stress_calculation
 
         CHARACTER(len=150) :: filename1
 
-       DO g=blk_start, size(block)
-
        viscousDrag = 0.
        pressureDrag = 0.
        viscousLift = 0.
@@ -60,176 +62,176 @@ module biocfd_stress_calculation
         !$acc          alen, area, area_xz, area_yz, area_xy, shear_x_force, shear_y_force,           &
         !$acc          shear_z_force, f_surf, f_surf_x, f_surf_y, f_surf_z,ac_z,ac_y,ac_x,at_y,at_z)  &
         !$acc default(present)    &
-        !$acc firstprivate (block(g)%nx, block(g)%ny, block(g)%nz, deltat, rho_f, re, mu_f)
+        !$acc firstprivate (blk%nx, blk%ny, blk%nz, deltat, rho_f, re, mu_f)
         !$acc private(derivatives)
-        !DO ielem = 1, block(g)%ibElemCnt
-        DO ielem = 1, block(g)%ibElems
-     !  IF((block(g)%zcent(ielem).ge.0.0).and.(block(g)%zcent(ielem).le.2.0)) THEN
+        !DO ielem = 1, blk%ibElemCnt
+        DO ielem = 1, blk%ibElems
+     !  IF((blk%zcent(ielem).ge.0.0).and.(blk%zcent(ielem).le.2.0)) THEN
 !***********************interpolation points****************************
        !$acc loop seq
-       do i = 2, block(g)%nx+1
-       if((block(g)%xcent(ielem)>=block(g)%x1(i)).and.(block(g)%xcent(ielem)<block(g)%x1(i+1)))then
+       do i = 2, blk%nx+1
+       if((blk%xcent(ielem)>=blk%x1(i)).and.(blk%xcent(ielem)<blk%x1(i+1)))then
        i_cell = i
        end if
        end do
        !$acc loop seq
-       do j = 2, block(g)%ny+1
-       if((block(g)%ycent(ielem)>=block(g)%y1(j)).and.(block(g)%ycent(ielem)<block(g)%y1(j+1)))then
+       do j = 2, blk%ny+1
+       if((blk%ycent(ielem)>=blk%y1(j)).and.(blk%ycent(ielem)<blk%y1(j+1)))then
        j_cell = j
        end if
        end do
        !$acc loop seq
-       do k = 2, block(g)%nz+1
-       if((block(g)%zcent(ielem)>=block(g)%z1(k)).and.(block(g)%zcent(ielem)<block(g)%z1(k+1)))then
+       do k = 2, blk%nz+1
+       if((blk%zcent(ielem)>=blk%z1(k)).and.(blk%zcent(ielem)<blk%z1(k+1)))then
        k_cell = k
        end if
        end do
 
-       xsurf = block(g)%xcent(ielem)
-       ysurf = block(g)%ycent(ielem)
-       zsurf = block(g)%zcent(ielem)
+       xsurf = blk%xcent(ielem)
+       ysurf = blk%ycent(ielem)
+       zsurf = blk%zcent(ielem)
 
-       del_X = block(g)%x1(i_cell+1)-block(g)%x1(i_cell)
-       del_Y = block(g)%y1(j_cell+1)-block(g)%y1(j_cell)
-       del_Z = block(g)%z1(k_cell+1)-block(g)%z1(k_cell)
+       del_X = blk%x1(i_cell+1)-blk%x1(i_cell)
+       del_Y = blk%y1(j_cell+1)-blk%y1(j_cell)
+       del_Z = blk%z1(k_cell+1)-blk%z1(k_cell)
 
        diagdis = dsqrt(del_X**2 + del_Y**2 + del_Z**2)
 
        normdis = diagdis
-       pos1_x = xsurf + normdis*block(g)%cosAlpha(ielem)
-       pos1_y = ysurf + normdis*block(g)%cosBeta(ielem)
-       pos1_z = zsurf + normdis*block(g)%cosGamma(ielem)
+       pos1_x = xsurf + normdis*blk%cosAlpha(ielem)
+       pos1_y = ysurf + normdis*blk%cosBeta(ielem)
+       pos1_z = zsurf + normdis*blk%cosGamma(ielem)
 
 !**************************velocity and pressure at the surface**********************
-       IF (block(g)%ibSurfID(ielem)==50) THEN
-        block(g)% thetaDot  =  0.
-        block(g)% thetaDDot =  0.
-             usurf = 0._dp + block(g)%xdot
-             vsurf = 0._dp + block(g)%ydot
+       IF (blk%ibSurfID(ielem)==50) THEN
+        blk% thetaDot  =  0.
+        blk% thetaDDot =  0.
+             usurf = 0._dp + blk%xdot
+             vsurf = 0._dp + blk%ydot
              wsurf = 0._dp
          ac_z      =  0._dp  !-thetaDot**2*(zcent(nelp(index_ts(n))) - piv_z)
          ac_y      =  0._dp  !-thetaDot**2*(ycent(nelp(index_ts(n))) - piv_y)
          at_z      =  0._dp  ! thetaDDot*(ycent(nelp(index_ts(n))) - piv_y)
          at_y      =  0._dp  !
-       ELSEIF (block(g)%ibSurfID(ielem)==51) THEN
-             block(g)% thetaDot  = block(g)% thetaDot1
-            block(g)% thetaDDot = block(g)% thetaDDot1
-             usurf    = 0._dp + block(g)%xdot
-             vsurf    = -block(g)%thetaDot*(block(g)%zcent(ielem) - block(g)%piv_z) + block(g)%ydot
-             wsurf    = block(g)%thetaDot*(block(g)%ycent(ielem) - block(g)%piv_y)
-         ac_z      = -block(g)%thetaDot**2*(block(g)%zcent(ielem) -block(g)% piv_z)
-         ac_y      = -block(g)%thetaDot**2*(block(g)%ycent(ielem) -block(g)% piv_y)
-         at_z      = block(g)% thetaDDot*(block(g)%ycent(ielem)-block(g)% piv_y)
-         at_y      = -block(g)%thetaDDot*(block(g)%zcent(ielem)-block(g)% piv_z)
-       ELSEIF (block(g)%ibSurfId(ielem)==52) THEN
-            block(g)% thetaDot  = block(g)% thetaDot2
-            block(g)% thetaDDot = block(g)% thetaDDot2
-             usurf = 0._dp +block(g)%xdot
-             vsurf    = -block(g)%thetaDot*(block(g)%zcent(ielem) - block(g)%piv_z)+ block(g)%ydot  ! + ydot
-             wsurf    = block(g)%thetaDot*(block(g)%ycent(ielem) - block(g)%piv_y)  ! + ydot
-         ac_z      = -block(g)%thetaDot**2*(block(g)%zcent(ielem) -block(g)% piv_z)
-         ac_y      = -block(g)%thetaDot**2*(block(g)%ycent(ielem) - block(g)%piv_y)
-         at_z      =  block(g)%thetaDDot*(block(g)%ycent(ielem) -block(g)% piv_y)
-         at_y      = -block(g)%thetaDDot*(block(g)%zcent(ielem) - block(g)%piv_z)
+       ELSEIF (blk%ibSurfID(ielem)==51) THEN
+             blk% thetaDot  = blk% thetaDot1
+            blk% thetaDDot = blk% thetaDDot1
+             usurf    = 0._dp + blk%xdot
+             vsurf    = -blk%thetaDot*(blk%zcent(ielem) - blk%piv_z) + blk%ydot
+             wsurf    = blk%thetaDot*(blk%ycent(ielem) - blk%piv_y)
+         ac_z      = -blk%thetaDot**2*(blk%zcent(ielem) -blk% piv_z)
+         ac_y      = -blk%thetaDot**2*(blk%ycent(ielem) -blk% piv_y)
+         at_z      = blk% thetaDDot*(blk%ycent(ielem)-blk% piv_y)
+         at_y      = -blk%thetaDDot*(blk%zcent(ielem)-blk% piv_z)
+       ELSEIF (blk%ibSurfId(ielem)==52) THEN
+            blk% thetaDot  = blk% thetaDot2
+            blk% thetaDDot = blk% thetaDDot2
+             usurf = 0._dp +blk%xdot
+             vsurf    = -blk%thetaDot*(blk%zcent(ielem) - blk%piv_z)+ blk%ydot  ! + ydot
+             wsurf    = blk%thetaDot*(blk%ycent(ielem) - blk%piv_y)  ! + ydot
+         ac_z      = -blk%thetaDot**2*(blk%zcent(ielem) -blk% piv_z)
+         ac_y      = -blk%thetaDot**2*(blk%ycent(ielem) - blk%piv_y)
+         at_z      =  blk%thetaDDot*(blk%ycent(ielem) -blk% piv_y)
+         at_y      = -blk%thetaDDot*(blk%zcent(ielem) - blk%piv_z)
        ENDIF
 !       usurf     =  0.
-!       wsurf     = block(g)% thetaDot*(block(g)%ycent(ielem) -block(g)% piv_y)
-!       vsurf     = -block(g)%thetaDot*(block(g)%zcent(ielem) -block(g)% piv_z)
-!       dpdn      = -((ac_z + at_z)*block(g)%cosAlpha(ielem)  + (ac_y + at_y)*block(g)%cosBeta(ielem))
-         dpdn = -((ac_z + at_z)*block(g)%cosGamma(ielem) &
-                + (ac_y + at_y)*block(g)%cosBeta(ielem))-block(g)%yddot*block(g)%cosBeta(ielem)
+!       wsurf     = blk% thetaDot*(blk%ycent(ielem) -blk% piv_y)
+!       vsurf     = -blk%thetaDot*(blk%zcent(ielem) -blk% piv_z)
+!       dpdn      = -((ac_z + at_z)*blk%cosAlpha(ielem)  + (ac_y + at_y)*blk%cosBeta(ielem))
+         dpdn = -((ac_z + at_z)*blk%cosGamma(ielem) &
+                + (ac_y + at_y)*blk%cosBeta(ielem))-blk%yddot*blk%cosBeta(ielem)
 
 !*******************velocity interpolation at point 2******************
 
 !******************u velocity interpolation at point 2******************
        !$acc loop seq
-       DO i = 2, block(g)%nx+1
-       if(pos1_x>=block(g)%xu(i).and.pos1_x<block(g)%xu(i+1)) i_x1 = i
+       DO i = 2, blk%nx+1
+       if(pos1_x>=blk%xu(i).and.pos1_x<blk%xu(i+1)) i_x1 = i
        END DO
        !$acc loop seq
-       DO j = 2, block(g)%ny+1
-       if(pos1_y>=block(g)%yu(j).and.pos1_y<block(g)%yu(j+1)) i_y1 = j
+       DO j = 2, blk%ny+1
+       if(pos1_y>=blk%yu(j).and.pos1_y<blk%yu(j+1)) i_y1 = j
        END DO
        !$acc loop seq
-       DO k = 2, block(g)%nz+1
-       if(pos1_z>=block(g)%zu(k).and.pos1_z<block(g)%zu(k+1)) i_z1 = k
+       DO k = 2, blk%nz+1
+       if(pos1_z>=blk%zu(k).and.pos1_z<blk%zu(k+1)) i_z1 = k
        END DO
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-                                          block(g)%xu, block(g)%yu, block(g)%zu, 1, &
-                                          block(g)%u, u_pos1, derivatives)
+                                          blk%xu, blk%yu, blk%zu, 1, &
+                                          blk%u, u_pos1, derivatives)
 
-         dudn_e = derivatives(1) * block(g)%cosAlpha(ielem) &
-                + derivatives(2) * block(g)%cosBeta(ielem) &
-                + derivatives(3) * block(g)%cosGamma(ielem)
+         dudn_e = derivatives(1) * blk%cosAlpha(ielem) &
+                + derivatives(2) * blk%cosBeta(ielem) &
+                + derivatives(3) * blk%cosGamma(ielem)
 
          dudn_s = (2._dp/normdis)*(u_pos1 - usurf) - dudn_e
 
 !******************v velocity interpolation in point 2******************
        !$acc loop seq
-       DO i = 2, block(g)%nx+1
-       if(pos1_x>=block(g)%xv(i).and.pos1_x<block(g)%xv(i+1)) i_x1 = i
+       DO i = 2, blk%nx+1
+       if(pos1_x>=blk%xv(i).and.pos1_x<blk%xv(i+1)) i_x1 = i
        END DO
        !$acc loop seq
-       DO j = 2, block(g)%ny+1
-       if(pos1_y>=block(g)%yv(j).and.pos1_y<block(g)%yv(j+1)) i_y1 = j
+       DO j = 2, blk%ny+1
+       if(pos1_y>=blk%yv(j).and.pos1_y<blk%yv(j+1)) i_y1 = j
        END DO
        !$acc loop seq
-       DO k = 2, block(g)%nz+1
-       if(pos1_z>=block(g)%zv(k).and.pos1_z<block(g)%zv(k+1)) i_z1 = k
+       DO k = 2, blk%nz+1
+       if(pos1_z>=blk%zv(k).and.pos1_z<blk%zv(k+1)) i_z1 = k
        END DO
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-                                          block(g)%xv, block(g)%yv, block(g)%zv, 2, &
-                                          block(g)%v, v_pos1, derivatives)
+                                          blk%xv, blk%yv, blk%zv, 2, &
+                                          blk%v, v_pos1, derivatives)
 
-         dvdn_e = derivatives(1) * block(g)%cosAlpha(ielem) &
-                + derivatives(2) * block(g)%cosBeta(ielem) &
-                + derivatives(3) * block(g)%cosGamma(ielem)
+         dvdn_e = derivatives(1) * blk%cosAlpha(ielem) &
+                + derivatives(2) * blk%cosBeta(ielem) &
+                + derivatives(3) * blk%cosGamma(ielem)
 
          dvdn_s = (2._dp/normdis)*(v_pos1 - vsurf) - dvdn_e
 
 !******************w velocity interpolation in point 2******************
        !$acc loop seq
-       DO i = 2, block(g)%nx+1
-       if(pos1_x>=block(g)%xw(i).and.pos1_x<block(g)%xw(i+1)) i_x1 = i
+       DO i = 2, blk%nx+1
+       if(pos1_x>=blk%xw(i).and.pos1_x<blk%xw(i+1)) i_x1 = i
        END DO
        !$acc loop seq
-       DO j = 2, block(g)%ny+1
-       if(pos1_y>=block(g)%yw(j).and.pos1_y<block(g)%yw(j+1)) i_y1 = j
+       DO j = 2, blk%ny+1
+       if(pos1_y>=blk%yw(j).and.pos1_y<blk%yw(j+1)) i_y1 = j
        END DO
        !$acc loop seq
-       DO k = 2, block(g)%nz+1
-       if(pos1_z>=block(g)%zw(k).and.pos1_z<block(g)%zw(k+1)) i_z1 = k
+       DO k = 2, blk%nz+1
+       if(pos1_z>=blk%zw(k).and.pos1_z<blk%zw(k+1)) i_z1 = k
        END DO
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-                                            block(g)%xw, block(g)%yw, block(g)%zw, 3, &
-                                            block(g)%w, w_pos1, derivatives)
+                                            blk%xw, blk%yw, blk%zw, 3, &
+                                            blk%w, w_pos1, derivatives)
 
-         dwdn_e = derivatives(1) * block(g)%cosAlpha(ielem) &
-                + derivatives(2) * block(g)%cosBeta(ielem) &
-                + derivatives(3) * block(g)%cosGamma(ielem)
+         dwdn_e = derivatives(1) * blk%cosAlpha(ielem) &
+                + derivatives(2) * blk%cosBeta(ielem) &
+                + derivatives(3) * blk%cosGamma(ielem)
 
          dwdn_s = (2._dp/normdis)*(w_pos1 - wsurf) - dwdn_e
 
 !***********************calculate area of the elements******************
-       ! alen = sqrt(block(g)%alpha3(ielem)**2.+block(g)%beta3(ielem)**2.+ block(g)%gamma3(ielem)**2.)
-       alen = block(g)%element_length(ielem)
+       ! alen = sqrt(blk%alpha3(ielem)**2.+blk%beta3(ielem)**2.+ blk%gamma3(ielem)**2.)
+       alen = blk%element_length(ielem)
        area = alen/2._dp
-       area_yz = 0.5_dp*abs(alen * block(g)%cosAlpha(ielem))
-       area_xz = 0.5_dp*abs(alen * block(g)%cosBeta(ielem))
-       area_xy = 0.5_dp*abs(alen * block(g)%cosGamma(ielem))
+       area_yz = 0.5_dp*abs(alen * blk%cosAlpha(ielem))
+       area_xz = 0.5_dp*abs(alen * blk%cosBeta(ielem))
+       area_xy = 0.5_dp*abs(alen * blk%cosGamma(ielem))
 
 !*********non-dimensional viscous stress & force calculation************
-       stx1 = dudn_s - (dudn_s*block(g)%cosAlpha(ielem) + dvdn_s*block(g)%cosBeta(ielem) &
-            + dwdn_s*block(g)%cosGamma(ielem))*block(g)%cosAlpha(ielem)
+       stx1 = dudn_s - (dudn_s*blk%cosAlpha(ielem) + dvdn_s*blk%cosBeta(ielem) &
+            + dwdn_s*blk%cosGamma(ielem))*blk%cosAlpha(ielem)
 
-       sty1 = dvdn_s - (dudn_s*block(g)%cosAlpha(ielem) + dvdn_s*block(g)%cosBeta(ielem) &
-            + dwdn_s*block(g)%cosGamma(ielem))*block(g)%cosBeta(ielem)
+       sty1 = dvdn_s - (dudn_s*blk%cosAlpha(ielem) + dvdn_s*blk%cosBeta(ielem) &
+            + dwdn_s*blk%cosGamma(ielem))*blk%cosBeta(ielem)
 
-       stz1 = dwdn_s - (dudn_s*block(g)%cosAlpha(ielem) + dvdn_s*block(g)%cosBeta(ielem) &
-            + dwdn_s*block(g)%cosGamma(ielem))*block(g)%cosGamma(ielem)
+       stz1 = dwdn_s - (dudn_s*blk%cosAlpha(ielem) + dvdn_s*blk%cosBeta(ielem) &
+            + dwdn_s*blk%cosGamma(ielem))*blk%cosGamma(ielem)
 
        shear_x_force = mu_f*stx1*area
        shear_y_force = mu_f*sty1*area
@@ -239,25 +241,25 @@ module biocfd_stress_calculation
 
 !*******************pressure interpolation at point 2*******************
        !$acc loop seq
-       DO i = 2, block(g)%nx+1
-       if(pos1_x>=block(g)%xp(i).and.pos1_x<block(g)%xp(i+1)) i_x1 = i
+       DO i = 2, blk%nx+1
+       if(pos1_x>=blk%xp(i).and.pos1_x<blk%xp(i+1)) i_x1 = i
        END DO
        !$acc loop seq
-       DO j = 2, block(g)%ny+1
-       if(pos1_y>=block(g)%yp(j).and.pos1_y<block(g)%yp(j+1)) i_y1 = j
+       DO j = 2, blk%ny+1
+       if(pos1_y>=blk%yp(j).and.pos1_y<blk%yp(j+1)) i_y1 = j
        END DO
        !$acc loop seq
-       DO k = 1, block(g)%nz+2
-       if(pos1_z>=block(g)%zp(k).and.pos1_z<block(g)%zp(k+1)) i_z1 = k
+       DO k = 1, blk%nz+2
+       if(pos1_z>=blk%zp(k).and.pos1_z<blk%zp(k+1)) i_z1 = k
        END DO
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-                                            block(g)%xp, block(g)%yp, block(g)%zp, 0, &
-                                            block(g)%p, p_pos1, derivatives)
+                                            blk%xp, blk%yp, blk%zp, 0, &
+                                            blk%p, p_pos1, derivatives)
 
-         dpdn_e = derivatives(1)*block(g)%cosAlpha(ielem) &
-                + derivatives(2)*block(g)%cosBeta(ielem) &
-                + derivatives(3)*block(g)%cosGamma(ielem)
+         dpdn_e = derivatives(1)*blk%cosAlpha(ielem) &
+                + derivatives(2)*blk%cosBeta(ielem) &
+                + derivatives(3)*blk%cosGamma(ielem)
 
          bval = dpdn  !dpdn=-dudt
          aval = (dpdn_e - dpdn)/(2*diagdis)
@@ -267,11 +269,11 @@ module biocfd_stress_calculation
 
          f_surf = cval*area
 
-        f_surf_x = -f_surf*block(g)%cosAlpha(ielem)*rho_f
+        f_surf_x = -f_surf*blk%cosAlpha(ielem)*rho_f
 
-        f_surf_y = -f_surf*block(g)%cosBeta(ielem)*rho_f
+        f_surf_y = -f_surf*blk%cosBeta(ielem)*rho_f
 
-       f_surf_z = -f_surf*block(g)%cosGamma(ielem)*rho_f
+       f_surf_z = -f_surf*blk%cosGamma(ielem)*rho_f
 
 !***********************drag calculation********************************
          viscousDrag = viscousDrag + shear_x_force
@@ -296,18 +298,16 @@ module biocfd_stress_calculation
 
         !*********************drag file writing*********************************
 
-        WRITE(filename1,19)g
+        WRITE(filename1,19) id
  19        FORMAT('dragcoff_',I4.4,'.dat')
        OPEN(899,file=filename1,Access='Append',status='unknown')
        WRITE(899,*) viscousDragcoefficient, pressureDragcoefficient, totime
        CLOSE(899)
-        WRITE(filename1,29)g
+        WRITE(filename1,29) id
  29       FORMAT('liftcoff_',I4.4,'.dat')
        OPEN(999,file=filename1,Access='Append',status='unknown')
        WRITE(999,*) viscousLiftcoefficient,  pressureLiftcoefficient, totime
        CLOSE(999)
 
-        END DO
-
-       END SUBROUTINE stressCal1
+  end subroutine stressCal1
 end module biocfd_stress_calculation

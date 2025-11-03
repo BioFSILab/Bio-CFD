@@ -136,7 +136,9 @@
         do g=blk_start, size(block)
            CALL pressureForcing1(block(g))
         end do
-        call stressCal1
+        do g=blk_start, size(block)
+           call stressCal1(block(g), g)
+        end do
         do g=1, size(block)
 #if USE_HDF5 == 1
         CALL write_output_hdf5(block(g),g)
