@@ -138,10 +138,10 @@
              usurf = 0. + block(g)%xdot
              vsurf = 0. + block(g)%ydot
              wsurf = 0.
-         ac_z      =  0.!-thetaDot**2*(zcent(nelp(index_ts(n))) - piv_z)
-         ac_y      =  0.!-thetaDot**2*(ycent(nelp(index_ts(n))) - piv_y)
-         at_z      =  0.! thetaDDot*(ycent(nelp(index_ts(n))) - piv_y)
-         at_y      =  0.!
+         ac_z      =  0.  !-thetaDot**2*(zcent(nelp(index_ts(n))) - piv_z)
+         ac_y      =  0.  !-thetaDot**2*(ycent(nelp(index_ts(n))) - piv_y)
+         at_z      =  0.  ! thetaDDot*(ycent(nelp(index_ts(n))) - piv_y)
+         at_y      =  0.  !
        ELSEIF (block(g)%ibSurfID(ielem).EQ.51) THEN
              block(g)% thetaDot  = block(g)% thetaDot1
 	     block(g)% thetaDDot = block(g)% thetaDDot1
@@ -156,8 +156,8 @@
 	     block(g)% thetaDot  = block(g)% thetaDot2
 	     block(g)% thetaDDot = block(g)% thetaDDot2
              usurf = 0. +block(g)%xdot
-             vsurf    = -block(g)%thetaDot*(block(g)%zcent(ielem) - block(g)%piv_z)+ block(g)%ydot ! + ydot
-             wsurf    = block(g)%thetaDot*(block(g)%ycent(ielem) - block(g)%piv_y)! + ydot
+             vsurf    = -block(g)%thetaDot*(block(g)%zcent(ielem) - block(g)%piv_z)+ block(g)%ydot  ! + ydot
+             wsurf    = block(g)%thetaDot*(block(g)%ycent(ielem) - block(g)%piv_y)  ! + ydot
          ac_z      = -block(g)%thetaDot**2*(block(g)%zcent(ielem) -block(g)% piv_z)
          ac_y      = -block(g)%thetaDot**2*(block(g)%ycent(ielem) - block(g)%piv_y)
          at_z      =  block(g)%thetaDDot*(block(g)%ycent(ielem) -block(g)% piv_y)
