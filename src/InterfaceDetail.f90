@@ -4,7 +4,7 @@ module biocfd_interface_detail
   implicit none
   private
 
-  public :: interfaceDetail
+  public :: interfaceDetail, print_interface_detail
 
   contains
 SUBROUTINE interfaceDetail

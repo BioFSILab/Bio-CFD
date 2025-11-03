@@ -6,6 +6,7 @@ module biocfd_search
        coarse_flcnt_check, intfr
   use biocfd_fine_interp, only: fineUpdate_mv
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
+  use biocfd_interface_detail, only : print_interface_detail
   use biocfd_block_type, only: Block_t
   implicit NONE
 
@@ -1384,155 +1385,102 @@ blk%fluidCellCount = flcnt
 
 SUBROUTINE change_block_interface
 
-        INTEGER(int64) :: i,j,g, a_blk_no, b_blk_no, factor,k,increment
+  INTEGER(int64) :: i,j,g, a_blk_no, b_blk_no, factor,k,increment
 
-        DO g=1,size(intfr)
-        a_blk_no=intfr(g)%a_blk
-        b_blk_no=intfr(g)%b_blk
-        factor=intfr(g)%b_msh/intfr(g)%a_msh
-        increment = block(b_blk_no)%move_amtx/factor
-        if ( block(b_blk_no)% move_check == 1) then
+  do g=1,size(intfr)
+     b_blk_no=intfr(g)%b_blk
+     if ( block(b_blk_no)% move_check /= 1) cycle
+     a_blk_no=intfr(g)%a_blk
+     factor=intfr(g)%b_msh/intfr(g)%a_msh
+     increment = block(b_blk_no)%move_amtx/factor
 
-        intfr(g)%px_interface_det(1,1:intfr(g)%counterxp) =&
-              intfr(g)%px_interface_det(1,1:intfr(g)%counterxp) + increment
+     intfr(g)%px_interface_det(1,1:intfr(g)%counterxp) =&
+             intfr(g)%px_interface_det(1,1:intfr(g)%counterxp) + increment
 
-        intfr(g)%ux_interface_det(1,1:intfr(g)%counterxu) =&
-              intfr(g)%ux_interface_det(1,1:intfr(g)%counterxu) + increment
+     intfr(g)%ux_interface_det(1,1:intfr(g)%counterxu) =&
+             intfr(g)%ux_interface_det(1,1:intfr(g)%counterxu) + increment
 
-        intfr(g)%vx_interface_det(1,1:intfr(g)%counterxv) =&
-              intfr(g)%vx_interface_det(1,1:intfr(g)%counterxv) + increment
+     intfr(g)%vx_interface_det(1,1:intfr(g)%counterxv) =&
+             intfr(g)%vx_interface_det(1,1:intfr(g)%counterxv) + increment
 
-        intfr(g)%wx_interface_det(1,1:intfr(g)%counterxw) =&
-              intfr(g)%wx_interface_det(1,1:intfr(g)%counterxw) + increment
+     intfr(g)%wx_interface_det(1,1:intfr(g)%counterxw) =&
+             intfr(g)%wx_interface_det(1,1:intfr(g)%counterxw) + increment
 
-        intfr(g)%py_interface_det(1,1:intfr(g)%counteryp) =&
-              intfr(g)%py_interface_det(1,1:intfr(g)%counteryp) + increment
+     intfr(g)%py_interface_det(1,1:intfr(g)%counteryp) =&
+             intfr(g)%py_interface_det(1,1:intfr(g)%counteryp) + increment
 
-        intfr(g)%uy_interface_det(1,1:intfr(g)%counteryu) =&
-              intfr(g)%uy_interface_det(1,1:intfr(g)%counteryu) + increment
+     intfr(g)%uy_interface_det(1,1:intfr(g)%counteryu) =&
+             intfr(g)%uy_interface_det(1,1:intfr(g)%counteryu) + increment
 
-        intfr(g)%vy_interface_det(1,1:intfr(g)%counteryv) =&
-              intfr(g)%vy_interface_det(1,1:intfr(g)%counteryv) + increment
+     intfr(g)%vy_interface_det(1,1:intfr(g)%counteryv) =&
+             intfr(g)%vy_interface_det(1,1:intfr(g)%counteryv) + increment
 
-        intfr(g)%wy_interface_det(1,1:intfr(g)%counteryw) =&
-              intfr(g)%wy_interface_det(1,1:intfr(g)%counteryw) + increment
+     intfr(g)%wy_interface_det(1,1:intfr(g)%counteryw) =&
+             intfr(g)%wy_interface_det(1,1:intfr(g)%counteryw) + increment
 
-        intfr(g)%pz_interface_det(1,1:intfr(g)%counterzp) =&
-              intfr(g)%pz_interface_det(1,1:intfr(g)%counterzp) + increment
+     intfr(g)%pz_interface_det(1,1:intfr(g)%counterzp) =&
+             intfr(g)%pz_interface_det(1,1:intfr(g)%counterzp) + increment
 
-        intfr(g)%uz_interface_det(1,1:intfr(g)%counterzu) =&
+     intfr(g)%uz_interface_det(1,1:intfr(g)%counterzu) =&
               intfr(g)%uz_interface_det(1,1:intfr(g)%counterzu) + increment
 
-        intfr(g)%vz_interface_det(1,1:intfr(g)%counterzv) =&
-              intfr(g)%vz_interface_det(1,1:intfr(g)%counterzv) + increment
+     intfr(g)%vz_interface_det(1,1:intfr(g)%counterzv) =&
+             intfr(g)%vz_interface_det(1,1:intfr(g)%counterzv) + increment
 
-        intfr(g)%wz_interface_det(1,1:intfr(g)%counterzw) =&
-              intfr(g)%wz_interface_det(1,1:intfr(g)%counterzw) + increment
+     intfr(g)%wz_interface_det(1,1:intfr(g)%counterzw) =&
+             intfr(g)%wz_interface_det(1,1:intfr(g)%counterzw) + increment
 
+     do j=1,size(intfr)
+        call print_interface_detail("px", intfr(j)%counterxp, intfr(j)%px_interface_det, &
+                                    block(a_blk_no)%xp, block(b_blk_no)%xp)
+     end do
+     do j=1,size(intfr)
+        call print_interface_detail("py", intfr(j)%counteryp, intfr(j)%py_interface_det, &
+                                    block(a_blk_no)%yp, block(b_blk_no)%yp)
+     end do
+     do j=1,size(intfr)
+        call print_interface_detail("pz", intfr(j)%counterzp, intfr(j)%pz_interface_det, &
+                                    block(a_blk_no)%zp, block(b_blk_no)%zp)
+     end do
+     do j=1,size(intfr)
+        call print_interface_detail("ux", intfr(j)%counterxu, intfr(j)%ux_interface_det, &
+                                    block(a_blk_no)%xu, block(b_blk_no)%xu)
+     end do
+     do j=1,size(intfr)
+        call print_interface_detail("uy", intfr(j)%counteryu, intfr(j)%uy_interface_det, &
+                                    block(a_blk_no)%yu, block(b_blk_no)%yu)
+      end do
+      do j=1,size(intfr)
+         call print_interface_detail("uz", intfr(j)%counterzu, intfr(j)%uz_interface_det, &
+                                     block(a_blk_no)%zu, block(b_blk_no)%zu)
+      end do
+      do j=1,size(intfr)
+         call print_interface_detail("vx", intfr(j)%counterxv, intfr(j)%vx_interface_det, &
+                                     block(a_blk_no)%xv, block(b_blk_no)%xv)
+      end do
+      do j=1,size(intfr)
+         call print_interface_detail("vy", intfr(j)%counteryv, intfr(j)%vy_interface_det, &
+                                     block(a_blk_no)%yv, block(b_blk_no)%yv)
+      end do
+      do j=1,size(intfr)
+          call print_interface_detail("vz", intfr(j)%counterzv, intfr(j)%vz_interface_det, &
+                                      block(a_blk_no)%zv, block(b_blk_no)%zv)
+        end do
         DO j=1,size(intfr)
-        print*,'**********************px***************************'
-        DO i=1,intfr(j)%counterxp
-          WRITE(*,'(A3,I5,3I5,3F8.5)') 'px', i, (intfr(j)%px_interface_det(k,i), k=1,3),&
-                                      block(a_blk_no)%xp(intfr(j)%px_interface_det(1,i)), &
-                                      (block(b_blk_no)%xp(intfr(j)%px_interface_det(k,i)), k=2,3)
+          call print_interface_detail("wx", intfr(j)%counterxw, intfr(j)%wx_interface_det, &
+                                      block(a_blk_no)%xw, block(b_blk_no)%xw)
         end do
+        do j=1,size(intfr)
+           call print_interface_detail("wy", intfr(j)%counteryw, intfr(j)%wy_interface_det, &
+                                       block(a_blk_no)%yw, block(b_blk_no)%yw)
         end do
-        DO j=1,size(intfr)
-        print*,'**********************py***************************'
-        DO i=1,intfr(j)%counteryp
-          WRITE(*,'(A3,I5,3I5,3F8.5)') 'py', i, (intfr(j)%py_interface_det(k,i), k=1,3), &
-                                      block(a_blk_no)%yp(intfr(j)%py_interface_det(1,i)), &
-                                      (block(b_blk_no)%yp(intfr(j)%py_interface_det(k,i)), k=2,3)
+        do j=1,size(intfr)
+           call print_interface_detail("wz", intfr(j)%counterzw, intfr(j)%wz_interface_det, &
+                                       block(a_blk_no)%zw, block(b_blk_no)%zw)
         end do
-        end do
-        DO j=1,size(intfr)
-        print*,'**********************pz***************************'
-        DO i=1,intfr(j)%counterzp
-          WRITE(*,'(A3,I5,3I5,3F8.5)') 'pz', i, (intfr(j)%pz_interface_det(k,i), k=1,3), &
-                                      block(a_blk_no)%zp(intfr(j)%pz_interface_det(1,i)), &
-                                      (block(b_blk_no)%zp(intfr(j)%pz_interface_det(k,i)), k=2,3)
-        end do
-        end do
+  end do
 
-        DO j=1,size(intfr)
-        print*,'**********************ux***************************'
-        DO i=1,intfr(j)%counterxu
-          WRITE(*,'(A3,I5,3I5,3F8.5)') 'ux', i, (intfr(j)%ux_interface_det(k,i), k=1,3), &
-                                      block(a_blk_no)%xu(intfr(j)%ux_interface_det(1,i)), &
-                                      (block(b_blk_no)%xu(intfr(j)%ux_interface_det(k,i)), k=2,3)
-        end do
-        end do
-        DO j=1,size(intfr)
-        print*,'**********************uy***************************'
-        DO i=1,intfr(j)%counteryu
-          WRITE(*,'(A3,I5,3I5,3F8.5)') 'uy', i, (intfr(j)%uy_interface_det(k,i), k=1,3), &
-                                      block(a_blk_no)%yu(intfr(j)%uy_interface_det(1,i)), &
-                                      (block(b_blk_no)%yu(intfr(j)%uy_interface_det(k,i)), k=2,3)
-        end do
-        end do
-        DO j=1,size(intfr)
-        print*,'**********************uz***************************'
-        DO i=1,intfr(j)%counterzu
-          WRITE(*,'(A3,I5,3I5,3F8.5)') 'uz', i, (intfr(j)%uz_interface_det(k,i), k=1,3), &
-                                      block(a_blk_no)%zu(intfr(j)%uz_interface_det(1,i)), &
-                                      (block(b_blk_no)%zu(intfr(j)%uz_interface_det(k,i)), k=2,3)
-        end do
-        end do
-
-        DO j=1,size(intfr)
-        print*,'**********************vx***************************'
-        DO i=1,intfr(j)%counterxv
-          WRITE(*,'(A3,I5,3I5,3F8.5)') 'vx', i, (intfr(j)%vx_interface_det(k,i), k=1,3), &
-                                      block(a_blk_no)%xv(intfr(j)%vx_interface_det(1,i)), &
-                                      (block(b_blk_no)%xv(intfr(j)%vx_interface_det(k,i)), k=2,3)
-        end do
-        end do
-        DO j=1,size(intfr)
-        print*,'**********************vy***************************'
-        DO i=1,intfr(j)%counteryv
-          WRITE(*,'(A3,I5,3I5,3F8.5)') 'vy', i, (intfr(j)%vy_interface_det(k,i), k=1,3), &
-                                      block(a_blk_no)%yv(intfr(j)%vy_interface_det(1,i)), &
-                                      (block(b_blk_no)%yv(intfr(j)%vy_interface_det(k,i)), k=2,3)
-        end do
-        end do
-        DO j=1,size(intfr)
-        print*,'**********************vz***************************'
-        DO i=1,intfr(j)%counterzv
-          WRITE(*,'(A3,I5,3I5,3F8.5)') 'vz', i, (intfr(j)%vz_interface_det(k,i), k=1,3), &
-                                      block(a_blk_no)%zv(intfr(j)%vz_interface_det(1,i)), &
-                                      (block(b_blk_no)%zv(intfr(j)%vz_interface_det(k,i)), k=2,3)
-        end do
-        end do
-
-
-        DO j=1,size(intfr)
-        print*,'**********************wx***************************'
-        DO i=1,intfr(j)%counterxw
-          WRITE(*,'(A3,I5,3I5,3F8.5)') 'wx', i, (intfr(j)%wx_interface_det(k,i), k=1,3), &
-                                      block(a_blk_no)%xw(intfr(j)%wx_interface_det(1,i)), &
-                                      (block(b_blk_no)%xw(intfr(j)%wx_interface_det(k,i)), k=2,3)
-        end do
-        end do
-        DO j=1,size(intfr)
-        print*,'**********************wy***************************'
-        DO i=1,intfr(j)%counteryw
-          WRITE(*,'(A3,I5,3I5,3F8.5)') 'wy', i, (intfr(j)%wy_interface_det(k,i), k=1,3), &
-                                      block(a_blk_no)%yw(intfr(j)%wy_interface_det(1,i)), &
-                                      (block(b_blk_no)%yw(intfr(j)%wy_interface_det(k,i)), k=2,3)
-        end do
-        end do
-        DO j=1,size(intfr)
-        print*,'**********************wz***************************'
-        DO i=1,intfr(j)%counterzw
-          WRITE(*,'(A3,I5,3I5,3F8.5)') 'wz', i, (intfr(j)%wz_interface_det(k,i), k=1,3), &
-                                      block(a_blk_no)%zw(intfr(j)%wz_interface_det(1,i)), &
-                                      (block(b_blk_no)%zw(intfr(j)%wz_interface_det(k,i)), k=2,3)
-        end do
-        end do
-        endif
-        ENDDO
-
-        end subroutine change_block_interface
+end subroutine change_block_interface
 
         SUBROUTINE cellCount_solid_coarse(blk)
 
