@@ -1,6 +1,6 @@
 module biocfd_stress_calculation
   use, intrinsic :: iso_fortran_env, only: dp => real64
-  USE global
+  USE global, only: block, blk_start, mu_f, rho_f, totime
   IMPLICIT NONE
 
   private
