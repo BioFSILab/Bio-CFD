@@ -5,14 +5,16 @@ module biocfd_stress_calculation
 
   private
 
+  public :: stressCal1
+
   contains
 
        SUBROUTINE stressCal1
        INTEGER, PARAMETER :: rk = selected_real_kind(8)
 
-       INTEGER:: i, j, k, ielem, inode, i_x1, i_y1, i_z1
+       INTEGER:: i, j, k, ielem, i_x1, i_y1, i_z1
 
-       INTEGER:: i_cell, j_cell, k_cell,g, nvib,n
+       INTEGER:: i_cell, j_cell, k_cell,g
 
        REAL(KIND = 8):: diagdis, normdis, aval, bval, cval, stx1, sty1, stz1, del_X, del_Y, del_Z
 
@@ -30,9 +32,6 @@ module biocfd_stress_calculation
                         v_z1_x2, v_z2_x2, w_x1_z1, w_x2_z1, w_x1_z2, w_x2_z2,     &
                         w_z1_x1, w_z2_x1, w_z1_x2, w_z2_x2, dudn_s, dvdn_s, dwdn_s
 
-        REAL (KIND=8)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL
-        REAL (KIND=8)      :: var_xcent, var_ycent, var_zcent,xlim1, ylim2, ylim1, zlim1,zlim2
-
        REAL(KIND = 8):: alen, area, area_xz, area_yz, area_xy
 
        REAL(KIND = 8):: shear_x_force, shear_y_force, shear_z_force,  &
@@ -42,8 +41,6 @@ module biocfd_stress_calculation
                         pressureLift, viscousDragcoefficient, pressureDragcoefficient, &
                         viscousLiftcoefficient, PressureLiftcoefficient, area_Sx,      &
                         area_Sy, surf_area
-
-        REAL(KIND = 8):: modStressNode, modSIGNWSS
 
         real(KIND = 8) :: ac_y, ac_z, at_y, at_z
 

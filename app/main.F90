@@ -154,7 +154,7 @@
         end do
         DO g=blk_start, size(block)
            DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent,block(g)%cosAlpha, &
-                block(g)%cosBeta, block(g)%cosGamma)
+                block(g)%cosBeta, block(g)%cosGamma, block(g)%element_length)
             block(g)%blk_mv_tag=0.
         END DO
         print *,10
