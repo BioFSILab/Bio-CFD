@@ -1385,7 +1385,7 @@ blk%fluidCellCount = flcnt
 
 SUBROUTINE change_block_interface
 
-  INTEGER(int64) :: i,j,g, a_blk_no, b_blk_no, factor,increment
+  INTEGER(int64) :: j,g, a_blk_no, b_blk_no, factor,increment
 
   do g=1,size(intfr)
      b_blk_no=intfr(g)%b_blk
