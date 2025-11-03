@@ -136,7 +136,8 @@ module biocfd_stress_calculation
 !       wsurf     = block(g)% thetaDot*(block(g)%ycent(ielem) -block(g)% piv_y)
 !       vsurf     = -block(g)%thetaDot*(block(g)%zcent(ielem) -block(g)% piv_z)
 !       dpdn      = -((ac_z + at_z)*block(g)%cosAlpha(ielem)  + (ac_y + at_y)*block(g)%cosBeta(ielem))
-         dpdn = -((ac_z + at_z)*block(g)%cosGamma(ielem) + (ac_y + at_y)*block(g)%cosBeta(ielem))-block(g)%yddot*block(g)%cosBeta(ielem)
+         dpdn = -((ac_z + at_z)*block(g)%cosGamma(ielem) &
+                + (ac_y + at_y)*block(g)%cosBeta(ielem))-block(g)%yddot*block(g)%cosBeta(ielem)
 
 !*******************velocity interpolation at point 2******************
 
@@ -221,11 +222,14 @@ module biocfd_stress_calculation
        area_xy = 0.5_dp*abs(alen * block(g)%cosGamma(ielem))
 
 !*********non-dimensional viscous stress & force calculation************
-       stx1 = dudn_s - (dudn_s*block(g)%cosAlpha(ielem) + dvdn_s*block(g)%cosBeta(ielem) + dwdn_s*block(g)%cosGamma(ielem))*block(g)%cosAlpha(ielem)
+       stx1 = dudn_s - (dudn_s*block(g)%cosAlpha(ielem) + dvdn_s*block(g)%cosBeta(ielem) &
+            + dwdn_s*block(g)%cosGamma(ielem))*block(g)%cosAlpha(ielem)
 
-       sty1 = dvdn_s - (dudn_s*block(g)%cosAlpha(ielem) + dvdn_s*block(g)%cosBeta(ielem) + dwdn_s*block(g)%cosGamma(ielem))*block(g)%cosBeta(ielem)
+       sty1 = dvdn_s - (dudn_s*block(g)%cosAlpha(ielem) + dvdn_s*block(g)%cosBeta(ielem) &
+            + dwdn_s*block(g)%cosGamma(ielem))*block(g)%cosBeta(ielem)
 
-       stz1 = dwdn_s - (dudn_s*block(g)%cosAlpha(ielem) + dvdn_s*block(g)%cosBeta(ielem) + dwdn_s*block(g)%cosGamma(ielem))*block(g)%cosGamma(ielem)
+       stz1 = dwdn_s - (dudn_s*block(g)%cosAlpha(ielem) + dvdn_s*block(g)%cosBeta(ielem) &
+            + dwdn_s*block(g)%cosGamma(ielem))*block(g)%cosGamma(ielem)
 
        shear_x_force = mu_f*stx1*area
        shear_y_force = mu_f*sty1*area
