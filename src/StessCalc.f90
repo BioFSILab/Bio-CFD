@@ -56,11 +56,6 @@ module biocfd_stress_calculation
        surf_area = 0.
 	area_Sx = 0.
        area_Sy = 0
-       block(g)%Total_V_Fx = 0._rk
-       block(g)%Total_P_Fx = 0._rk
-
-       block(g)%Total_V_Fy = 0._rk
-       block(g)%Total_P_Fy = 0._rk
         !$acc parallel loop gang vector reduction(+: pressureDrag, viscousDrag, viscousLift, pressureLift, area_Sx, area_Sy, surf_area)  &
         !$acc private (i_x1, i_y1, i_z1, i_cell, j_cell, k_cell, diagdis, normdis,                    &
         !$acc          aval, bval, cval, stx1, sty1, stz1, del_X, del_Y, del_Z,                       &
