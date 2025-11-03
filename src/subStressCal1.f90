@@ -50,7 +50,7 @@
 
         REAL(KIND = 8):: modStressNode, modSIGNWSS
 
-        CHARACTER*150 filename1
+        CHARACTER*150 :: filename1
 
        DO g=blk_start,nblocks
 
