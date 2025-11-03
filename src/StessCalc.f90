@@ -51,10 +51,8 @@ module biocfd_stress_calculation
 
         if (.not. allocated(block(g)%areaElem )) then
          ALLOCATE(block(g)%Elemcell(block(g)%ibElems,3), block(g)%ucell(block(g)%ibElems,3), block(g)%vcell(block(g)%ibElems,3), block(g)%wcell(block(g)%ibElems,3), block(g)%pcell(block(g)%ibElems,3))
-         ALLOCATE(block(g)%areaElem(block(g)%ibElems))
         endif
 
-       block(g)% areaElem = 0._rk
        viscousDrag = 0.
        pressureDrag = 0.
        viscousLift = 0.
@@ -364,7 +362,6 @@ module biocfd_stress_calculation
        area_yz = 0.5*abs(block(g)%alpha3(ielem))
        area_xz = 0.5*abs(block(g)%beta3(ielem))
        area_xy = 0.5*abs(block(g)%gamma3(ielem))
-       block(g)%areaElem(ielem) = area
 
 !*********non-dimensional viscous stress & force calculation************
        stx1 = dudn_s - (dudn_s*block(g)%cosAlpha(ielem) + dvdn_s*block(g)%cosBeta(ielem) + dwdn_s*block(g)%cosGamma(ielem))*block(g)%cosAlpha(ielem)
