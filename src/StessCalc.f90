@@ -33,17 +33,6 @@ module biocfd_stress_calculation
         REAL (KIND=8)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL
         REAL (KIND=8)      :: var_xcent, var_ycent, var_zcent,xlim1, ylim2, ylim1, zlim1,zlim2
 
-
-
-       !REAL(KIND = 8):: alen, area
-
-       !REAL(KIND = 8), DIMENSION(ibNodes):: Anode, Afnode, stressNode, TAWSS, OSI
-
-       !REAL(KIND = 8), DIMENSION(ibElems):: stressElem
-
-
-       !CHARACTER(LEN=70):: filename1
-
        REAL(KIND = 8):: alen, area, area_xz, area_yz, area_xy
 
        REAL(KIND = 8):: shear_x_force, shear_y_force, shear_z_force,  &
@@ -389,16 +378,6 @@ module biocfd_stress_calculation
        shear_y_force = mu_f*sty1*area
        shear_z_force = mu_f*stz1*area
 
-      !shear_x_force = (1.0/re)*stx1*area
-
-      !shear_y_force = (1.0/re)*sty1*area
-      !
-      !shear_z_force = (1.0/re)*stz1*area
-       !stressElem(ielem,1) = 0.0035*stx1
-!      block(g)%stressElem(ielem, 1) = (1.0/re)*stx1*block(g)%rhof
-!     block(g)% stressElem(ielem, 2) = (1.0/re)*sty1*block(g)%rhof
-!    block(g)% stressElem(ielem, 3) = (1.0/re)*stz1*block(g)%rhof
-
       block(g)%stressElem(ielem, 1) = mu_f*stx1
       block(g)%stressElem(ielem, 2) = mu_f*sty1
       block(g)%stressElem(ielem, 3) = mu_f*stz1
@@ -480,11 +459,6 @@ module biocfd_stress_calculation
 
 	f_surf_z = -f_surf*block(g)%cosGamma(ielem)*rho_f
 
-       !  f_surf_x = -f_surf*block(g)%cosAlpha(ielem)
-
-       !  f_surf_y = -f_surf*block(g)%cosBeta(ielem)
-
-       !  f_surf_z = -f_surf*block(g)%cosGamma(ielem)
 !***********************drag calculation********************************
 	  viscousDrag = viscousDrag + shear_x_force
          pressureDrag = pressureDrag + f_surf_x
@@ -493,21 +467,10 @@ module biocfd_stress_calculation
          surf_area = surf_area + area
 	  area_Sx = area_Sx + area_xz
          area_Sy = area_Sy + area_yz
-!***********************************************************************
-!!        block(g)%Total_V_Fx = block(g)%Total_V_Fx + shear_x_force
-!!        block(g)%Total_P_Fx = block(g)%Total_P_Fx + f_surf_x
-!!
-!!        block(g)%Total_V_Fy = block(g)%Total_V_Fy + shear_y_force
-!!        block(g)%Total_P_Fy = block(g)%Total_P_Fy + f_surf_y
-!	END IF
+
 	END DO
         !$acc end parallel
-!***********************************************************************
-        !! block(g)%Total_VP_FX = block(g)%Total_V_Fx + block(g)%Total_P_Fx
-        !! block(g)%Total_VP_FY = block(g)%Total_V_Fy + block(g)%Total_P_Fy
 
-        !!$acc update host (stressElem, areaElem)
-      !!$acc wait
         area_Sx= 0.5 * area_Sx
         area_Sy= 0.5 * area_Sy
        ! area_Sx= 1.!0.5 * area_Sx
