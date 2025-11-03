@@ -49,10 +49,6 @@ module biocfd_stress_calculation
 
        DO g=blk_start,nblocks
 
-        if (.not. allocated(block(g)%areaElem )) then
-         ALLOCATE(block(g)%pcell(block(g)%ibElems,3))
-        endif
-
        viscousDrag = 0.
        pressureDrag = 0.
        viscousLift = 0.
@@ -377,10 +373,6 @@ module biocfd_stress_calculation
        DO k = 1, block(g)%nz+2
        if(pos1_z>=block(g)%zp(k).and.pos1_z<block(g)%zp(k+1)) i_z1 = k
        END DO
-
-       block(g)%pcell(ielem,1) = i_x1
-       block(g)%pcell(ielem,2) = i_y1
-       block(g)%pcell(ielem,3) = i_z1
 
         !interpolation along x  @ z1 plane
          p_x1_z1 = block(g)%p(i_x1, i_y1, i_z1)   + (block(g)%p(i_x1+1, i_y1, i_z1)   - block(g)%p(i_x1, i_y1, i_z1))  *(pos1_x - block(g)%xp(i_x1))/(block(g)%xp(i_x1+1) - block(g)%xp(i_x1))
