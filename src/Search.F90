@@ -418,20 +418,16 @@ SUBROUTINE tagging_th_core(blk)
         INTEGER(int64), intent(in) :: id
         integer(int64) :: g
 
-        if (blk%move_check == 1) then
-           call tagging_th_core(blk)
-        endif
+        if (blk%move_check /= 1) return
+        call tagging_th_core(blk)
 
         DO g=1, size(intfr)
-           ! Find the interface which this block corresponds to. We
-           ! check if this is the right interface by skipping over
-           ! interfaces where the b_blk is not this one.
+          ! Find the interface which this block corresponds to. We
+          ! check if this is the right interface by skipping over
+          ! interfaces where the b_blk is not this one.
           if (intfr(g)%b_blk /= id) cycle
-
-          if (blk%move_check == 1) then
-            call fineUpdate_mv(g)
-            call fineUpdate_bd_mv(g)
-          endif
+          call fineUpdate_mv(g)
+          call fineUpdate_bd_mv(g)
         ENDDO
      END SUBROUTINE tagging_th_move
 
