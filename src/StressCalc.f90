@@ -225,12 +225,12 @@ contains
 
     WRITE(filename1,19) id
 19  FORMAT("dragcoff_",I4.4,".dat")
-    OPEN(899,file=filename1,Access="Append",status="unknown")
+    OPEN(899, file=filename1, position="Append", status="unknown")
     WRITE(899,*) viscousDragcoefficient, pressureDragcoefficient, totime
     CLOSE(899)
     WRITE(filename1,29) id
 29  FORMAT("liftcoff_",I4.4,".dat")
-    OPEN(999,file=filename1,Access="Append",status="unknown")
+    OPEN(999, file=filename1, position="Append", status="unknown")
     WRITE(999,*) viscousLiftcoefficient,  pressureLiftcoefficient, totime
     CLOSE(999)
 
