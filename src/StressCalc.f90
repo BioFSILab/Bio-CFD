@@ -16,20 +16,20 @@ contains
     type(Block_t), intent(inout) :: blk
     integer(int64), intent(in) :: id
 
-    INTEGER:: ielem, i_x1, i_y1, i_z1
+    INTEGER :: ielem, i_x1, i_y1, i_z1
 
-    INTEGER:: i_cell, j_cell, k_cell
+    INTEGER :: i_cell, j_cell, k_cell
 
-    REAL(dp):: diagdis, normdis, aval, bval, cval, del_X, del_Y, del_Z
+    REAL(dp) :: diagdis, normdis, aval, bval, cval, del_X, del_Y, del_Z
 
-    REAL(dp):: pos1_x, pos1_y, pos1_z, psurf, p_pos1, dpdn, dpdn_e, usurf, u_pos1, vsurf, v_pos1, &
+    REAL(dp) :: pos1_x, pos1_y, pos1_z, psurf, p_pos1, dpdn, dpdn_e, usurf, u_pos1, vsurf, v_pos1, &
                wsurf, w_pos1,  dudn_e, dvdn_e, dwdn_e, ddn_s(3)
 
-    REAL(dp):: alen, area, area_xz, area_yz, area_xy
+    REAL(dp) :: alen, area, area_xz, area_yz, area_xy
 
-    REAL(dp):: shear_force(3), f_surf(3)
+    REAL(dp) :: shear_force(3), f_surf(3)
 
-    REAL(dp):: pressureDrag, viscousDrag, viscousLift, pressureLift, viscousDragcoefficient, &
+    REAL(dp) :: pressureDrag, viscousDrag, viscousLift, pressureLift, viscousDragcoefficient, &
                pressureDragcoefficient, viscousLiftcoefficient, PressureLiftcoefficient, &
                area_Sx, area_Sy, surf_area
 
@@ -96,7 +96,7 @@ contains
           ac_y      =  0._dp  !-thetaDot**2*(ycent(nelp(index_ts(n))) - piv_y)
           at_z      =  0._dp  ! thetaDDot*(ycent(nelp(index_ts(n))) - piv_y)
           at_y      =  0._dp  !
-       ELSEIF (blk%ibSurfID(ielem)==51) THEN
+       ELSE IF (blk%ibSurfID(ielem)==51) THEN
           blk% thetaDot  = blk% thetaDot1
           blk% thetaDDot = blk% thetaDDot1
           usurf    = 0._dp + blk%xdot
@@ -106,7 +106,7 @@ contains
           ac_y      = -blk%thetaDot**2*(blk%ycent(ielem) -blk% piv_y)
           at_z      = blk% thetaDDot*(blk%ycent(ielem)-blk% piv_y)
           at_y      = -blk%thetaDDot*(blk%zcent(ielem)-blk% piv_z)
-       ELSEIF (blk%ibSurfId(ielem)==52) THEN
+       ELSE IF (blk%ibSurfId(ielem)==52) THEN
           blk% thetaDot  = blk% thetaDot2
           blk% thetaDDot = blk% thetaDDot2
           usurf = 0._dp +blk%xdot
@@ -116,7 +116,7 @@ contains
           ac_y      = -blk%thetaDot**2*(blk%ycent(ielem) - blk%piv_y)
           at_z      =  blk%thetaDDot*(blk%ycent(ielem) -blk% piv_y)
           at_y      = -blk%thetaDDot*(blk%zcent(ielem) - blk%piv_z)
-       ENDIF
+       END IF
        !       usurf     =  0.
        !       wsurf     = blk% thetaDot*(blk%ycent(ielem) -blk% piv_y)
        !       vsurf     = -blk%thetaDot*(blk%zcent(ielem) -blk% piv_z)
@@ -217,13 +217,13 @@ contains
     !*********************drag file writing*********************************
 
     WRITE(filename1,19) id
-19  FORMAT('dragcoff_',I4.4,'.dat')
-    OPEN(899,file=filename1,Access='Append',status='unknown')
+19  FORMAT("dragcoff_",I4.4,".dat")
+    OPEN(899,file=filename1,Access="Append",status="unknown")
     WRITE(899,*) viscousDragcoefficient, pressureDragcoefficient, totime
     CLOSE(899)
     WRITE(filename1,29) id
-29  FORMAT('liftcoff_',I4.4,'.dat')
-    OPEN(999,file=filename1,Access='Append',status='unknown')
+29  FORMAT("liftcoff_",I4.4,".dat")
+    OPEN(999,file=filename1,Access="Append",status="unknown")
     WRITE(999,*) viscousLiftcoefficient,  pressureLiftcoefficient, totime
     CLOSE(999)
 
