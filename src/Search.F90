@@ -1280,7 +1280,7 @@ blk%fluidCellCount = flcnt
       ! and as a result this subroutine must be called straight
       ! after change_block_coords
       subroutine change_block_coords_interfaces(local_intfr,blk)
-        type(Interface_t),intent(ino) :: local_intfr
+        type(Interface_t),intent(in) :: local_intfr
         type(Block_t), intent(inout) :: blk
         INTEGER(int64) :: k,j,i,countx_st,countz_st,county_st
 
