@@ -3,6 +3,7 @@ name: Lint with Fortitude
 on:
   workflow_dispatch:
   pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
     branches: [main,dev]
 #  push:
 #    branches: [main]
@@ -15,6 +16,7 @@ jobs:
   test:
     name: Fortitude-Lint
     runs-on: [ubuntu-latest]
+    if: github.event.pull_request.draft == false
     strategy:
       fail-fast: false
     steps:
