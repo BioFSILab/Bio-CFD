@@ -423,11 +423,9 @@ SUBROUTINE tagging_th_core(blk)
         endif
 
         DO g=1, size(intfr)
-           ! Find the interface which this block corresponds to. There
-           ! is an assumption here that each block only interfaces to
-           ! the coarse block. We check if this is the right interface
-           ! by skipping over interfaces where the b_blk is not this
-           ! one.
+           ! Find the interface which this block corresponds to. We
+           ! check if this is the right interface by skipping over
+           ! interfaces where the b_blk is not this one.
           if (intfr(g)%b_blk /= id) cycle
 
           if (blk%move_check == 1) then
