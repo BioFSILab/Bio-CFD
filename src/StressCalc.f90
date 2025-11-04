@@ -78,7 +78,7 @@ contains
        del_Y = blk%y1(j_cell+1)-blk%y1(j_cell)
        del_Z = blk%z1(k_cell+1)-blk%z1(k_cell)
 
-       diagdis = dsqrt(del_X**2 + del_Y**2 + del_Z**2)
+       diagdis = sqrt(del_X**2 + del_Y**2 + del_Z**2)
 
        normdis = diagdis
        pos1_x = blk%xcent(ielem) + normdis * normal(1)
