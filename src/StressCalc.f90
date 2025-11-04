@@ -16,18 +16,18 @@ contains
     type(Block_t), intent(inout) :: blk
     integer(int64), intent(in) :: id
 
-    INTEGER:: i, j, k, ielem, i_x1, i_y1, i_z1
+    INTEGER:: ielem, i_x1, i_y1, i_z1
 
     INTEGER:: i_cell, j_cell, k_cell
 
-    REAL(dp):: diagdis, normdis, aval, bval, cval, stx1, sty1, stz1, del_X, del_Y, del_Z
+    REAL(dp):: diagdis, normdis, aval, bval, cval, del_X, del_Y, del_Z
 
     REAL(dp):: pos1_x, pos1_y, pos1_z, psurf, p_pos1, dpdn, dpdn_e, usurf, u_pos1, vsurf, v_pos1, &
-               wsurf, w_pos1,  dudn_e, dvdn_e, dwdn_e, dudn_s, dvdn_s, dwdn_s
+               wsurf, w_pos1,  dudn_e, dvdn_e, dwdn_e, ddn_s(3)
 
     REAL(dp):: alen, area, area_xz, area_yz, area_xy
 
-    REAL(dp):: shear_x_force, shear_y_force, shear_z_force, f_surf, f_surf_x, f_surf_y, f_surf_z
+    REAL(dp):: shear_force(3), f_surf(3)
 
     REAL(dp):: pressureDrag, viscousDrag, viscousLift, pressureLift, viscousDragcoefficient, &
                pressureDragcoefficient, viscousLiftcoefficient, PressureLiftcoefficient, &
@@ -35,6 +35,10 @@ contains
 
     real(dp) :: ac_y, ac_z, at_y, at_z
     real(dp) :: derivatives(3)
+    ! In this case I think it makes sense to store the normal - there
+    ! is an argument to make cosAlpha, cosBeta, and cosGamma a length
+    ! 3 array in Block_t
+    real(dp) :: normal(3)
 
     CHARACTER(len=150) :: filename1
 
@@ -53,16 +57,18 @@ contains
     !$acc          usurf, u_pos1, vsurf, v_pos1, &
     !$acc          wsurf, w_pos1, &
     !$acc          dudn_e, dvdn_e, dwdn_e, &
-    !$acc          dudn_s, dvdn_s, dwdn_s, &
-    !$acc          alen, area, area_xz, area_yz, area_xy, shear_x_force, shear_y_force,           &
-    !$acc          shear_z_force, f_surf, f_surf_x, f_surf_y, f_surf_z,ac_z,ac_y,ac_x,at_y,at_z)  &
+    !$acc          ddn_s, &
+    !$acc          alen, area, area_xz, area_yz, area_xy, &
+    !$acc          shear_force, f_surf, ac_z, ac_y, ac_x, at_y, at_z)  &
     !$acc default(present)    &
     !$acc firstprivate (blk%nx, blk%ny, blk%nz, deltat, rho_f, re, mu_f)
-    !$acc private(derivatives)
+    !$acc private(derivatives, normal)
     !DO ielem = 1, blk%ibElemCnt
     DO ielem = 1, blk%ibElems
        !  IF((blk%zcent(ielem).ge.0.0).and.(blk%zcent(ielem).le.2.0)) THEN
        !***********************interpolation points****************************
+
+       normal = [blk%cosAlpha(ielem), blk%cosBeta(ielem), blk%cosGamma(ielem)]
 
        i_cell = find_index_in_array(blk%xcent(ielem), blk%x1, 2_int64, blk%nx+1)
        j_cell = find_index_in_array(blk%ycent(ielem), blk%y1, 2_int64, blk%ny+1)
@@ -75,9 +81,9 @@ contains
        diagdis = dsqrt(del_X**2 + del_Y**2 + del_Z**2)
 
        normdis = diagdis
-       pos1_x = blk%xcent(ielem) + normdis*blk%cosAlpha(ielem)
-       pos1_y = blk%ycent(ielem) + normdis*blk%cosBeta(ielem)
-       pos1_z = blk%zcent(ielem) + normdis*blk%cosGamma(ielem)
+       pos1_x = blk%xcent(ielem) + normdis * normal(1)
+       pos1_y = blk%ycent(ielem) + normdis * normal(2)
+       pos1_z = blk%zcent(ielem) + normdis * normal(3)
 
        !**************************velocity and pressure at the surface**********************
        IF (blk%ibSurfID(ielem)==50) THEN
@@ -130,11 +136,8 @@ contains
             blk%xu, blk%yu, blk%zu, 1, &
             blk%u, u_pos1, derivatives)
 
-       dudn_e = derivatives(1) * blk%cosAlpha(ielem) &
-            + derivatives(2) * blk%cosBeta(ielem) &
-            + derivatives(3) * blk%cosGamma(ielem)
-
-       dudn_s = (2._dp/normdis)*(u_pos1 - usurf) - dudn_e
+       dudn_e = dot_product(derivatives, normal)
+       ddn_s(1) = (2._dp/normdis)*(u_pos1 - usurf) - dudn_e
 
        !******************v velocity interpolation in point 2******************
        i_x1 = find_index_in_array(pos1_x, blk%xv, 2_int64, blk%nx+1)
@@ -145,11 +148,8 @@ contains
             blk%xv, blk%yv, blk%zv, 2, &
             blk%v, v_pos1, derivatives)
 
-       dvdn_e = derivatives(1) * blk%cosAlpha(ielem) &
-            + derivatives(2) * blk%cosBeta(ielem) &
-            + derivatives(3) * blk%cosGamma(ielem)
-
-       dvdn_s = (2._dp/normdis)*(v_pos1 - vsurf) - dvdn_e
+       dvdn_e = dot_product(derivatives, normal)
+       ddn_s(2) = (2._dp/normdis)*(v_pos1 - vsurf) - dvdn_e
 
        !******************w velocity interpolation in point 2******************
        i_x1 = find_index_in_array(pos1_x, blk%xw, 2_int64, blk%nx+1)
@@ -160,34 +160,18 @@ contains
             blk%xw, blk%yw, blk%zw, 3, &
             blk%w, w_pos1, derivatives)
 
-       dwdn_e = derivatives(1) * blk%cosAlpha(ielem) &
-            + derivatives(2) * blk%cosBeta(ielem) &
-            + derivatives(3) * blk%cosGamma(ielem)
-
-       dwdn_s = (2._dp/normdis)*(w_pos1 - wsurf) - dwdn_e
+       dwdn_e = dot_product(derivatives, normal)
+       ddn_s(3) = (2._dp/normdis)*(w_pos1 - wsurf) - dwdn_e
 
        !***********************calculate area of the elements******************
-       ! alen = sqrt(blk%alpha3(ielem)**2.+blk%beta3(ielem)**2.+ blk%gamma3(ielem)**2.)
        alen = blk%element_length(ielem)
        area = alen/2._dp
-       area_yz = 0.5_dp*abs(alen * blk%cosAlpha(ielem))
-       area_xz = 0.5_dp*abs(alen * blk%cosBeta(ielem))
-       area_xy = 0.5_dp*abs(alen * blk%cosGamma(ielem))
+       area_yz = 0.5_dp*abs(alen * normal(1))
+       area_xz = 0.5_dp*abs(alen * normal(2))
+       area_xy = 0.5_dp*abs(alen * normal(3))
 
        !*********non-dimensional viscous stress & force calculation************
-       stx1 = dudn_s - (dudn_s*blk%cosAlpha(ielem) + dvdn_s*blk%cosBeta(ielem) &
-            + dwdn_s*blk%cosGamma(ielem))*blk%cosAlpha(ielem)
-
-       sty1 = dvdn_s - (dudn_s*blk%cosAlpha(ielem) + dvdn_s*blk%cosBeta(ielem) &
-            + dwdn_s*blk%cosGamma(ielem))*blk%cosBeta(ielem)
-
-       stz1 = dwdn_s - (dudn_s*blk%cosAlpha(ielem) + dvdn_s*blk%cosBeta(ielem) &
-            + dwdn_s*blk%cosGamma(ielem))*blk%cosGamma(ielem)
-
-       shear_x_force = mu_f*stx1*area
-       shear_y_force = mu_f*sty1*area
-       shear_z_force = mu_f*stz1*area
-
+       shear_force = (ddn_s - dot_product(ddn_s, normal) * normal) * mu_f * area
        !************************presssure interpolation************************
 
        !*******************pressure interpolation at point 2*******************
@@ -199,9 +183,7 @@ contains
             blk%xp, blk%yp, blk%zp, 0, &
             blk%p, p_pos1, derivatives)
 
-       dpdn_e = derivatives(1)*blk%cosAlpha(ielem) &
-            + derivatives(2)*blk%cosBeta(ielem) &
-            + derivatives(3)*blk%cosGamma(ielem)
+       dpdn_e = dot_product(derivatives, normal)
 
        bval = dpdn  !dpdn=-dudt
        aval = (dpdn_e - dpdn)/(2*diagdis)
@@ -209,19 +191,13 @@ contains
 
        psurf = cval
 
-       f_surf = cval*area
-
-       f_surf_x = -f_surf*blk%cosAlpha(ielem)*rho_f
-
-       f_surf_y = -f_surf*blk%cosBeta(ielem)*rho_f
-
-       f_surf_z = -f_surf*blk%cosGamma(ielem)*rho_f
+       f_surf = -cval * area * normal * rho_f
 
        !***********************drag calculation********************************
-       viscousDrag = viscousDrag + shear_x_force
-       pressureDrag = pressureDrag + f_surf_x
-       viscousLift = viscousLift + shear_y_force
-       PressureLift = PressureLift + f_surf_y
+       viscousDrag = viscousDrag + shear_force(1)
+       pressureDrag = pressureDrag + f_surf(1)
+       viscousLift = viscousLift + shear_force(2)
+       PressureLift = PressureLift + f_surf(2)
        surf_area = surf_area + area
        area_Sx = area_Sx + area_xz
        area_Sy = area_Sy + area_yz
