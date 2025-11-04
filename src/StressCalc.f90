@@ -28,7 +28,7 @@ contains
 
     REAL(dp) :: diagdis, normdis, aval, bval, cval, del_X, del_Y, del_Z
 
-    REAL(dp) :: pos1_x, pos1_y, pos1_z, psurf, p_pos1, dpdn, dpdn_e, usurf, u_pos1, vsurf, v_pos1, &
+    REAL(dp) :: pos1_x, pos1_y, pos1_z, p_pos1, dpdn, dpdn_e, usurf, u_pos1, vsurf, v_pos1, &
                wsurf, w_pos1,  dudn_e, dvdn_e, dwdn_e, ddn_s(3)
 
     REAL(dp) :: alen, area, area_xz, area_yz, area_xy
@@ -59,7 +59,7 @@ contains
     !$acc private (i_x1, i_y1, i_z1, i_cell, j_cell, k_cell, diagdis, normdis, &
     !$acc          aval, bval, cval, del_X, del_Y, del_Z,                       &
     !$acc          pos1_x, pos1_y, pos1_z,                                   &
-    !$acc          psurf, p_pos1, dpdn, dpdn_e, &
+    !$acc          p_pos1, dpdn, dpdn_e, &
     !$acc          usurf, u_pos1, vsurf, v_pos1, &
     !$acc          wsurf, w_pos1, &
     !$acc          dudn_e, dvdn_e, dwdn_e, &
@@ -195,8 +195,6 @@ contains
        bval = dpdn  !dpdn=-dudt
        aval = (dpdn_e - dpdn)/(2*diagdis)
        cval = p_pos1 - (dpdn_e + dpdn)*diagdis*0.5_dp
-
-       psurf = cval
 
        f_surf = -cval * area * normal * rho_f
 
