@@ -254,7 +254,7 @@ contains
   end subroutine stressCal1
 
 !> Find the position in the array where the value is greater than
-!> element i but less than element i-1
+!> element i but less than element i+1
 pure function find_index_in_array(value, array, start, end) result(index)
    real(dp), intent(in) :: value
    real(dp), intent(in) :: array(:)
