@@ -22,21 +22,16 @@ contains
 
     REAL(dp):: diagdis, normdis, aval, bval, cval, stx1, sty1, stz1, del_X, del_Y, del_Z
 
-    REAL(dp):: pos1_x, pos1_y, pos1_z,              &
-         psurf, p_pos1, dpdn, dpdn_e, &
-         usurf, u_pos1, vsurf, v_pos1, wsurf, w_pos1, &
-         dudn_e, dvdn_e, dwdn_e, &
-         dudn_s, dvdn_s, dwdn_s
+    REAL(dp):: pos1_x, pos1_y, pos1_z, psurf, p_pos1, dpdn, dpdn_e, usurf, u_pos1, vsurf, v_pos1, &
+               wsurf, w_pos1,  dudn_e, dvdn_e, dwdn_e, dudn_s, dvdn_s, dwdn_s
 
     REAL(dp):: alen, area, area_xz, area_yz, area_xy
 
-    REAL(dp):: shear_x_force, shear_y_force, shear_z_force,  &
-         f_surf, f_surf_x, f_surf_y, f_surf_z
+    REAL(dp):: shear_x_force, shear_y_force, shear_z_force, f_surf, f_surf_x, f_surf_y, f_surf_z
 
-    REAL(dp):: pressureDrag, viscousDrag, viscousLift,                        &
-         pressureLift, viscousDragcoefficient, pressureDragcoefficient, &
-         viscousLiftcoefficient, PressureLiftcoefficient, area_Sx,      &
-         area_Sy, surf_area
+    REAL(dp):: pressureDrag, viscousDrag, viscousLift, pressureLift, viscousDragcoefficient, &
+               pressureDragcoefficient, viscousLiftcoefficient, PressureLiftcoefficient, &
+               area_Sx, area_Sy, surf_area
 
     real(dp) :: ac_y, ac_z, at_y, at_z
     real(dp) :: derivatives(3)
@@ -68,24 +63,10 @@ contains
     DO ielem = 1, blk%ibElems
        !  IF((blk%zcent(ielem).ge.0.0).and.(blk%zcent(ielem).le.2.0)) THEN
        !***********************interpolation points****************************
-       !$acc loop seq
-       do i = 2, blk%nx+1
-          if((blk%xcent(ielem)>=blk%x1(i)).and.(blk%xcent(ielem)<blk%x1(i+1)))then
-             i_cell = i
-          end if
-       end do
-       !$acc loop seq
-       do j = 2, blk%ny+1
-          if((blk%ycent(ielem)>=blk%y1(j)).and.(blk%ycent(ielem)<blk%y1(j+1)))then
-             j_cell = j
-          end if
-       end do
-       !$acc loop seq
-       do k = 2, blk%nz+1
-          if((blk%zcent(ielem)>=blk%z1(k)).and.(blk%zcent(ielem)<blk%z1(k+1)))then
-             k_cell = k
-          end if
-       end do
+
+       i_cell = find_index_in_array(blk%xcent(ielem), blk%x1, 2_int64, blk%nx+1)
+       j_cell = find_index_in_array(blk%ycent(ielem), blk%y1, 2_int64, blk%ny+1)
+       k_cell = find_index_in_array(blk%zcent(ielem), blk%z1, 2_int64, blk%nz+1)
 
        del_X = blk%x1(i_cell+1)-blk%x1(i_cell)
        del_Y = blk%y1(j_cell+1)-blk%y1(j_cell)
@@ -140,18 +121,10 @@ contains
        !*******************velocity interpolation at point 2******************
 
        !******************u velocity interpolation at point 2******************
-       !$acc loop seq
-       DO i = 2, blk%nx+1
-          if(pos1_x>=blk%xu(i).and.pos1_x<blk%xu(i+1)) i_x1 = i
-       END DO
-       !$acc loop seq
-       DO j = 2, blk%ny+1
-          if(pos1_y>=blk%yu(j).and.pos1_y<blk%yu(j+1)) i_y1 = j
-       END DO
-       !$acc loop seq
-       DO k = 2, blk%nz+1
-          if(pos1_z>=blk%zu(k).and.pos1_z<blk%zu(k+1)) i_z1 = k
-       END DO
+
+       i_x1 = find_index_in_array(pos1_x, blk%xu, 2_int64, blk%nx+1)
+       i_y1 = find_index_in_array(pos1_y, blk%yu, 2_int64, blk%ny+1)
+       i_z1 = find_index_in_array(pos1_z, blk%zu, 2_int64, blk%nz+1)
 
        call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
             blk%xu, blk%yu, blk%zu, 1, &
@@ -164,18 +137,9 @@ contains
        dudn_s = (2._dp/normdis)*(u_pos1 - usurf) - dudn_e
 
        !******************v velocity interpolation in point 2******************
-       !$acc loop seq
-       DO i = 2, blk%nx+1
-          if(pos1_x>=blk%xv(i).and.pos1_x<blk%xv(i+1)) i_x1 = i
-       END DO
-       !$acc loop seq
-       DO j = 2, blk%ny+1
-          if(pos1_y>=blk%yv(j).and.pos1_y<blk%yv(j+1)) i_y1 = j
-       END DO
-       !$acc loop seq
-       DO k = 2, blk%nz+1
-          if(pos1_z>=blk%zv(k).and.pos1_z<blk%zv(k+1)) i_z1 = k
-       END DO
+       i_x1 = find_index_in_array(pos1_x, blk%xv, 2_int64, blk%nx+1)
+       i_y1 = find_index_in_array(pos1_y, blk%yv, 2_int64, blk%ny+1)
+       i_z1 = find_index_in_array(pos1_z, blk%zv, 2_int64, blk%nz+1)
 
        call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
             blk%xv, blk%yv, blk%zv, 2, &
@@ -188,18 +152,9 @@ contains
        dvdn_s = (2._dp/normdis)*(v_pos1 - vsurf) - dvdn_e
 
        !******************w velocity interpolation in point 2******************
-       !$acc loop seq
-       DO i = 2, blk%nx+1
-          if(pos1_x>=blk%xw(i).and.pos1_x<blk%xw(i+1)) i_x1 = i
-       END DO
-       !$acc loop seq
-       DO j = 2, blk%ny+1
-          if(pos1_y>=blk%yw(j).and.pos1_y<blk%yw(j+1)) i_y1 = j
-       END DO
-       !$acc loop seq
-       DO k = 2, blk%nz+1
-          if(pos1_z>=blk%zw(k).and.pos1_z<blk%zw(k+1)) i_z1 = k
-       END DO
+       i_x1 = find_index_in_array(pos1_x, blk%xw, 2_int64, blk%nx+1)
+       i_y1 = find_index_in_array(pos1_y, blk%yw, 2_int64, blk%ny+1)
+       i_z1 = find_index_in_array(pos1_z, blk%zw, 2_int64, blk%nz+1)
 
        call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
             blk%xw, blk%yw, blk%zw, 3, &
@@ -236,18 +191,9 @@ contains
        !************************presssure interpolation************************
 
        !*******************pressure interpolation at point 2*******************
-       !$acc loop seq
-       DO i = 2, blk%nx+1
-          if(pos1_x>=blk%xp(i).and.pos1_x<blk%xp(i+1)) i_x1 = i
-       END DO
-       !$acc loop seq
-       DO j = 2, blk%ny+1
-          if(pos1_y>=blk%yp(j).and.pos1_y<blk%yp(j+1)) i_y1 = j
-       END DO
-       !$acc loop seq
-       DO k = 1, blk%nz+2
-          if(pos1_z>=blk%zp(k).and.pos1_z<blk%zp(k+1)) i_z1 = k
-       END DO
+       i_x1 = find_index_in_array(pos1_x, blk%xp, 2_int64, blk%nx+1)
+       i_y1 = find_index_in_array(pos1_y, blk%yp, 2_int64, blk%ny+1)
+       i_z1 = find_index_in_array(pos1_z, blk%zp, 2_int64, blk%nz+1)
 
        call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
             blk%xp, blk%yp, blk%zp, 0, &
@@ -306,4 +252,27 @@ contains
     CLOSE(999)
 
   end subroutine stressCal1
+
+!> Find the position in the array where the value is greater than
+!> element i but less than element i-1
+pure function find_index_in_array(value, array, start, end) result(index)
+   real(dp), intent(in) :: value
+   real(dp), intent(in) :: array(:)
+   ! TODO: No need for these to be int64
+   integer(int64), intent(in) :: start, end
+
+   !> The resulting index
+   integer :: index
+
+   ! Internal counter
+   integer :: i
+   !$acc loop seq
+   do i=start, end
+      if (value >= array(i) .and. value < array(i+1)) then
+         index = i
+         return  ! As soon as we find a value we can return
+      end if
+   end do
+end function find_index_in_array
+
 end module biocfd_stress_calculation
