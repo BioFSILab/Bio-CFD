@@ -3,12 +3,12 @@
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, &
              ita, ita1, totaltime, totime, &
-             pi,uc,re
+             pi,uc,re,intfr
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
              change_block_interface, computenormdistance, computesurfacevariables, findtscells, &
-             fine_block_cell, selectiveretagging_th
+             fine_block_cell, selectiveretagging_th, change_block_coords_interfaces
         use biocfd_pcor_vcor, only: poissonSolver, updateVelocity_newv
         use biocfd_boundary_conditions, only: velocityBC, solidcellbc, solidcellbc_move
         use biocfd_read_input, only: readInput, readBlockInterface, readSurfaceMeshGmsh
@@ -159,7 +159,12 @@
            CALL computeSurfaceVariables(block(g),g,phase_angle,piv_pt)
         END DO
            CALL block_move_check
-           CALL change_block_coords
+           DO g=blk_start, size(block)
+              CALL change_block_coords(block(g))
+           END DO
+           DO g=1,size(intfr)
+              CALL change_block_coords_interfaces(intfr(g),block(intfr(g)%b_blk))
+           END DO
            CALL change_block_interface
           CALL fine_block_cell
           CALL cellCount_solid_coarse_mv
