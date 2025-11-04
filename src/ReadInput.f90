@@ -16,11 +16,11 @@ module biocfd_read_input
   contains
 
       SUBROUTINE readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt, &
-                           rho_f, mu_f)
+                           mu_f, rho_f)
        INTEGER (int64) :: i, g,io
        CHARACTER(len=160)  :: filename1
        INTEGER (int64),INTENT(OUT)   :: surGeoPoints, itamax,pcItaMax
-       REAL(dp),intent(out) :: aoa,phase_angle,piv_pt, rho_f, mu_f
+       REAL(dp),intent(out) :: aoa,phase_angle,piv_pt, mu_f, rho_f
        CHARACTER (LEN = 3), INTENT(OUT)  :: char_f
        INTEGER,INTENT(OUT)               :: istart
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until

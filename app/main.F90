@@ -3,7 +3,7 @@
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, &
              ita, ita1, totaltime, totime, &
-             pi,uc,re, rho_f, mu_f
+             pi,uc,re
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
@@ -34,9 +34,9 @@
         CHARACTER (LEN = 3)   :: char_f
         INTEGER               :: istart
         INTEGER (int64)   :: itamax, pcItaMax
-        real(dp) :: aoa,aoa1,aoa2,phase_angle,piv_pt
+        real(dp) :: aoa, aoa1, aoa2, phase_angle, piv_pt, mu_f, rho_f
         CALL readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt, &
-                       rho_f, mu_f)
+                       mu_f, rho_f)
         CALL readBlockInterface
         do g=blk_start, size(block)
           CALL readSurfaceMeshGmsh(block(g),surGeoPoints)
@@ -137,7 +137,7 @@
            CALL pressureForcing1(block(g))
         end do
         do g=blk_start, size(block)
-           call stressCal1(block(g), g)
+           call stressCal1(block(g), g, mu_f, rho_f, totime)
         end do
         do g=1, size(block)
 #if USE_HDF5 == 1

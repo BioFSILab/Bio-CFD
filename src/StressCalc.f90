@@ -1,6 +1,5 @@
 module biocfd_stress_calculation
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  USE global, only: block, blk_start, mu_f, rho_f, totime
   use biocfd_forcing, only: compute_value_and_derivatives
   use biocfd_block_type, only: Block_t
   IMPLICIT NONE
@@ -11,10 +10,17 @@ module biocfd_stress_calculation
 
 contains
 
-  SUBROUTINE stressCal1(blk, id)
-
+  SUBROUTINE stressCal1(blk, id, mu_f, rho_f, totime)
+    !> The block to perform the stress calculation on (not this is
+    !> inout only because of setting thetaDot and thetaDDot, which I
+    !> think might not be needed)
     type(Block_t), intent(inout) :: blk
+    !> The ID number of the block (it's position in the block array)
     integer(int64), intent(in) :: id
+    !> Parameters used in the stress calculation
+    real(dp), intent(in) :: mu_f, rho_f
+    !> totime is just printed to the output
+    real(dp), intent(in) :: totime
 
     INTEGER :: ielem, i_x1, i_y1, i_z1
 
@@ -49,9 +55,9 @@ contains
     surf_area = 0.
     area_Sx = 0.
     area_Sy = 0
-    !$acc parallel loop gang vector reduction(+: pressureDrag, viscousDrag, viscousLift, pressureLift, area_Sx, area_Sy, surf_area)  &
-    !$acc private (i_x1, i_y1, i_z1, i_cell, j_cell, k_cell, diagdis, normdis,                    &
-    !$acc          aval, bval, cval, stx1, sty1, stz1, del_X, del_Y, del_Z,                       &
+    !$acc parallel loop gang vector &
+    !$acc private (i_x1, i_y1, i_z1, i_cell, j_cell, k_cell, diagdis, normdis, &
+    !$acc          aval, bval, cval, del_X, del_Y, del_Z,                       &
     !$acc          pos1_x, pos1_y, pos1_z,                                   &
     !$acc          psurf, p_pos1, dpdn, dpdn_e, &
     !$acc          usurf, u_pos1, vsurf, v_pos1, &
@@ -59,10 +65,11 @@ contains
     !$acc          dudn_e, dvdn_e, dwdn_e, &
     !$acc          ddn_s, &
     !$acc          alen, area, area_xz, area_yz, area_xy, &
-    !$acc          shear_force, f_surf, ac_z, ac_y, ac_x, at_y, at_z)  &
+    !$acc          shear_force, f_surf, ac_z, ac_y, at_y, at_z)  &
     !$acc default(present)    &
-    !$acc firstprivate (blk%nx, blk%ny, blk%nz, deltat, rho_f, re, mu_f)
-    !$acc private(derivatives, normal)
+    !$acc firstprivate (rho_f, mu_f) &
+    !$acc private(derivatives, normal) &
+    !$acc reduction(+: pressureDrag, viscousDrag, viscousLift, pressureLift, area_Sx, area_Sy, surf_area)
     !DO ielem = 1, blk%ibElemCnt
     DO ielem = 1, blk%ibElems
        !  IF((blk%zcent(ielem).ge.0.0).and.(blk%zcent(ielem).le.2.0)) THEN
@@ -203,7 +210,7 @@ contains
        area_Sy = area_Sy + area_yz
 
     END DO
-    !$acc end parallel
+    !$acc end parallel loop
 
     area_Sx= 0.5_dp * area_Sx
     area_Sy= 0.5_dp * area_Sy
@@ -242,7 +249,7 @@ pure function find_index_in_array(value, array, start, end) result(index)
 
    ! Internal counter
    integer :: i
-   !$acc loop seq
+   !$acc routine seq
    do i=start, end
       if (value >= array(i) .and. value < array(i+1)) then
          index = i
