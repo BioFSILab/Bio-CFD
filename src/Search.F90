@@ -1388,8 +1388,8 @@ blk%fluidCellCount = flcnt
 SUBROUTINE change_block_interface(local_intfr,blk_a,blk_b)
 
   type(Interface_t),intent(inout) :: local_intfr
-  type(Block_t), intent(in) :: blk_a,blk_b
-  INTEGER(int64) :: factor,increment
+  type(Block_t), intent(in) :: blk_a, blk_b
+  INTEGER(int64) :: factor, increment
 
   if ( blk_b%move_check /= 1) return
   factor=local_intfr%b_msh/local_intfr%a_msh
