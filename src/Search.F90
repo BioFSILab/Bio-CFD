@@ -1392,8 +1392,8 @@ SUBROUTINE change_block_interface
      if ( block(b_blk_no)% move_check /= 1) cycle
      a_blk_no=intfr(g)%a_blk
      factor=intfr(g)%b_msh/intfr(g)%a_msh
-     increment = block(b_blk_no)%move_amtx/factor
 
+     increment = block(b_blk_no)%move_amtx/factor
      intfr(g)%px_interface_det(1,1:intfr(g)%counterxp) =&
              intfr(g)%px_interface_det(1,1:intfr(g)%counterxp) + increment
 
@@ -1405,6 +1405,7 @@ SUBROUTINE change_block_interface
 
      intfr(g)%wx_interface_det(1,1:intfr(g)%counterxw) =&
              intfr(g)%wx_interface_det(1,1:intfr(g)%counterxw) + increment
+
      increment = block(b_blk_no)%move_amty/factor
      intfr(g)%py_interface_det(1,1:intfr(g)%counteryp) =&
              intfr(g)%py_interface_det(1,1:intfr(g)%counteryp) + increment
@@ -1417,6 +1418,7 @@ SUBROUTINE change_block_interface
 
      intfr(g)%wy_interface_det(1,1:intfr(g)%counteryw) =&
              intfr(g)%wy_interface_det(1,1:intfr(g)%counteryw) + increment
+
      increment = block(b_blk_no)%move_amtz/factor
      intfr(g)%pz_interface_det(1,1:intfr(g)%counterzp) =&
              intfr(g)%pz_interface_det(1,1:intfr(g)%counterzp) + increment
