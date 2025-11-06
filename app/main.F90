@@ -165,7 +165,9 @@
            DO g=1,size(intfr)
               CALL change_block_coords_interfaces(intfr(g),block(intfr(g)%b_blk))
            END DO
-           CALL change_block_interface
+        do g=1,size(intfr)
+           CALL change_block_interface(intfr(g),block(intfr(g)%a_blk),block(intfr(g)%b_blk))
+        end do
           CALL fine_block_cell
           CALL cellCount_solid_coarse_mv
            print*,1

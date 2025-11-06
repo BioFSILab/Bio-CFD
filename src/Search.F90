@@ -1385,104 +1385,89 @@ blk%fluidCellCount = flcnt
 
      end subroutine change_block_coords_interfaces
 
-SUBROUTINE change_block_interface
+SUBROUTINE change_block_interface(local_intfr,blk_a,blk_b)
 
-  INTEGER(int64) :: j,g, a_blk_no, b_blk_no, factor,increment
+  type(Interface_t),intent(inout) :: local_intfr
+  type(Block_t), intent(in) :: blk_a, blk_b
+  INTEGER(int64) :: factor, increment
 
-  do g=1,size(intfr)
-     b_blk_no=intfr(g)%b_blk
-     if ( block(b_blk_no)% move_check /= 1) cycle
-     a_blk_no=intfr(g)%a_blk
-     factor=intfr(g)%b_msh/intfr(g)%a_msh
+  if ( blk_b%move_check /= 1) return
+  factor=local_intfr%b_msh/local_intfr%a_msh
 
-     increment = block(b_blk_no)%move_amtx/factor
-     intfr(g)%px_interface_det(1,1:intfr(g)%counterxp) =&
-             intfr(g)%px_interface_det(1,1:intfr(g)%counterxp) + increment
+  increment = blk_b%move_amtx/factor
+  local_intfr%px_interface_det(1,1:local_intfr%counterxp) =&
+          local_intfr%px_interface_det(1,1:local_intfr%counterxp) + increment
 
-     intfr(g)%ux_interface_det(1,1:intfr(g)%counterxu) =&
-             intfr(g)%ux_interface_det(1,1:intfr(g)%counterxu) + increment
+  local_intfr%ux_interface_det(1,1:local_intfr%counterxu) =&
+          local_intfr%ux_interface_det(1,1:local_intfr%counterxu) + increment
 
-     intfr(g)%vx_interface_det(1,1:intfr(g)%counterxv) =&
-             intfr(g)%vx_interface_det(1,1:intfr(g)%counterxv) + increment
+  local_intfr%vx_interface_det(1,1:local_intfr%counterxv) =&
+          local_intfr%vx_interface_det(1,1:local_intfr%counterxv) + increment
 
-     intfr(g)%wx_interface_det(1,1:intfr(g)%counterxw) =&
-             intfr(g)%wx_interface_det(1,1:intfr(g)%counterxw) + increment
+  local_intfr%wx_interface_det(1,1:local_intfr%counterxw) =&
+          local_intfr%wx_interface_det(1,1:local_intfr%counterxw) + increment
 
-     increment = block(b_blk_no)%move_amty/factor
-     intfr(g)%py_interface_det(1,1:intfr(g)%counteryp) =&
-             intfr(g)%py_interface_det(1,1:intfr(g)%counteryp) + increment
+  increment = blk_b%move_amty/factor
+  local_intfr%py_interface_det(1,1:local_intfr%counteryp) =&
+          local_intfr%py_interface_det(1,1:local_intfr%counteryp) + increment
 
-     intfr(g)%uy_interface_det(1,1:intfr(g)%counteryu) =&
-             intfr(g)%uy_interface_det(1,1:intfr(g)%counteryu) + increment
+  local_intfr%uy_interface_det(1,1:local_intfr%counteryu) =&
+          local_intfr%uy_interface_det(1,1:local_intfr%counteryu) + increment
 
-     intfr(g)%vy_interface_det(1,1:intfr(g)%counteryv) =&
-             intfr(g)%vy_interface_det(1,1:intfr(g)%counteryv) + increment
+  local_intfr%vy_interface_det(1,1:local_intfr%counteryv) =&
+          local_intfr%vy_interface_det(1,1:local_intfr%counteryv) + increment
 
-     intfr(g)%wy_interface_det(1,1:intfr(g)%counteryw) =&
-             intfr(g)%wy_interface_det(1,1:intfr(g)%counteryw) + increment
+  local_intfr%wy_interface_det(1,1:local_intfr%counteryw) =&
+          local_intfr%wy_interface_det(1,1:local_intfr%counteryw) + increment
 
-     increment = block(b_blk_no)%move_amtz/factor
-     intfr(g)%pz_interface_det(1,1:intfr(g)%counterzp) =&
-             intfr(g)%pz_interface_det(1,1:intfr(g)%counterzp) + increment
+  increment = blk_b%move_amtz/factor
+  local_intfr%pz_interface_det(1,1:local_intfr%counterzp) =&
+          local_intfr%pz_interface_det(1,1:local_intfr%counterzp) + increment
 
-     intfr(g)%uz_interface_det(1,1:intfr(g)%counterzu) =&
-              intfr(g)%uz_interface_det(1,1:intfr(g)%counterzu) + increment
+  local_intfr%uz_interface_det(1,1:local_intfr%counterzu) =&
+          local_intfr%uz_interface_det(1,1:local_intfr%counterzu) + increment
 
-     intfr(g)%vz_interface_det(1,1:intfr(g)%counterzv) =&
-             intfr(g)%vz_interface_det(1,1:intfr(g)%counterzv) + increment
+  local_intfr%vz_interface_det(1,1:local_intfr%counterzv) =&
+          local_intfr%vz_interface_det(1,1:local_intfr%counterzv) + increment
 
-     intfr(g)%wz_interface_det(1,1:intfr(g)%counterzw) =&
-             intfr(g)%wz_interface_det(1,1:intfr(g)%counterzw) + increment
+  local_intfr%wz_interface_det(1,1:local_intfr%counterzw) =&
+          local_intfr%wz_interface_det(1,1:local_intfr%counterzw) + increment
 
-     do j=1,size(intfr)
-        call print_interface_detail("px", intfr(j)%counterxp, intfr(j)%px_interface_det, &
-                                    block(a_blk_no)%xp, block(b_blk_no)%xp)
-     end do
-     do j=1,size(intfr)
-        call print_interface_detail("py", intfr(j)%counteryp, intfr(j)%py_interface_det, &
-                                    block(a_blk_no)%yp, block(b_blk_no)%yp)
-     end do
-     do j=1,size(intfr)
-        call print_interface_detail("pz", intfr(j)%counterzp, intfr(j)%pz_interface_det, &
-                                    block(a_blk_no)%zp, block(b_blk_no)%zp)
-     end do
-     do j=1,size(intfr)
-        call print_interface_detail("ux", intfr(j)%counterxu, intfr(j)%ux_interface_det, &
-                                    block(a_blk_no)%xu, block(b_blk_no)%xu)
-     end do
-     do j=1,size(intfr)
-        call print_interface_detail("uy", intfr(j)%counteryu, intfr(j)%uy_interface_det, &
-                                    block(a_blk_no)%yu, block(b_blk_no)%yu)
-      end do
-      do j=1,size(intfr)
-         call print_interface_detail("uz", intfr(j)%counterzu, intfr(j)%uz_interface_det, &
-                                     block(a_blk_no)%zu, block(b_blk_no)%zu)
-      end do
-      do j=1,size(intfr)
-         call print_interface_detail("vx", intfr(j)%counterxv, intfr(j)%vx_interface_det, &
-                                     block(a_blk_no)%xv, block(b_blk_no)%xv)
-      end do
-      do j=1,size(intfr)
-         call print_interface_detail("vy", intfr(j)%counteryv, intfr(j)%vy_interface_det, &
-                                     block(a_blk_no)%yv, block(b_blk_no)%yv)
-      end do
-      do j=1,size(intfr)
-          call print_interface_detail("vz", intfr(j)%counterzv, intfr(j)%vz_interface_det, &
-                                      block(a_blk_no)%zv, block(b_blk_no)%zv)
-        end do
-        DO j=1,size(intfr)
-          call print_interface_detail("wx", intfr(j)%counterxw, intfr(j)%wx_interface_det, &
-                                      block(a_blk_no)%xw, block(b_blk_no)%xw)
-        end do
-        do j=1,size(intfr)
-           call print_interface_detail("wy", intfr(j)%counteryw, intfr(j)%wy_interface_det, &
-                                       block(a_blk_no)%yw, block(b_blk_no)%yw)
-        end do
-        do j=1,size(intfr)
-           call print_interface_detail("wz", intfr(j)%counterzw, intfr(j)%wz_interface_det, &
-                                       block(a_blk_no)%zw, block(b_blk_no)%zw)
-        end do
-  end do
+  call print_interface_detail("px", local_intfr%counterxp, local_intfr%px_interface_det, &
+                              blk_a%xp, blk_b%xp)
+
+  call print_interface_detail("py", local_intfr%counteryp, local_intfr%py_interface_det, &
+                              blk_a%yp, blk_b%yp)
+
+  call print_interface_detail("pz", local_intfr%counterzp, local_intfr%pz_interface_det, &
+                              blk_a%zp, blk_b%zp)
+
+  call print_interface_detail("ux", local_intfr%counterxu, local_intfr%ux_interface_det, &
+                              blk_a%xu, blk_b%xu)
+
+  call print_interface_detail("uy", local_intfr%counteryu, local_intfr%uy_interface_det, &
+                              blk_a%yu, blk_b%yu)
+
+  call print_interface_detail("uz", local_intfr%counterzu, local_intfr%uz_interface_det, &
+                              blk_a%zu, blk_b%zu)
+
+  call print_interface_detail("vx", local_intfr%counterxv, local_intfr%vx_interface_det, &
+                              blk_a%xv, blk_b%xv)
+
+  call print_interface_detail("vy", local_intfr%counteryv, local_intfr%vy_interface_det, &
+                              blk_a%yv, blk_b%yv)
+
+  call print_interface_detail("vz", local_intfr%counterzv, local_intfr%vz_interface_det, &
+                              blk_a%zv, blk_b%zv)
+
+  call print_interface_detail("wx", local_intfr%counterxw, local_intfr%wx_interface_det, &
+                              blk_a%xw, blk_b%xw)
+
+  call print_interface_detail("wy", local_intfr%counteryw, local_intfr%wy_interface_det, &
+                              blk_a%yw, blk_b%yw)
+
+  call print_interface_detail("wz", local_intfr%counterzw, local_intfr%wz_interface_det, &
+                              blk_a%zw, blk_b%zw)
 
 end subroutine change_block_interface
 
