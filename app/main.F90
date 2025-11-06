@@ -2,13 +2,13 @@
       PROGRAM main
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, &
-             ita, ita1, nblocks, totaltime, totime, &
-             aoa,aoa1,aoa2,phase_angle,pi,uc,re
+             ita, ita1, totaltime, totime, &
+             pi,uc,re,intfr
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
              change_block_interface, computenormdistance, computesurfacevariables, findtscells, &
-             fine_block_cell, selectiveretagging_th
+             fine_block_cell, selectiveretagging_th, change_block_coords_interfaces
         use biocfd_pcor_vcor, only: poissonSolver, updateVelocity_newv
         use biocfd_boundary_conditions, only: velocityBC, solidcellbc, solidcellbc_move
         use biocfd_read_input, only: readInput, readBlockInterface, readSurfaceMeshGmsh
@@ -33,7 +33,8 @@
         CHARACTER (LEN = 3)   :: char_f
         INTEGER               :: istart
         INTEGER (int64)   :: itamax, pcItaMax
-        CALL readInput(surGeoPoints,char_f,istart,itamax,pcItaMax)
+        real(dp) :: aoa,aoa1,aoa2,phase_angle,piv_pt
+        CALL readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt)
         CALL readBlockInterface
         do g=blk_start, size(block)
           CALL readSurfaceMeshGmsh(block(g),surGeoPoints)
@@ -48,7 +49,7 @@
         aoa1 = aoa*pi/180_dp
         aoa2 = -aoa1
         do g=blk_start, size(block)
-           CALL shiftSurfaceNodesInitial(block(g))
+           CALL shiftSurfaceNodesInitial(block(g),aoa1,aoa2,piv_pt)
         end do
         do g=blk_start, size(block)
            CALL computeSurfaceNorm(block(g))
@@ -86,7 +87,7 @@
            ita = 0
            ita1 = 0
            do g=1, size(block)
-              call lastConditions(block(g), g, re)
+              call lastConditions(block(g), g, re,totime,ita,ita1)
            end do
         end if
         do g=blk_start, size(block)
@@ -104,13 +105,13 @@
         end do
         write(*,*)'leaving non_uni_coeff'
         totime = totime + deltat
-#if USE_HDF5 == 1
-        CALL write_output_hdf5
-#else
         do g=1, size(block)
-           CALL write_output_ascii(block(g),g,char_f)
-        end do
+#if USE_HDF5 == 1
+        CALL write_output_hdf5(block(g),g)
+#else
+        CALL write_output_ascii(block(g),g,char_f)
 #endif
+        end do
         coarse_flcnt_check=0
         print*, 'adam'
         DO
@@ -133,29 +134,40 @@
         do g=blk_start, size(block)
            CALL pressureForcing1(block(g))
         end do
-#if USE_HDF5 == 1
-        CALL write_output_hdf5
-#else
         do g=1, size(block)
-           CALL write_output_ascii(block(g),g,char_f)
-        end do
+#if USE_HDF5 == 1
+        CALL write_output_hdf5(block(g),g)
+#else
+        CALL write_output_ascii(block(g),g,char_f)
 #endif
+        end do
         !$acc wait
-        CALL writeResult(char_f)
+        do g=1, size(block)
+          CALL writeResult(block(g),g,char_f)
+        end do
         !$acc wait
-        CALL body_plot
-        DO g=blk_start, nblocks
+        do g=1, size(block)
+           CALL body_plot(block(g))
+        end do
+        DO g=blk_start, size(block)
            DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent,block(g)%cosAlpha, &
                 block(g)%cosBeta, block(g)%cosGamma)
             block(g)%blk_mv_tag=0.
         END DO
         print *,10
-        DO g=blk_start, nblocks
-           CALL computeSurfaceVariables(block(g),g)
+        DO g=blk_start, size(block)
+           CALL computeSurfaceVariables(block(g),g,phase_angle,piv_pt)
         END DO
            CALL block_move_check
-           CALL change_block_coords
-           CALL change_block_interface
+           DO g=blk_start, size(block)
+              CALL change_block_coords(block(g))
+           END DO
+           DO g=1,size(intfr)
+              CALL change_block_coords_interfaces(intfr(g),block(intfr(g)%b_blk))
+           END DO
+        do g=1,size(intfr)
+           CALL change_block_interface(intfr(g),block(intfr(g)%a_blk),block(intfr(g)%b_blk))
+        end do
           CALL fine_block_cell
           CALL cellCount_solid_coarse_mv
            print*,1
@@ -163,11 +175,13 @@
             CALL computeSurfaceNorm(block(g))
          end do
            print*,2
-           CALL tagging_th_move
+         do g=blk_start, size(block)
+           CALL tagging_th_move(block(g), g)
+         end do
         do g=blk_start, size(block)
            CALL selectiveRetagging_th(block(g))
         end do
-        DO g=blk_start, nblocks
+        DO g=blk_start, size(block)
             block(g)%blk_mv_tag=0.
               DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,&
                    block(g)% pNormDis,block(g)% nelp,block(g)% nelu1,block(g)% nelu2,&

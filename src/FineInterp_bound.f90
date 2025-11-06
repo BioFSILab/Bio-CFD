@@ -1,6 +1,6 @@
 module biocfd_fine_interp_bound
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, intfr, intflines
+  use global, only : block, intfr
   use biocfd_interpolation, only: bilinear_interpolation, linear_interpolation
   use biocfd_blocks, only: Blocks
   use biocfd_interface_type, only: Interface_t
@@ -9,17 +9,9 @@ module biocfd_fine_interp_bound
 
   private
 
-  public :: fineUpdate_bd, fineUpdate_pc_bd, fineUpdate_newv_bd, fineUpdate_bd_mv
+  public :: fineUpdate_pc_bd, fineUpdate_newv_bd, fineUpdate_bd_mv
 
   contains
-SUBROUTINE fineUpdate_bd
-        INTEGER(int64) :: g
-
-        DO g=1,intflines
-           call fineUpdate_bd_mv(g)
-        ENDDO
-
-      end subroutine fineUpdate_bd
 
       SUBROUTINE fineUpdate_pc_bd(local_intfr,blk_a,blk_b)
         type(Interface_t),intent(in) :: local_intfr
@@ -102,7 +94,7 @@ SUBROUTINE fineUpdate_bd
         integer :: axis, steps(3)
 
 
-        DO g=1,intflines
+        DO g=1,size(intfr)
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
 

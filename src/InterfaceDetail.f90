@@ -1,10 +1,10 @@
 module biocfd_interface_detail
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, intfr, intflines
+  use global, only : block, intfr
   implicit none
   private
 
-  public :: interfaceDetail
+  public :: interfaceDetail, print_interface_detail
 
   contains
 SUBROUTINE interfaceDetail
@@ -16,7 +16,7 @@ SUBROUTINE interfaceDetail
         print*, 'before allocation in interface'
         a_max_intf_length=0
         b_max_intf_length=0
-        DO g=1, intflines
+        DO g=1, size(intfr)
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
            factor=intfr(g)%b_msh/intfr(g)%a_msh
@@ -51,7 +51,7 @@ SUBROUTINE interfaceDetail
 !coarse mesh start and end index
 
         print*,'After allocation in interface detail'
-        DO g=1, intflines
+        DO g=1, size(intfr)
         factor=intfr(g)%b_msh/intfr(g)%a_msh
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
@@ -107,57 +107,57 @@ SUBROUTINE interfaceDetail
         END DO
 
         ! p
-        DO j=1,intflines
+        DO j=1,size(intfr)
           call print_interface_detail("px", intfr(j)%counterxp, intfr(j)%px_interface_det, &
                                       block(a_blk_no)%xp, block(b_blk_no)%xp)
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
           call print_interface_detail("py", intfr(j)%counteryp, intfr(j)%py_interface_det, &
                                       block(a_blk_no)%yp, block(b_blk_no)%yp)
         end do
-        DO j=1,intflines
+        DO j=1,size(intfr)
           call print_interface_detail("pz", intfr(j)%counterzp, intfr(j)%pz_interface_det, &
                                       block(a_blk_no)%zp, block(b_blk_no)%zp)
         end do
 
         ! u
-        DO j=1,intflines
+        DO j=1,size(intfr)
           call print_interface_detail("ux", intfr(j)%counterxu, intfr(j)%ux_interface_det, &
                                       block(a_blk_no)%xu, block(b_blk_no)%xu)
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
           call print_interface_detail("uy", intfr(j)%counteryu, intfr(j)%uy_interface_det, &
                                       block(a_blk_no)%yu, block(b_blk_no)%yu)
         end do
-        DO j=1,intflines
+        DO j=1,size(intfr)
           call print_interface_detail("uz", intfr(j)%counterzu, intfr(j)%uz_interface_det, &
                                       block(a_blk_no)%zu, block(b_blk_no)%zu)
         end do
 
         ! v
-        DO j=1,intflines
+        DO j=1,size(intfr)
           call print_interface_detail("vx", intfr(j)%counterxv, intfr(j)%vx_interface_det, &
                                       block(a_blk_no)%xv, block(b_blk_no)%xv)
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
           call print_interface_detail("vy", intfr(j)%counteryv, intfr(j)%vy_interface_det, &
                                       block(a_blk_no)%yv, block(b_blk_no)%yv)
         end do
-        DO j=1,intflines
+        DO j=1,size(intfr)
           call print_interface_detail("vz", intfr(j)%counterzv, intfr(j)%vz_interface_det, &
                                       block(a_blk_no)%zv, block(b_blk_no)%zv)
         end do
 
         ! w
-        DO j=1,intflines
+        DO j=1,size(intfr)
           call print_interface_detail("wx", intfr(j)%counterxw, intfr(j)%wx_interface_det, &
                                       block(a_blk_no)%xw, block(b_blk_no)%xw)
         end do
-        DO j=1,intfLines
+        DO j=1,size(intfr)
           call print_interface_detail("wy", intfr(j)%counteryw, intfr(j)%wy_interface_det, &
                                       block(a_blk_no)%yw, block(b_blk_no)%yw)
         end do
-        DO j=1,intflines
+        DO j=1,size(intfr)
           call print_interface_detail("wz", intfr(j)%counterzw, intfr(j)%wz_interface_det, &
                                       block(a_blk_no)%zw, block(b_blk_no)%zw)
         end do

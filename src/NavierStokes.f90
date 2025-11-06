@@ -1,9 +1,11 @@
 module biocfd_navier_stokes
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : alpha, deltat, re
-  use biocfd_blocks, only: Blocks
+  use global, only : deltat, re
+  use biocfd_block_type, only: Block_t
   implicit none
   private
+
+  real(dp), parameter :: alpha = 1._dp
 
   public :: non_uni_coeff, nsmomentum2order
 
@@ -11,7 +13,7 @@ contains
 
   SUBROUTINE non_uni_coeff(blk)
 
-       type(Blocks), intent(inout) :: blk
+       type(Block_t), intent(inout) :: blk
        INTEGER  (dp) :: i, j, k, nx_var, ny_var, nz_var
        REAL (dp)   :: tmp_dx1, tmp_dx2, tmp_dx3, tmp_dx4, tmp_dy1, tmp_dy2, tmp_dy3,         &
                       tmp_dy4, tmp_dz1, tmp_dz2, tmp_dz3, tmp_dz4
@@ -252,7 +254,7 @@ contains
 !c***********************************************************************
 !c     navier-stokes equations for constant properties
 !c***********************************************************************
-      type(Blocks), intent(inout) :: blk
+      type(Block_t), intent(inout) :: blk
       INTEGER (dp) :: i, j, k, n ,nx_var,ny_var,nz_var, n1, nn, &
            index_ip1, index_im1, index_jp1, index_jm1, index_kp1, index_km1, block_idx_ts, idx
          REAL (dp) :: dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14, &
