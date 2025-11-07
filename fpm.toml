@@ -7,7 +7,7 @@ version = "0.1.0"
 auto-executables = true
 auto-tests = true
 auto-examples = true
-external-modules = ["hdf5", "openacc"]
+external-modules = ["hdf5", "openacc", "mpi_f08"]
 
 [preprocess]
 cpp.macros = ["USE_HDF5=0"]
