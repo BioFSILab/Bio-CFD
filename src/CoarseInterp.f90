@@ -3,7 +3,8 @@ module biocfd_coarse_update
   use global, only : block, intfr
   use biocfd_interpolation, only: bilinear_interpolation, linear_interpolation
 #ifdef BIOCFD_MPI
-  use mpi_f08
+  use mpi_f08, only: MPI_COMM_WORLD, MPI_STATUS_IGNORE, MPI_DOUBLE_PRECISION, &
+       MPI_Comm_size, MPI_Comm_rank, MPI_Send, MPI_Recv, MPI_Bcast
 #endif
 
   implicit none
