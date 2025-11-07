@@ -28,7 +28,7 @@ contains
     integer(hsize_t),allocatable :: data_dims(:)
     integer(hid_t) :: file_id, dspace_id, dset_id, group_id
     integer (int32) :: space_rank
-    integer (int8) ::arguments_present
+    integer (int8) :: arguments_present
     integer :: error
     logical :: file_exists, dataset_exists, group_exists
     arguments_present=0
@@ -37,8 +37,8 @@ contains
     end if
 
     if (present(array_input_1d)) then
-      if(arguments_present /= 0 ) then
-        error stop 'More than one argument present hdf5_write'
+      if(arguments_present /= 0) then
+        error stop "More than one argument present hdf5_write"
       end if
       arguments_present = arguments_present + 1
       allocate(data_dims(1))
@@ -47,8 +47,8 @@ contains
     end if
 
     if (present(array_input_2d)) then
-      if(arguments_present /= 0 ) then
-        error stop 'More than one argument present hdf5_write'
+      if(arguments_present /= 0) then
+        error stop "More than one argument present hdf5_write"
       end if
       arguments_present = arguments_present + 1
       allocate(data_dims(2))
@@ -58,8 +58,8 @@ contains
     end if
 
     if (present(array_input_3d)) then
-      if(arguments_present /= 0 ) then
-        error stop 'More than one argument present hdf5_write'
+      if(arguments_present /= 0) then
+        error stop "More than one argument present hdf5_write"
       end if
       allocate(data_dims(3))
       data_dims(1) = size(array_input_3d,1)
@@ -71,7 +71,7 @@ contains
     ! Initialize Fortran interface.
     call h5open_f(error)
 
-    inquire(file=trim(filename), exist=file_exists )
+    inquire(file=trim(filename), exist=file_exists)
 
     if (file_exists) then
       ! Open an existing file.
@@ -162,8 +162,8 @@ contains
     end if
 
     if (present(array_input_1d)) then
-       if(arguments_present /= 0 ) then
-        error stop 'More than one argument present hdf5_write'
+       if(arguments_present /= 0) then
+        error stop "More than one argument present hdf5_write"
       end if
       arguments_present = arguments_present + 1
       allocate(data_dims(1))
@@ -172,8 +172,8 @@ contains
     end if
 
     if (present(array_input_2d)) then
-      if(arguments_present /= 0 ) then
-        error stop 'More than one argument present hdf5_write'
+      if(arguments_present /= 0) then
+        error stop "More than one argument present hdf5_write"
       end if
       arguments_present = arguments_present + 1
       allocate(data_dims(2))
@@ -183,8 +183,8 @@ contains
     end if
 
     if (present(array_input_3d)) then
-      if(arguments_present /= 0 ) then
-        error stop 'More than one argument present hdf5_write'
+      if(arguments_present /= 0) then
+        error stop "More than one argument present hdf5_write"
       end if
       allocate(data_dims(3))
       data_dims(1) = size(array_input_3d,1)
@@ -196,7 +196,7 @@ contains
     ! Initialize Fortran interface.
     call h5open_f(error)
 
-    inquire(file=trim(filename), exist=file_exists )
+    inquire(file=trim(filename), exist=file_exists)
 
     if (file_exists) then
       ! Open an existing file.
