@@ -12,6 +12,9 @@ program tester
   integer :: stat, is
   type(testsuite_type), allocatable :: testsuites(:)
   character(len=*), parameter :: fmt = '("#", *(1x, a))'
+#if USE_HDF5 == 1
+  type(testsuite_type) :: hdf5_tests
+#endif
 
   stat = 0
 
@@ -19,16 +22,18 @@ program tester
     new_testsuite("search", collect_search), &
     new_testsuite("interpolation", collect_interpolation), &
     new_testsuite("allocate_arrays", collect_allocate_arrays), &
-#if USE_HDF5 == 1
-    new_testsuite("hdf5", collect_hdf5), &
-#endif
     new_testsuite("pcor_vcor", collect_pcor_vcor) &
     ]
 
   do is = 1, size(testsuites)
     write(error_unit, fmt) "Testing:", testsuites(is)%name
     call run_testsuite(testsuites(is)%collect, error_unit, stat)
-  end do
+ end do
+
+#if USE_HDF5 == 1
+    hdf5_tests = new_testsuite("hdf5", collect_hdf5)
+    call run_testsuite(hdf5_tests%collect, error_unit, stat)
+#endif
 
   if (stat > 0) then
     write(error_unit, '(i0, 1x, a)') stat, "test(s) failed!"
