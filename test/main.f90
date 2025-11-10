@@ -5,6 +5,9 @@ program tester
   use test_interpolation, only: collect_interpolation
   use test_allocate, only: collect_allocate_arrays
   use test_pcor_vcor, only: collect_pcor_vcor
+#if USE_HDF5 == 1
+  use test_hdf5_io, only: collect_hdf5
+#endif
   implicit none
   integer :: stat, is
   type(testsuite_type), allocatable :: testsuites(:)
@@ -16,6 +19,9 @@ program tester
     new_testsuite("search", collect_search), &
     new_testsuite("interpolation", collect_interpolation), &
     new_testsuite("allocate_arrays", collect_allocate_arrays), &
+#if USE_HDF5 == 1
+    new_testsuite("hdf5", collect_hdf5), &
+#endif
     new_testsuite("pcor_vcor", collect_pcor_vcor) &
     ]
 
