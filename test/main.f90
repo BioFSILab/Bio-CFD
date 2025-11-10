@@ -14,6 +14,7 @@ program tester
   character(len=*), parameter :: fmt = '("#", *(1x, a))'
 #if USE_HDF5 == 1
   type(testsuite_type) :: hdf5_tests
+  integer :: unit
 #endif
 
   stat = 0
@@ -33,6 +34,8 @@ program tester
 #if USE_HDF5 == 1
     hdf5_tests = new_testsuite("hdf5", collect_hdf5)
     call run_testsuite(hdf5_tests%collect, error_unit, stat)
+    open(file="test_output.h5", newunit=unit)
+    close(unit, status="delete")
 #endif
 
   if (stat > 0) then
