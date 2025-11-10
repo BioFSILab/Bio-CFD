@@ -401,6 +401,6 @@ contains
     call check(error, scalar , scalar_read)
     if (allocated(error)) return
   end subroutine test_hdf5_write_int_scalar
-  
+
 end module test_hdf5_io
 #endif
