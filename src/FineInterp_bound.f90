@@ -3,7 +3,7 @@ module biocfd_fine_interp_bound
   use global, only : block, intfr
   use biocfd_interpolation, only: bilinear_interpolation, linear_interpolation
 #ifdef BIOCFD_MPI
-  use mpi_f08
+  use mpi_f08, only: MPI_Bcast, MPI_DOUBLE_PRECISION, MPI_COMM_WORLD
 #endif
 
   implicit none
