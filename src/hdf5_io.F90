@@ -29,7 +29,7 @@ contains
     integer(hsize_t),allocatable :: data_dims(:)
     integer(hid_t) :: file_id, dspace_id, dset_id, group_id
     integer(hid_t) :: attr_id, aspace_id
-    integer(size_t), dimension(1) :: adims
+    integer(size_t) :: adims(1)
     integer (int32) :: space_rank
     integer (int8) :: arguments_present
     integer :: error
@@ -172,7 +172,7 @@ contains
     integer(hsize_t),allocatable :: data_dims(:)
     integer(hid_t) :: file_id, dspace_id, dset_id, group_id
     integer(hid_t) :: attr_id, aspace_id
-    integer(size_t), dimension(1) :: adims
+    integer(size_t) :: adims(1)
     integer (int32) :: space_rank
     integer (int8) :: arguments_present
     integer :: error
