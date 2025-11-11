@@ -2,6 +2,9 @@ module biocfd_fine_interp_bound
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, intfr
   use biocfd_interpolation, only: bilinear_interpolation, linear_interpolation
+#ifdef BIOCFD_MPI
+  use mpi_f08
+#endif
 
   implicit none
 
@@ -20,9 +23,24 @@ module biocfd_fine_interp_bound
         !> axis and steps control how the looping is performed over the x, y, and z axes
         integer :: axis, steps(3)
 
+#ifdef BIOCFD_MPI
+          ! If we are using MPI then at this stage we need to make
+          ! sure that block(1) is up-to-date on all ranks
+          call MPI_Bcast(block(1)%pc, size(block(1)%pc), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+#endif
+
         DO g=1,size(intfr)
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
+
+#ifdef BIOCFD_MPI
+           if (.not. allocated(block(b_blk_no)%pc)) then
+               ! If this array isn't allocated we aren't on the right
+               ! rank to deal with this so keep going until we find
+               ! one that is on this rank
+               cycle
+           end if
+#endif
 
         ! Loop through the x (1), y (2), and z (3) axes
         DO axis=1, 3
@@ -96,11 +114,27 @@ module biocfd_fine_interp_bound
         !> axis and steps control how the looping is performed over the x, y, and z axes
         integer :: axis, steps(3)
 
+#ifdef BIOCFD_MPI
+          ! If we are using MPI then at this stage we need to make
+          ! sure that block(1) is up-to-date on all ranks
+          call MPI_Bcast(block(1)%ut, size(block(1)%ut), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%vt, size(block(1)%vt), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%wt, size(block(1)%wt), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+#endif
+
 
         DO g=1,size(intfr)
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
 
+#ifdef BIOCFD_MPI
+           if (.not. allocated(block(b_blk_no)%ut)) then
+               ! If this array isn't allocated we aren't on the right
+               ! rank to deal with this so keep going until we find
+               ! one that is on this rank
+               cycle
+           end if
+#endif
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!uuuuuuu!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
           ! Loop through the x (1), y (2), and z (3) axes
           DO axis=1, 3
