@@ -26,6 +26,7 @@
 #endif
         use biocfd_forcing, only: pressureForcing1, pressureforcingfield, pressureforcingghost, &
              velocityforcing1, velocityforcingfield, velocityforcingghost
+        use biocfd_mpi_helpers, only: biocfd_init, biocfd_finalize
         IMPLICIT NONE
 
         INTEGER (int64) :: g
@@ -34,6 +35,9 @@
         INTEGER               :: istart
         INTEGER (int64)   :: itamax, pcItaMax
         real(dp) :: aoa,aoa1,aoa2,phase_angle,piv_pt
+        integer :: start, step, rank
+        call biocfd_init(size(block), start, step, rank)
+
         CALL readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt)
         CALL readBlockInterface
         do g=blk_start, size(block)
@@ -224,7 +228,8 @@
            CALL pressureForcingGhost(block(g))
         end do
         IF(ita>=itamax) EXIT
-        END DO
+     END DO
+     call biocfd_finalize()
       END PROGRAM main
 
 
