@@ -18,11 +18,11 @@ contains
 
   !> Initialize the steps that we will be performing over blocks. This
   !> allows us to work out which blocks to put on each rank in the case of MPI.
-  subroutine biocfd_init(nblocks, start, step, rank)
+  subroutine biocfd_init(nblocks, start, finish, step, rank)
     !> The total number of blocks we are simulating
     integer, intent(in) :: nblocks
-    !> The start and step size we will use to loop over blocks
-    integer, intent(out) :: start, step
+    !> The start, finish (both end and stop are keywords) and step size we will use to loop over blocks
+    integer, intent(out) :: start, finish, step
     !> The MPI rank that we are running on (0 in the case we aren't using MPI)
     integer, intent(out) :: rank
 #ifdef BIOCFD_MPI
@@ -37,6 +37,7 @@ contains
     ! If we aren't using MPI, it is straight forward. Our loop goes
     ! over every block from 1 in steps of 1. Rank is set to 0.
     start = 1
+    finish = nblocks
     step = 1
     rank = 0
 #else
@@ -64,6 +65,7 @@ contains
     ! MPI ranks are zero indexed, we want to start looping from 1 in
     ! fortran
     start = rank + 1
+    finish = nblocks
 #endif
   end subroutine biocfd_init
 
