@@ -36,9 +36,10 @@
         INTEGER (int64)   :: itamax, pcItaMax
         real(dp) :: aoa,aoa1,aoa2,phase_angle,piv_pt
         integer :: start, finish, step, rank
-        call biocfd_init(size(block), start, finish, step, rank)
 
         CALL readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt)
+        ! Need to init after we know the size of block
+        call biocfd_init(size(block), start, finish, step, rank)
         CALL readBlockInterface
         do g=blk_start, size(block)
           CALL readSurfaceMeshGmsh(block(g),surGeoPoints)
