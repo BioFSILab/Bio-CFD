@@ -12,7 +12,6 @@ external-modules = ["hdf5", "openacc", "mpi_f08"]
 [preprocess]
 cpp.macros = ["USE_HDF5=0"]
 
-
 [install]
 library = false
 

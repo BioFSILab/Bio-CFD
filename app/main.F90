@@ -45,76 +45,87 @@
         ! Need to init after we know the size of block
         call biocfd_init(size(block), start, finish, step, rank)
 
-        do g=blk_start, size(block)
-          CALL readSurfaceMeshGmsh(block(g),surGeoPoints)
+        do g=start, finish, step
+          if (g /= 1) CALL readSurfaceMeshGmsh(block(g), surGeoPoints)
         end do
-        do g=1, size(block)
-          CALL allocateArrays(block(g))
+
+        ! We allocate arrays like this because we want to ensure that
+        ! the coarse mesh is allocated on every rank when using MPI
+        call allocateArrays(block(1))
+        do g=start, finish, step
+          if (g /= 1) call allocateArrays(block(g))
         end do
-        do g=blk_start, size(block)
-           CALL findDistnode(block(g))
-        end do
+
         phase_angle = phase_angle*pi/180_dp
         aoa1 = aoa*pi/180_dp
         aoa2 = -aoa1
-        do g=blk_start, size(block)
-           CALL shiftSurfaceNodesInitial(block(g),aoa1,aoa2,piv_pt)
+
+        do g=start, finish, step
+          if (g == 1) cycle  ! These aren't called for the coarse block
+          CALL findDistnode(block(g))
+          CALL shiftSurfaceNodesInitial(block(g),aoa1,aoa2,piv_pt)
+          CALL computeSurfaceNorm(block(g))
         end do
-        do g=blk_start, size(block)
-           CALL computeSurfaceNorm(block(g))
-        end do
+
+        print *, "Rank =", rank
 
         totalTime=0.
         totime = 0.
         ita1 = 0
-        do g=blk_start, size(block)
-           CALL tagging_th(block(g),g)
+
+        do g=start, finish, step
+          if (g == 1) cycle
+          call tagging_th(block(g), g)
+          CALL cellCount_solid(block(g))
+          print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
         end do
-        print*,'11'
-        print*, "cellCount started"
-        do g=blk_start, size(block)
-           CALL cellCount_solid(block(g))
-           print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
+
+        ! Just run fine_block_cell on rank 1 (note that we'll need to
+        ! be sure that only block(1) is being written to)
+        do g=start, finish, step
+          if (g /= 1) cycle
+          CALL fine_block_cell
+          print*,'13'
+          CALL cellCount_solid_coarse(block(1))
         end do
-        print*,'12'
-        CALL fine_block_cell
-        print*,'13'
-        CALL cellCount_solid_coarse(block(1))
+
         print*,'14'
-        IF (iStart==0) then
-           WRITE(*,*) 'Enter initialcondtitions'
-           ita = 0
-           ita1 = 0
-           totime = 0.
-           do g=1, size(block)
-              CALL initialConditions(block(g), uc)
-           end do
-           print*, 'initial'
-        end if
-        IF (iStart==1) then
-           WRITE(*,*) 'Enter lastconditions'
-           ita = 0
-           ita1 = 0
-           do g=1, size(block)
-              call lastConditions(block(g), g, re,totime,ita,ita1)
-           end do
-        end if
-        do g=blk_start, size(block)
-           CALL computeNormDistance(block(g))
-        end do
-        do g=blk_start, size(block)
-           CALL findTScells(block(g))
-        end do
-        do g=1, size(block)
-           CALL coefficientMatrix(block(g), g == 1)
+
+        ita = 0
+        ita1 = 0
+        totime = 0.
+        select case (istart)
+        case (0)
+          WRITE(*,*) 'Enter initialcondtitions'
+          do g=start, finish, step
+            CALL initialConditions(block(g), uc)
+          end do
+          print*, 'initial'
+
+        case (1)
+          WRITE(*,*) 'Enter lastconditions'
+          do g=start, finish, step
+            call lastConditions(block(g), g, re,totime,ita,ita1)
+          end do
+
+        end select
+
+        do g=start, finish, step
+         if (g /= 1) then
+             CALL computeNormDistance(block(g))
+             CALL findTScells(block(g))
+         end if
+             CALL coefficientMatrix(block(g), g == 1)
         end do
         print*, "Coefficient Matrix generated"
-        do g=1, size(block)
-           CALL non_uni_coeff(block(g))
+
+        do g=start, finish, step
+         CALL non_uni_coeff(block(g))
         end do
         write(*,*)'leaving non_uni_coeff'
         totime = totime + deltat
-        do g=1, size(block)
+
+        do g=start, finish, step
 #if USE_HDF5 == 1
         CALL write_output_hdf5(block(g),g)
 #else
