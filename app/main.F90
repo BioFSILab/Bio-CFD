@@ -155,7 +155,7 @@
         do g=start, finish, step
            if (g /= 1) CALL pressureForcing1(block(g))
         end do
-        do g=1, size(block)
+        do g=start, finish, step
 #if USE_HDF5 == 1
         CALL write_output_hdf5(block(g),g)
 #else

@@ -13,6 +13,9 @@ module biocfd_pcor_vcor
   use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
   use biocfd_boundary_conditions, only : velocityBC
   use biocfd_mpi_helpers, only: get_block_iteration_params
+#ifdef BIOCFD_MPI
+   use mpi_f08
+#endif
   implicit none
   private
 
@@ -27,7 +30,9 @@ module biocfd_pcor_vcor
         REAL (dp)    :: max_derr1, max_derr2, max_div, max_derrStdSt
         REAL (dp)    :: er_dudt, er_dvdt, er_dwdt, err_ds
         INTEGER(int64) :: max_nIterPcor
+#ifndef BIOCFD_MPI
         CHARACTER(len=160) :: filename1
+#endif
 
         ! For controlling OpenMP
         integer :: omp_threads
@@ -52,7 +57,7 @@ module biocfd_pcor_vcor
           omp_thread_num = 0
           acc_devices = 0
 
-          call get_block_iteration_params(size(block), start, finish, step)
+          call get_block_iteration_params(size(block), start, finish, step, rank)
 
 
 #ifdef _OPENMP
@@ -89,9 +94,21 @@ module biocfd_pcor_vcor
         CALL fineUpdate_newv_bd
         CALL coarseUpdate_newv
 
+#if defined(BIOCFD_MPI) && defined(_OPENMP)
+        ! If we are using MPI and OpenMP then the number of threads is a little different
+        omp_threads = 0
+        ! Count the number of blocks on this rank
+        do g=start, finish, step
+          omp_threads = omp_threads + 1
+        end do
+        ! Then omp_threads is the minimum of that or the maximum number of allowed threads
+        omp_threads = min(omp_get_max_threads(), omp_threads)
+#endif
+
         !$omp parallel num_threads(omp_threads) default(none) &
         !$omp& private(g) &
-        !$omp& shared(acc_devices, pcItaMax, block) firstprivate(omp_thread_num)
+        !$omp& shared(acc_devices, pcItaMax, block) firstprivate(omp_thread_num) &
+        !$omp& shared(start, finish, step)
 
 #ifdef _OPENMP
         omp_thread_num = omp_get_thread_num()
@@ -114,7 +131,7 @@ module biocfd_pcor_vcor
         g=1
         ! This is a slightly confusing loop but is written this way for MPI
         do g=start, finish, step
-          if (g == 1) CALL REDBLACKSOR_linear(1, pcItaMax)
+          if (g == 1) CALL REDBLACKSOR_linear(g, pcItaMax)
         end do
         call fineUpdate_pc_bd
         !$omp end single
@@ -131,10 +148,13 @@ module biocfd_pcor_vcor
        DO g=start, finish, step
                CALL correctPressure(g)  !pressure correction
                CALL correctVelocity(g)  !velocity correction
-               if (g == 1) CALL velocityBC(block(1),deltat,uc)  !correct velocity at boundaries
         END DO
         !$omp end do
         !$omp end parallel
+
+        do g=start, finish, step
+          if (g == 1) CALL velocityBC(block(1),deltat,uc)  !correct velocity at boundaries
+        end do
 
          DO g=start, finish, step
          err_ds=0.
@@ -214,11 +234,11 @@ module biocfd_pcor_vcor
 
         DO g=1,size(intfr)
 #ifdef BIOCFD_MPI
-           if (.not. allocated(block(intfr(g)%b_blk_no)%p)) then
+           if (.not. allocated(block(intfr(g)%b_blk)%p)) then
                ! If this array isn't allocated we aren't on the right
                ! rank to deal with this so keep going until we find
                ! one that is on this rank
-               return
+               cycle
            end if
 #endif
 
