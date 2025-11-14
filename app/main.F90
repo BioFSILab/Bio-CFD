@@ -1,7 +1,7 @@
 
       PROGRAM main
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
-        USE global, only: block, blk_start, coarse_flcnt_check, deltat, &
+        USE global, only: block, coarse_flcnt_check, deltat, &
              ita, ita1, totaltime, totime, &
              pi,uc,re,intfr
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
@@ -27,6 +27,10 @@
         use biocfd_forcing, only: pressureForcing1, pressureforcingfield, pressureforcingghost, &
              velocityforcing1, velocityforcingfield, velocityforcingghost
         use biocfd_mpi_helpers, only: biocfd_init, biocfd_finalize
+#ifdef BIOCFD_MPI
+        ! TODO: Let's aim to not directly use the MPI module in main
+        use mpi_f08
+#endif
         IMPLICIT NONE
 
         INTEGER (int64) :: g
@@ -162,9 +166,8 @@
         CALL write_output_ascii(block(g),g,char_f)
 #endif
         end do
-        call biocfd_finalize()
-        stop
         !$acc wait
+#ifndef BIOCFD_MPI
         do g=1, size(block)
           CALL writeResult(block(g),g,char_f)
         end do
@@ -172,39 +175,77 @@
         do g=1, size(block)
            CALL body_plot(block(g))
         end do
-        DO g=blk_start, size(block)
+#endif
+        DO g=start, finish, step
+         if (g == 1) cycle
            DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent,block(g)%cosAlpha, &
                 block(g)%cosBeta, block(g)%cosGamma)
             block(g)%blk_mv_tag=0.
-        END DO
-        print *,10
-        DO g=blk_start, size(block)
            CALL computeSurfaceVariables(block(g),g,phase_angle,piv_pt)
         END DO
+
            CALL block_move_check
-           DO g=blk_start, size(block)
-              CALL change_block_coords(block(g))
+#ifdef BIOCFD_MPI
+        ! Here we set coarse_flcnt_check to 1 on every rank if it is 1
+        ! on any rank (by computing the maximum). Since this is really
+        ! a true or false flag, we should probably convert this to a
+        ! logical. Then we'd use MPI_LOR instead of MPI_MAX for the
+        ! reduction operation.
+        call MPI_Allreduce(MPI_IN_PLACE, coarse_flcnt_check, 1, MPI_INTEGER8, MPI_MAX, MPI_COMM_WORLD)
+#endif
+
+           DO g=start, finish, step
+              if (g /= 1) CALL change_block_coords(block(g))
            END DO
+
            DO g=1,size(intfr)
               CALL change_block_coords_interfaces(intfr(g),block(intfr(g)%b_blk))
            END DO
         do g=1,size(intfr)
            CALL change_block_interface(intfr(g),block(intfr(g)%a_blk),block(intfr(g)%b_blk))
         end do
-          CALL fine_block_cell
-          CALL cellCount_solid_coarse_mv
+
+         do g=start, finish, step
+            if (g == 1) then
+              CALL fine_block_cell
+              CALL cellCount_solid_coarse_mv
+            end if
+         end do
+        ! cellCount_solid_coarse_mv may or may not set
+        ! coarse_flcnt_check to 0. If it does then we have to
+        ! broadcast it everwhere...
+#ifdef BIOCFD_MPI
+        call MPI_Bcast(coarse_flcnt_check, 1, MPI_INTEGER8, 0, MPI_COMM_WORLD)
+#endif
            print*,1
-         do g=blk_start, size(block)
-            CALL computeSurfaceNorm(block(g))
+
+         do g=start, finish, step
+            if (g /= 1) CALL computeSurfaceNorm(block(g))
          end do
            print*,2
-         do g=blk_start, size(block)
-           CALL tagging_th_move(block(g), g)
+
+#ifdef BIOCFD_MPI
+          ! If we are using MPI then at this stage we need to make
+          ! sure that block(1) is up-to-date on all ranks. We assume
+          ! that all interfaces are from block(1) to another block
+          ! This is because at the end of tagging_th_move there are
+          ! fineUpdates which will need block(1) to be up to date
+          call MPI_Bcast(block(1)%p, size(block(1)%p), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%u, size(block(1)%u), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%v, size(block(1)%v), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%w, size(block(1)%w), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+#endif
+         ! Extra care needs to be taken with tagging_th_move because it contains interpoltions functions
+         do g=start, finish, step
+           if (g /= 1) CALL tagging_th_move(block(g), g)
          end do
-        do g=blk_start, size(block)
-           CALL selectiveRetagging_th(block(g))
+
+        do g=start, finish, step
+           if (g /= 1) CALL selectiveRetagging_th(block(g))
         end do
-        DO g=blk_start, size(block)
+
+        DO g=start, finish, step
+         if (g /= 1) then
             block(g)%blk_mv_tag=0.
               DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,&
                    block(g)% pNormDis,block(g)% nelp,block(g)% nelu1,block(g)% nelu2,&
@@ -217,33 +258,25 @@
              block(g)% v2_ghost,block(g)% v2t_ghost,block(g)% w2_ghost, block(g)%w2t_ghost,&
              block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, &
              block(g)%w1_ghost,block(g)% w1t_ghost)
+             end if
        END DO
        print*, "cellCount started"
-       do g=blk_start, size(block)
-          CALL cellCount_solid(block(g))
-          print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
-       end do
-        DO g=blk_start, size(block)
-            call solidCellBC_move(block(g))
-            call updateVelocity_newv(block(g))
-            block(g)%move_check=0.
-        ENDDO
-        do g=blk_start, size(block)
+       do g=start, finish, step
+         if (g == 1) cycle
+           CALL cellCount_solid(block(g))
+           print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
+           call solidCellBC_move(block(g))
+           call updateVelocity_newv(block(g))
+           block(g)%move_check=0.
            CALL computeNormDistance(block(g))
-        end do
-        do g=blk_start, size(block)
            CALL findTScells(block(g))
         end do
-        do g=blk_start, size(block)
+
+        do g=start, finish, step
+         if (g == 1) cycle
            CALL velocityForcingField(block(g))
-        end do
-        do g=blk_start, size(block)
            CALL pressureForcingField(block(g))
-        end do
-        do g=blk_start, size(block)
            CALL velocityForcingGhost(block(g))
-        end do
-        do g=blk_start, size(block)
            CALL pressureForcingGhost(block(g))
         end do
         IF(ita>=itamax) EXIT

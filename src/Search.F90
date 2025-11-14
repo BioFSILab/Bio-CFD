@@ -1027,6 +1027,18 @@ blk%fluidCellCount = flcnt
         DO g=1,size(intfr)
         a_blk_no=intfr(g)%a_blk
         b_blk_no=intfr(g)%b_blk
+
+#ifdef BIOCFD_MPI
+         ! Here we use the trick we've used elsewhere that if one of
+         ! the allocatable arrays isn't allocated we aren't on the
+         ! right branch so carry on
+         if (.not. allocated(block(b_blk_no)%u)) then
+               ! If this array isn't allocated we aren't on the right
+               ! rank to deal with this so keep going until we find
+               ! one that is on this rank
+               cycle
+           end if
+#endif
         mg1=block(b_blk_no)%cintp*block(1)%dx
         marginx=4.5_dp*mg1
         marginy=5*mg1
@@ -1292,6 +1304,18 @@ blk%fluidCellCount = flcnt
         type(Block_t), intent(inout) :: blk
         INTEGER(int64) :: k,j,i,countx_st,countz_st,county_st
 
+#ifdef BIOCFD_MPI
+         ! Here we use the trick we've used elsewhere that if one of
+         ! the allocatable arrays isn't allocated we aren't on the
+         ! right branch so carry on
+         if (.not. allocated(blk%u)) then
+               ! If this array isn't allocated we aren't on the right
+               ! rank to deal with this so keep going until we find
+               ! one that is on this rank
+               return
+           end if
+#endif
+
         if ( blk% move_check /= 1) return
         blk%cell_n=0
         DO k=1,blk%nz+2
@@ -1390,6 +1414,18 @@ SUBROUTINE change_block_interface(local_intfr,blk_a,blk_b)
   type(Interface_t),intent(inout) :: local_intfr
   type(Block_t), intent(in) :: blk_a, blk_b
   INTEGER(int64) :: factor, increment
+
+#ifdef BIOCFD_MPI
+         ! Here we use the trick we've used elsewhere that if one of
+         ! the allocatable arrays isn't allocated we aren't on the
+         ! right branch so carry on
+         if (.not. allocated(blk_b%u)) then
+               ! If this array isn't allocated we aren't on the right
+               ! rank to deal with this so keep going until we find
+               ! one that is on this rank
+               return
+           end if
+#endif
 
   if ( blk_b%move_check /= 1) return
   factor=local_intfr%b_msh/local_intfr%a_msh
