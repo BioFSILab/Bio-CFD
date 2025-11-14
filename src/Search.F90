@@ -677,9 +677,10 @@ blk%fluidCellCount = flcnt
      END IF
      END SUBROUTINE selectiveRetagging_th
 
-     SUBROUTINE cellCount_solid(blk)
+     SUBROUTINE cellCount_solid(blk,blk_no)
 
        type(Block_t), intent(inout) :: blk
+       integer(int64), intent(in) :: blk_no
        INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k
        INTEGER (int64) :: cell_val
        integer :: red_count, black_count
@@ -762,7 +763,8 @@ blk%fluidCellCount = flcnt
           ENDIF
        ENDDO
        !$acc end parallel loop
-
+       print*, "cellCount:", blk_no, block(blk_no)%fluidCellCount, &
+            block(blk_no)%redCellCount, block(blk_no)%blackCellCount
      END SUBROUTINE cellCount_solid
 
      SUBROUTINE computeNormDistance(blk)

@@ -20,4 +20,3 @@ MODULE global
         type(Interface_t), allocatable :: intfr(:)
 
 END MODULE global
-

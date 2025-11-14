@@ -1,5 +1,4 @@
-
-      PROGRAM main
+PROGRAM main
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, blk_start, coarse_flcnt_check, deltat, &
              ita, ita1, totaltime, totime, &
@@ -36,22 +35,16 @@
         real(dp) :: aoa,aoa1,aoa2,phase_angle,piv_pt
         CALL readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt)
         CALL readBlockInterface
-        do g=blk_start, size(block)
-          CALL readSurfaceMeshGmsh(block(g),surGeoPoints)
-        end do
         do g=1, size(block)
+          if (g >= blk_start) CALL readSurfaceMeshGmsh(block(g),surGeoPoints)
           CALL allocateArrays(block(g))
-        end do
-        do g=blk_start, size(block)
-           CALL findDistnode(block(g))
+          if (g >= blk_start) CALL findDistnode(block(g))
         end do
         phase_angle = phase_angle*pi/180_dp
         aoa1 = aoa*pi/180_dp
         aoa2 = -aoa1
         do g=blk_start, size(block)
            CALL shiftSurfaceNodesInitial(block(g),aoa1,aoa2,piv_pt)
-        end do
-        do g=blk_start, size(block)
            CALL computeSurfaceNorm(block(g))
         end do
         CALL interfaceDetail
@@ -60,50 +53,33 @@
         ita1 = 0
         do g=blk_start, size(block)
            CALL tagging_th(block(g),g)
+           CALL cellCount_solid(block(g),g)
         end do
-        print*,'11'
-        print*, "cellCount started"
-        do g=blk_start, size(block)
-           CALL cellCount_solid(block(g))
-           print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
-        end do
-        print*,'12'
         CALL fine_block_cell
-        print*,'13'
         CALL cellCount_solid_coarse(block(1))
-        print*,'14'
         IF (iStart==0) then
-           WRITE(*,*) 'Enter initialcondtitions'
            ita = 0
            ita1 = 0
            totime = 0.
            do g=1, size(block)
               CALL initialConditions(block(g), uc)
            end do
-           print*, 'initial'
         end if
         IF (iStart==1) then
-           WRITE(*,*) 'Enter lastconditions'
            ita = 0
            ita1 = 0
            do g=1, size(block)
               call lastConditions(block(g), g, re,totime,ita,ita1)
            end do
         end if
-        do g=blk_start, size(block)
-           CALL computeNormDistance(block(g))
-        end do
-        do g=blk_start, size(block)
-           CALL findTScells(block(g))
-        end do
         do g=1, size(block)
+           if (g >= blk_start) CALL computeNormDistance(block(g))
+           if (g >= blk_start) CALL findTScells(block(g))
            CALL coefficientMatrix(block(g), g == 1)
         end do
-        print*, "Coefficient Matrix generated"
         do g=1, size(block)
            CALL non_uni_coeff(block(g))
         end do
-        write(*,*)'leaving non_uni_coeff'
         totime = totime + deltat
         do g=1, size(block)
 #if USE_HDF5 == 1
@@ -113,50 +89,32 @@
 #endif
         end do
         coarse_flcnt_check=0
-        print*, 'adam'
         DO
         ita = ita + 1
         totime = totime + deltat
         do g=1, size(block)
            CALL nsMomentum2order(block(g))
+           if (g ==1) CALL velocityBC(block(g),deltat,uc)
+           if (g >= blk_start) CALL solidCellBC(block(g))
+           !$acc wait
+           if (g >= blk_start) CALL velocityForcing1(block(g))
+           if (g ==1) CALL velocityBC(block(g),deltat,uc)
         end do
-        CALL velocityBC(block(1),deltat,uc)
-        do g=blk_start, size(block)
-           CALL solidCellBC(block(g))
-        end do
-        !$acc wait
-        do g=blk_start, size(block)
-           CALL velocityForcing1(block(g))
-        end do
-        CALL velocityBC(block(1),deltat,uc)
         CALL poissonSolver(pcItaMax)
-        print *,7
-        do g=blk_start, size(block)
-           CALL pressureForcing1(block(g))
-        end do
         do g=1, size(block)
+           if (g >= blk_start) CALL pressureForcing1(block(g))
 #if USE_HDF5 == 1
-        CALL write_output_hdf5(block(g),g)
+           CALL write_output_hdf5(block(g),g)
 #else
-        CALL write_output_ascii(block(g),g,char_f)
+           CALL write_output_ascii(block(g),g,char_f)
 #endif
-        end do
-        !$acc wait
-        do g=1, size(block)
-          CALL writeResult(block(g),g,char_f)
-        end do
-        !$acc wait
-        do g=1, size(block)
+           CALL writeResult(block(g),g,char_f)
            CALL body_plot(block(g))
-        end do
-        DO g=blk_start, size(block)
-           DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent,block(g)%cosAlpha, &
-                block(g)%cosBeta, block(g)%cosGamma)
-            block(g)%blk_mv_tag=0.
-        END DO
-        print *,10
-        DO g=blk_start, size(block)
-           CALL computeSurfaceVariables(block(g),g,phase_angle,piv_pt)
+           !$acc wait
+           if (g >= blk_start) DEALLOCATE(block(g)%xcent, block(g)%ycent, &
+                block(g)%zcent,block(g)%cosAlpha, block(g)%cosBeta, block(g)%cosGamma)
+           if (g >= blk_start)  block(g)%blk_mv_tag=0.
+           if (g >= blk_start) CALL computeSurfaceVariables(block(g),g,phase_angle,piv_pt)
         END DO
            CALL block_move_check
            DO g=blk_start, size(block)
@@ -170,11 +128,9 @@
         end do
           CALL fine_block_cell
           CALL cellCount_solid_coarse_mv
-           print*,1
          do g=blk_start, size(block)
             CALL computeSurfaceNorm(block(g))
          end do
-           print*,2
          do g=blk_start, size(block)
            CALL tagging_th_move(block(g), g)
          end do
@@ -195,47 +151,22 @@
              block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, &
              block(g)%w1_ghost,block(g)% w1t_ghost)
        END DO
-       print*, "cellCount started"
        do g=blk_start, size(block)
-          CALL cellCount_solid(block(g))
-          print*,g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
+          CALL cellCount_solid(block(g),g)
        end do
         DO g=blk_start, size(block)
             call solidCellBC_move(block(g))
             call updateVelocity_newv(block(g))
             block(g)%move_check=0.
-        ENDDO
-        do g=blk_start, size(block)
-           CALL computeNormDistance(block(g))
+            CALL computeNormDistance(block(g))
         end do
         do g=blk_start, size(block)
            CALL findTScells(block(g))
-        end do
-        do g=blk_start, size(block)
            CALL velocityForcingField(block(g))
-        end do
-        do g=blk_start, size(block)
            CALL pressureForcingField(block(g))
-        end do
-        do g=blk_start, size(block)
            CALL velocityForcingGhost(block(g))
-        end do
-        do g=blk_start, size(block)
            CALL pressureForcingGhost(block(g))
         end do
         IF(ita>=itamax) EXIT
         END DO
       END PROGRAM main
-
-
-
-
-
-
-
-
-
-
-
-
-
