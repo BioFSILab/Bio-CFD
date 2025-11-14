@@ -12,12 +12,12 @@ module biocfd_mpi_helpers
 
   private
 
-  public :: biocfd_init, biocfd_finalize
+  public :: biocfd_init, biocfd_finalize, get_block_iteration_params
 
 contains
 
-  !> Initialize the steps that we will be performing over blocks. This
-  !> allows us to work out which blocks to put on each rank in the case of MPI.
+  !> Initialize MPI and then work out steps that we will be performing
+  !> over blocks with `get_block_iteration_params`.
   subroutine biocfd_init(nblocks, start, finish, step, rank)
     !> The total number of blocks we are simulating
     integer, intent(in) :: nblocks
@@ -30,17 +30,7 @@ contains
     integer :: required, provided
     ! An error value to check when using MPI
     integer :: ierror
-#endif
 
-
-#ifndef BIOCFD_MPI
-    ! If we aren't using MPI, it is straight forward. Our loop goes
-    ! over every block from 1 in steps of 1. Rank is set to 0.
-    start = 1
-    finish = nblocks
-    step = 1
-    rank = 0
-#else
     required = MPI_THREAD_SERIALIZED
     call MPI_Init_Thread(required, provided, ierror)
 
@@ -61,12 +51,8 @@ contains
        call MPI_Finalize()
        stop 1
     end if
-
-    ! MPI ranks are zero indexed, we want to start looping from 1 in
-    ! fortran
-    start = rank + 1
-    finish = nblocks
 #endif
+    call  get_block_iteration_params(nblocks, start, finish, step, rank)
   end subroutine biocfd_init
 
   !> Finalize is an no-op in the case that we aren't using MPI
@@ -76,5 +62,33 @@ contains
     call MPI_Finalize(ierror)
 #endif
   end subroutine biocfd_finalize
+
+!> Work out how work will be shared across MPI nodes
+subroutine get_block_iteration_params(nblocks, start, finish, step, rank)
+   !> The total number of blocks we are simulating
+    integer, intent(in) :: nblocks
+    !> The start, finish (both end and stop are keywords) and step size we will use to loop over blocks
+    integer, intent(out) :: start, finish, step
+    !> The MPI rank that we are running on (0 in the case we aren't using MPI)
+    integer, intent(out) :: rank
+#ifdef BIOCFD_MPI
+    ! An error value to check when using MPI
+    integer :: ierror
+    call MPI_Comm_size(MPI_COMM_WORLD, step, ierror)
+    call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierror)
+    ! MPI ranks are zero indexed, we want to start looping from 1 in
+    ! fortran
+    start = rank + 1
+    finish = nblocks
+#else
+    ! If we aren't using MPI, it is straight forward. Our loop goes
+    ! over every block from 1 in steps of 1. Rank is set to 0.
+    start = 1
+    finish = nblocks
+    step = 1
+    rank = 0
+#endif
+
+end subroutine get_block_iteration_params
 
 end module biocfd_mpi_helpers
