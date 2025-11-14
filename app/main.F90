@@ -37,10 +37,14 @@
         real(dp) :: aoa,aoa1,aoa2,phase_angle,piv_pt
         integer :: start, finish, step, rank
 
+        ! In MPI mode, the following three subroutines are called on all ranks
         CALL readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt)
+        CALL readBlockInterface
+        CALL interfaceDetail
+
         ! Need to init after we know the size of block
         call biocfd_init(size(block), start, finish, step, rank)
-        CALL readBlockInterface
+
         do g=blk_start, size(block)
           CALL readSurfaceMeshGmsh(block(g),surGeoPoints)
         end do
@@ -59,7 +63,7 @@
         do g=blk_start, size(block)
            CALL computeSurfaceNorm(block(g))
         end do
-        CALL interfaceDetail
+
         totalTime=0.
         totime = 0.
         ita1 = 0
