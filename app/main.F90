@@ -137,22 +137,23 @@
         DO
         ita = ita + 1
         totime = totime + deltat
-        do g=1, size(block)
+        do g=start, finish, step
            CALL nsMomentum2order(block(g))
+           if (g == 1) CALL velocityBC(block(1), deltat, uc)
         end do
-        CALL velocityBC(block(1),deltat,uc)
-        do g=blk_start, size(block)
+
+        do g=start, finish, step
+         if (g /= 1) then
            CALL solidCellBC(block(g))
+           CALL velocityForcing1(block(g))
+         end if
+         if (g == 1) CALL velocityBC(block(1), deltat, uc)
         end do
         !$acc wait
-        do g=blk_start, size(block)
-           CALL velocityForcing1(block(g))
-        end do
-        CALL velocityBC(block(1),deltat,uc)
         CALL poissonSolver(pcItaMax)
         print *,7
-        do g=blk_start, size(block)
-           CALL pressureForcing1(block(g))
+        do g=start, finish, step
+           if (g /= 1) CALL pressureForcing1(block(g))
         end do
         do g=1, size(block)
 #if USE_HDF5 == 1
@@ -161,6 +162,8 @@
         CALL write_output_ascii(block(g),g,char_f)
 #endif
         end do
+        call biocfd_finalize()
+        stop
         !$acc wait
         do g=1, size(block)
           CALL writeResult(block(g),g,char_f)
