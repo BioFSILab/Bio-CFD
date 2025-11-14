@@ -20,7 +20,7 @@ subroutine coarseUpdate
         INTEGER :: st_idz, en_idz
 
 #ifdef BIOCFD_MPI
-        integer :: rank, num_proc, ierror, token
+        integer :: rank, num_proc, ierror
         call MPI_Comm_size(MPI_COMM_WORLD, num_proc, ierror)
         call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierror)
 
@@ -211,7 +211,7 @@ subroutine coarseUpdate
         INTEGER :: st_idz, en_idz
 
 #ifdef BIOCFD_MPI
-        integer :: rank, num_proc, ierror, token
+        integer :: rank, num_proc, ierror
         call MPI_Comm_size(MPI_COMM_WORLD, num_proc, ierror)
         call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierror)
         ! We don't wait for anything if we are on rank 0 and just get
@@ -354,7 +354,7 @@ subroutine coarseUpdate
         INTEGER :: st_idz, en_idz
 
 #ifdef BIOCFD_MPI
-        integer :: rank, num_proc, ierror, token
+        integer :: rank, num_proc, ierror
         call MPI_Comm_size(MPI_COMM_WORLD, num_proc, ierror)
         call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierror)
 
