@@ -26,11 +26,11 @@ contains
        INTEGER  :: k, i, j
        REAL (dp), allocatable :: u1(:,:,:), v1(:,:,:), w1(:,:,:)
        character (len=11) :: dummy_1
-       character (len=5) ::dummy_2
+       character (len=14) ::dummy_2
 
          if (mod(ita,200_int64) /=0 .and. ita > 2) return
             write(dummy_1,'(A6,I5.5)') 'block_',blk_no
-            write(dummy_2,'(I5.5)') ita
+            write(dummy_2,'(A9,I5.5)') 'timestep_', ita
             allocate(u1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1),&
                      v1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1),&
                      w1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1))
@@ -43,39 +43,39 @@ contains
             END DO
             END DO
             END DO
-            filename1="out/output_"//trim(dummy_2)//".h5"
+            filename1="out/"//trim(dummy_1)//".h5"
             call hdf5_write_real(filename=filename1,&
-                                 array_input_3d=u1,key='u1',group=dummy_1)
+                                 array_input_3d=u1,key='u1',group=dummy_2)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_3d=v1,key='v1',group=dummy_1)
+                                 array_input_3d=v1,key='v1',group=dummy_2)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_3d=w1,key='w1',group=dummy_1)
+                                 array_input_3d=w1,key='w1',group=dummy_2)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_1d=blk%xp(2:blk%nx+1), key='xp', group=dummy_1)
+                                 array_input_1d=blk%xp(2:blk%nx+1), key='xp', group=dummy_2)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_1d=blk%yp(2:blk%ny+1), key='yp',group=dummy_1)
+                                 array_input_1d=blk%yp(2:blk%ny+1), key='yp',group=dummy_2)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_1d=blk%zp(2:blk%nz+1), key='zp',group=dummy_1)
+                                 array_input_1d=blk%zp(2:blk%nz+1), key='zp',group=dummy_2)
             call hdf5_write_int(filename=filename1,&
-                                scalar_input=blk%nx,key='zonei',group=dummy_1)
+                                scalar_input=blk%nx,key='zonei',group=dummy_2)
             call hdf5_write_int(filename=filename1,&
-                                scalar_input=blk%nx,key='zonej',group=dummy_1)
+                                scalar_input=blk%nx,key='zonej',group=dummy_2)
             call hdf5_write_int(filename=filename1,&
-                                scalar_input=blk%nz,key='zonek',group=dummy_1)
+                                scalar_input=blk%nz,key='zonek',group=dummy_2)
             call hdf5_write_real(filename=filename1,&
                                  array_input_3d=blk%p(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
-                                 key='p',group=dummy_1)
+                                 key='p',group=dummy_2)
             call hdf5_write_real(filename=filename1,&
-                                 scalar_input=totime,key='totime',group=dummy_1)
+                                 scalar_input=totime,key='totime',group=dummy_2)
             call hdf5_write_int(filename=filename1,&
                                 array_input_3d=blk%cell(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
-                                key='cell',group=dummy_1)
+                                key='cell',group=dummy_2)
             call hdf5_write_int(filename=filename1,&
                                 array_input_3d=blk%cell_n(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
-                                key='cell_n',group=dummy_1)
+                                key='cell_n',group=dummy_2)
             call hdf5_write_int(filename=filename1,&
                                 array_input_3d=blk%cell_pr(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
-                                key='cell_pr',group=dummy_1)
+                                key='cell_pr',group=dummy_2)
             deallocate(u1,v1,w1)
 
        END SUBROUTINE write_output_hdf5
