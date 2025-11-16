@@ -10,7 +10,7 @@ auto-examples = true
 external-modules = ["hdf5", "openacc", "mpi_f08"]
 
 [preprocess]
-cpp.macros = ["USE_HDF5=0"]
+cpp.macros = ["USE_HDF5=0","CREATE_LOGFILE=0"]
 
 
 [install]

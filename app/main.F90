@@ -26,6 +26,7 @@
 #endif
         use biocfd_forcing, only: pressureForcing1, pressureforcingfield, pressureforcingghost, &
              velocityforcing1, velocityforcingfield, velocityforcingghost
+        use biocfd_debug_log, only: log_file_open, log_file_close, log_file_write
         IMPLICIT NONE
 
         INTEGER (int64) :: g
@@ -34,6 +35,8 @@
         INTEGER               :: istart
         INTEGER (int64)   :: itamax, pcItaMax
         real(dp) :: aoa,aoa1,aoa2,phase_angle,piv_pt
+        call log_file_open()
+        call log_file_write("main","Start of log file")
         CALL readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt)
         CALL readBlockInterface
         do g=blk_start, size(block)
@@ -225,6 +228,8 @@
         end do
         IF(ita>=itamax) EXIT
         END DO
+      call log_file_write("main","end of log file")
+      call log_file_close()
       END PROGRAM main
 
 
