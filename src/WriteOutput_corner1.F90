@@ -29,8 +29,8 @@ contains
        character (len=5) ::dummy_2
 
          if (mod(ita,200_int64) /=0 .and. ita > 2) return
-            write(dummy_1,'(A6,I5.5)') 'block_',blk_no
-            write(dummy_2,'(I5.5)') ita
+            write(dummy_1,"(A6,I5.5)") "block_",blk_no
+            write(dummy_2,"(I5.5)") ita
             allocate(u1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1),&
                      v1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1),&
                      w1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1))
@@ -45,37 +45,37 @@ contains
             END DO
             filename1="out/output_"//trim(dummy_2)//".h5"
             call hdf5_write_real(filename=filename1,&
-                                 array_input_3d=u1,key='u1',group=dummy_1)
+                                 array_input_3d=u1,key="u1",group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_3d=v1,key='v1',group=dummy_1)
+                                 array_input_3d=v1,key="v1",group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_3d=w1,key='w1',group=dummy_1)
+                                 array_input_3d=w1,key="w1",group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_1d=blk%xp(2:blk%nx+1), key='xp', group=dummy_1)
+                                 array_input_1d=blk%xp(2:blk%nx+1), key="xp", group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_1d=blk%yp(2:blk%ny+1), key='yp',group=dummy_1)
+                                 array_input_1d=blk%yp(2:blk%ny+1), key="yp",group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 array_input_1d=blk%zp(2:blk%nz+1), key='zp',group=dummy_1)
+                                 array_input_1d=blk%zp(2:blk%nz+1), key="zp",group=dummy_1)
             call hdf5_write_int(filename=filename1,&
-                                scalar_input=blk%nx,key='zonei',group=dummy_1)
+                                scalar_input=blk%nx,key="zonei",group=dummy_1)
             call hdf5_write_int(filename=filename1,&
-                                scalar_input=blk%nx,key='zonej',group=dummy_1)
+                                scalar_input=blk%nx,key="zonej",group=dummy_1)
             call hdf5_write_int(filename=filename1,&
-                                scalar_input=blk%nz,key='zonek',group=dummy_1)
+                                scalar_input=blk%nz,key="zonek",group=dummy_1)
             call hdf5_write_real(filename=filename1,&
                                  array_input_3d=blk%p(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
-                                 key='p',group=dummy_1)
+                                 key="p",group=dummy_1)
             call hdf5_write_real(filename=filename1,&
-                                 scalar_input=totime,key='totime',group=dummy_1)
+                                 scalar_input=totime,key="totime",group=dummy_1)
             call hdf5_write_int(filename=filename1,&
                                 array_input_3d=blk%cell(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
-                                key='cell',group=dummy_1)
+                                key="cell",group=dummy_1)
             call hdf5_write_int(filename=filename1,&
                                 array_input_3d=blk%cell_n(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
-                                key='cell_n',group=dummy_1)
+                                key="cell_n",group=dummy_1)
             call hdf5_write_int(filename=filename1,&
                                 array_input_3d=blk%cell_pr(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
-                                key='cell_pr',group=dummy_1)
+                                key="cell_pr",group=dummy_1)
             deallocate(u1,v1,w1)
 
        END SUBROUTINE write_output_hdf5
@@ -91,10 +91,10 @@ contains
          IF((mod(ita,200_int64) ==0 .or. ita <= 2 ))then
 
        WRITE(filename1,1)char_f,ita,blk_no,re,blk%dx,size(block)
-1     FORMAT('out/',A3,'_butter_fielddata.',i9.9,'.',i3.3,'.',f7.1,'.',f8.6,'.',i3.3,".dat")
-           OPEN(UNIT = 786, FILE = filename1, STATUS = 'unknown')
+1     FORMAT("out/",A3,"_butter_fielddata.",i9.9,".",i3.3,".",f7.1,".",f8.6,".",i3.3,".dat")
+           OPEN(UNIT = 786, FILE = filename1, STATUS = "unknown")
             WRITE(786,*)'variables="x","y","z","u","v","w","p","totime","cellid","cell_n","cell_pr"'
-            WRITE(786,*) 'zone, ', 'i = ', blk%nx,' j = ', blk%ny, ' k = ', blk%nz
+            WRITE(786,*) "zone, ", "i = ", blk%nx," j = ", blk%ny, " k = ", blk%nz
 
             DO k = 2, blk%nz+1
             DO j = 2, blk%ny+1
@@ -121,8 +121,8 @@ contains
         CHARACTER (LEN = 3),INTENT(IN)   :: char_f
         IF(mod(ita,500_int64)/=0) return
            WRITE(filename1,22)char_f,blk_no,re,blk%dx
- 22          FORMAT('out/Chkpt/',A3,'_butter_chkpt.',i3.3,'.',f6.1,'.',f8.6,".dat")
-        OPEN (1,FILE=filename1,FORM='formatted')
+ 22          FORMAT("out/Chkpt/",A3,"_butter_chkpt.",i3.3,".",f6.1,".",f8.6,".dat")
+        OPEN (1,FILE=filename1,FORM="formatted")
         DO k = 1, blk%nz+2
         DO j = 1, blk%ny+2
         DO i = 1, blk%nx+2
@@ -143,10 +143,10 @@ contains
           if (ita /= 1 ) return
           WRITE(filename1,108)
   108     FORMAT("out/butterfly.dat")
-          OPEN(UNIT=857,FILE=filename1,STATUS='unknown')
+          OPEN(UNIT=857,FILE=filename1,STATUS="unknown")
           WRITE(857,*) 'TITLE = "FEstressplot"'
           WRITE(857,*) 'VARIABLES= "x", "y", "z","bd_n"'
-          WRITE(857,*) 'ZONE NODES= ',blk%ibNodes,',ELEMENTS=',blk%ibElems,',DATAPACKING=POINT, ZONETYPE=FETRIANGLE'
+          WRITE(857,*) "ZONE NODES= ",blk%ibNodes,",ELEMENTS=",blk%ibElems,",DATAPACKING=POINT, ZONETYPE=FETRIANGLE"
           DO inode = 1, blk%ibNodes
             WRITE(857,*) blk%xnode1(inode),blk%ynode1(inode),blk%znode1(inode), 99
           END DO

@@ -194,13 +194,13 @@ module biocfd_pcor_vcor
 #ifndef BIOCFD_MPI
           ! TN: Not going to do this if we are using MPI - I'm not sure how useful it is anyway
             WRITE(filename1,1)
- 1          FORMAT('sphere_iter.dat')
-         OPEN(111,FILE=filename1,POSITION='APPEND',STATUS='unknown')
+ 1          FORMAT("sphere_iter.dat")
+         OPEN(111,FILE=filename1,POSITION="APPEND",STATUS="unknown")
          ! Final 0. was solverTime, but this was never written to so was always 0.
          WRITE(111,126)   ita, block(1)%nIterPcor, block(2)%nIterPcor, omega1, omega2, 0._dp
          WRITE(*,16) ita, max_nIterPcor, max_derr2, max_derrStdSt, totalTime
- 126      FORMAT(' ',I8, 2I10, 2F6.2,F14.9)
- 16      FORMAT(' ',I8, I10, 4E15.6)
+ 126      FORMAT(" ",I8, 2I10, 2F6.2,F14.9)
+ 16      FORMAT(" ",I8, I10, 4E15.6)
          CLOSE(111)
 #endif
 

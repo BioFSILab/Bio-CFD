@@ -174,13 +174,13 @@ module biocfd_search
         blk%nxty_cent= blk%nxty_cent + blk%ychg
         blk%nxtx_cent= blk%nxtx_cent + blk%xmove
         WRITE(filename1,1) blk%fineg,re, g
-      1  FORMAT('d',I4.4,'_index.',F8.2,'.',i3.1,".dat")
-        OPEN(UNIT = 17, FILE = filename1,POSITION='APPEND', STATUS = 'unknown')
+      1  FORMAT("d",I4.4,"_index.",F8.2,".",i3.1,".dat")
+        OPEN(UNIT = 17, FILE = filename1,POSITION="APPEND", STATUS = "unknown")
         write(17,14) totime, blk%nxty_cent, blk%inity_cent, blk%ymove, &
                      blk%nxtx_cent, blk%xmove
      close(17)
      14      FORMAT(7F15.8)
-        print*,'centn',blk%nxty_cent,'centi',blk%inity_cent,'mv',blk%ychg
+        print*,"centn",blk%nxty_cent,"centi",blk%inity_cent,"mv",blk%ychg
       DO i = 1, blk%ibnodes
       IF (blk%ibNodeId(i)==51) THEN
              xr1 =  blk%xnode(i)
@@ -255,7 +255,7 @@ module biocfd_search
         END DO
        !$acc end parallel loop
 
-        print*, 'SurfaceNorm done, inor =', inor
+        print*, "SurfaceNorm done, inor =", inor
 
      END SUBROUTINE computeSurfaceNorm
 
@@ -381,10 +381,10 @@ SUBROUTINE tagging_th_core(blk)
          END DO
          END DO
 
-         print*, 'search done'
-         Print*, 'imms. cells=', blk%ibCellCount
-        Print*, 'fluid cells=',blk%fluidCellCount
-        Print*, 'solid cells=', blk%solidCellCount
+         print*, "search done"
+         Print*, "imms. cells=", blk%ibCellCount
+        Print*, "fluid cells=",blk%fluidCellCount
+        Print*, "solid cells=", blk%solidCellCount
      END SUBROUTINE tagging_th_core
 
      SUBROUTINE tagging_th(blk,blk_no)
@@ -395,8 +395,8 @@ SUBROUTINE tagging_th_core(blk)
 
         call tagging_th_core(blk)
                WRITE(filename1,1) blk_no
-  1      FORMAT('butter_f.',i3.3,".dat")
-          OPEN(11,FILE=filename1,status='unknown')
+  1      FORMAT("butter_f.",i3.3,".dat")
+          OPEN(11,FILE=filename1,status="unknown")
         DO k = 1, blk%nz+2
         DO j = 1, blk%ny+2
         DO i = 1, blk%nx+2
@@ -407,8 +407,8 @@ SUBROUTINE tagging_th_core(blk)
         CLOSE(11)
 
          WRITE(filename1,2) blk_no
- 2       FORMAT('butter_cellcount_f.',i3.3,".dat")
-         OPEN(12,FILE=filename1,FORM='formatted')
+ 2       FORMAT("butter_cellcount_f.",i3.3,".dat")
+         OPEN(12,FILE=filename1,FORM="formatted")
         WRITE(12,*) blk%solidCellCount, blk%fluidCellCount, blk%ibCellCount
         CLOSE(12)
 
@@ -474,7 +474,7 @@ SUBROUTINE tagging_th_core(blk)
         !$acc end parallel loop
 
         blk%TSCellCount = tscnt
-        print*, 'TScell count =', blk%TSCellCount
+        print*, "TScell count =", blk%TSCellCount
 
         ALLOCATE(blk%TSIndexPtr(blk%TSCellCount,3))
 
@@ -672,7 +672,7 @@ ibcnt=0
 blk%ibCellCount = ibcnt
 blk%solidCellCount = sdcnt
 blk%fluidCellCount = flcnt
-       print*, 'selective retagging', blk%ibCellCount, blk%fluidCellCount, &
+       print*, "selective retagging", blk%ibCellCount, blk%fluidCellCount, &
                 blk%solidCellCount
      END IF
      END SUBROUTINE selectiveRetagging_th
@@ -961,9 +961,9 @@ blk%fluidCellCount = flcnt
          end do
          end do
          end do
-         print*,'bef deall'
+         print*,"bef deall"
          DEALLOCATE (block(g)%fluidIndexPtr)
-         print*,'aft deall'
+         print*,"aft deall"
          ALLOCATE (block(g)%fluidIndexPtr(block(g)%fluidCellCount,3))
          DO k = 2, block(g)%nz +1
          DO j = 2, block(g)%ny +1
@@ -1048,8 +1048,8 @@ blk%fluidCellCount = flcnt
         xdisp1= (abs(xval_lt - intfr(g)%xintf_start))
         zdisp1= dmin1(abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start), &
                       abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end))
-        print*,'blk_check_cond', marginx, marginy
-        print*,'ydsip',abs(yval_dw-intfr(g)%yintf_start),abs(yval_up - intfr(g)%yintf_end)
+        print*,"blk_check_cond", marginx, marginy
+        print*,"ydsip",abs(yval_dw-intfr(g)%yintf_start),abs(yval_up - intfr(g)%yintf_end)
         print*,block(b_blk_no)%xnode1(block(b_blk_no)%mkx1),block(b_blk_no)%nxtx_cent
         print*,block(b_blk_no)%ynode1(block(b_blk_no)%mk),block(b_blk_no)%nxty_cent
         block(b_blk_no)%move_amty=0
@@ -1093,7 +1093,7 @@ blk%fluidCellCount = flcnt
                 block(b_blk_no)%move_amtx = &
                   floor((block(b_blk_no)%nxtx_cent - block(b_blk_no)%initx_cent) &
                   / block(b_blk_no)%dx) - factor
-                print*,'move_amtx',block(b_blk_no)%move_amtx
+                print*,"move_amtx",block(b_blk_no)%move_amtx
                 if ( abs(block(b_blk_no)%move_amtx) < factor)then
                         if ( block(b_blk_no)%move_amtx < 0)then
                         block(b_blk_no)%move_amtx=-factor
@@ -1136,9 +1136,9 @@ blk%fluidCellCount = flcnt
                 end if
                 block(b_blk_no)%initz_cent=block(b_blk_no)%nxtz_cent
                 end if
-                 print*,'blk_movez',block(b_blk_no)%move_amtz
-                 print*,'blk_movey',block(b_blk_no)%move_amty
-                 print*,'blk_movex',block(b_blk_no)%move_amtx
+                 print*,"blk_movez",block(b_blk_no)%move_amtz
+                 print*,"blk_movey",block(b_blk_no)%move_amty
+                 print*,"blk_movex",block(b_blk_no)%move_amtx
 
        intfr(g)%xintf_st_new=dmax1(intfr(g)%xintf_start,intfr(g)%xintf_start &
                              + (block(b_blk_no)%move_amtx * block(b_blk_no)%dx))
@@ -1152,9 +1152,9 @@ blk%fluidCellCount = flcnt
                              + (block(b_blk_no)%move_amtz * block(b_blk_no)%dz))
        intfr(g)%zintf_en_new=dmin1(intfr(g)%zintf_end,intfr(g)%zintf_end &
                              + (block(b_blk_no)%move_amtz * block(b_blk_no)%dz))
-       print*,'zstart_org',intfr(g)%zintf_start,'zend_org',intfr(g)%zintf_end
-       print*,'ystart_org',intfr(g)%yintf_start,'yend_org',intfr(g)%yintf_end
-       print*,'xstart_org',intfr(g)%xintf_start,'xend_org',intfr(g)%xintf_end
+       print*,"zstart_org",intfr(g)%zintf_start,"zend_org",intfr(g)%zintf_end
+       print*,"ystart_org",intfr(g)%yintf_start,"yend_org",intfr(g)%yintf_end
+       print*,"xstart_org",intfr(g)%xintf_start,"xend_org",intfr(g)%xintf_end
 
        intfr(g)%xintf_start=intfr(g)%xintf_start + (block(b_blk_no)%move_amtx * block(b_blk_no)%dx)
        intfr(g)%xintf_end=intfr(g)%xintf_end + (block(b_blk_no)%move_amtx * block(b_blk_no)%dx)
@@ -1162,17 +1162,17 @@ blk%fluidCellCount = flcnt
        intfr(g)%yintf_end=intfr(g)%yintf_end + (block(b_blk_no)%move_amty * block(b_blk_no)%dy)
        intfr(g)%zintf_start=intfr(g)%zintf_start + (block(b_blk_no)%move_amtz * block(b_blk_no)%dz)
        intfr(g)%zintf_end=intfr(g)%zintf_end + (block(b_blk_no)%move_amtz * block(b_blk_no)%dz)
-       print*,'zstart_mv',intfr(g)%zintf_start,'zend_mv',intfr(g)%zintf_end
-       print*,'ystart_mv',intfr(g)%yintf_start,'yend_mv',intfr(g)%yintf_end
-       print*,'xstart_mv',intfr(g)%xintf_start,'xend_mv',intfr(g)%xintf_end
-       print*,'zstart_nw',intfr(g)%zintf_st_new,'zend_nw',intfr(g)%zintf_en_new
-       print*,'ystart_nw',intfr(g)%yintf_st_new,'yend_nw',intfr(g)%yintf_en_new
-       print*,'xstart_nw',intfr(g)%xintf_st_new,'xend_nw',intfr(g)%xintf_en_new
+       print*,"zstart_mv",intfr(g)%zintf_start,"zend_mv",intfr(g)%zintf_end
+       print*,"ystart_mv",intfr(g)%yintf_start,"yend_mv",intfr(g)%yintf_end
+       print*,"xstart_mv",intfr(g)%xintf_start,"xend_mv",intfr(g)%xintf_end
+       print*,"zstart_nw",intfr(g)%zintf_st_new,"zend_nw",intfr(g)%zintf_en_new
+       print*,"ystart_nw",intfr(g)%yintf_st_new,"yend_nw",intfr(g)%yintf_en_new
+       print*,"xstart_nw",intfr(g)%xintf_st_new,"xend_nw",intfr(g)%xintf_en_new
 
         DO i=1,block(b_blk_no)%nx+2
            if( block(b_blk_no)%xp(i) > intfr(g)%xintf_st_new)then
                 block(b_blk_no)%cpy_x_start=i
-                print*,'xpst',block(b_blk_no)%xp(i),'i',i
+                print*,"xpst",block(b_blk_no)%xp(i),"i",i
                 exit
           end if
         END DO
@@ -1180,14 +1180,14 @@ blk%fluidCellCount = flcnt
         DO i=block(b_blk_no)%cpy_x_start,block(b_blk_no)%nx+2
            if( block(b_blk_no)%xp(i) > intfr(g)%xintf_en_new)then
                 block(b_blk_no)%cpy_x_end=i-1
-                print*,'xpen',block(b_blk_no)%xp(i-1),'i',i-1
+                print*,"xpen",block(b_blk_no)%xp(i-1),"i",i-1
                 exit
           end if
         END DO
         DO j=1,block(b_blk_no)%ny+2
            if( block(b_blk_no)%yp(j) > intfr(g)%yintf_st_new)then
                 block(b_blk_no)%cpy_y_start=j
-                print*,'ypst',block(b_blk_no)%yp(j),'j',j
+                print*,"ypst",block(b_blk_no)%yp(j),"j",j
                 exit
           end if
         END DO
@@ -1195,7 +1195,7 @@ blk%fluidCellCount = flcnt
         DO j=block(b_blk_no)%cpy_y_start,block(b_blk_no)%ny+2
            if( block(b_blk_no)%yp(j) > intfr(g)%yintf_en_new)then
                 block(b_blk_no)%cpy_y_end=j-1
-                print*,'ypen',block(b_blk_no)%yp(j-1),'j',j-1
+                print*,"ypen",block(b_blk_no)%yp(j-1),"j",j-1
                 exit
           end if
         END DO
@@ -1203,7 +1203,7 @@ blk%fluidCellCount = flcnt
         DO k=1,block(b_blk_no)%nz+2
            if( block(b_blk_no)%zp(k) > intfr(g)%zintf_st_new)then
                 block(b_blk_no)%cpy_z_start=k
-                print*,'zpst',block(b_blk_no)%zp(k),'k',k
+                print*,"zpst",block(b_blk_no)%zp(k),"k",k
                 exit
           end if
         END DO
@@ -1211,7 +1211,7 @@ blk%fluidCellCount = flcnt
         DO k=block(b_blk_no)%cpy_z_start,block(b_blk_no)%nz+2
            if( block(b_blk_no)%zp(k) > intfr(g)%zintf_en_new)then
                 block(b_blk_no)%cpy_z_end=k-1
-                print*,'zpen',block(b_blk_no)%zp(k-1),'k',k-1
+                print*,"zpen",block(b_blk_no)%zp(k-1),"k",k-1
                 exit
           end if
         END DO
@@ -1244,9 +1244,9 @@ blk%fluidCellCount = flcnt
         change_z_f= blk%move_amtz*blk%dz
         change_y_f= blk%move_amty*blk%dy
         change_x_f= blk%move_amtx * blk%dx
-        print*, 'chz',blk%move_amtz , blk%dz
-        print*, 'chy',blk%move_amty , blk%dy
-        print*, 'chx',blk%move_amtx , blk%dx
+        print*, "chz",blk%move_amtz , blk%dz
+        print*, "chy",blk%move_amty , blk%dy
+        print*, "chx",blk%move_amtx , blk%dx
 
         DO i = 1, blk%nx+3
            blk%x1(i) = blk%x1(i) + change_x_f
@@ -1325,7 +1325,7 @@ blk%fluidCellCount = flcnt
         DO i=1,blk%nx+2
            if(blk%xp(i) > local_intfr%xintf_st_new)then
                  blk%cpy_x_start_mv=i
-                 print*,'xpst_f',blk%xp(i),'i',i
+                 print*,"xpst_f",blk%xp(i),"i",i
                  exit
            end if
         END DO
@@ -1333,7 +1333,7 @@ blk%fluidCellCount = flcnt
         DO i=blk%cpy_x_start_mv,blk%nx+2
            if(blk%xp(i) > local_intfr%xintf_en_new)then
                  blk%cpy_x_end_mv=i-1
-                 print*,'xpen_f',blk%xp(i-1),'i',i-1
+                 print*,"xpen_f",blk%xp(i-1),"i",i-1
                  exit
            end if
         END DO
@@ -1341,7 +1341,7 @@ blk%fluidCellCount = flcnt
         DO j=1,blk%ny+2
            if(blk%yp(j) > local_intfr%yintf_st_new)then
                   blk%cpy_y_start_mv=j
-                  print*,'ypst_f',blk%yp(j),'j',j
+                  print*,"ypst_f",blk%yp(j),"j",j
                   exit
            end if
         END DO
@@ -1349,7 +1349,7 @@ blk%fluidCellCount = flcnt
         DO j=blk%cpy_y_start_mv,blk%ny+2
            if(blk%yp(j) > local_intfr%yintf_en_new)then
                  blk%cpy_y_end_mv=j-1
-                 print*,'ypen_f',blk%yp(j-1),'j',j-1
+                 print*,"ypen_f",blk%yp(j-1),"j",j-1
                  exit
            end if
         END DO
@@ -1357,7 +1357,7 @@ blk%fluidCellCount = flcnt
         DO j=1,blk%nz+2
            if(blk%zp(j) > local_intfr%zintf_st_new)then
                  blk%cpy_z_start_mv=j
-                 print*,'zpst_f',blk%zp(j),'k',j
+                 print*,"zpst_f",blk%zp(j),"k",j
                  exit
            end if
         END DO
@@ -1365,12 +1365,12 @@ blk%fluidCellCount = flcnt
         DO j=blk%cpy_z_start_mv,blk%nz+2
            if(blk%zp(j) > local_intfr%zintf_en_new)then
                  blk%cpy_z_end_mv=j-1
-                 print*,'zpen_f',blk%zp(j-1),'k',j-1
+                 print*,"zpen_f",blk%zp(j-1),"k",j-1
                  exit
            end if
         END DO
 
-        print*,'bef'
+        print*,"bef"
         countx_st=blk%cpy_x_start
         county_st=blk%cpy_y_start
         countz_st=blk%cpy_z_start
@@ -1394,7 +1394,7 @@ blk%fluidCellCount = flcnt
            END DO
            countz_st=countz_st+1
         END DO
-        print*,'aft'
+        print*,"aft"
 
      end subroutine change_block_coords_interfaces
 
