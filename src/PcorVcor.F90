@@ -122,7 +122,11 @@ module biocfd_pcor_vcor
 
         !$omp single
         CALL coarseUpdate_pc
-        ! This is a slightly confusing loop but is written this way for MPI
+        ! This is a slightly confusing loop but is written this way
+        ! for MPI. The reason it is like this is that when we run with
+        ! MPI we don't know where block(1) is. I'm not 100% that the
+        ! code will work if block(1) is anywhere other than rank 0,
+        ! but we ideally we shouldn't assume that it is.
         do g=start, finish, step
           if (g == 1) CALL REDBLACKSOR_linear(g, pcItaMax)
         end do
