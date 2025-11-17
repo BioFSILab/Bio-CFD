@@ -12,6 +12,10 @@ module biocfd_pcor_vcor
   use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_pc_bd, fineupdate_bd_mv
   use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
   use biocfd_boundary_conditions, only : velocityBC
+  use biocfd_mpi_helpers, only: get_block_iteration_params
+#ifdef BIOCFD_MPI
+   use mpi_f08, only: MPI_Bcast, MPI_COMM_WORLD, MPI_DOUBLE_PRECISION
+#endif
   implicit none
   private
 
@@ -26,13 +30,17 @@ module biocfd_pcor_vcor
         REAL (dp)    :: max_derr1, max_derr2, max_div, max_derrStdSt
         REAL (dp)    :: er_dudt, er_dvdt, er_dwdt, err_ds
         INTEGER(int64) :: max_nIterPcor
+#ifndef BIOCFD_MPI
         CHARACTER(len=160) :: filename1
+#endif
 
         ! For controlling OpenMP
         integer :: omp_threads
         integer :: omp_thread_num
         ! For controlling OpenACC
         integer :: acc_devices
+        ! Variables to control iteration over blocks (mainly for MPI)
+        integer :: start, finish, step, rank
 
           max_derrStdst=0._dp
           max_derr1=0._dp
@@ -49,8 +57,16 @@ module biocfd_pcor_vcor
           omp_thread_num = 0
           acc_devices = 0
 
+          call get_block_iteration_params(size(block), start, finish, step, rank)
+
 #ifdef _OPENMP
-          omp_threads = min(omp_get_max_threads(), size(block))
+          ! Count the number of blocks on this rank (or in total if not
+          ! using MPI)
+          do g=start, finish, step
+            omp_threads = omp_threads + 1
+          end do
+          ! Then omp_threads is the minimum of that or the maximum number of allowed threads
+          omp_threads = min(omp_get_max_threads(), omp_threads)
 #endif
 #ifdef _OPENACC
          ! Not checked, but apparently in nvfortran the default
@@ -63,7 +79,7 @@ module biocfd_pcor_vcor
 #endif
 
 
-        DO g=1,size(block)
+        DO g=start, finish, step
         !$acc parallel loop gang vector collapse (3) default(present)
         DO k = 1, block(g)%nz+2
         DO j = 1, block(g)%ny+2
@@ -85,7 +101,8 @@ module biocfd_pcor_vcor
 
         !$omp parallel num_threads(omp_threads) default(none) &
         !$omp& private(g) &
-        !$omp& shared(acc_devices, pcItaMax, block) firstprivate(omp_thread_num)
+        !$omp& shared(acc_devices, pcItaMax, block) firstprivate(omp_thread_num) &
+        !$omp& shared(start, finish, step)
 
 #ifdef _OPENMP
         omp_thread_num = omp_get_thread_num()
@@ -96,23 +113,25 @@ module biocfd_pcor_vcor
 #endif
 
         !$omp do
-        DO g=1,size(block)
+        DO g=start, finish, step
            CALL computeDiv(g)    !divergence vector
            ! Do not compute Red/Black here for block 1
-           if (g /= 1)  CALL REDBLACKSOR_linear(g,pcItaMax)
-
+           if (g /= 1)  CALL REDBLACKSOR_linear(g, pcItaMax)
         end do
         !$omp end do
 
         !$omp single
         CALL coarseUpdate_pc
         g=1
-        CALL REDBLACKSOR_linear(g,pcItaMax)
+        ! This is a slightly confusing loop but is written this way for MPI
+        do g=start, finish, step
+          if (g == 1) CALL REDBLACKSOR_linear(g, pcItaMax)
+        end do
         call fineUpdate_pc_bd
         !$omp end single
         !$omp do
-        DO g=2,size(block)
-         CALL REDBLACKSOR_linear(g,pcItaMax)
+        DO g=start, finish, step
+         if (g /= 1) CALL REDBLACKSOR_linear(g,pcItaMax)
         end do
         !$omp end do
         !$omp single
@@ -120,15 +139,18 @@ module biocfd_pcor_vcor
         !$omp end single
 
        !$omp do
-       DO g=1,size(block)
+       DO g=start, finish, step
                CALL correctPressure(g)  !pressure correction
                CALL correctVelocity(g)  !velocity correction
         END DO
         !$omp end do
         !$omp end parallel
-         CALL velocityBC(block(1),deltat,uc)      !correct velocity at boundaries
 
-         DO g=1,size(block)
+        do g=start, finish, step
+          if (g == 1) CALL velocityBC(block(1), deltat, uc)  !correct velocity at boundaries
+        end do
+
+         DO g=start, finish, step
          err_ds=0.
         !$acc parallel loop gang vector firstprivate (deltat)   &
         !$acc private (i, j, k, er_dudt, er_dvdt, er_dwdt)               &
@@ -150,7 +172,7 @@ module biocfd_pcor_vcor
 
 
 
-        DO i=1,size(block)
+        DO i=start, finish, step
                if ( block(i)%derr2 >max_derr2)then
                   max_derr2=block(i)%derr2
                end if
@@ -166,6 +188,8 @@ module biocfd_pcor_vcor
               totalTime=totime + totalTime
           end do
 
+#ifndef BIOCFD_MPI
+          ! TN: Not going to do this if we are using MPI - I'm not sure how useful it is anyway
             WRITE(filename1,1)
  1          FORMAT('sphere_iter.dat')
          OPEN(111,FILE=filename1,POSITION='APPEND',STATUS='unknown')
@@ -175,8 +199,9 @@ module biocfd_pcor_vcor
  126      FORMAT(' ',I8, 2I10, 2F6.2,F14.9)
  16      FORMAT(' ',I8, I10, 4E15.6)
          CLOSE(111)
+#endif
 
-         DO g=1,size(block)
+         DO g=start, finish, step
         !$acc parallel loop gang vector default(present) collapse (3)
          DO k = 1, block(g)%nz+2
          DO j = 1, block(g)%ny+2
@@ -189,8 +214,24 @@ module biocfd_pcor_vcor
          END DO
         !$acc end parallel loop
          END DO
+
+#ifdef BIOCFD_MPI
+          ! Need some MPI communication here!
+          ! If we are using MPI then at this stage we need to make
+          ! sure that block(1) is up-to-date on all ranks. We assume
+          ! that all interfaces are from block(1) to another block
+          call MPI_Bcast(block(1)%p, size(block(1)%p), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%u, size(block(1)%u), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%v, size(block(1)%v), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+          call MPI_Bcast(block(1)%w, size(block(1)%w), MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD)
+#endif
+
         DO g=1,size(intfr)
-           call fineUpdate_bd_mv(g)
+          ! If this array isn't allocated we aren't on the right
+          ! rank to deal with this so keep going until we find
+          ! one that is on this rank
+          if (.not. allocated(block(intfr(g)%b_blk)%p)) cycle
+          call fineUpdate_bd_mv(g)
         ENDDO
         CALL coarseUpdate
       END SUBROUTINE poissonSolver
