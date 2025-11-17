@@ -242,7 +242,7 @@ module biocfd_pcor_vcor
       SUBROUTINE computeDiv(g)
 
          INTEGER :: n, i, j, k,gg, counter, nx_var, ny_var
-         INTEGER(int64),INTENT(IN) ::g
+         INTEGER(int64),INTENT(IN) :: g
          gg=g
          nx_var=block(g)%nx
          ny_var=block(g)%ny
@@ -265,7 +265,7 @@ module biocfd_pcor_vcor
       SUBROUTINE correctPressure(g)
 
          INTEGER(int64) :: n, i, j, k,gg
-         INTEGER(int64),INTENT(IN) ::g
+         INTEGER(int64),INTENT(IN) :: g
         gg=g
         !$acc parallel loop gang vector private (i, j, k)   &
         !$acc default(present)
@@ -281,7 +281,7 @@ module biocfd_pcor_vcor
       SUBROUTINE correctVelocity(g)
 
          INTEGER(int64) :: n, i, j, k,gg
-         INTEGER(int64),INTENT(IN) ::g
+         INTEGER(int64),INTENT(IN) :: g
          gg=g
 
         !$acc parallel loop gang vector private (i, j, k) firstprivate (deltat) &
@@ -308,7 +308,7 @@ module biocfd_pcor_vcor
          INTEGER (int64),INTENT(IN)   :: pcItaMax
          INTEGER(int64) :: n, i, j, k, gg, nx_var, ny_var,nz_var,nxy
          REAL (dp) :: errSum,var,derr4
-         INTEGER(int64),INTENT(IN) ::g
+         INTEGER(int64),INTENT(IN) :: g
 
          gg=g
             if (gg == 1)then

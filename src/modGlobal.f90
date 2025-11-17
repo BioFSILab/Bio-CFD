@@ -16,7 +16,7 @@ MODULE global
                                 uc
        real(dp), parameter :: pi = 4._dp * atan(1._dp)
 
-        type(Block_t),allocatable ::block(:)
+        type(Block_t),allocatable :: block(:)
         type(Interface_t), allocatable :: intfr(:)
 
 END MODULE global

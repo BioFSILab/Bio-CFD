@@ -684,7 +684,7 @@ blk%fluidCellCount = flcnt
        INTEGER (int64) ::  n, iPt, iPt1, iPt2, i, j, k
        INTEGER (int64) :: cell_val
        integer :: red_count, black_count
-       integer (int64):: idx
+       integer (int64) :: idx
 
        iPt  = 0
        iPt1 = 0

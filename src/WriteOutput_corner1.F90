@@ -26,7 +26,7 @@ contains
        INTEGER  :: k, i, j
        REAL (dp), allocatable :: u1(:,:,:), v1(:,:,:), w1(:,:,:)
        character (len=11) :: dummy_1
-       character (len=5) ::dummy_2
+       character (len=5) :: dummy_2
 
          if (mod(ita,200_int64) /=0 .and. ita > 2) return
             write(dummy_1,"(A6,I5.5)") "block_",blk_no
@@ -116,7 +116,7 @@ contains
       SUBROUTINE writeResult(blk,blk_no,char_f)
         type(Block_t), intent(in) :: blk
         integer (int64), intent(in) :: blk_no
-        INTEGER::  i, j, k
+        INTEGER ::  i, j, k
         CHARACTER(len=70)  :: filename1
         CHARACTER (LEN = 3),INTENT(IN)   :: char_f
         IF(mod(ita,500_int64)/=0) return
