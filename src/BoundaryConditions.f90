@@ -111,7 +111,7 @@ SUBROUTINE velocityBC(blk,deltat,uc)
             blk%w(i,j,k) = 0._dp
          END DO
          !$acc end parallel loop
-        endif
+        end if
       END SUBROUTINE solidCellBC_move
 
 end module biocfd_boundary_conditions

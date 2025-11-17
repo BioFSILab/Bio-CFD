@@ -205,15 +205,15 @@ SUBROUTINE interfaceDetail
             if(block_var(i) > intf_start)then
                     xx1_p=i
                     exit
-            endif
-          enddo
+            end if
+          end do
 
           DO i=xx1_p, size(block_var)
             if(block_var(i) > intf_end)then
                     xx2_p=i-1
                     exit
-            endif
-          enddo
+            end if
+          end do
 
           interface_details(1,1) = xx1_p-1
           interface_details(2,1) = starter - 1

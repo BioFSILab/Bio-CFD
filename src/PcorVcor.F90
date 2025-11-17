@@ -166,12 +166,12 @@ module biocfd_pcor_vcor
            er_dvdt = dabs((block(g)%vt(i,j,k) - block(g)%v(i,j,k)))/deltat
            er_dwdt = dabs((block(g)%wt(i,j,k) - block(g)%w(i,j,k)))/deltat
            err_ds = dmax1(err_ds, er_dudt,er_dvdt, er_dwdt)
-         ENDDO
+         END DO
          !$acc end parallel loop
            block(g)%derrStdSt = err_ds
 
 
-         ENDDO
+         END DO
 
 
 
@@ -235,7 +235,7 @@ module biocfd_pcor_vcor
           ! one that is on this rank
           if (.not. allocated(block(intfr(g)%b_blk)%p)) cycle
           call fineUpdate_bd_mv(g)
-        ENDDO
+        END DO
         CALL coarseUpdate
       END SUBROUTINE poissonSolver
 
@@ -313,13 +313,13 @@ module biocfd_pcor_vcor
          gg=g
             if (gg == 1)then
                  omega = omega1
-           elseif (gg == 2) then
+           else if (gg == 2) then
                  omega=omega2
-           elseif (gg == 3) then
+           else if (gg == 3) then
                  omega=omega3
            else
                 omega =omega4
-          endif
+          end if
 
           nx_var=block(gg)%nx
           ny_var=block(gg)%ny
@@ -414,7 +414,7 @@ module biocfd_pcor_vcor
               END DO
            END DO
            !$acc end parallel loop
-        endif
+        end if
 
       END SUBROUTINE updateVelocity_newv
 end module biocfd_pcor_vcor

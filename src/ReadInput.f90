@@ -264,20 +264,20 @@ module biocfd_read_input
         DO g=1,size(block)
         DO i = 1, block(g)%nx+3
            block(g)%xu(i) = block(g)%x1(i)
-        ENDDO
-        ENDDO
+        END DO
+        END DO
 
         DO g=1,size(block)
         DO i = 1, block(g)%ny+3
            block(g)%yv(i) = block(g)%y1(i)
-        ENDDO
-        ENDDO
+        END DO
+        END DO
 
         DO g=1,size(block)
           DO i = 1, block(g)%nz+3
            block(g)%zw(i) = block(g)%z1(i)
-          ENDDO
-       ENDDO
+          END DO
+       END DO
 
         DO g=1,size(block)
            DO i = 1, block(g)%ny+2
@@ -285,7 +285,7 @@ module biocfd_read_input
              block(g)%yw(i) = block(g)%yu(i)
              block(g)%yp(i) = block(g)%yu(i)
            END DO
-        ENDDO
+        END DO
 
         DO g=1,size(block)
            DO i = 1, block(g)%nx+2
@@ -294,7 +294,7 @@ module biocfd_read_input
              block(g)%xp(i) = block(g)%xv(i)
             print*,'xp',g,i,block(g)%xp(i)
          END DO
-        ENDDO
+        END DO
 
         DO g=1,size(block)
            DO i = 1, block(g)%nz+2
@@ -302,7 +302,7 @@ module biocfd_read_input
             block(g)%zv(i) = block(g)%zu(i)
             block(g)%zp(i) = block(g)%zu(i)
           END DO
-        ENDDO
+        END DO
 
       END SUBROUTINE readInput
 
@@ -348,19 +348,19 @@ module biocfd_read_input
            blk%ibNodeId(blk%ibELP1(n)) = 51
            blk%ibNodeId(blk%ibELP2(n)) = 51
            blk%ibNodeId(blk%ibELP3(n)) = 51
-           ELSEIF (blk%ibSurfId(n)==52) THEN
+           ELSE IF (blk%ibSurfId(n)==52) THEN
            blk%ibNodeId(blk%ibELP1(n)) = 52
            blk%ibNodeId(blk%ibELP2(n)) = 52
            blk%ibNodeId(blk%ibELP3(n)) = 52
-          ENDIF
-        ENDDO
+          END IF
+        END DO
         DO n = 1, blk%ibElems
         IF (blk%ibSurfId(n)==50) THEN
             blk%ibNodeId(blk%ibELP1(n)) = 50
             blk%ibNodeId(blk%ibELP2(n)) = 50
             blk%ibNodeId(blk%ibELP3(n)) = 50
-          ENDIF
-        ENDDO
+          END IF
+        END DO
 
        CLOSE(121)
        PRINT *, 'SURFACE MESH READING COMPLETE'

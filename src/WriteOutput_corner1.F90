@@ -110,7 +110,7 @@ contains
             END DO
             CLOSE(786)
         !$acc wait
-         ENDIF
+         END IF
       END SUBROUTINE write_output_ascii
 #endif
       SUBROUTINE writeResult(blk,blk_no,char_f)

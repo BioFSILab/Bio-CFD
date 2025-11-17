@@ -34,19 +34,19 @@ module biocfd_search
                 if (abs(blk%znode(i)) > dist)then
                         dist=blk%znode(i)
                         blk%mk=i
-                endif
-        ENDIF
+                end if
+        END IF
         IF (blk%ibNodeId(i)==51) THEN
                 if (abs(blk%xnode(i)) < dist1)then
                         dist1=blk%xnode(i)
                         blk%mkx1=i
-                endif
+                end if
                 if (abs(blk%xnode(i)) > dist2)then
                         dist2=blk%xnode(i)
                         blk%mkx2=i
-                endif
-        ENDIF
-        ENDDO
+                end if
+        END IF
+        END DO
         end subroutine findDistnode
 
         SUBROUTINE shiftSurfaceNodesInitial(blk,aoa1,aoa2,piv_pt)
@@ -106,7 +106,7 @@ module biocfd_search
             zr1 =  blk%znode(i)*cos(aoa1) + blk%ynode(i)*sin(aoa1) + piv_pt &
                    - piv_pt*cos(aoa1)
             yr1 = -blk%znode(i)*sin(aoa1) + blk%ynode(i)*cos(aoa1) + piv_pt*sin(aoa1)
-         ELSEIF (blk%ibNodeId(i)==52) THEN
+         ELSE IF (blk%ibNodeId(i)==52) THEN
             xr1 =  blk%xnode(i)
             zr1 =  blk%znode(i)*cos(aoa2) + blk%ynode(i)*sin(aoa2)  + piv_pt &
                    - piv_pt*cos(aoa2)
@@ -115,11 +115,11 @@ module biocfd_search
                xr1 = blk% xnode(i)
                zr1 = blk% znode(i)  !*cos(aoa1) + ynode(i)*sin(aoa1)
                yr1 = blk% ynode(i)  !*sin(aoa1) + ynode(i)*cos(aoa1)
-           ENDIF
+           END IF
            blk%xnode1(i) = xr1+ blk%xShift
            blk%ynode1(i) = yr1+ blk%yShift
            blk%znode1(i) = zr1+ blk%zshift
-        ENDDO
+        END DO
 
       END SUBROUTINE shiftSurfaceNodesInitial
 
@@ -187,7 +187,7 @@ module biocfd_search
              zr1 =  blk%znode(i)*cos(aoa1) + blk%ynode(i)*sin(aoa1) + piv_pt &
                     - piv_pt*cos(aoa1)
              yr1 = -blk%znode(i)*sin(aoa1) + blk%ynode(i)*cos(aoa1) + piv_pt*sin(aoa1)
-         ELSEIF (blk%ibNodeId(i)==52) THEN
+         ELSE IF (blk%ibNodeId(i)==52) THEN
              xr1 =  blk%xnode(i)
              zr1 =  blk%znode(i)*cos(aoa2) + blk%ynode(i)*sin(aoa2)  + piv_pt &
                     - piv_pt*cos(aoa2)
@@ -196,12 +196,12 @@ module biocfd_search
                xr1 = blk% xnode(i)
                zr1 = blk% znode(i)
                yr1 = blk% ynode(i)
-           ENDIF
+           END IF
 
            blk%xnode1(i) = xr1 +blk%xpth2
            blk%ynode1(i) = yr1 +blk%yshift +blk%ymove
            blk%znode1(i) = zr1 +blk%zshift +blk%zmove
-        ENDDO
+        END DO
            write(*,*) blk%xnode1(1),blk%ynode1(1),blk%znode1(1)
 
       END SUBROUTINE computeSurfaceVariables
@@ -252,7 +252,7 @@ module biocfd_search
            blk%cosAlpha(n) = inor * blk%cosAlpha(n) / lenEl  ! direction cosine unit normal along x
            blk%cosBeta(n)  = inor * blk%cosBeta(n) / lenEl   ! direction cosine unit normal along y
            blk%cosGamma(n) = inor * blk%cosGamma(n) / lenEl  ! direction cosine unit normal along z
-        ENDDO
+        END DO
        !$acc end parallel loop
 
         print*, 'SurfaceNorm done, inor =', inor
@@ -313,12 +313,12 @@ SUBROUTINE tagging_th_core(blk)
                IF (dis_cen<minDis) THEN
                   minDis    = dis_cen
                   nel2Cen   = m
-               ENDIF
+               END IF
                IF (dis_pnt<minDis1) THEN
                   minDis1   = dis_pnt
                   nel2Pnt   = m
-               ENDIF
-            ENDDO
+               END IF
+            END DO
             IF((blk%x1(i)<=blk%xcent(nel2Cen) .AND. &
                 blk%x1(i+1)>=blk%xcent(nel2Cen)).AND. &
                (blk%y1(j)<=blk%ycent(nel2Cen) .AND. &
@@ -327,7 +327,7 @@ SUBROUTINE tagging_th_core(blk)
                 blk%z1(k+1)>=blk%zcent(nel2Cen))) THEN
                blk%cell(i,j,k) = 2
 
-            ENDIF
+            END IF
 
             n2dotn  = (blk%x1(i) - blk%xcent(nel2Pnt))*blk%cosAlpha(nel2Pnt) + &
                       (blk%y1(j) - blk%ycent(nel2Pnt))*blk%cosBeta(nel2Pnt)  + &
@@ -337,7 +337,7 @@ SUBROUTINE tagging_th_core(blk)
                blk%nodeIdTag(i,j,k) = 0
             ELSE
                blk%nodeIdTag(i,j,k) = 1
-            ENDIF
+            END IF
          END DO
          END DO
          END DO
@@ -357,8 +357,8 @@ SUBROUTINE tagging_th_core(blk)
                               + blk%nodeIdTag(i,j+1,k+1)  + blk%nodeIdTag(i+1,j+1,k+1)
                   IF (sumNodeId==8) THEN
                      blk%cell(i,j,k) = 1
-                  ENDIF
-               ENDIF
+                  END IF
+               END IF
            END DO
            END DO
            END DO
@@ -372,11 +372,11 @@ SUBROUTINE tagging_th_core(blk)
          DO i = 2, blk%nx+1
                IF (blk%cell(i,j,k)==1) THEN
                   blk%solidCellCount = blk%solidCellCount + 1
-               ELSEIF (blk%cell(i,j,k)==0) THEN
+               ELSE IF (blk%cell(i,j,k)==0) THEN
                   blk%fluidCellCount  = blk%fluidCellCount + 1
-               ELSEIF (blk%cell(i,j,k)==2) THEN
+               ELSE IF (blk%cell(i,j,k)==2) THEN
                   blk%ibCellCount = blk%ibCellCount + 1
-               ENDIF
+               END IF
          END DO
          END DO
          END DO
@@ -430,7 +430,7 @@ SUBROUTINE tagging_th_core(blk)
           if (intfr(g)%b_blk /= id) cycle
           call fineUpdate_mv(g)
           call fineUpdate_bd_mv(g)
-        ENDDO
+        END DO
      END SUBROUTINE tagging_th_move
 
      SUBROUTINE findTScells(blk)
@@ -467,7 +467,7 @@ SUBROUTINE tagging_th_core(blk)
                      IF (blk%cell2(i,j,k)==2) THEN
                            !blk%TSCellCount = blk%TSCellCount + 1
                            tscnt = tscnt + 1
-                     ENDIF
+                     END IF
                  END DO
                  END DO
                  END DO
@@ -489,7 +489,7 @@ SUBROUTINE tagging_th_core(blk)
                     idx = iPt1
                     !$acc end atomic
                     blk%TSIndexPtr(idx, :) = [i, j, k]
-                 ENDIF
+                 END IF
               END DO
            END DO
         END DO
@@ -524,8 +524,8 @@ SUBROUTINE tagging_th_core(blk)
            k1 = blk%interceptedIndexPtr(m, 3)
               IF (i1==i .AND. j1==j .AND. k1==k) THEN
                   blk%index_ts(n) = m
-              ENDIF
-           ENDDO
+              END IF
+           END DO
            blk%u2_ghost(n)  = 0.
            blk%u2t_ghost(n) = 0.
            blk%v2_ghost(n)  = 0.
@@ -540,7 +540,7 @@ SUBROUTINE tagging_th_core(blk)
            blk%w2t_ghost(n) = 0.
            blk%w1_ghost(n)  = 0.
            blk%w1t_ghost(n) = 0.
-        ENDDO
+        END DO
         !$acc end parallel loop
              END SUBROUTINE findTScells
 
@@ -592,12 +592,12 @@ SUBROUTINE tagging_th_core(blk)
                   IF (dis_cen<minDis) THEN
                      minDis    = dis_cen
                      nel2Cen   = m
-                  ENDIF
+                  END IF
                   IF (dis_pnt<minDis1) THEN
                      minDis1   = dis_pnt
                      nel2Pnt   = m
-                  ENDIF
-               ENDDO
+                  END IF
+               END DO
                IF((blk%x1(i)<=blk%xcent(nel2Cen).AND. &
                    blk%x1(i+1)>=blk%xcent(nel2Cen)).AND. &
                   (blk%y1(j)<=blk%ycent(nel2Cen).AND. &
@@ -605,7 +605,7 @@ SUBROUTINE tagging_th_core(blk)
                   (blk%z1(k)<=blk%zcent(nel2Cen).AND. &
                    blk%z1(k+1)>=blk%zcent(nel2Cen))) THEN
                         blk%cell(i,j,k) = 2
-               ENDIF
+               END IF
 
                n2dotn  = (blk%x1(i) - blk%xcent(nel2Pnt)) * blk%cosAlpha(nel2Pnt) + &
                          (blk%y1(j) - blk%ycent(nel2Pnt)) * blk%cosBeta(nel2Pnt)  + &
@@ -615,11 +615,11 @@ SUBROUTINE tagging_th_core(blk)
                   blk%nodeIdTag(i,j,k) = 0
                ELSE
                   blk%nodeIdTag(i,j,k) = 1
-               ENDIF
+               END IF
            END DO
            END DO
            END DO
-        ENDDO
+        END DO
 !$acc end parallel loop
 
 !$acc parallel loop gang vector default(present)
@@ -641,12 +641,12 @@ SUBROUTINE tagging_th_core(blk)
                      blk%cell(i,j,k) = 1
                   ELSE
                      blk%cell(i,j,k) = 0
-                  ENDIF
-               ENDIF
+                  END IF
+               END IF
            END DO
            END DO
            END DO
-        ENDDO
+        END DO
 blk%ibCellCount = 0
 blk%solidCellCount = 0
 blk%fluidCellCount = 0
@@ -660,11 +660,11 @@ ibcnt=0
             n = i-1  + blk%nx*(j-2)  + blk%nx*blk%ny*(k-2)
             IF (blk%cell(i,j,k)==1) THEN
                 sdcnt = sdcnt + 1
-            ELSEIF (blk%cell(i,j,k)==0) THEN
+            ELSE IF (blk%cell(i,j,k)==0) THEN
                flcnt  = flcnt + 1
-            ELSEIF (blk%cell(i,j,k)==2) THEN
+            ELSE IF (blk%cell(i,j,k)==2) THEN
                 ibcnt = ibcnt + 1
-            ENDIF
+            END IF
          END DO
          END DO
          END DO
@@ -707,19 +707,19 @@ blk%fluidCellCount = flcnt
                    idx = iPt1
                    !$acc end atomic
                    blk%fluidIndexPtr(idx, :) = [i, j, k]
-                ELSEIF (cell_val==1) THEN
+                ELSE IF (cell_val==1) THEN
                    !$acc atomic capture
                    iPt2 = iPt2 + 1
                    idx = iPt2
                    !$acc end atomic
                    blk%solidIndexPtr(idx, :) = [i, j, k]
-                ELSEIF (cell_val==2) THEN
+                ELSE IF (cell_val==2) THEN
                    !$acc atomic capture
                    iPt = iPt + 1
                    idx = iPt
                    !$acc end atomic
                    blk%interceptedIndexPtr(idx, :) = [i, j, k]
-                ENDIF
+                END IF
 
              END DO
           END DO
@@ -735,8 +735,8 @@ blk%fluidCellCount = flcnt
              red_count = red_count + 1
           ELSE
              black_count = black_count + 1
-          ENDIF
-       ENDDO
+          END IF
+       END DO
        !$acc end parallel loop
 
        blk%redCellCount = red_count
@@ -760,8 +760,8 @@ blk%fluidCellCount = flcnt
              idx = iPt1
              !$acc end atomic
              blk%blackCellIndexPtr(idx, :) = blk%fluidIndexPtr(n, :)
-          ENDIF
-       ENDDO
+          END IF
+       END DO
        !$acc end parallel loop
        print*, "cellCount:", blk_no, block(blk_no)%fluidCellCount, &
             block(blk_no)%redCellCount, block(blk_no)%blackCellCount
@@ -821,32 +821,32 @@ blk%fluidCellCount = flcnt
               IF (dis<minDis) THEN
                  minDis   = dis
                  nel2p    = m
-              ENDIF
+              END IF
               IF (dis1<minDis1) THEN
                  minDis1   = dis1
                  nel2u1    = m
-              ENDIF
+              END IF
               IF (dis2<minDis2) THEN
                  minDis2   = dis2
                  nel2u2    = m
-              ENDIF
+              END IF
               IF (dis3<minDis3) THEN
                  minDis3   = dis3
                  nel2v1    = m
-              ENDIF
+              END IF
               IF (dis4<minDis4) THEN
                  minDis4   = dis4
                  nel2v2    = m
-              ENDIF
+              END IF
               IF (dis5<minDis5) THEN
                  minDis5   = dis5
                  nel2w1    = m
-              ENDIF
+              END IF
               IF (dis6<minDis6) THEN
                  minDis6   = dis6
                  nel2w2    = m
-              ENDIF
-           ENDDO
+              END IF
+           END DO
 
            blk%nelp(k)  = nel2p
            blk%nelu1(k) = nel2u1
@@ -920,7 +920,7 @@ blk%fluidCellCount = flcnt
                 block(a_blk_no)%cell_n(i,j,k)=1
                 block(a_blk_no)%cell(i,j,k)=1
 
-        endif
+        end if
         if ( block(a_blk_no)%xp(i) >= intfr(g)%xintf_start .and. &
              block(a_blk_no)%xp(i) <= intfr(g)%xintf_end   .and. &
              block(a_blk_no)%zp(k) >= intfr(g)%zintf_start .and. &
@@ -930,12 +930,12 @@ blk%fluidCellCount = flcnt
 
                 block(a_blk_no)%cell_pr(i,j,k)=1
 
-        endif
-        ENDDO
-        ENDDO
-        ENDDO
+        end if
+        END DO
+        END DO
+        END DO
         !$acc end parallel loop
-        ENDDO
+        END DO
 
 
         end subroutine fine_block_cell
@@ -957,7 +957,7 @@ blk%fluidCellCount = flcnt
          DO i = 2, block(g)%nx +1
             IF (block(g)%cell(i,j,k)==0) THEN
                 block(g)%fluidCellCount=block(g)%fluidCellCount +1
-            ENDIF
+            END IF
          end do
          end do
          end do
@@ -974,7 +974,7 @@ blk%fluidCellCount = flcnt
                   block(g)%fluidIndexPtr(iPt1, 1) = i
                   block(g)%fluidIndexPtr(iPt1, 2) = j
                   block(g)%fluidIndexPtr(iPt1, 3) = k
-               ENDIF
+               END IF
          END DO
          END DO
          END DO
@@ -989,8 +989,8 @@ blk%fluidCellCount = flcnt
                block(g)%redCellCount = block(g)%redCellCount + 1
             ELSE
                block(g)%blackCellCount = block(g)%blackCellCount + 1
-            ENDIF
-         ENDDO
+            END IF
+         END DO
          DEALLOCATE (block(g)%redCellIndexPtr ,block(g)%blackCellIndexPtr)
          ALLOCATE(block(g)%redCellIndexPtr(block(g)%redCellCount,3) , &
                   block(g)%blackCellIndexPtr(block(g)%blackCellCount,3))
@@ -1011,11 +1011,11 @@ blk%fluidCellCount = flcnt
                block(g)%blackCellIndexPtr(iPt1, 1) = i
                block(g)%blackCellIndexPtr(iPt1, 2) = j
                block(g)%blackCellIndexPtr(iPt1, 3) = k
-            ENDIF
-         ENDDO
+            END IF
+         END DO
 
             print*, g, block(g)%fluidCellCount, block(g)%redCellCount, block(g)%blackCellCount
-          ENDIF
+          END IF
           coarse_flcnt_check=0
 
         END SUBROUTINE cellCount_solid_coarse_mv
@@ -1074,7 +1074,7 @@ blk%fluidCellCount = flcnt
                         block(b_blk_no)%move_amty=-factor
                         else
                         block(b_blk_no)%move_amty=factor
-                        endif
+                        end if
 
                 else
                         if ( block(b_blk_no)%move_amty < 0)then
@@ -1083,12 +1083,12 @@ blk%fluidCellCount = flcnt
                         else
                         block(b_blk_no)%move_amty= block(b_blk_no)%move_amty &
                                                    - mod(abs(block(b_blk_no)%move_amty),factor)
-                        endif
+                        end if
 
-                endif
+                end if
                 block(b_blk_no)%inity_cent=block(b_blk_no)%nxty_cent
 
-                endif
+                end if
         if ( (abs(xval_lt- intfr(g)%xintf_start) < marginx ) )then
                 block(b_blk_no)%move_amtx = &
                   floor((block(b_blk_no)%nxtx_cent - block(b_blk_no)%initx_cent) &
@@ -1099,7 +1099,7 @@ blk%fluidCellCount = flcnt
                         block(b_blk_no)%move_amtx=-factor
                         else
                         block(b_blk_no)%move_amtx=factor
-                        endif
+                        end if
 
                 else
                         if ( block(b_blk_no)%move_amtx < 0)then
@@ -1108,11 +1108,11 @@ blk%fluidCellCount = flcnt
                         else
                         block(b_blk_no)%move_amtx = block(b_blk_no)%move_amtx &
                                                     - mod(abs(block(b_blk_no)%move_amtx),factor)
-                        endif
+                        end if
 
-                endif
+                end if
                 block(b_blk_no)%initx_cent=block(b_blk_no)%nxtx_cent
-                endif
+                end if
             if( (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start) < (0.500_dp-0.410_dp-mg1)) .or. &
              (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end)   < (0.600_dp-0.500_dp-mg1) ))then
                 block(b_blk_no)%move_amtz = &
@@ -1122,7 +1122,7 @@ blk%fluidCellCount = flcnt
                         block(b_blk_no)%move_amtz=-factor
                         else
                         block(b_blk_no)%move_amtz=factor
-                        endif
+                        end if
 
                 else
                         if ( block(b_blk_no)%move_amtz < 0)then
@@ -1131,11 +1131,11 @@ blk%fluidCellCount = flcnt
                         else
                         block(b_blk_no)%move_amtz = block(b_blk_no)%move_amtz &
                                                     - mod(abs(block(b_blk_no)%move_amtz),factor)
-                        endif
+                        end if
 
-                endif
+                end if
                 block(b_blk_no)%initz_cent=block(b_blk_no)%nxtz_cent
-                endif
+                end if
                  print*,'blk_movez',block(b_blk_no)%move_amtz
                  print*,'blk_movey',block(b_blk_no)%move_amty
                  print*,'blk_movex',block(b_blk_no)%move_amtx
@@ -1174,47 +1174,47 @@ blk%fluidCellCount = flcnt
                 block(b_blk_no)%cpy_x_start=i
                 print*,'xpst',block(b_blk_no)%xp(i),'i',i
                 exit
-          endif
-        ENDDO
+          end if
+        END DO
 
         DO i=block(b_blk_no)%cpy_x_start,block(b_blk_no)%nx+2
            if( block(b_blk_no)%xp(i) > intfr(g)%xintf_en_new)then
                 block(b_blk_no)%cpy_x_end=i-1
                 print*,'xpen',block(b_blk_no)%xp(i-1),'i',i-1
                 exit
-          endif
-        ENDDO
+          end if
+        END DO
         DO j=1,block(b_blk_no)%ny+2
            if( block(b_blk_no)%yp(j) > intfr(g)%yintf_st_new)then
                 block(b_blk_no)%cpy_y_start=j
                 print*,'ypst',block(b_blk_no)%yp(j),'j',j
                 exit
-          endif
-        ENDDO
+          end if
+        END DO
 
         DO j=block(b_blk_no)%cpy_y_start,block(b_blk_no)%ny+2
            if( block(b_blk_no)%yp(j) > intfr(g)%yintf_en_new)then
                 block(b_blk_no)%cpy_y_end=j-1
                 print*,'ypen',block(b_blk_no)%yp(j-1),'j',j-1
                 exit
-          endif
-        ENDDO
+          end if
+        END DO
 
         DO k=1,block(b_blk_no)%nz+2
            if( block(b_blk_no)%zp(k) > intfr(g)%zintf_st_new)then
                 block(b_blk_no)%cpy_z_start=k
                 print*,'zpst',block(b_blk_no)%zp(k),'k',k
                 exit
-          endif
-        ENDDO
+          end if
+        END DO
 
         DO k=block(b_blk_no)%cpy_z_start,block(b_blk_no)%nz+2
            if( block(b_blk_no)%zp(k) > intfr(g)%zintf_en_new)then
                 block(b_blk_no)%cpy_z_end=k-1
                 print*,'zpen',block(b_blk_no)%zp(k-1),'k',k-1
                 exit
-          endif
-        ENDDO
+          end if
+        END DO
 
         DO k=1,block(b_blk_no)%nz+2
         DO i=1,block(b_blk_no)%nx+2
@@ -1223,12 +1223,12 @@ blk%fluidCellCount = flcnt
             block(b_blk_no)%v_dum(i,j,k)=block(b_blk_no)%v(i,j,k)
             block(b_blk_no)%w_dum(i,j,k)=block(b_blk_no)%w(i,j,k)
             block(b_blk_no)%p_dum(i,j,k)=block(b_blk_no)%p(i,j,k)
-        ENDDO
-        ENDDO
-        ENDDO
-        endif
+        END DO
+        END DO
+        END DO
+        end if
 
-        ENDDO
+        END DO
         end subroutine block_move_check
 
       ! This subroutine used to be combined with change_block_coords_interfaces
@@ -1250,27 +1250,27 @@ blk%fluidCellCount = flcnt
 
         DO i = 1, blk%nx+3
            blk%x1(i) = blk%x1(i) + change_x_f
-        ENDDO
+        END DO
 
         DO i = 1, blk%ny+3
            blk%y1(i) = blk%y1(i) + change_y_f
-        ENDDO
+        END DO
 
         DO i = 1, blk%nz+3
            blk%z1(i) = blk%z1(i)+ change_z_f
-        ENDDO
+        END DO
 
         DO i = 1, blk%nx+3
            blk%xu(i) = blk%x1(i)
-        ENDDO
+        END DO
 
         DO i = 1, blk%ny+3
            blk%yv(i) = blk%y1(i)
-        ENDDO
+        END DO
 
         DO i = 1, blk%nz+3
            blk%zw(i) = blk%z1(i)
-        ENDDO
+        END DO
 
         DO i = 1, blk%ny+2
            blk%yu(i) = 0.5_dp*(blk%y1(i)+blk%y1(i+1))
@@ -1317,58 +1317,58 @@ blk%fluidCellCount = flcnt
               blk%yp(j) > (local_intfr%yintf_st_new  + blk%dy).and. &
               blk%yp(j) < (local_intfr%yintf_en_new  - blk%dy))then
                  blk%cell_n(i,j,k)=1
-           endif
-        ENDDO
-        ENDDO
-        ENDDO
+           end if
+        END DO
+        END DO
+        END DO
 
         DO i=1,blk%nx+2
            if(blk%xp(i) > local_intfr%xintf_st_new)then
                  blk%cpy_x_start_mv=i
                  print*,'xpst_f',blk%xp(i),'i',i
                  exit
-           endif
-        ENDDO
+           end if
+        END DO
 
         DO i=blk%cpy_x_start_mv,blk%nx+2
            if(blk%xp(i) > local_intfr%xintf_en_new)then
                  blk%cpy_x_end_mv=i-1
                  print*,'xpen_f',blk%xp(i-1),'i',i-1
                  exit
-           endif
-        ENDDO
+           end if
+        END DO
 
         DO j=1,blk%ny+2
            if(blk%yp(j) > local_intfr%yintf_st_new)then
                   blk%cpy_y_start_mv=j
                   print*,'ypst_f',blk%yp(j),'j',j
                   exit
-           endif
-        ENDDO
+           end if
+        END DO
 
         DO j=blk%cpy_y_start_mv,blk%ny+2
            if(blk%yp(j) > local_intfr%yintf_en_new)then
                  blk%cpy_y_end_mv=j-1
                  print*,'ypen_f',blk%yp(j-1),'j',j-1
                  exit
-           endif
-        ENDDO
+           end if
+        END DO
 
         DO j=1,blk%nz+2
            if(blk%zp(j) > local_intfr%zintf_st_new)then
                  blk%cpy_z_start_mv=j
                  print*,'zpst_f',blk%zp(j),'k',j
                  exit
-           endif
-        ENDDO
+           end if
+        END DO
 
         DO j=blk%cpy_z_start_mv,blk%nz+2
            if(blk%zp(j) > local_intfr%zintf_en_new)then
                  blk%cpy_z_end_mv=j-1
                  print*,'zpen_f',blk%zp(j-1),'k',j-1
                  exit
-           endif
-        ENDDO
+           end if
+        END DO
 
         print*,'bef'
         countx_st=blk%cpy_x_start
@@ -1389,11 +1389,11 @@ blk%fluidCellCount = flcnt
                  blk%w(i,j,k)=blk%w_dum(countx_st,county_st,countz_st)
                  blk%p(i,j,k)=blk%p_dum(countx_st,county_st,countz_st)
                  county_st=county_st+1
-              ENDDO
+              END DO
               countx_st=countx_st+1
-           ENDDO
+           END DO
            countz_st=countz_st+1
-        ENDDO
+        END DO
         print*,'aft'
 
      end subroutine change_block_coords_interfaces
@@ -1503,7 +1503,7 @@ end subroutine change_block_interface
          DO i = 2, blk%nx +1
             IF (blk%cell(i,j,k)==0) THEN
                 blk%fluidCellCount=blk%fluidCellCount +1
-            ENDIF
+            END IF
          end do
          end do
          end do
@@ -1516,7 +1516,7 @@ end subroutine change_block_interface
                blk%fluidIndexPtr(iPt1, 1) = i
                blk%fluidIndexPtr(iPt1, 2) = j
                blk%fluidIndexPtr(iPt1, 3) = k
-            ENDIF
+            END IF
          END DO
          END DO
          END DO
@@ -1531,8 +1531,8 @@ end subroutine change_block_interface
                blk%redCellCount = blk%redCellCount + 1
             ELSE
                blk%blackCellCount = blk%blackCellCount + 1
-            ENDIF
-         ENDDO
+            END IF
+         END DO
 
          ALLOCATE (blk%redCellIndexPtr(blk%redCellCount,3), &
                    blk%blackCellIndexPtr(blk%blackCellCount,3))
@@ -1553,8 +1553,8 @@ end subroutine change_block_interface
                blk%blackCellIndexPtr(iPt1, 1) = i
                blk%blackCellIndexPtr(iPt1, 2) = j
                blk%blackCellIndexPtr(iPt1, 3) = k
-            ENDIF
-         ENDDO
+            END IF
+         END DO
 
             print*, "1", blk%fluidCellCount, blk%redCellCount, blk%blackCellCount
 
