@@ -452,8 +452,9 @@ SUBROUTINE tagging_th_core(blk)
         i = blk%interceptedIndexPtr(n, 1)
         j = blk%interceptedIndexPtr(n, 2)
         k = blk%interceptedIndexPtr(n, 3)
-         IF(blk%ibSurfID(blk%nelp(n))==51.OR.blk%ibSurfID(blk%nelp(n))==52) &
-            blk%cell2(i, j, k) = 2
+         IF(blk%ibSurfID(blk%nelp(n))==51.OR.blk%ibSurfID(blk%nelp(n))==52) then
+           blk%cell2(i, j, k) = 2
+         end if
 
          END DO
         !$acc end parallel loop
