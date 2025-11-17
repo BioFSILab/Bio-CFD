@@ -652,9 +652,9 @@ contains
 
        else
  !cccccccccccccc---First Order Upwinding ----ccccccccccccccccccccccccccccc
-   duudx = -0.25_dp*( u1a*u1a + alpha*dabs(u1a)*u22-u3*u3-alpha*dabs(u3)*u4)/blk%deltax(i)
+   duudx = -0.25_dp*(u1a*u1a + alpha*dabs(u1a)*u22-u3*u3-alpha*dabs(u3)*u4)/blk%deltax(i)
 
-   dvudy = -0.25_dp*( v1a*u5 + alpha*dabs(v1a)*u6 - v22*u7 - alpha*dabs(v22)*u8)/blk%deltay(j)
+   dvudy = -0.25_dp*(v1a*u5 + alpha*dabs(v1a)*u6 - v22*u7 - alpha*dabs(v22)*u8)/blk%deltay(j)
 
    dwudz = -0.25_dp*(w1a*u9 + alpha*dabs(w1a)*u10-w22*u11 - alpha*dabs(w22)*u12) /blk%deltaz(k)
 

@@ -57,7 +57,7 @@ module biocfd_search
         REAL(dp)      :: bdy,bdfr
 
         ALLOCATE (blk%xnode1(blk%ibNodes), blk%ynode1(blk%ibNodes), &
-                  blk%znode1(blk%ibNodes) )
+                  blk%znode1(blk%ibNodes))
         blk%xnode1 = blk%xnode
         blk%ynode1 = blk%ynode
         blk%znode1 = blk%znode
@@ -87,7 +87,7 @@ module biocfd_search
         blk% thetaDDot1 = 0.
         blk%thetaDDot2 = 0.
         blk% thetaDDot  = 0.
-        blk%yt         =  bdy*sin(2*pi*bdfr*totime )
+        blk%yt         =  bdy*sin(2*pi*bdfr*totime)
         blk%ydot       =  angt*bdy*cos(2*pi*bdfr*totime)
         blk%yddot      =  -angt*angt*bdy*sin(2*pi*bdfr*totime)
         blk%xt         =  blk%xshift- (ita*dxmin*xfact)
@@ -154,14 +154,14 @@ module biocfd_search
         blk%thetaDot2  = -blk%thetaDot1
         blk%thetaDDot2 = -blk%thetaDDot1
 
-        blk%yt         =  bdy*sin(angt*(totime) )
+        blk%yt         =  bdy*sin(angt*(totime))
         blk%ydot       =  angt*bdy*cos(angt*(totime))
         blk%yddot      =  -angt*angt*bdy*sin(angt*(totime))
 
         blk%xt         = blk%xpth2
         blk%xdot       = -(dxmin*xfact)/deltat
 
-        blk%ychg=blk%yt - bdy*sin(angt*(totime-deltat) )
+        blk%ychg=blk%yt - bdy*sin(angt*(totime-deltat))
         blk%ymove = blk%yt
         blk%xmove = blk%xchg
         blk%zmove = 0.
@@ -552,7 +552,7 @@ SUBROUTINE tagging_th_core(blk)
         REAL(dp)      :: minDis, minDis1, dis_cen, dis_pnt, n2dotn
         integer :: iprime, jprime, kprime
 
-        if( blk%blk_mv_tag ==0)then
+        if(blk%blk_mv_tag ==0)then
 
        ! Set the intercepted indicies cell value to 0, we do this in a
        ! seperate loop so that we can nicely GPU-ise the computation
@@ -921,12 +921,12 @@ blk%fluidCellCount = flcnt
                 block(a_blk_no)%cell(i,j,k)=1
 
         end if
-        if ( block(a_blk_no)%xp(i) >= intfr(g)%xintf_start .and. &
+        if (block(a_blk_no)%xp(i) >= intfr(g)%xintf_start .and. &
              block(a_blk_no)%xp(i) <= intfr(g)%xintf_end   .and. &
              block(a_blk_no)%zp(k) >= intfr(g)%zintf_start .and. &
              block(a_blk_no)%zp(k) <= intfr(g)%zintf_end   .and. &
              block(a_blk_no)%yp(j) >= intfr(g)%yintf_start .and. &
-             block(a_blk_no)%yp(j) <= intfr(g)%yintf_end   )then
+             block(a_blk_no)%yp(j) <= intfr(g)%yintf_end)then
 
                 block(a_blk_no)%cell_pr(i,j,k)=1
 
@@ -946,7 +946,7 @@ blk%fluidCellCount = flcnt
         INTEGER(int64) ::  g
         g=1
 
-        if ( coarse_flcnt_check == 1)then
+        if (coarse_flcnt_check == 1)then
 
         block(g)%fluidCellCount=0
          iPt  = 0
@@ -1055,29 +1055,29 @@ blk%fluidCellCount = flcnt
         block(b_blk_no)%move_amty=0
         block(b_blk_no)%move_amtx=0
         block(b_blk_no)%move_amtz=0
-        if ( (abs(xval_lt - intfr(g)%xintf_start)      <= marginx )  .or. &
-             (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start)      <= marginz )  .or. &
-             (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end)        <= marginz )  .or. &
-             ((abs(yval_dw - intfr(g)%yintf_start) <= marginy ) )   .or. &
-             ((abs(yval_up - intfr(g)%yintf_end)  <= marginy ) ) )then
+        if ((abs(xval_lt - intfr(g)%xintf_start)      <= marginx)  .or. &
+             (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start)      <= marginz)  .or. &
+             (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end)        <= marginz)  .or. &
+             ((abs(yval_dw - intfr(g)%yintf_start) <= marginy))   .or. &
+             ((abs(yval_up - intfr(g)%yintf_end)  <= marginy)))then
 
                 block(b_blk_no)%move_check=1
              block(b_blk_no)%blk_mv_tag=1.
                  coarse_flcnt_check=1
-            if( abs(yval_dw - intfr(g)%yintf_start) <= marginy    .or. &
-                (abs(yval_up - intfr(g)%yintf_end)  <= marginy ) )then
+            if(abs(yval_dw - intfr(g)%yintf_start) <= marginy    .or. &
+                (abs(yval_up - intfr(g)%yintf_end)  <= marginy))then
 
                 block(b_blk_no)%move_amty = &
                   floor((block(b_blk_no)%nxty_cent -block(b_blk_no)%inity_cent)/block(b_blk_no)%dy)
-                if ( abs(block(b_blk_no)%move_amty) < factor)then
-                        if ( block(b_blk_no)%move_amty < 0)then
+                if (abs(block(b_blk_no)%move_amty) < factor)then
+                        if (block(b_blk_no)%move_amty < 0)then
                         block(b_blk_no)%move_amty=-factor
                         else
                         block(b_blk_no)%move_amty=factor
                         end if
 
                 else
-                        if ( block(b_blk_no)%move_amty < 0)then
+                        if (block(b_blk_no)%move_amty < 0)then
                         block(b_blk_no)%move_amty= block(b_blk_no)%move_amty &
                                                    + mod(abs(block(b_blk_no)%move_amty),factor)
                         else
@@ -1089,20 +1089,20 @@ blk%fluidCellCount = flcnt
                 block(b_blk_no)%inity_cent=block(b_blk_no)%nxty_cent
 
                 end if
-        if ( (abs(xval_lt- intfr(g)%xintf_start) < marginx ) )then
+        if ((abs(xval_lt- intfr(g)%xintf_start) < marginx))then
                 block(b_blk_no)%move_amtx = &
                   floor((block(b_blk_no)%nxtx_cent - block(b_blk_no)%initx_cent) &
                   / block(b_blk_no)%dx) - factor
                 print*,"move_amtx",block(b_blk_no)%move_amtx
-                if ( abs(block(b_blk_no)%move_amtx) < factor)then
-                        if ( block(b_blk_no)%move_amtx < 0)then
+                if (abs(block(b_blk_no)%move_amtx) < factor)then
+                        if (block(b_blk_no)%move_amtx < 0)then
                         block(b_blk_no)%move_amtx=-factor
                         else
                         block(b_blk_no)%move_amtx=factor
                         end if
 
                 else
-                        if ( block(b_blk_no)%move_amtx < 0)then
+                        if (block(b_blk_no)%move_amtx < 0)then
                         block(b_blk_no)%move_amtx= block(b_blk_no)%move_amtx &
                                                    + mod(abs(block(b_blk_no)%move_amtx),factor)
                         else
@@ -1113,19 +1113,19 @@ blk%fluidCellCount = flcnt
                 end if
                 block(b_blk_no)%initx_cent=block(b_blk_no)%nxtx_cent
                 end if
-            if( (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start) < (0.500_dp-0.410_dp-mg1)) .or. &
-             (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end)   < (0.600_dp-0.500_dp-mg1) ))then
+            if((abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start) < (0.500_dp-0.410_dp-mg1)) .or. &
+             (abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end)   < (0.600_dp-0.500_dp-mg1)))then
                 block(b_blk_no)%move_amtz = &
                   floor((block(b_blk_no)%nxtz_cent -block(b_blk_no)%initz_cent)/block(b_blk_no)%dz)
-                if ( abs(block(b_blk_no)%move_amtz) < factor)then
-                        if ( block(b_blk_no)%move_amtz < 0)then
+                if (abs(block(b_blk_no)%move_amtz) < factor)then
+                        if (block(b_blk_no)%move_amtz < 0)then
                         block(b_blk_no)%move_amtz=-factor
                         else
                         block(b_blk_no)%move_amtz=factor
                         end if
 
                 else
-                        if ( block(b_blk_no)%move_amtz < 0)then
+                        if (block(b_blk_no)%move_amtz < 0)then
                         block(b_blk_no)%move_amtz = block(b_blk_no)%move_amtz &
                                                     + mod(abs(block(b_blk_no)%move_amtz),factor)
                         else
@@ -1170,7 +1170,7 @@ blk%fluidCellCount = flcnt
        print*,"xstart_nw",intfr(g)%xintf_st_new,"xend_nw",intfr(g)%xintf_en_new
 
         DO i=1,block(b_blk_no)%nx+2
-           if( block(b_blk_no)%xp(i) > intfr(g)%xintf_st_new)then
+           if(block(b_blk_no)%xp(i) > intfr(g)%xintf_st_new)then
                 block(b_blk_no)%cpy_x_start=i
                 print*,"xpst",block(b_blk_no)%xp(i),"i",i
                 exit
@@ -1178,14 +1178,14 @@ blk%fluidCellCount = flcnt
         END DO
 
         DO i=block(b_blk_no)%cpy_x_start,block(b_blk_no)%nx+2
-           if( block(b_blk_no)%xp(i) > intfr(g)%xintf_en_new)then
+           if(block(b_blk_no)%xp(i) > intfr(g)%xintf_en_new)then
                 block(b_blk_no)%cpy_x_end=i-1
                 print*,"xpen",block(b_blk_no)%xp(i-1),"i",i-1
                 exit
           end if
         END DO
         DO j=1,block(b_blk_no)%ny+2
-           if( block(b_blk_no)%yp(j) > intfr(g)%yintf_st_new)then
+           if(block(b_blk_no)%yp(j) > intfr(g)%yintf_st_new)then
                 block(b_blk_no)%cpy_y_start=j
                 print*,"ypst",block(b_blk_no)%yp(j),"j",j
                 exit
@@ -1193,7 +1193,7 @@ blk%fluidCellCount = flcnt
         END DO
 
         DO j=block(b_blk_no)%cpy_y_start,block(b_blk_no)%ny+2
-           if( block(b_blk_no)%yp(j) > intfr(g)%yintf_en_new)then
+           if(block(b_blk_no)%yp(j) > intfr(g)%yintf_en_new)then
                 block(b_blk_no)%cpy_y_end=j-1
                 print*,"ypen",block(b_blk_no)%yp(j-1),"j",j-1
                 exit
@@ -1201,7 +1201,7 @@ blk%fluidCellCount = flcnt
         END DO
 
         DO k=1,block(b_blk_no)%nz+2
-           if( block(b_blk_no)%zp(k) > intfr(g)%zintf_st_new)then
+           if(block(b_blk_no)%zp(k) > intfr(g)%zintf_st_new)then
                 block(b_blk_no)%cpy_z_start=k
                 print*,"zpst",block(b_blk_no)%zp(k),"k",k
                 exit
@@ -1209,7 +1209,7 @@ blk%fluidCellCount = flcnt
         END DO
 
         DO k=block(b_blk_no)%cpy_z_start,block(b_blk_no)%nz+2
-           if( block(b_blk_no)%zp(k) > intfr(g)%zintf_en_new)then
+           if(block(b_blk_no)%zp(k) > intfr(g)%zintf_en_new)then
                 block(b_blk_no)%cpy_z_end=k-1
                 print*,"zpen",block(b_blk_no)%zp(k-1),"k",k-1
                 exit
@@ -1239,7 +1239,7 @@ blk%fluidCellCount = flcnt
         INTEGER(int64) :: i
         REAL(dp) :: change_y_f,change_x_f,change_z_f
 
-        if ( blk%move_check /= 1) return
+        if (blk%move_check /= 1) return
 
         change_z_f= blk%move_amtz*blk%dz
         change_y_f= blk%move_amty*blk%dy
@@ -1305,7 +1305,7 @@ blk%fluidCellCount = flcnt
         ! not running in MPI mode, this should always be allocated.
          if (.not. allocated(blk%u)) return
 
-        if ( blk% move_check /= 1) return
+        if (blk% move_check /= 1) return
         blk%cell_n=0
         DO k=1,blk%nz+2
         DO j=1,blk%ny+2
@@ -1409,7 +1409,7 @@ SUBROUTINE change_block_interface(local_intfr,blk_a,blk_b)
   ! not running in MPI mode, this should always be allocated.
   if (.not. allocated(blk_b%u)) return
 
-  if ( blk_b%move_check /= 1) return
+  if (blk_b%move_check /= 1) return
   factor=local_intfr%b_msh/local_intfr%a_msh
 
   increment = blk_b%move_amtx/factor

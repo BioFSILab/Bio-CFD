@@ -73,13 +73,13 @@ module biocfd_read_input
         block(g)%zshift=block(g)%zshift*0.001_dp
         END DO
         CLOSE(77)
-        if ( alpha_m /= 0 .and. theta_m /=0 ) then
+        if (alpha_m /= 0 .and. theta_m /=0) then
                 char_f = "bot"
         end if
-        if ( alpha_m == 0 .and. theta_m /=0 ) then
+        if (alpha_m == 0 .and. theta_m /=0) then
                 char_f = "amp"
         end if
-        if ( alpha_m /= 0 .and. theta_m ==0 ) then
+        if (alpha_m /= 0 .and. theta_m ==0) then
                 char_f = "ang"
         end if
         blk_start=2

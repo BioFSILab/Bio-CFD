@@ -1067,7 +1067,7 @@ SUBROUTINE velocityForcingField(blk)
          ELSE IF (blk%ibSurfId(blk%nelv2(n))==52) THEN
            blk%thetaDot =  blk%thetaDot2
            vsurf = -blk%thetaDot*(blk%zcent(blk%nelv2(n)) - blk%piv_z) &
-                   + (-blk%alphaDot)*( blk%xcent(blk%nelv2(n)) - blk%piv_x) &
+                   + (-blk%alphaDot)*(blk%xcent(blk%nelv2(n)) - blk%piv_x) &
                    + blk%ydot
          END IF
 

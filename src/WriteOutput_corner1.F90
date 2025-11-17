@@ -88,7 +88,7 @@ contains
        INTEGER  :: k, i, j
        REAL (dp) :: u1, v1, w1
 
-         IF((mod(ita,200_int64) ==0 .or. ita <= 2 ))then
+         IF((mod(ita,200_int64) ==0 .or. ita <= 2))then
 
        WRITE(filename1,1)char_f,ita,blk_no,re,blk%dx,size(block)
 1     FORMAT("out/",A3,"_butter_fielddata.",i9.9,".",i3.3,".",f7.1,".",f8.6,".",i3.3,".dat")
@@ -140,7 +140,7 @@ contains
          INTEGER(int64) :: inode, ielem
          CHARACTER(len=150) :: filename1
 
-          if (ita /= 1 ) return
+          if (ita /= 1) return
           WRITE(filename1,108)
   108     FORMAT("out/butterfly.dat")
           OPEN(UNIT=857,FILE=filename1,STATUS="unknown")

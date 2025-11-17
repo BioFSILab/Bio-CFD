@@ -176,16 +176,16 @@ module biocfd_pcor_vcor
 
 
         DO i=start, finish, step
-               if ( block(i)%derr2 >max_derr2)then
+               if (block(i)%derr2 >max_derr2)then
                   max_derr2=block(i)%derr2
                end if
-              if ( block(i)%derr1 >max_derr1)then
+              if (block(i)%derr1 >max_derr1)then
                  max_derr1=block(i)%derr1
               end if
-              if ( block(i)%derrStdSt >max_derrStdSt)then
+              if (block(i)%derrStdSt >max_derrStdSt)then
                  max_derrStdSt=block(i)%derrStdSt
               end if
-              if ( block(i)%nIterPcor >max_nIterPcor)then
+              if (block(i)%nIterPcor >max_nIterPcor)then
                  max_nIterPcor=block(i)%nIterPcor
               end if
               totalTime=totime + totalTime
