@@ -122,7 +122,6 @@ module biocfd_pcor_vcor
 
         !$omp single
         CALL coarseUpdate_pc
-        g=1
         ! This is a slightly confusing loop but is written this way for MPI
         do g=start, finish, step
           if (g == 1) CALL REDBLACKSOR_linear(g, pcItaMax)
