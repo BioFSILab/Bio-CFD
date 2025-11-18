@@ -86,9 +86,9 @@ subroutine coarseUpdate
                   block(b_blk_no)%xp, block(b_blk_no)%yp, block(b_blk_no)%zp, &
                   0, block(b_blk_no)%p)
 
-            enddo
-          enddo
-        enddo
+            end do
+          end do
+        end do
 
         st_idx=block(b_blk_no)%cintp
         en_idx=intfr(g)%counterxu-block(b_blk_no)%cintp
@@ -113,9 +113,9 @@ subroutine coarseUpdate
                   block(b_blk_no)%xu, block(b_blk_no)%yu, block(b_blk_no)%zu, &
                   1, block(b_blk_no)%u)
 
-        enddo
-        enddo
-        enddo
+        end do
+        end do
+        end do
 
         st_idx=block(b_blk_no)%cintp
         en_idx=intfr(g)%counterxv-block(b_blk_no)%cintp
@@ -140,9 +140,9 @@ subroutine coarseUpdate
                   block(b_blk_no)%xv, block(b_blk_no)%yv, block(b_blk_no)%zv, &
                   2, block(b_blk_no)%v)
 
-        enddo
-        enddo
-        enddo
+        end do
+        end do
+        end do
 
         st_idx=block(b_blk_no)%cintp
         en_idx=intfr(g)%counterxw-block(b_blk_no)%cintp
@@ -167,10 +167,10 @@ subroutine coarseUpdate
                   block(b_blk_no)%xw, block(b_blk_no)%yw, block(b_blk_no)%zw, &
                   3, block(b_blk_no)%w)
 
-        enddo
-        enddo
-        enddo
-        ENDDO
+        end do
+        end do
+        end do
+        END DO
 
 #ifdef BIOCFD_MPI
         ! We have no finished processing the p, u, v, and w arrays on
@@ -265,9 +265,9 @@ subroutine coarseUpdate
                   block(b_blk_no)%xu, block(b_blk_no)%yu, block(b_blk_no)%zu, &
                   1, block(b_blk_no)%ut)
 
-        enddo
-        enddo
-        enddo
+        end do
+        end do
+        end do
 
         st_idx=block(b_blk_no)%cintp
         en_idx=intfr(g)%counterxv-block(b_blk_no)%cintp
@@ -292,9 +292,9 @@ subroutine coarseUpdate
                   block(b_blk_no)%xv, block(b_blk_no)%yv, block(b_blk_no)%zv, &
                   2, block(b_blk_no)%vt)
 
-        enddo
-        enddo
-        enddo
+        end do
+        end do
+        end do
 
         st_idx=block(b_blk_no)%cintp
         en_idx=intfr(g)%counterxw-block(b_blk_no)%cintp
@@ -319,10 +319,10 @@ subroutine coarseUpdate
                   block(b_blk_no)%xw, block(b_blk_no)%yw, block(b_blk_no)%zw, &
                   3, block(b_blk_no)%wt)
 
-        enddo
-        enddo
-        enddo
-        ENDDO
+        end do
+        end do
+        end do
+        END DO
 
 #ifdef BIOCFD_MPI
         if (rank /= (num_proc-1)) then
@@ -415,10 +415,10 @@ subroutine coarseUpdate
 
 
 
-        enddo
-        enddo
-        enddo
-        ENDDO
+        end do
+        end do
+        end do
+        END DO
 
 #ifdef BIOCFD_MPI
         if (rank /= (num_proc-1)) then

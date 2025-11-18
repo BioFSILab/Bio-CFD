@@ -166,26 +166,26 @@ module biocfd_pcor_vcor
            er_dvdt = dabs((block(g)%vt(i,j,k) - block(g)%v(i,j,k)))/deltat
            er_dwdt = dabs((block(g)%wt(i,j,k) - block(g)%w(i,j,k)))/deltat
            err_ds = dmax1(err_ds, er_dudt,er_dvdt, er_dwdt)
-         ENDDO
+         END DO
          !$acc end parallel loop
            block(g)%derrStdSt = err_ds
 
 
-         ENDDO
+         END DO
 
 
 
         DO i=start, finish, step
-               if ( block(i)%derr2 >max_derr2)then
+               if (block(i)%derr2 >max_derr2)then
                   max_derr2=block(i)%derr2
                end if
-              if ( block(i)%derr1 >max_derr1)then
+              if (block(i)%derr1 >max_derr1)then
                  max_derr1=block(i)%derr1
               end if
-              if ( block(i)%derrStdSt >max_derrStdSt)then
+              if (block(i)%derrStdSt >max_derrStdSt)then
                  max_derrStdSt=block(i)%derrStdSt
               end if
-              if ( block(i)%nIterPcor >max_nIterPcor)then
+              if (block(i)%nIterPcor >max_nIterPcor)then
                  max_nIterPcor=block(i)%nIterPcor
               end if
               totalTime=totime + totalTime
@@ -194,13 +194,13 @@ module biocfd_pcor_vcor
 #ifndef BIOCFD_MPI
           ! TN: Not going to do this if we are using MPI - I'm not sure how useful it is anyway
             WRITE(filename1,1)
- 1          FORMAT('sphere_iter.dat')
-         OPEN(111,FILE=filename1,POSITION='APPEND',STATUS='unknown')
+ 1          FORMAT("sphere_iter.dat")
+         OPEN(111,FILE=filename1,POSITION="APPEND",STATUS="unknown")
          ! Final 0. was solverTime, but this was never written to so was always 0.
          WRITE(111,126)   ita, block(1)%nIterPcor, block(2)%nIterPcor, omega1, omega2, 0._dp
          WRITE(*,16) ita, max_nIterPcor, max_derr2, max_derrStdSt, totalTime
- 126      FORMAT(' ',I8, 2I10, 2F6.2,F14.9)
- 16      FORMAT(' ',I8, I10, 4E15.6)
+ 126      FORMAT(" ",I8, 2I10, 2F6.2,F14.9)
+ 16      FORMAT(" ",I8, I10, 4E15.6)
          CLOSE(111)
 #endif
 
@@ -235,14 +235,14 @@ module biocfd_pcor_vcor
           ! one that is on this rank
           if (.not. allocated(block(intfr(g)%b_blk)%p)) cycle
           call fineUpdate_bd_mv(g)
-        ENDDO
+        END DO
         CALL coarseUpdate
       END SUBROUTINE poissonSolver
 
       SUBROUTINE computeDiv(g)
 
          INTEGER :: n, i, j, k,gg, counter, nx_var, ny_var
-         INTEGER(int64),INTENT(IN) ::g
+         INTEGER(int64),INTENT(IN) :: g
          gg=g
          nx_var=block(g)%nx
          ny_var=block(g)%ny
@@ -265,7 +265,7 @@ module biocfd_pcor_vcor
       SUBROUTINE correctPressure(g)
 
          INTEGER(int64) :: n, i, j, k,gg
-         INTEGER(int64),INTENT(IN) ::g
+         INTEGER(int64),INTENT(IN) :: g
         gg=g
         !$acc parallel loop gang vector private (i, j, k)   &
         !$acc default(present)
@@ -281,7 +281,7 @@ module biocfd_pcor_vcor
       SUBROUTINE correctVelocity(g)
 
          INTEGER(int64) :: n, i, j, k,gg
-         INTEGER(int64),INTENT(IN) ::g
+         INTEGER(int64),INTENT(IN) :: g
          gg=g
 
         !$acc parallel loop gang vector private (i, j, k) firstprivate (deltat) &
@@ -308,18 +308,18 @@ module biocfd_pcor_vcor
          INTEGER (int64),INTENT(IN)   :: pcItaMax
          INTEGER(int64) :: n, i, j, k, gg, nx_var, ny_var,nz_var,nxy
          REAL (dp) :: errSum,var,derr4
-         INTEGER(int64),INTENT(IN) ::g
+         INTEGER(int64),INTENT(IN) :: g
 
          gg=g
             if (gg == 1)then
                  omega = omega1
-           elseif (gg == 2) then
+           else if (gg == 2) then
                  omega=omega2
-           elseif (gg == 3) then
+           else if (gg == 3) then
                  omega=omega3
            else
                 omega =omega4
-          endif
+          end if
 
           nx_var=block(gg)%nx
           ny_var=block(gg)%ny
@@ -414,7 +414,7 @@ module biocfd_pcor_vcor
               END DO
            END DO
            !$acc end parallel loop
-        endif
+        end if
 
       END SUBROUTINE updateVelocity_newv
 end module biocfd_pcor_vcor
