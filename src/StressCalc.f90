@@ -96,38 +96,23 @@ contains
        IF (blk%ibSurfID(ielem)==50) THEN
           blk% thetaDot  =  0.
           blk% thetaDDot =  0.
-          usurf = 0._dp + blk%xdot
-          vsurf = 0._dp + blk%ydot
-          wsurf = 0._dp
-          ac_z      =  0._dp  !-thetaDot**2*(zcent(nelp(index_ts(n))) - piv_z)
-          ac_y      =  0._dp  !-thetaDot**2*(ycent(nelp(index_ts(n))) - piv_y)
-          at_z      =  0._dp  ! thetaDDot*(ycent(nelp(index_ts(n))) - piv_y)
-          at_y      =  0._dp  !
        ELSE IF (blk%ibSurfID(ielem)==51) THEN
           blk% thetaDot  = blk% thetaDot1
           blk% thetaDDot = blk% thetaDDot1
-          usurf    = 0._dp + blk%xdot
-          vsurf    = -blk%thetaDot*(blk%zcent(ielem) - blk%piv_z) + blk%ydot
-          wsurf    = blk%thetaDot*(blk%ycent(ielem) - blk%piv_y)
-          ac_z      = -blk%thetaDot**2*(blk%zcent(ielem) -blk% piv_z)
-          ac_y      = -blk%thetaDot**2*(blk%ycent(ielem) -blk% piv_y)
-          at_z      = blk% thetaDDot*(blk%ycent(ielem)-blk% piv_y)
-          at_y      = -blk%thetaDDot*(blk%zcent(ielem)-blk% piv_z)
        ELSE IF (blk%ibSurfId(ielem)==52) THEN
           blk% thetaDot  = blk% thetaDot2
           blk% thetaDDot = blk% thetaDDot2
-          usurf = 0._dp +blk%xdot
-          vsurf    = -blk%thetaDot*(blk%zcent(ielem) - blk%piv_z)+ blk%ydot  ! + ydot
-          wsurf    = blk%thetaDot*(blk%ycent(ielem) - blk%piv_y)  ! + ydot
-          ac_z      = -blk%thetaDot**2*(blk%zcent(ielem) -blk% piv_z)
-          ac_y      = -blk%thetaDot**2*(blk%ycent(ielem) - blk%piv_y)
-          at_z      =  blk%thetaDDot*(blk%ycent(ielem) -blk% piv_y)
-          at_y      = -blk%thetaDDot*(blk%zcent(ielem) - blk%piv_z)
        END IF
-       !       usurf     =  0.
-       !       wsurf     = blk% thetaDot*(blk%ycent(ielem) -blk% piv_y)
-       !       vsurf     = -blk%thetaDot*(blk%zcent(ielem) -blk% piv_z)
-       !       dpdn      = -((ac_z + at_z)*blk%cosAlpha(ielem)  + (ac_y + at_y)*blk%cosBeta(ielem))
+
+       usurf = 0._dp + blk%xdot
+       vsurf = -blk%thetaDot * (blk%zcent(ielem) - blk%piv_z) + blk%ydot
+       wsurf = blk%thetaDot * (blk%ycent(ielem) - blk%piv_y)
+
+       ac_z = -blk%thetaDot**2 * (blk%zcent(ielem) - blk%piv_z)
+       ac_y = -blk%thetaDot**2 * (blk%ycent(ielem) - blk%piv_y)
+       at_z = blk%thetaDDot * (blk%ycent(ielem) - blk%piv_y)
+       at_y = -blk%thetaDDot * (blk%zcent(ielem) - blk%piv_z)
+
        dpdn = -((ac_z + at_z)*blk%cosGamma(ielem) &
             + (ac_y + at_y)*blk%cosBeta(ielem))-blk%yddot*blk%cosBeta(ielem)
 
