@@ -104,7 +104,7 @@ contains
           blk% thetaDDot = blk% thetaDDot2
        END IF
 
-       usurf = 0._dp + blk%xdot
+       usurf = blk%xdot
        vsurf = -blk%thetaDot * (blk%zcent(ielem) - blk%piv_z) + blk%ydot
        wsurf = blk%thetaDot * (blk%ycent(ielem) - blk%piv_y)
 
