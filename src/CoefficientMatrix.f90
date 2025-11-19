@@ -13,7 +13,7 @@ contains
     type(Block_t), intent(inout) :: blk
     logical, intent(in) :: is_coarse
     INTEGER (int64) :: i, j, nx_var, ny_var, nz_var
-    REAL (dp):: rx1, rx2, rxsum, ry1, ry2, rysum, rz1, rz2, rzsum
+    REAL (dp) :: rx1, rx2, rxsum, ry1, ry2, rysum, rz1, rz2, rzsum
 
     nx_var=blk%nx
     ny_var=blk%ny

@@ -60,7 +60,7 @@ contains
        blk%ck_uu(4, i) = -ak(5)
        blk%ck_uu(5, i) = ak(6)
        blk%ck_uu(6, i) = ak(7)
-       enddo
+       end do
 
        do j=2, blk%ny
 
@@ -84,7 +84,7 @@ contains
        blk%ck_vv(4, j) = -ak(5)
        blk%ck_vv(5, j) = ak(6)
        blk%ck_vv(6, j) = ak(7)
-       enddo
+       end do
 
        do k=2, blk%nz
 
@@ -108,14 +108,14 @@ contains
        blk%ck_ww(4, k) = -ak(5)
        blk%ck_ww(5, k) = ak(6)
        blk%ck_ww(6, k) = ak(7)
-       enddo
+       end do
 
        do i=2, blk%nx
        if(i==2)then
        tmp_dx1=blk%deltax(i-1)
        else
        tmp_dx1=0.5_dp*(blk%deltax(i-1)+blk%deltax(i-2))
-       endif
+       end if
        tmp_dx2=0.5_dp*(blk%deltax(i)+blk%deltax(i-1))
        tmp_dx3=0.5_dp*(blk%deltax(i)+blk%deltax(i+1))
        tmp_dx4=0.5_dp*(blk%deltax(i+1)+blk%deltax(i+2))
@@ -154,14 +154,14 @@ contains
        blk%ck_uw(4, i)=blk%ck_uv(4, i)
        blk%ck_uw(5, i)=blk%ck_uv(5, i)
        blk%ck_uw(6, i)=blk%ck_uv(6, i)
-       enddo
+       end do
 
        do j=2, blk%ny
        if(j==2)then
        tmp_dy1=blk%deltay(j-1)
        else
        tmp_dy1=0.5_dp*(blk%deltay(j-1)+blk%deltay(j-2))
-       endif
+       end if
        tmp_dy2=0.5_dp*(blk%deltay(j)+blk%deltay(j-1))
        tmp_dy3=0.5_dp*(blk%deltay(j)+blk%deltay(j+1))
        tmp_dy4=0.5_dp*(blk%deltay(j+1)+blk%deltay(j+2))
@@ -200,14 +200,14 @@ contains
        blk%ck_vw(4, j)=blk%ck_vu(4, j)
        blk%ck_vw(5, j)=blk%ck_vu(5, j)
        blk%ck_vw(6, j)=blk%ck_vu(6, j)
-       enddo
+       end do
 
        do k=2, blk%nz
        if(k==2)then
        tmp_dz1=blk%deltaz(k-1)
        else
        tmp_dz1=0.5_dp*(blk%deltaz(k-1)+blk%deltaz(k-2))
-       endif
+       end if
        tmp_dz2=0.5_dp*(blk%deltaz(k)+blk%deltaz(k-1))
        tmp_dz3=0.5_dp*(blk%deltaz(k)+blk%deltaz(k+1))
        tmp_dz4=0.5_dp*(blk%deltaz(k+1)+blk%deltaz(k+2))
@@ -246,7 +246,7 @@ contains
        blk%ck_wv(4, k)=blk%ck_wu(4, k)
        blk%ck_wv(5, k)=blk%ck_wu(5, k)
        blk%ck_wv(6, k)=blk%ck_wu(6, k)
-       enddo
+       end do
 
        END SUBROUTINE non_uni_coeff
 
@@ -358,136 +358,136 @@ contains
                    index_ip1 = nn
                    IF (temp_u2dotn<0) THEN
                       blk%u(i+1,j,k) = blk%u2_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_v2dotn<0) THEN
                       blk%v(i+1,j,k) = blk%v2_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_v1dotn<0) THEN
                       blk%v(i+1,j-1,k) = blk%v1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_w2dotn<0) THEN
                       blk%w(i+1,j,k) = blk%w2_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_w1dotn<0) THEN
                       blk%w(i+1,j,k-1) = blk%w1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_pdotn<0) THEN
                       blk%p(i+1,j,k) = blk%p_ghost(nn)
-                   ENDIF
-                ENDIF
+                   END IF
+                END IF
 
                 IF (blk%cell2(i-1, j, k)==2) THEN
                    index_im1 = nn
                    IF (temp_u1dotn<0) THEN
                       blk%u(i-2,j,k) = blk%u1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_v2dotn<0) THEN
                       blk%v(i-1,j,k) = blk%v2_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_v1dotn<0) THEN
                       blk%v(i-1,j-1,k) = blk%v1_ghost(nn)
-                   ENDIF
+                   END IF
                            IF (temp_w2dotn<0) THEN
                       blk%w(i-1,j,k) = blk%w2_ghost(nn)
-                   ENDIF
+                   END IF
                            IF (temp_w1dotn<0) THEN
                       blk%w(i-1,j,k-1) = blk%w1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_pdotn<0) THEN
                       blk%p(i-1,j,k) = blk%p_ghost(nn)
-                   ENDIF
-                ENDIF
+                   END IF
+                END IF
 
                 IF (blk%cell2(i, j+1, k)==2) THEN
                    index_jp1 = nn
                    IF (temp_u2dotn<0) THEN
                       blk%u(i,j+1,k) = blk%u2_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_u1dotn<0) THEN
                       blk%u(i-1,j+1,k) = blk%u1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_v2dotn<0) THEN
                       blk%v(i,j+1,k) = blk%v2_ghost(nn)
-                   ENDIF
+                   END IF
                            IF (temp_w2dotn<0) THEN
                       blk%w(i,j+1,k) = blk%w2_ghost(nn)
-                   ENDIF
+                   END IF
                            IF (temp_w1dotn<0) THEN
                       blk%w(i,j+1,k-1) = blk%w1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_pdotn<0) THEN
                       blk%p(i,j+1,k) = blk%p_ghost(nn)
-                   ENDIF
-                ENDIF
+                   END IF
+                END IF
 
                 IF (blk%cell2(i, j-1, k)==2) THEN
                    index_jm1 = nn
                    IF (temp_u2dotn<0) THEN
                       blk%u(i,j-1,k) = blk%u2_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_u1dotn<0) THEN
                       blk%u(i-1,j-1,k) = blk%u1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_v1dotn<0) THEN
                       blk%v(i,j-2,k) = blk%v1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_w2dotn<0) THEN
                       blk%w(i,j-1,k) = blk%w2_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_w1dotn<0) THEN
                       blk%w(i,j-1,k-1) = blk%w1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_pdotn<0) THEN
                       blk%p(i,j-1,k) = blk%p_ghost(nn)
-                   ENDIF
-                ENDIF
+                   END IF
+                END IF
 
                 IF (blk%cell2(i, j, k+1)==2) THEN
                    index_kp1 = nn
                    IF (temp_u2dotn<0) THEN
                       blk%u(i,j,k+1) = blk%u2_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_u1dotn<0) THEN
                       blk%u(i-1,j,k+1) = blk%u1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_v2dotn<0) THEN
                       blk%v(i,j,k+1) = blk%v2_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_v1dotn<0) THEN
                       blk%v(i,j-1,k+1) = blk%v1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_w2dotn<0) THEN
                       blk%w(i,j,k+1) = blk%w2_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_pdotn<0) THEN
                       blk%p(i,j,k+1) = blk%p_ghost(nn)
-                   ENDIF
-                ENDIF
+                   END IF
+                END IF
 
                 IF (blk%cell2(i, j, k-1)==2) THEN
                    index_km1 = nn
                    IF (temp_u2dotn<0) THEN
                       blk%u(i,j,k-1) = blk%u2_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_u1dotn<0) THEN
                       blk%u(i-1,j,k-1) = blk%u1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_v2dotn<0) THEN
                       blk%v(i,j,k-1) = blk%v2_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_v1dotn<0) THEN
                       blk%v(i,j-1,k-1) = blk%v1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_w1dotn<0) THEN
                       blk%w(i,j,k-2) = blk%w1_ghost(nn)
-                   ENDIF
+                   END IF
                    IF (temp_pdotn<0) THEN
                       blk%p(i,j,k-1) = blk%p_ghost(nn)
-                   ENDIF
-                ENDIF
+                   END IF
+                END IF
 
-             ENDDO
-      ENDIF
+             END DO
+      END IF
           dxr=blk%deltax(i+1)
           dx=blk%deltax(i)
           dxl=blk%deltax(i-1)
@@ -652,13 +652,13 @@ contains
 
        else
  !cccccccccccccc---First Order Upwinding ----ccccccccccccccccccccccccccccc
-   duudx = -0.25_dp*( u1a*u1a + alpha*dabs(u1a)*u22-u3*u3-alpha*dabs(u3)*u4)/blk%deltax(i)
+   duudx = -0.25_dp*(u1a*u1a + alpha*dabs(u1a)*u22-u3*u3-alpha*dabs(u3)*u4)/blk%deltax(i)
 
-   dvudy = -0.25_dp*( v1a*u5 + alpha*dabs(v1a)*u6 - v22*u7 - alpha*dabs(v22)*u8)/blk%deltay(j)
+   dvudy = -0.25_dp*(v1a*u5 + alpha*dabs(v1a)*u6 - v22*u7 - alpha*dabs(v22)*u8)/blk%deltay(j)
 
    dwudz = -0.25_dp*(w1a*u9 + alpha*dabs(w1a)*u10-w22*u11 - alpha*dabs(w22)*u12) /blk%deltaz(k)
 
-       endif
+       end if
 
 !ccccccccccccccccccccccccc  grad of u part cccccccccccccccccccccccccccccc
        d2udx2=(2.0_dp/dx2xr)*((-u4/dxr)+(u22/dx))
@@ -750,7 +750,7 @@ contains
 
       dwvdz = -0.25_dp*(w3*v11 + alpha*dabs(w3)*v12 -w4*v13 - alpha*dabs(w4)*v14)/blk%deltaz(k)
 
-       endif
+       end if
 
 !ccccccccccccccccccccccccc  grad of v part cccccccccccccccccccccccccccccc
        d2vdx2=(2.0_dp/(0.5_dp*(dx2xr+dx2xl)))*((-v6/(0.5_dp*dx2xr))+ &
@@ -837,7 +837,7 @@ contains
 
    dwwdz=-0.5_dp*(w13*w13 + alpha*dabs(w13)*w14 - w15*w15 - alpha*dabs(w15)*w16)/blk%deltaz(k)
 
-       endif
+       end if
 
 !ccccccccccccccccccccccccc  grad of w part cccccccccccccccccccccccccccccc
 
@@ -864,7 +864,7 @@ IF (blk%cell2(i+1, j, k)==2) THEN
    blk%w(i+1,j,k)   = blk%w2t_ghost(index_ip1)
    blk%w(i+1,j,k-1) = blk%w1t_ghost(index_ip1)
    blk%p(i+1,j,k)   = blk%pt_ghost(index_ip1)
-ENDIF
+END IF
 IF (blk%cell2(i-1, j, k)==2) THEN
    blk%u(i-2,j,k)   = blk%u1t_ghost(index_im1)
    blk%v(i-1,j,k)   = blk%v2t_ghost(index_im1)
@@ -872,7 +872,7 @@ IF (blk%cell2(i-1, j, k)==2) THEN
    blk%w(i-1,j,k)   = blk%w2t_ghost(index_im1)
    blk%w(i-1,j,k-1) = blk%w1t_ghost(index_im1)
    blk%p(i-1,j,k)   = blk%pt_ghost(index_im1)
-ENDIF
+END IF
 IF (blk%cell2(i, j+1, k)==2) THEN
    blk%u(i,j+1,k)   = blk%u2t_ghost(index_jp1)
    blk%u(i-1,j+1,k) = blk%u1t_ghost(index_jp1)
@@ -880,7 +880,7 @@ IF (blk%cell2(i, j+1, k)==2) THEN
    blk%w(i,j+1,k)   = blk%w2t_ghost(index_jp1)
    blk%w(i,j+1,k-1) = blk%w1t_ghost(index_jp1)
    blk%p(i,j+1,k)   = blk%pt_ghost(index_jp1)
-ENDIF
+END IF
 IF (blk%cell2(i, j-1, k)==2) THEN
    blk%u(i,j-1,k)   = blk%u2t_ghost(index_jm1)
    blk%u(i-1,j-1,k) = blk%u1t_ghost(index_jm1)
@@ -888,7 +888,7 @@ IF (blk%cell2(i, j-1, k)==2) THEN
    blk%w(i,j-1,k)   = blk%w2t_ghost(index_jm1)
    blk%w(i,j-1,k-1) = blk%w1t_ghost(index_jm1)
    blk%p(i,j-1,k)   = blk%pt_ghost(index_jm1)
-ENDIF
+END IF
 IF (blk%cell2(i, j, k+1)==2) THEN
    blk%u(i,j,k+1)   = blk%u2t_ghost(index_kp1)
    blk%u(i-1,j,k+1) = blk%u1t_ghost(index_kp1)
@@ -896,7 +896,7 @@ IF (blk%cell2(i, j, k+1)==2) THEN
    blk%v(i,j-1,k+1) = blk%v1t_ghost(index_kp1)
    blk%w(i,j,k+1)   = blk%w2t_ghost(index_kp1)
    blk%p(i,j,k+1)   = blk%pt_ghost(index_kp1)
-ENDIF
+END IF
 IF (blk%cell2(i, j, k-1)==2) THEN
    blk%u(i,j,k-1)   = blk%u2t_ghost(index_km1)
    blk%u(i-1,j,k-1) = blk%u1t_ghost(index_km1)
@@ -904,8 +904,8 @@ IF (blk%cell2(i, j, k-1)==2) THEN
    blk%v(i,j-1,k-1) = blk%v1t_ghost(index_km1)
    blk%w(i,j,k-2)   = blk%w1t_ghost(index_km1)
    blk%p(i,j,k-1)   = blk%pt_ghost(index_km1)
-ENDIF
-       ENDDO
+END IF
+       END DO
 !c***********************************************************************
      !$acc end parallel loop
         !$acc wait

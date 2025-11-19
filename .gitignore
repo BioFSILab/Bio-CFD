@@ -37,6 +37,7 @@
 # Bio-CFD input files
 *.txt
 *.dat
+*.nml
 inputdata
 
 # msh files
@@ -44,3 +45,6 @@ inputdata
 
 # hdf5 files
 *.h5
+
+# Bash script files
+*.sh

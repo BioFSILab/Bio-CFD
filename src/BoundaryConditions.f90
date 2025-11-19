@@ -10,7 +10,7 @@ module biocfd_boundary_conditions
 
 SUBROUTINE velocityBC(blk,deltat,uc)
       type(Block_t), intent(inout) :: blk
-      INTEGER (int64):: i, j, k
+      INTEGER (int64) :: i, j, k
       REAL(dp), intent(in) :: deltat,uc
 
      !$acc parallel loop gang vector collapse (2) default(present)  &
@@ -75,7 +75,7 @@ SUBROUTINE velocityBC(blk,deltat,uc)
 
       SUBROUTINE solidCellBC(blk)
         type(Block_t), intent(inout) :: blk
-        INTEGER (int64):: i, j, k, n
+        INTEGER (int64) :: i, j, k, n
         !$acc parallel loop gang vector &
         !$acc default(present) &
         !$acc private (i, j, k)
@@ -93,7 +93,7 @@ SUBROUTINE velocityBC(blk,deltat,uc)
 
       SUBROUTINE solidCellBC_move(blk)
         type(Block_t), intent(inout) :: blk
-        INTEGER (int64):: i, j, k,n
+        INTEGER (int64) :: i, j, k,n
 
          if (blk%move_check == 1) then
          !$acc parallel loop gang vector &
@@ -111,7 +111,7 @@ SUBROUTINE velocityBC(blk,deltat,uc)
             blk%w(i,j,k) = 0._dp
          END DO
          !$acc end parallel loop
-        endif
+        end if
       END SUBROUTINE solidCellBC_move
 
 end module biocfd_boundary_conditions

@@ -3,11 +3,12 @@
 ! effectively empty
 #if USE_HDF5 == 1
 module biocfd_hdf5_io
-  use, intrinsic :: iso_fortran_env, only: dp => real64, int8,int16,int32,int64
+  use, intrinsic :: iso_fortran_env, only: dp => real64, int8,int32,int64
   use hdf5, only: hsize_t, hid_t, h5open_f, h5fopen_f, h5fcreate_f, h5lexists_f, &
        h5gcreate_f, h5gopen_f, h5screate_f, h5screate_simple_f, h5dcreate_f, &
        h5dwrite_f, h5dclose_f, h5sclose_f, h5gclose_f, h5fclose_f, h5close_f, &
-       h5F_acc_rdwr_f, H5S_SCALAR_F, H5T_STD_I64LE, h5f_acc_excl_f, h5t_native_double
+       h5F_acc_rdwr_f, H5S_SCALAR_F, H5T_STD_I64LE, h5f_acc_excl_f, h5t_native_double, &
+       h5acreate_f, h5awrite_f, size_t, h5aclose_f, h5sclose_f
   implicit none
 
   private
@@ -27,18 +28,21 @@ contains
     character(len=20) :: dataset_location
     integer(hsize_t),allocatable :: data_dims(:)
     integer(hid_t) :: file_id, dspace_id, dset_id, group_id
+    integer(hid_t) :: attr_id, aspace_id
+    integer(size_t) :: adims(1)
     integer (int32) :: space_rank
-    integer (int8) ::arguments_present
+    integer (int8) :: arguments_present
     integer :: error
     logical :: file_exists, dataset_exists, group_exists
     arguments_present=0
     if (present(scalar_input)) then
       arguments_present = arguments_present + 1
+      adims = [0]
     end if
 
     if (present(array_input_1d)) then
-      if(arguments_present /= 0 ) then
-        error stop 'More than one argument present hdf5_write'
+      if(arguments_present /= 0) then
+        error stop "More than one argument present hdf5_write"
       end if
       arguments_present = arguments_present + 1
       allocate(data_dims(1))
@@ -47,8 +51,8 @@ contains
     end if
 
     if (present(array_input_2d)) then
-      if(arguments_present /= 0 ) then
-        error stop 'More than one argument present hdf5_write'
+      if(arguments_present /= 0) then
+        error stop "More than one argument present hdf5_write"
       end if
       arguments_present = arguments_present + 1
       allocate(data_dims(2))
@@ -58,8 +62,8 @@ contains
     end if
 
     if (present(array_input_3d)) then
-      if(arguments_present /= 0 ) then
-        error stop 'More than one argument present hdf5_write'
+      if(arguments_present /= 0) then
+        error stop "More than one argument present hdf5_write"
       end if
       allocate(data_dims(3))
       data_dims(1) = size(array_input_3d,1)
@@ -71,7 +75,7 @@ contains
     ! Initialize Fortran interface.
     call h5open_f(error)
 
-    inquire(file=trim(filename), exist=file_exists )
+    inquire(file=trim(filename), exist=file_exists)
 
     if (file_exists) then
       ! Open an existing file.
@@ -94,7 +98,7 @@ contains
 
     if (present(scalar_input)) then
       ! Create a scalar dataspace
-      call h5screate_f(H5S_SCALAR_F, dspace_id, error)
+      call h5screate_f(H5S_SCALAR_F, aspace_id, error)
     else
       ! Open dataspace
       call h5screate_simple_f(space_rank,data_dims,dspace_id,error)
@@ -104,8 +108,18 @@ contains
     call h5lexists_f(file_id, trim(dataset_location), dataset_exists, error)
 
     if (.not. dataset_exists) then
-      ! Create dataset if it doesn't exist already
-      call h5dcreate_f(group_id,key,h5t_native_double,dspace_id,dset_id,error)
+      if (present(scalar_input)) then
+        ! Create attribute attached to the group
+        call h5acreate_f(group_id, key, h5t_native_double, aspace_id, attr_id, error)
+      else
+        ! Create dataset if it doesn't exist already
+         call h5dcreate_f(group_id,key,h5t_native_double,dspace_id,dset_id,error)
+      end if
+    end if
+
+    if (present(scalar_input)) then
+       ! Write to dataset
+       call h5awrite_f(attr_id,h5t_native_double, scalar_input, adims, error)
     end if
 
     if (present(array_input_1d)) then
@@ -123,11 +137,16 @@ contains
       call h5dwrite_f(dset_id,h5t_native_double,array_input_3d,data_dims,error)
     end if
 
-    ! Close dataset
-    call h5dclose_f(dset_id,error)
+    if (present(scalar_input)) then
+       call h5aclose_f(attr_id, error)
+       call h5sclose_f(aspace_id, error)
+    else
+       ! Close dataset
+       call h5dclose_f(dset_id,error)
 
-    ! Close dataspace
-    call h5sclose_f(dspace_id, error)
+       ! Close dataspace
+       call h5sclose_f(dspace_id, error)
+    end if
 
     ! Close the group
     call h5gclose_f(group_id, error)
@@ -152,6 +171,8 @@ contains
     character(len=20) :: dataset_location
     integer(hsize_t),allocatable :: data_dims(:)
     integer(hid_t) :: file_id, dspace_id, dset_id, group_id
+    integer(hid_t) :: attr_id, aspace_id
+    integer(size_t) :: adims(1)
     integer (int32) :: space_rank
     integer (int8) :: arguments_present
     integer :: error
@@ -159,11 +180,12 @@ contains
     arguments_present=0
     if (present(scalar_input)) then
       arguments_present = arguments_present + 1
+      adims = [0]
     end if
 
     if (present(array_input_1d)) then
-       if(arguments_present /= 0 ) then
-        error stop 'More than one argument present hdf5_write'
+       if(arguments_present /= 0) then
+        error stop "More than one argument present hdf5_write"
       end if
       arguments_present = arguments_present + 1
       allocate(data_dims(1))
@@ -172,8 +194,8 @@ contains
     end if
 
     if (present(array_input_2d)) then
-      if(arguments_present /= 0 ) then
-        error stop 'More than one argument present hdf5_write'
+      if(arguments_present /= 0) then
+        error stop "More than one argument present hdf5_write"
       end if
       arguments_present = arguments_present + 1
       allocate(data_dims(2))
@@ -183,8 +205,8 @@ contains
     end if
 
     if (present(array_input_3d)) then
-      if(arguments_present /= 0 ) then
-        error stop 'More than one argument present hdf5_write'
+      if(arguments_present /= 0) then
+        error stop "More than one argument present hdf5_write"
       end if
       allocate(data_dims(3))
       data_dims(1) = size(array_input_3d,1)
@@ -196,14 +218,14 @@ contains
     ! Initialize Fortran interface.
     call h5open_f(error)
 
-    inquire(file=trim(filename), exist=file_exists )
+    inquire(file=trim(filename), exist=file_exists)
 
     if (file_exists) then
       ! Open an existing file.
       call h5fopen_f(trim(filename), h5F_acc_rdwr_f, file_id, error)
     else
       ! Create file requested
-      call h5fcreate_f(trim(filename), h5f_acc_rdwr_f, file_id, error)
+      call h5fcreate_f(trim(filename), h5f_acc_excl_f, file_id, error)
     end if
 
     ! Check if the group exists
@@ -219,7 +241,7 @@ contains
 
     if (present(scalar_input)) then
       ! Create a scalar dataspace
-      call h5screate_f(H5S_SCALAR_F, dspace_id, error)
+      call h5screate_f(H5S_SCALAR_F, aspace_id, error)
     else
       ! Open dataspace
       call h5screate_simple_f(space_rank,data_dims,dspace_id,error)
@@ -229,8 +251,18 @@ contains
      call h5lexists_f(file_id, trim(dataset_location), dataset_exists, error)
 
     if (.not. dataset_exists) then
-      ! Create dataset if it doesn't exist already
-      call h5dcreate_f(group_id,key,H5T_STD_I64LE,dspace_id,dset_id,error)
+      if (present(scalar_input)) then
+        ! Create attribute attached to the group
+        call h5acreate_f(group_id, key, H5T_STD_I64LE, aspace_id, attr_id, error)
+      else
+        ! Create dataset if it doesn't exist already
+         call h5dcreate_f(group_id,key,H5T_STD_I64LE,dspace_id,dset_id,error)
+      end if
+    end if
+
+    if (present(scalar_input)) then
+       ! Write to dataset
+       call h5awrite_f(attr_id,H5T_STD_I64LE, scalar_input, adims, error)
     end if
 
     if (present(array_input_1d)) then
@@ -248,11 +280,16 @@ contains
        call h5dwrite_f(dset_id,H5T_STD_I64LE,array_input_3d,data_dims,error)
     end if
 
-    ! Close dataset
-    call h5dclose_f(dset_id,error)
+    if (present(scalar_input)) then
+       call h5aclose_f(attr_id, error)
+       call h5sclose_f(aspace_id, error)
+    else
+       ! Close dataset
+       call h5dclose_f(dset_id,error)
 
-    ! Close dataspace
-    call h5sclose_f(dspace_id, error)
+       ! Close dataspace
+       call h5sclose_f(dspace_id, error)
+    end if
 
     ! Close the group
     call h5gclose_f(group_id, error)

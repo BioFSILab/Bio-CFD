@@ -3,6 +3,7 @@ name: Setup Fortran
 on:
   workflow_dispatch:
   pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
     branches: [main,dev]
 #  push:
 #    branches: [main]
@@ -19,11 +20,11 @@ concurrency:
 jobs:
   test:
     name: ${{ matrix.os }}-${{ matrix.toolchain.compiler }}${{ matrix.toolchain.tag }}
+    if: github.event.pull_request.draft == false
     runs-on: ${{ matrix.os }}
     env:
       FPM_FFLAGS: ${{ matrix.toolchain.FPM_FFLAGS }}
     strategy:
-      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         toolchain:

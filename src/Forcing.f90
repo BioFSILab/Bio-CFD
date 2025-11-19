@@ -32,21 +32,21 @@ SUBROUTINE pressureForcing1(blk)
             ac_y = 0.  !-block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_z = 0.  ! block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_y = 0.  !
-        ELSEIF (blk%ibSurfId(blk%nelp(n))==51) THEN
+        ELSE IF (blk%ibSurfId(blk%nelp(n))==51) THEN
             blk%thetaDot  = blk%thetaDot1
             blk%thetaDDot = blk%thetaDDot1
             ac_z = -blk%thetaDot**2*(blk%zcent(blk%nelp(n)) - blk%piv_z)
             ac_y = -blk%thetaDot**2*(blk%ycent(blk%nelp(n)) - blk%piv_y)
             at_z =  blk%thetaDDot*(blk%ycent(blk%nelp(n)) - blk%piv_y)
             at_y = -blk%thetaDDot*(blk%zcent(blk%nelp(n)) - blk%piv_z)
-        ELSEIF (blk%ibSurfId(blk%nelp(n))==52) THEN
+        ELSE IF (blk%ibSurfId(blk%nelp(n))==52) THEN
             blk%thetaDot  = blk%thetaDot2
             blk%thetaDDot = blk%thetaDDot2
             ac_z = -blk%thetaDot**2*(blk%zcent(blk%nelp(n)) - blk%piv_z)
             ac_y = -blk%thetaDot**2*(blk%ycent(blk%nelp(n)) - blk%piv_y)
             at_z =  blk%thetaDDot*(blk%ycent(blk%nelp(n)) - blk%piv_y)
             at_y = -blk%thetaDDot*(blk%zcent(blk%nelp(n)) - blk%piv_z)
-        ENDIF
+        END IF
          dpdn = -((ac_z + at_z)*blk%cosGamma(blk%nelp(n)) + (ac_y + at_y) * &
                   blk%cosBeta(blk%nelp(n)))-blk%yddot * &
                      blk%cosBeta(blk%nelp(n))
@@ -93,7 +93,7 @@ SUBROUTINE pressureForcing1(blk)
          cvaL = p_pos1 - (dpdn_e + dpdn)*n1*0.5_dp
 
          blk%p(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-      ENDDO
+      END DO
  !$acc end parallel loop
 
 END SUBROUTINE pressureForcing1
@@ -120,11 +120,11 @@ SUBROUTINE velocityForcing1(blk)
 
          IF (blk%ibSurfID(blk%nelu2(n))==50) THEN
              usurf = blk%xdot
-         ELSEIF (blk%ibSurfID(blk%nelu2(n))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelu2(n))==51) THEN
              usurf = blk%xdot
-         ELSEIF (blk%ibSurfId(blk%nelu2(n))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelu2(n))==52) THEN
              usurf = blk%xdot
-         ENDIF
+         END IF
          i = blk%interceptedIndexPtr(n, 1)
          j = blk%interceptedIndexPtr(n, 2)
          k = blk%interceptedIndexPtr(n, 3)
@@ -172,11 +172,11 @@ SUBROUTINE velocityForcing1(blk)
 !******************************U(i-1,j,k)*******************************
          IF (blk%ibSurfID(blk%nelu1(n))==50) THEN
              usurf = blk%xdot
-         ELSEIF (blk%ibSurfID(blk%nelu1(n))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelu1(n))==51) THEN
              usurf = blk%xdot
-         ELSEIF (blk%ibSurfId(blk%nelu1(n))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelu1(n))==52) THEN
              usurf = blk%xdot
-         ENDIF
+         END IF
          sur2nodeDis = blk%u1NormDis(n)
 
          pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2) &
@@ -219,15 +219,15 @@ SUBROUTINE velocityForcing1(blk)
 !**************************V(i,j,k)*************************************
          IF (blk%ibSurfID(blk%nelv2(n))==50) THEN
                  vsurf = blk%ydot
-         ELSEIF (blk%ibSurfID(blk%nelv2(n))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelv2(n))==51) THEN
            blk%thetaDot =  blk%thetaDot1
            vsurf = -blk%thetaDot*(blk%zcent(blk%nelv2(n)) &
                    - blk%piv_z) + blk%ydot
-         ELSEIF (blk%ibSurfId(blk%nelv2(n))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelv2(n))==52) THEN
            blk%thetaDot =  blk%thetaDot2
            vsurf = -blk%thetaDot*(blk%zcent(blk%nelv2(n)) &
                    - blk%piv_z)+ blk%ydot  ! + ydot
-         ENDIF
+         END IF
 
          sur2nodeDis = blk%v2NormDis(n)
 
@@ -270,15 +270,15 @@ SUBROUTINE velocityForcing1(blk)
 !**************************V(i,j-1,k)*************************************
          IF (blk%ibSurfID(blk%nelv1(n))==50) THEN
            vsurf = 0._dp+ blk%ydot
-         ELSEIF (blk%ibSurfID(blk%nelv1(n))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelv1(n))==51) THEN
            blk%thetaDot =  blk%thetaDot1
            vsurf    = -blk%thetaDot*(blk%zcent(blk%nelv1(n)) - blk%piv_z) &
                       + blk%ydot
-         ELSEIF (blk%ibSurfId(blk%nelv1(n))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelv1(n))==52) THEN
            blk%thetaDot =  blk%thetaDot2
            vsurf    = -blk%thetaDot*(blk%zcent(blk%nelv1(n)) - blk%piv_z) &
                       + blk%ydot  ! + ydot
-         ENDIF
+         END IF
          sur2nodeDis = blk%v1NormDis(n)
 
          pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2) &
@@ -321,13 +321,13 @@ SUBROUTINE velocityForcing1(blk)
 !**************************W(i,j,k)*************************************
          IF (blk%ibSurfID(blk%nelw2(n))==50) THEN
            wsurf = 0.
-         ELSEIF (blk%ibSurfID(blk%nelw2(n))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelw2(n))==51) THEN
            blk%thetaDot = blk%thetaDot1
            wsurf    = blk%thetaDot*(blk%ycent(blk%nelw2(n)) - blk%piv_y)
-         ELSEIF (blk%ibSurfId(blk%nelw2(n))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelw2(n))==52) THEN
            blk%thetaDot = blk%thetaDot2
            wsurf    = blk%thetaDot*(blk%ycent(blk%nelw2(n)) - blk%piv_y)  ! + ydot
-         ENDIF
+         END IF
          sur2nodeDis = blk%w2NormDis(n)
 
          pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2) &
@@ -370,13 +370,13 @@ SUBROUTINE velocityForcing1(blk)
          wsurf = 0._dp
          IF (blk%ibSurfID(blk%nelw1(n))==50) THEN
            wsurf = 0.
-         ELSEIF (blk%ibSurfID(blk%nelw1(n))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelw1(n))==51) THEN
            blk%thetaDot = blk%thetaDot1
            wsurf    = blk%thetaDot*(blk%ycent(blk%nelw1(n)) - blk%piv_y)
-         ELSEIF (blk%ibSurfId(blk%nelw1(n))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelw1(n))==52) THEN
            blk%thetaDot = blk%thetaDot2
            wsurf    = blk%thetaDot*(blk%ycent(blk%nelw1(n)) - blk%piv_y)  ! + ydot
-         ENDIF
+         END IF
          sur2nodeDis = blk%w1NormDis(n)
 
          pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2) &
@@ -416,7 +416,7 @@ SUBROUTINE velocityForcing1(blk)
          bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          blk%wt(i,j,k-1) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-      ENDDO
+      END DO
 !$acc end parallel loop
 
 END SUBROUTINE velocityForcing1
@@ -445,7 +445,7 @@ SUBROUTINE pressureForcingGhost(blk)
             ac_y = 0.  !-block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_z = 0.  ! block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_y = 0.  !-block(g)%thetaDDot*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
-        ELSEIF (blk%ibSurfId(blk%nelp(blk%index_ts(n)))==51) THEN
+        ELSE IF (blk%ibSurfId(blk%nelp(blk%index_ts(n)))==51) THEN
             blk%thetaDot  = blk%thetaDot1
             blk%thetaDDot = blk%thetaDDot1
             ac_z = -blk%thetaDot**2*(blk%zcent(blk%nelp(blk%index_ts(n))) &
@@ -457,7 +457,7 @@ SUBROUTINE pressureForcingGhost(blk)
             at_y = -blk%thetaDDot*(blk%zcent(blk%nelp(blk%index_ts(n))) &
                    - blk%piv_z)
 
-        ELSEIF (blk%ibSurfId(blk%nelp(blk%index_ts(n)))==52) THEN
+        ELSE IF (blk%ibSurfId(blk%nelp(blk%index_ts(n)))==52) THEN
             blk%thetaDot  = blk%thetaDot2
             blk%thetaDDot = blk%thetaDDot2
             ac_z = -blk%thetaDot**2*(blk%zcent(blk%nelp(blk%index_ts(n))) &
@@ -468,7 +468,7 @@ SUBROUTINE pressureForcingGhost(blk)
                    - blk%piv_y)
             at_y = -blk%thetaDDot*(blk%zcent(blk%nelp(blk%index_ts(n))) &
                    - blk%piv_z)
-        ENDIF
+        END IF
             dpdn = ((ac_z + at_z)* blk%cosGamma(blk%nelp(blk%index_ts(n))) &
                   + (ac_y + at_y)* blk%cosBeta(blk%nelp(blk%index_ts(n)))) &
                    + (blk%yddot*(blk%cosBeta(blk%index_ts(n))))
@@ -513,7 +513,7 @@ SUBROUTINE pressureForcingGhost(blk)
 
          blk%p_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          blk%pt_ghost(n) = blk%p(i,j,k)
-      ENDDO
+      END DO
       !$acc end parallel loop
 END SUBROUTINE pressureForcingGhost
 
@@ -541,11 +541,11 @@ SUBROUTINE velocityForcingGhost(blk)
 !***********************U(i,j,k)****************************************
          IF (blk%ibSurfID(blk%nelu2(blk%index_ts(n)))==50) THEN
              usurf = blk%xdot
-         ELSEIF (blk%ibSurfID(blk%nelu2(blk%index_ts(n)))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelu2(blk%index_ts(n)))==51) THEN
              usurf = blk%xdot
-         ELSEIF (blk%ibSurfId(blk%nelu2(blk%index_ts(n)))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelu2(blk%index_ts(n)))==52) THEN
            usurf = blk%xdot
-         ENDIF
+         END IF
 
          sur2nodeDis = -blk%u2NormDis(blk%index_ts(n))
 
@@ -590,11 +590,11 @@ SUBROUTINE velocityForcingGhost(blk)
 !******************************U(i-1,j,k)*******************************
          IF (blk%ibSurfID(blk%nelu1(blk%index_ts(n)))==50) THEN
              usurf = blk%xdot
-         ELSEIF (blk%ibSurfID(blk%nelu1(blk%index_ts(n)))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelu1(blk%index_ts(n)))==51) THEN
              usurf = blk%xdot
-         ELSEIF (blk%ibSurfId(blk%nelu1(blk%index_ts(n)))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelu1(blk%index_ts(n)))==52) THEN
            usurf = blk%xdot
-         ENDIF
+         END IF
 
          sur2nodeDis = -blk%u1NormDis(blk%index_ts(n))
 
@@ -637,19 +637,19 @@ SUBROUTINE velocityForcingGhost(blk)
 !**************************V(i,j,k)*************************************
          IF (blk%ibSurfID(blk%nelv2(blk%index_ts(n)))==50) THEN
            vsurf = 0._dp+ blk%ydot
-         ELSEIF (blk%ibSurfID(blk%nelv2(blk%index_ts(n)))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelv2(blk%index_ts(n)))==51) THEN
            blk%thetaDot =  blk%thetaDot1
            vsurf = -blk%thetaDot*(blk%zcent(blk%nelv2(blk%index_ts(n))) &
                    - blk%piv_z) &
                    + (-blk%alphaDot)*(blk%xcent(blk%nelv2(blk%index_ts(n))) &
                    - blk%piv_x)+ blk%ydot
-         ELSEIF (blk%ibSurfId(blk%nelv2(blk%index_ts(n)))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelv2(blk%index_ts(n)))==52) THEN
            blk%thetaDot =  blk%thetaDot2
            vsurf = -blk%thetaDot*(blk%zcent(blk%nelv2(blk%index_ts(n))) &
                    - blk%piv_z) &
                    + (-blk%alphaDot)*(blk%xcent(blk%nelv2(blk%index_ts(n))) &
                    - blk%piv_x) + blk%ydot  ! + ydot
-         ENDIF
+         END IF
 
          sur2nodeDis = -blk%v2NormDis(blk%index_ts(n))
 
@@ -694,19 +694,19 @@ SUBROUTINE velocityForcingGhost(blk)
 !**************************V(i,j-1,k)*************************************
          IF (blk%ibSurfID(blk%nelv1(blk%index_ts(n)))==50) THEN
            vsurf = blk%ydot
-         ELSEIF (blk%ibSurfID(blk%nelv1(blk%index_ts(n)))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelv1(blk%index_ts(n)))==51) THEN
            blk%thetaDot =  blk%thetaDot1
            vsurf    = -blk%thetaDot*(blk%zcent(blk%nelv1(blk%index_ts(n))) &
                       - blk%piv_z)  &
                       + (-blk%alphaDot)*(blk%xcent(blk%nelv1(blk%index_ts(n)))&
                       - blk%piv_x) + blk%ydot
-         ELSEIF (blk%ibSurfId(blk%nelv1(blk%index_ts(n)))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelv1(blk%index_ts(n)))==52) THEN
            blk%thetaDot =  blk%thetaDot2
            vsurf    = -blk%thetaDot*(blk%zcent(blk%nelv1(blk%index_ts(n))) &
                       - blk%piv_z)  &
                       + (-blk%alphaDot)*(blk%xcent(blk%nelv1(blk%index_ts(n)))&
                       - blk%piv_x)+ blk%ydot  ! + ydot
-         ENDIF
+         END IF
 
          sur2nodeDis = -blk%v1NormDis(blk%index_ts(n))
 
@@ -749,15 +749,15 @@ SUBROUTINE velocityForcingGhost(blk)
          wsurf = 0._dp
          IF (blk%ibSurfID(blk%nelw2(blk%index_ts(n)))==50) THEN
            wsurf = 0.
-         ELSEIF (blk%ibSurfID(blk%nelw2(blk%index_ts(n)))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelw2(blk%index_ts(n)))==51) THEN
            blk%thetaDot =  blk%thetaDot1
            wsurf = blk%thetaDot*(blk%ycent(blk%nelw2(blk%index_ts(n))) &
                    - blk%piv_y)
-         ELSEIF (blk%ibSurfId(blk%nelw2(blk%index_ts(n)))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelw2(blk%index_ts(n)))==52) THEN
            blk%thetaDot =  blk%thetaDot2
            wsurf = blk%thetaDot*(blk%ycent(blk%nelw2(blk%index_ts(n))) &
                    - blk%piv_y)  ! + ydot
-         ENDIF
+         END IF
 
 
          sur2nodeDis = -blk%w2NormDis(blk%index_ts(n))
@@ -804,15 +804,15 @@ SUBROUTINE velocityForcingGhost(blk)
          wsurf = 0._dp
          IF (blk%ibSurfID(blk%nelw1(blk%index_ts(n)))==50) THEN
            wsurf = 0.
-         ELSEIF (blk%ibSurfID(blk%nelw1(blk%index_ts(n)))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelw1(blk%index_ts(n)))==51) THEN
            blk%thetaDot =  blk%thetaDot1
            wsurf = blk%thetaDot*(blk%ycent(blk%nelw1(blk%index_ts(n))) &
                    - blk%piv_y)
-         ELSEIF (blk%ibSurfId(blk%nelw1(blk%index_ts(n)))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelw1(blk%index_ts(n)))==52) THEN
            blk%thetaDot =  blk%thetaDot2
            wsurf =  blk%thetaDot*(blk%ycent(blk%nelw1(blk%index_ts(n))) &
                    - blk%piv_y)  ! + ydot
-         ENDIF
+         END IF
 
 
          sur2nodeDis = -blk%w1NormDis(blk%index_ts(n))
@@ -852,7 +852,7 @@ SUBROUTINE velocityForcingGhost(blk)
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          blk%w1_ghost(n) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
          blk%w1t_ghost(n) = blk%w(i,j,k-1)
-      ENDDO
+      END DO
       !$acc end parallel loop
 
 END SUBROUTINE velocityForcingGhost
@@ -878,21 +878,21 @@ SUBROUTINE pressureForcingField(blk)
             ac_y = 0.  !-block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_z = 0.  ! block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_y = 0.  !
-        ELSEIF (blk%ibSurfId(blk%nelp(n))==51) THEN
+        ELSE IF (blk%ibSurfId(blk%nelp(n))==51) THEN
             blk%thetaDot  = blk%thetaDot1
             blk%thetaDDot = blk%thetaDDot1
             ac_z = -blk%thetaDot**2*(blk%zcent(blk%nelp(n)) - blk%piv_z)
             ac_y = -blk%thetaDot**2*(blk%ycent(blk%nelp(n)) - blk%piv_y)
             at_z =  blk%thetaDDot*(blk%ycent(blk%nelp(n)) - blk%piv_y)
             at_y = -blk%thetaDDot*(blk%zcent(blk%nelp(n)) - blk%piv_z)
-        ELSEIF (blk%ibSurfId(blk%nelp(n))==52) THEN
+        ELSE IF (blk%ibSurfId(blk%nelp(n))==52) THEN
             blk%thetaDot  = blk%thetaDot2
             blk%thetaDDot = blk%thetaDDot2
             ac_z = -blk%thetaDot**2*(blk%zcent(blk%nelp(n)) - blk%piv_z)
             ac_y = -blk%thetaDot**2*(blk%ycent(blk%nelp(n)) - blk%piv_y)
             at_z =  blk%thetaDDot*(blk%ycent(blk%nelp(n)) - blk%piv_y)
             at_y = -blk%thetaDDot*(blk%zcent(blk%nelp(n)) - blk%piv_z)
-        ENDIF
+        END IF
          dpdn = -((ac_z + at_z)*blk%cosGamma(blk%nelp(n)) &
                 + (ac_y + at_y)*blk%cosBeta(blk%nelp(n))) &
                 -blk%yddot*blk%cosBeta(blk%nelp(n))
@@ -939,7 +939,7 @@ SUBROUTINE pressureForcingField(blk)
          cvaL = p_pos1 - (dpdn_e + dpdn)*n1*0.5_dp
 
          blk%p(i,j,k) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-      ENDDO
+      END DO
       !$acc end parallel loop
 END SUBROUTINE pressureForcingField
 
@@ -967,11 +967,11 @@ SUBROUTINE velocityForcingField(blk)
 !***********************U(i,j,k)****************************************
          IF (blk%ibSurfID(blk%nelu2(n))==50) THEN
              usurf = blk%xdot
-         ELSEIF (blk%ibSurfID(blk%nelu2(n))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelu2(n))==51) THEN
              usurf = blk%xdot
-         ELSEIF (blk%ibSurfId(blk%nelu2(n))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelu2(n))==52) THEN
              usurf = blk%xdot
-         ENDIF
+         END IF
 
          sur2nodeDis = blk%u2NormDis(n)
 
@@ -1013,11 +1013,11 @@ SUBROUTINE velocityForcingField(blk)
 !******************************U(i-1,j,k)*******************************
          IF (blk%ibSurfID(blk%nelu1(n))==50) THEN
              usurf = blk%xdot
-         ELSEIF (blk%ibSurfID(blk%nelu1(n))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelu1(n))==51) THEN
              usurf = blk%xdot
-         ELSEIF (blk%ibSurfId(blk%nelu1(n))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelu1(n))==52) THEN
              usurf = blk%xdot
-         ENDIF
+         END IF
 
          sur2nodeDis = blk%u1NormDis(n)
 
@@ -1060,17 +1060,17 @@ SUBROUTINE velocityForcingField(blk)
 !**************************V(i,j,k)*************************************
          IF (blk%ibSurfID(blk%nelv2(n))==50) THEN
            vsurf = blk%ydot
-         ELSEIF (blk%ibSurfID(blk%nelv2(n))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelv2(n))==51) THEN
            blk%thetaDot =  blk%thetaDot1
            vsurf = -blk%thetaDot*(blk%zcent(blk%nelv2(n)) - blk%piv_z) &
                    + (-blk%alphaDot)*(blk%xcent(blk%nelv2(n)) - blk%piv_x) &
                    + blk%ydot
-         ELSEIF (blk%ibSurfId(blk%nelv2(n))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelv2(n))==52) THEN
            blk%thetaDot =  blk%thetaDot2
            vsurf = -blk%thetaDot*(blk%zcent(blk%nelv2(n)) - blk%piv_z) &
-                   + (-blk%alphaDot)*( blk%xcent(blk%nelv2(n)) - blk%piv_x) &
+                   + (-blk%alphaDot)*(blk%xcent(blk%nelv2(n)) - blk%piv_x) &
                    + blk%ydot
-         ENDIF
+         END IF
 
          sur2nodeDis = blk%v2NormDis(n)
 
@@ -1111,19 +1111,19 @@ SUBROUTINE velocityForcingField(blk)
 !**************************V(i,j-1,k)*************************************
          IF (blk%ibSurfID(blk%nelv1(n))==50) THEN
            vsurf = blk%ydot
-         ELSEIF (blk%ibSurfID(blk%nelv1(n))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelv1(n))==51) THEN
            blk%thetaDot =  blk%thetaDot1
            !vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)
            vsurf = -blk%thetaDot*(blk%zcent(blk%nelv1(n)) - blk%piv_z)  &
                    + (-blk%alphaDot)*(blk%xcent(blk%nelv1(n)) - blk%piv_x) &
                    + blk%ydot
-         ELSEIF (blk%ibSurfId(blk%nelv1(n))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelv1(n))==52) THEN
            blk%thetaDot =  blk%thetaDot2
            !vsurf    = -block(g)%thetaDot*(block(g)%zcent(block(g)%nelv1(n)) - block(g)%piv_z)! + ydot
            vsurf = -blk%thetaDot*(blk%zcent(blk%nelv1(n)) - blk%piv_z)  &
                    + (-blk%alphaDot)*(blk%xcent(blk%nelv1(n)) - blk%piv_x) &
                    + blk%ydot
-         ENDIF
+         END IF
 
          !vsurf =  -block(g)%thetaDot*(block(g)%xcent(block(g)%nelv1(n)) - block(g)%piv_x) + ydot
          sur2nodeDis = blk%v1NormDis(n)
@@ -1165,13 +1165,13 @@ SUBROUTINE velocityForcingField(blk)
 !**************************W(i,j,k)*************************************
          IF (blk%ibSurfID(blk%nelw2(n))==50) THEN
            wsurf = 0.
-         ELSEIF (blk%ibSurfID(blk%nelw2(n))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelw2(n))==51) THEN
            blk%thetaDot = blk%thetaDot1
            wsurf    = blk%thetaDot*(blk%ycent(blk%nelw2(n)) - blk%piv_y)
-         ELSEIF (blk%ibSurfId(blk%nelw2(n))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelw2(n))==52) THEN
            blk%thetaDot = blk%thetaDot2
            wsurf    = blk%thetaDot*(blk%ycent(blk%nelw2(n)) - blk%piv_y)  ! + ydot
-         ENDIF
+         END IF
 
          sur2nodeDis = blk%w2NormDis(n)
          pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
@@ -1212,13 +1212,13 @@ SUBROUTINE velocityForcingField(blk)
          wsurf = 0._dp
          IF (blk%ibSurfID(blk%nelw1(n))==50) THEN
            wsurf = 0.
-         ELSEIF (blk%ibSurfID(blk%nelw1(n))==51) THEN
+         ELSE IF (blk%ibSurfID(blk%nelw1(n))==51) THEN
            blk%thetaDot = blk%thetaDot1
            wsurf    = blk%thetaDot*(blk%ycent(blk%nelw1(n)) - blk%piv_y)
-         ELSEIF (blk%ibSurfId(blk%nelw1(n))==52) THEN
+         ELSE IF (blk%ibSurfId(blk%nelw1(n))==52) THEN
            blk%thetaDot = blk%thetaDot2
            wsurf    = blk%thetaDot*(blk%ycent(blk%nelw1(n)) - blk%piv_y)  ! + ydot
-         ENDIF
+         END IF
 
          sur2nodeDis = blk%w1NormDis(n)
 
@@ -1256,7 +1256,7 @@ SUBROUTINE velocityForcingField(blk)
          bval = 2._dp/n1*(w_pos1 - wsurf) - dwdn_e
          avaL = dwdn_e/n1 - (w_pos1 - wsurf)/n1**2
          blk%w(i,j,k-1) = aval*sur2nodeDis**2 + bval*sur2nodeDis + cval
-      ENDDO
+      END DO
       !$acc end parallel loop
 
 END SUBROUTINE velocityForcingField
