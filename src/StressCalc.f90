@@ -40,13 +40,13 @@ contains
     ! 3 array in Block_t
     real(dp) :: normal(3)
 
-    viscousDrag = 0.
-    pressureDrag = 0.
-    viscousLift = 0.
-    PressureLift = 0.
-    surf_area = 0.
-    area_Sx = 0.
-    area_Sy = 0
+    viscousDrag = 0._dp
+    pressureDrag = 0._dp
+    viscousLift = 0._dp
+    PressureLift = 0._dp
+    surf_area = 0._dp
+    area_Sx = 0._dp
+    area_Sy = 0._dp
     !$acc parallel loop gang vector &
     !$acc private (i_x1, i_y1, i_z1, i_cell, j_cell, k_cell, diagdis, normdis, &
     !$acc          aval, bval, cval, del_X, del_Y, del_Z,                       &
@@ -62,9 +62,7 @@ contains
     !$acc firstprivate (rho_f, mu_f) &
     !$acc private(derivatives, normal) &
     !$acc reduction(+: pressureDrag, viscousDrag, viscousLift, pressureLift, area_Sx, area_Sy, surf_area)
-    !DO ielem = 1, blk%ibElemCnt
     DO ielem = 1, blk%ibElems
-       !  IF((blk%zcent(ielem).ge.0.0).and.(blk%zcent(ielem).le.2.0)) THEN
        !***********************interpolation points****************************
 
        normal = [blk%cosAlpha(ielem), blk%cosBeta(ielem), blk%cosGamma(ielem)]
@@ -199,11 +197,11 @@ contains
 
 !> Find the position in the array where the value is greater than
 !> element i but less than element i+1
-pure function find_index_in_array(value, array, start, end) result(index)
+pure function find_index_in_array(value, array, start, finish) result(index)
    real(dp), intent(in) :: value
    real(dp), intent(in) :: array(:)
    ! TODO: No need for these to be int64
-   integer(int64), intent(in) :: start, end
+   integer(int64), intent(in) :: start, finish
 
    !> The resulting index
    integer :: index
@@ -211,7 +209,7 @@ pure function find_index_in_array(value, array, start, end) result(index)
    ! Internal counter
    integer :: i
    !$acc routine seq
-   do i=start, end
+   do i=start, finish
       if (value >= array(i) .and. value < array(i+1)) then
          index = i
          return  ! As soon as we find a value we can return
