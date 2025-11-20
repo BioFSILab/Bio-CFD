@@ -37,10 +37,11 @@ PROGRAM main
         CHARACTER (LEN = 3)   :: char_f
         INTEGER               :: istart
         INTEGER (int64)   :: itamax, pcItaMax
-        real(dp) :: aoa,aoa1,aoa2,phase_angle,piv_pt
+        real(dp) :: aoa, aoa1, aoa2, phase_angle, piv_pt, mu_f, rho_f
         integer :: start, finish, step, rank
 
-        CALL readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt)
+        CALL readInput(surGeoPoints, char_f, istart, itamax, pcItaMax, aoa, phase_angle, piv_pt, &
+                       mu_f, rho_f)
         ! Need to init after we know the size of block
         call biocfd_init(size(block), start, finish, step, rank)
         CALL readBlockInterface
@@ -157,7 +158,8 @@ PROGRAM main
          if (g /= 1) then
            !$acc wait
            DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent, &
-                      block(g)%cosAlpha, block(g)%cosBeta, block(g)%cosGamma)
+                      block(g)%cosAlpha, block(g)%cosBeta, block(g)%cosGamma, &
+                      block(g)%element_length)
            block(g)%blk_mv_tag=0.
            CALL computeSurfaceVariables(block(g),g,phase_angle,piv_pt)
          end if

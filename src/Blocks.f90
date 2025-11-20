@@ -69,6 +69,9 @@ MODULE biocfd_block_type
        REAL (dp) :: theta, thetaDot, thetaDDot, piv_x,piv_y, piv_z
        REAL (dp) :: alphaDot, thetaDot1, thetaDDot1, thetaDot2, thetaDDot2
 
+       ! Variables from the stress calculation
+       real(dp) :: viscous_drag_coefficient, pressure_drag_coefficient
+       real(dp) :: viscous_lift_coefficient, pressure_lift_coefficient
 
     end type Block_t
 

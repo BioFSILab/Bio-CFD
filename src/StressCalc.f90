@@ -10,17 +10,13 @@ module biocfd_stress_calculation
 
 contains
 
-  SUBROUTINE stressCal1(blk, id, mu_f, rho_f, totime)
+  SUBROUTINE stressCal1(blk, mu_f, rho_f)
     !> The block to perform the stress calculation on (not this is
     !> inout only because of setting thetaDot and thetaDDot, which I
     !> think might not be needed)
     type(Block_t), intent(inout) :: blk
-    !> The ID number of the block (it's position in the block array)
-    integer(int64), intent(in) :: id
     !> Parameters used in the stress calculation
     real(dp), intent(in) :: mu_f, rho_f
-    !> totime is just printed to the output
-    real(dp), intent(in) :: totime
 
     INTEGER :: ielem, i_x1, i_y1, i_z1
 
@@ -35,9 +31,7 @@ contains
 
     REAL(dp) :: shear_force(3), f_surf(3)
 
-    REAL(dp) :: pressureDrag, viscousDrag, viscousLift, pressureLift, viscousDragcoefficient, &
-               pressureDragcoefficient, viscousLiftcoefficient, PressureLiftcoefficient, &
-               area_Sx, area_Sy, surf_area
+    REAL(dp) :: pressureDrag, viscousDrag, viscousLift, pressureLift, area_Sx, area_Sy, surf_area
 
     real(dp) :: ac_y, ac_z, at_y, at_z
     real(dp) :: derivatives(3)
@@ -45,8 +39,6 @@ contains
     ! is an argument to make cosAlpha, cosBeta, and cosGamma a length
     ! 3 array in Block_t
     real(dp) :: normal(3)
-
-    CHARACTER(len=150) :: filename1
 
     viscousDrag = 0.
     pressureDrag = 0.
@@ -197,25 +189,11 @@ contains
 
     area_Sx= 0.5_dp * area_Sx
     area_Sy= 0.5_dp * area_Sy
-    ! area_Sx= 1.!0.5 * area_Sx
-    ! area_Sy= 1.!0.5 * area_Sy
-    viscousDragcoefficient= 2* (viscousDrag/area_Sx)
-    pressureDragcoefficient= 2* (pressureDrag/area_Sy)
-    viscousLiftcoefficient= 2* (viscousLift/area_Sx)
-    pressureLiftcoefficient= 2* (pressureLift/area_Sy)
 
-    !*********************drag file writing*********************************
-
-    WRITE(filename1,19) id
-19  FORMAT("dragcoff_",I4.4,".dat")
-    OPEN(899, file=filename1, position="Append", status="unknown")
-    WRITE(899,*) viscousDragcoefficient, pressureDragcoefficient, totime
-    CLOSE(899)
-    WRITE(filename1,29) id
-29  FORMAT("liftcoff_",I4.4,".dat")
-    OPEN(999, file=filename1, position="Append", status="unknown")
-    WRITE(999,*) viscousLiftcoefficient,  pressureLiftcoefficient, totime
-    CLOSE(999)
+    blk%viscous_drag_coefficient = 2 * (viscousDrag/area_Sx)
+    blk%pressure_drag_coefficient = 2 * (pressureDrag/area_Sy)
+    blk%viscous_lift_coefficient = 2 * (viscousLift/area_Sx)
+    blk%pressure_lift_coefficient = 2 * (pressureLift/area_Sy)
 
   end subroutine stressCal1
 
