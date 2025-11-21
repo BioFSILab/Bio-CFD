@@ -230,7 +230,7 @@ PROGRAM main
                    block(g)% u1NormDis,block(g)% u2NormDis ,block(g)% v1NormDis,&
                    block(g)% v2NormDis,block(g)% w1NormDis,block(g)% w2NormDis,&
                    block(g)% solidIndexPtr)
-        DEALLOCATE( block(g)%fluidIndexPtr,block(g)% redCellIndexPtr, block(g)%blackCellIndexPtr)
+        DEALLOCATE(block(g)%fluidIndexPtr,block(g)% redCellIndexPtr, block(g)%blackCellIndexPtr)
         DEALLOCATE(block(g)%p_ghost,block(g)% pt_ghost,block(g)% u2_ghost,block(g)% u2t_ghost,&
              block(g)% v2_ghost,block(g)% v2t_ghost,block(g)% w2_ghost, block(g)%w2t_ghost,&
              block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, &
