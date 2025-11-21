@@ -21,8 +21,8 @@ contains
     CHARACTER(len=150) :: filename3
 
     WRITE(filename3,3) id, re
-3   FORMAT('out/aorta_chkpt.',i3.3,'.',f6.1,".dat")
-    OPEN (1, FILE=filename3, FORM='formatted')
+3   FORMAT("out/aorta_chkpt.",i3.3,".",f6.1,".dat")
+    OPEN (1, FILE=filename3, FORM="formatted")
     DO k = 1, blk%nz+2
        DO j = 1, blk%ny+2
           DO i = 1, blk%nx+2

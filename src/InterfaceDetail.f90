@@ -13,7 +13,7 @@ SUBROUTINE interfaceDetail
         a_blk_no, b_blk_no, xx1_p, xx2_p, &
         a_mm_x, a_mm_y,a_mm_z
 
-        print*, 'before allocation in interface'
+        print*, "before allocation in interface"
         a_max_intf_length=0
         b_max_intf_length=0
         DO g=1, size(intfr)
@@ -50,7 +50,7 @@ SUBROUTINE interfaceDetail
 
 !coarse mesh start and end index
 
-        print*,'After allocation in interface detail'
+        print*,"After allocation in interface detail"
         DO g=1, size(intfr)
         factor=intfr(g)%b_msh/intfr(g)%a_msh
         a_blk_no=intfr(g)%a_blk
@@ -205,15 +205,15 @@ SUBROUTINE interfaceDetail
             if(block_var(i) > intf_start)then
                     xx1_p=i
                     exit
-            endif
-          enddo
+            end if
+          end do
 
           DO i=xx1_p, size(block_var)
             if(block_var(i) > intf_end)then
                     xx2_p=i-1
                     exit
-            endif
-          enddo
+            end if
+          end do
 
           interface_details(1,1) = xx1_p-1
           interface_details(2,1) = starter - 1

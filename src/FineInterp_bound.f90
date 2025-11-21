@@ -90,18 +90,18 @@ module biocfd_fine_interp_bound
                 block(b_blk_no)%pc(tar_x, tar_y, tar_z) = bl_interp_ans
                 block(b_blk_no)%pco(tar_x, tar_y, tar_z) = bl_interp_ans
 
-            ENDDO
-          ENDDO
-        ENDDO
+            END DO
+          END DO
+        END DO
 
-        ENDDO
-        ENDDO
-        ENDDO
+        END DO
+        END DO
+        END DO
         !$acc end parallel loop
 
 
      end do  ! axes loop
-        ENDDO
+        END DO
 
 
         end subroutine fineUpdate_pc_bd
@@ -181,13 +181,13 @@ module biocfd_fine_interp_bound
                1, block(a_blk_no)%ut &
           )
 
-          ENDDO
-          ENDDO
-          ENDDO
+          END DO
+          END DO
+          END DO
 
-        ENDDO
-        ENDDO
-        ENDDO
+        END DO
+        END DO
+        END DO
         !$acc end parallel loop
 
      end do  ! axes
@@ -238,13 +238,13 @@ module biocfd_fine_interp_bound
                2, block(a_blk_no)%vt &
           )
 
-          ENDDO
-          ENDDO
-          ENDDO
+          END DO
+          END DO
+          END DO
 
-        ENDDO
-        ENDDO
-        ENDDO
+        END DO
+        END DO
+        END DO
         !$acc end parallel loop
 
      end do  ! axes
@@ -294,18 +294,18 @@ module biocfd_fine_interp_bound
                3, block(a_blk_no)%wt &
           )
 
-          ENDDO
-          ENDDO
-          ENDDO
+          END DO
+          END DO
+          END DO
 
-        ENDDO
-        ENDDO
-        ENDDO
+        END DO
+        END DO
+        END DO
         !$acc end parallel loop
 
      end do  ! axes
 
-        ENDDO
+        END DO
 
 
         end subroutine fineUpdate_newv_bd
@@ -368,13 +368,13 @@ module biocfd_fine_interp_bound
                0, block(a_blk_no)%p &
           )
 
-                ENDDO
-                ENDDO
-                ENDDO
+                END DO
+                END DO
+                END DO
 
-        ENDDO
-        ENDDO
-        ENDDO
+        END DO
+        END DO
+        END DO
          !$acc end parallel loop
 
         end do  ! axes
@@ -423,13 +423,13 @@ module biocfd_fine_interp_bound
                1, block(a_blk_no)%u &
           )
 
-                ENDDO
-                ENDDO
-                ENDDO
+                END DO
+                END DO
+                END DO
 
-        ENDDO
-        ENDDO
-        ENDDO
+        END DO
+        END DO
+        END DO
          !$acc end parallel loop
 
         end do  ! axes
@@ -478,13 +478,13 @@ module biocfd_fine_interp_bound
                2, block(a_blk_no)%v &
           )
 
-                ENDDO
-                ENDDO
-                ENDDO
+                END DO
+                END DO
+                END DO
 
-        ENDDO
-        ENDDO
-        ENDDO
+        END DO
+        END DO
+        END DO
          !$acc end parallel loop
 
         end do  ! axes
@@ -533,13 +533,13 @@ module biocfd_fine_interp_bound
                3, block(a_blk_no)%w &
           )
 
-                ENDDO
-                ENDDO
-                ENDDO
+                END DO
+                END DO
+                END DO
 
-        ENDDO
-        ENDDO
-        ENDDO
+        END DO
+        END DO
+        END DO
         !$acc end parallel loop
 
         end do  ! axes

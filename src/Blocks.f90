@@ -10,9 +10,9 @@ MODULE biocfd_block_type
                 bfreq, yamp, xt, xdot
         REAL(dp) :: derr1,derr2,derrStdSt,a0
         REAL(dp) :: xshift, yshift, zshift, gx_shift, gy_shift,gz_shift
-        INTEGER (int64):: nx, ny, nz
-        INTEGER (int64):: mk, mkx1, mkx2
-        INTEGER (int64):: nIterPcor, cintp, fineg
+        INTEGER (int64) :: nx, ny, nz
+        INTEGER (int64) :: mk, mkx1, mkx2
+        INTEGER (int64) :: nIterPcor, cintp, fineg
         INTEGER (int64) ::  k_startSearch, k_endSearch, &
                                      j_startSearch, j_endSearch, &
                                      i_startSearch, i_endSearch
@@ -72,4 +72,3 @@ MODULE biocfd_block_type
     end type Block_t
 
 END MODULE biocfd_block_type
-
