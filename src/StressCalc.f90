@@ -6,11 +6,11 @@ module biocfd_stress_calculation
 
   private
 
-  public :: stressCal1
+  public :: stress_calculation
 
 contains
 
-  SUBROUTINE stressCal1(blk, mu_f, rho_f)
+  SUBROUTINE stress_calculation(blk, mu_f, rho_f)
     !> The block to perform the stress calculation on (not this is
     !> inout only because of setting thetaDot and thetaDDot, which I
     !> think might not be needed)
@@ -193,7 +193,7 @@ contains
     blk%viscous_lift_coefficient = 2 * (viscousLift/area_Sx)
     blk%pressure_lift_coefficient = 2 * (pressureLift/area_Sy)
 
-  end subroutine stressCal1
+  end subroutine stress_calculation
 
 !> Find the position in the array where the value is greater than
 !> element i but less than element i+1
