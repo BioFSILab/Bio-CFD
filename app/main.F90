@@ -186,11 +186,9 @@ PROGRAM main
 
         do g=start, finish, step
           if (g == 1) then
-             CALL fine_block_cell
-             if (coarse_flcnt_check == 1) then
-                call cellCount_solid_coarse(block(1))
-                coarse_flcnt_check = 0
-             end if
+            CALL fine_block_cell
+            if (coarse_flcnt_check == 1) call cellCount_solid_coarse(block(1))
+            coarse_flcnt_check = 0
           end if
         end do
         ! cellCount_solid_coarse_mv may or may not set
