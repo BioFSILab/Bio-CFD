@@ -80,13 +80,13 @@ module biocfd_fine_interp
                      ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%p(tar_x,tar_y,tar_z)=bl_interp_ans
 
-                endif
-                ENDDO
-                ENDDO
-                ENDDO
-                ENDDO
-                ENDDO
-                ENDDO
+                end if
+                END DO
+                END DO
+                END DO
+                END DO
+                END DO
+                END DO
 
         DO k=2,intfr(g)%counterzu-1
         DO j=2,intfr(g)%counteryu-1
@@ -144,13 +144,13 @@ module biocfd_fine_interp
                 bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
                      ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%u(tar_x-1,tar_y,tar_z)=bl_interp_ans
-        endif
-        ENDDO
-        ENDDO
-        ENDDO
-        ENDDO
-        ENDDO
-        ENDDO
+        end if
+        END DO
+        END DO
+        END DO
+        END DO
+        END DO
+        END DO
 
         DO k=2,intfr(g)%counterzv-1
         DO j=2,intfr(g)%counteryv-1
@@ -207,13 +207,13 @@ module biocfd_fine_interp
                 bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
                      ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%v(tar_x,tar_y-1,tar_z)=bl_interp_ans
-        endif
-        ENDDO
-        ENDDO
-        ENDDO
-        ENDDO
-        ENDDO
-        ENDDO
+        end if
+        END DO
+        END DO
+        END DO
+        END DO
+        END DO
+        END DO
 
         DO k=2,intfr(g)%counterzw-1
         DO j=2,intfr(g)%counteryw-1
@@ -270,13 +270,13 @@ module biocfd_fine_interp
                 bl_interp_ans= bl_interp_ans1 + ((bl_intp_valz-bl_intp_z1)*&
                      ((bl_interp_ans2 - bl_interp_ans1)/(bl_intp_z2 - bl_intp_z1)))
                 block(b_blk_no)%w(tar_x,tar_y,tar_z-1)=bl_interp_ans
-        endif
-        ENDDO
-        ENDDO
-        ENDDO
-        ENDDO
-        ENDDO
-        ENDDO
+        end if
+        END DO
+        END DO
+        END DO
+        END DO
+        END DO
+        END DO
 
         end subroutine fineUpdate_mv
 end module biocfd_fine_interp

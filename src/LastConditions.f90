@@ -1,17 +1,18 @@
 module biocfd_last_conditions
   use, intrinsic :: iso_fortran_env, only : dp => real64, int64
-  use global, only: ita, ita1, totime
-  use biocfd_blocks, only: Blocks
+  use biocfd_block_type, only: Block_t
   implicit none
   private
 
   public :: lastConditions
 
 contains
-  SUBROUTINE lastConditions(blk, id, re)
+  SUBROUTINE lastConditions(blk, id, re,totime,ita,ita1)
 
     !> The Block that we want to setup
-    type(Blocks), intent(inout) :: blk
+    type(Block_t), intent(inout) :: blk
+    real(dp), intent(out) :: totime
+    INTEGER(int64), intent(out)   ::     ita, ita1
     !> The ID number of the block, usually 1 for the coarse block and
     !> >=2 for the fine blocks
     integer(int64), intent(in) :: id
@@ -20,8 +21,8 @@ contains
     CHARACTER(len=150) :: filename3
 
     WRITE(filename3,3) id, re
-3   FORMAT('out/aorta_chkpt.',i3.3,'.',f6.1,".dat")
-    OPEN (1, FILE=filename3, FORM='formatted')
+3   FORMAT("out/aorta_chkpt.",i3.3,".",f6.1,".dat")
+    OPEN (1, FILE=filename3, FORM="formatted")
     DO k = 1, blk%nz+2
        DO j = 1, blk%ny+2
           DO i = 1, blk%nx+2

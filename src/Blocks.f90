@@ -1,18 +1,18 @@
-MODULE biocfd_blocks
+MODULE biocfd_block_type
        use, intrinsic :: iso_fortran_env, only: dp => real64, int32, int64
        IMPLICIT NONE
        private
 
-       public :: Blocks
+       public :: Block_t
 
-        type Blocks
+        type Block_t
            REAL(dp) ::  dx,dy, dz, ypth2, xpth1, xpth2, xchg,ychg, yt, ydot, yddot,&
                 bfreq, yamp, xt, xdot
         REAL(dp) :: derr1,derr2,derrStdSt,a0
         REAL(dp) :: xshift, yshift, zshift, gx_shift, gy_shift,gz_shift
-        INTEGER (int64):: nx, ny, nz
-        INTEGER (int64):: mk, mkx1, mkx2
-        INTEGER (int64):: nIterPcor, cintp, fineg
+        INTEGER (int64) :: nx, ny, nz
+        INTEGER (int64) :: mk, mkx1, mkx2
+        INTEGER (int64) :: nIterPcor, cintp, fineg
         INTEGER (int64) ::  k_startSearch, k_endSearch, &
                                      j_startSearch, j_endSearch, &
                                      i_startSearch, i_endSearch
@@ -69,7 +69,6 @@ MODULE biocfd_blocks
        REAL (dp) :: alphaDot, thetaDot1, thetaDDot1, thetaDot2, thetaDDot2
 
 
-    end type Blocks
+    end type Block_t
 
-END MODULE biocfd_blocks
-
+END MODULE biocfd_block_type
