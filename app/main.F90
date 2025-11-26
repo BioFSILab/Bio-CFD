@@ -217,39 +217,27 @@ PROGRAM main
             if (g /= 1) CALL tagging_th_move(block(g), g)
          end do
 
-        do g=start, finish, step
-           if (g /= 1) CALL selectiveRetagging_th(block(g))
-        end do
-
         DO g=start, finish, step
-         if (g /= 1) then
-            block(g)%blk_mv_tag=0.
-              DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,&
-                   block(g)% pNormDis,block(g)% nelp,block(g)% nelu1,block(g)% nelu2,&
-                   block(g)% nelv1,block(g)% nelv2,block(g)% nelw1,block(g)% nelw2,&
-                   block(g)% u1NormDis,block(g)% u2NormDis ,block(g)% v1NormDis,&
-                   block(g)% v2NormDis,block(g)% w1NormDis,block(g)% w2NormDis,&
-                   block(g)% solidIndexPtr)
-        DEALLOCATE(block(g)%fluidIndexPtr,block(g)% redCellIndexPtr, block(g)%blackCellIndexPtr)
-        DEALLOCATE(block(g)%p_ghost,block(g)% pt_ghost,block(g)% u2_ghost,block(g)% u2t_ghost,&
-             block(g)% v2_ghost,block(g)% v2t_ghost,block(g)% w2_ghost, block(g)%w2t_ghost,&
-             block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, &
-             block(g)%w1_ghost,block(g)% w1t_ghost)
-             end if
-       END DO
-
-       do g=start, finish, step
-         if (g == 1) cycle  ! Use cycle here to save on indentation
-           CALL cellCount_solid(block(g),g)
-           call solidCellBC_move(block(g))
-           call updateVelocity_newv(block(g))
-           block(g)%move_check=0.
-           CALL computeNormDistance(block(g))
-           CALL findTScells(block(g))
-        end do
-
-        do g=start, finish, step
-          if (g == 1) cycle  ! Use cycle here to save on indentation
+          if (g == 1) cycle
+          CALL selectiveRetagging_th(block(g))
+          block(g)%blk_mv_tag=0.
+          DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,&
+               block(g)% pNormDis,block(g)% nelp,block(g)% nelu1,block(g)% nelu2,&
+               block(g)% nelv1,block(g)% nelv2,block(g)% nelw1,block(g)% nelw2,&
+               block(g)% u1NormDis,block(g)% u2NormDis ,block(g)% v1NormDis,&
+               block(g)% v2NormDis,block(g)% w1NormDis,block(g)% w2NormDis,&
+               block(g)% solidIndexPtr)
+          DEALLOCATE(block(g)%fluidIndexPtr,block(g)% redCellIndexPtr, block(g)%blackCellIndexPtr)
+          DEALLOCATE(block(g)%p_ghost,block(g)% pt_ghost,block(g)% u2_ghost,block(g)% u2t_ghost,&
+               block(g)% v2_ghost,block(g)% v2t_ghost,block(g)% w2_ghost, block(g)%w2t_ghost,&
+               block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, &
+               block(g)%w1_ghost,block(g)% w1t_ghost)
+          CALL cellCount_solid(block(g),g)
+          call solidCellBC_move(block(g))
+          call updateVelocity_newv(block(g))
+          block(g)%move_check=0.
+          CALL computeNormDistance(block(g))
+          CALL findTScells(block(g))
           CALL velocityForcingField(block(g))
           CALL pressureForcingField(block(g))
           CALL velocityForcingGhost(block(g))
