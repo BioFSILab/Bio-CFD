@@ -3,11 +3,9 @@ module biocfd_pcor_vcor
   use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, &
        ita, totaltime,totime,uc, intfr
   use biocfd_block_type, only: Block_t
+  use biocfd_gpu_helpers, only: set_gpu
 #ifdef _OPENMP
-  use omp_lib, only: omp_get_max_threads, omp_get_thread_num
-#endif
-#ifdef _OPENACC
-  use openacc, only: acc_device_default, acc_get_num_devices, acc_set_device_num
+  use omp_lib, only: omp_get_max_threads
 #endif
   use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_pc_bd, fineupdate_bd_mv
   use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
@@ -36,9 +34,6 @@ module biocfd_pcor_vcor
 
         ! For controlling OpenMP
         integer :: omp_threads
-        integer :: omp_thread_num
-        ! For controlling OpenACC
-        integer :: acc_devices
         ! Variables to control iteration over blocks (mainly for MPI)
         integer :: start, finish, step, rank
 
@@ -54,8 +49,6 @@ module biocfd_pcor_vcor
 
           ! Dummy values for omp/acc variables
           omp_threads = 1
-          omp_thread_num = 0
-          acc_devices = 0
 
           call get_block_iteration_params(size(block), start, finish, step, rank)
 
@@ -68,16 +61,6 @@ module biocfd_pcor_vcor
           ! Then omp_threads is the minimum of that or the maximum number of allowed threads
           omp_threads = min(omp_get_max_threads(), omp_threads)
 #endif
-#ifdef _OPENACC
-         ! Not checked, but apparently in nvfortran the default
-         ! resolves to the same as `acc_device_nvidia` (see
-         ! https://docs.nvidia.com/hpc-sdk/compilers/openacc-gs/index.html#defaults)
-         ! For gfortran this can be set at runtime with an environment
-         ! variable, ACC_DEVICE_TYPE. It may or may not pick up a
-         ! compatible GPU if it can find it.
-         acc_devices = acc_get_num_devices(acc_device_default)
-#endif
-
 
         DO g=start, finish, step
         !$acc parallel loop gang vector collapse (3) default(present)
@@ -101,16 +84,10 @@ module biocfd_pcor_vcor
 
         !$omp parallel num_threads(omp_threads) default(none) &
         !$omp& private(g) &
-        !$omp& shared(acc_devices, pcItaMax, block) firstprivate(omp_thread_num) &
+        !$omp& shared(pcItaMax, block) &
         !$omp& shared(start, finish, step)
 
-#ifdef _OPENMP
-        omp_thread_num = omp_get_thread_num()
-#endif
-
-#ifdef _OPENACC
-        call acc_set_device_num(mod(omp_thread_num, acc_devices), acc_device_default)
-#endif
+        call set_gpu()
 
         !$omp do
         DO g=start, finish, step
