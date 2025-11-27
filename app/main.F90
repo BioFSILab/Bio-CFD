@@ -129,6 +129,11 @@ PROGRAM main
         DO
         ita = ita + 1
         totime = totime + deltat
+
+        !$omp parallel default(none) private(g) shared(block, start, finish, step, deltat, uc)
+        ! Set the device (for multi-GPU)
+        call set_gpu()
+        !$omp do
         do g=start, finish, step
            CALL nsMomentum2order(block(g))
            if (g == 1) CALL velocityBC(block(g), deltat, uc)
@@ -140,6 +145,8 @@ PROGRAM main
            ! TODO: Not sure why velocityBC is called twice in a row for block(1)?
            if (g == 1) CALL velocityBC(block(g), deltat, uc)
         end do
+        !$omp end do
+        !$omp end parallel
 
         CALL poissonSolver(pcItaMax)
 
