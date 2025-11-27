@@ -26,6 +26,7 @@ PROGRAM main
         use biocfd_forcing, only: pressureForcing1, pressureforcingfield, pressureforcingghost, &
              velocityforcing1, velocityforcingfield, velocityforcingghost
         use biocfd_mpi_helpers, only: biocfd_init, biocfd_finalize
+        use biocfd_gpu_helpers, only: set_gpu
 #ifdef BIOCFD_MPI
         use mpi_f08, only: MPI_Allreduce, MPI_Bcast, MPI_COMM_WORLD, MPI_DOUBLE_PRECISION, &
                            MPI_IN_PLACE, MPI_INTEGER8, MPI_Max
@@ -72,12 +73,18 @@ PROGRAM main
         totime = 0.
         ita1 = 0
 
+        !$omp parallel default(none) private(g) shared(block, start, finish, step)
+        ! Set the device (for multi-GPU)
+        call set_gpu()
+        !$omp do
         do g=start, finish, step
           if (g /= 1) then
            CALL tagging_th(block(g), g)
            CALL cellCount_solid(block(g), g)
           end if
         end do
+        !$omp end do
+        !$omp end parallel
 
         ! Just run fine_block_cell on rank 1 (note that we'll need to
         ! be sure that only block(1) is being written to)
@@ -217,6 +224,10 @@ PROGRAM main
             if (g /= 1) CALL tagging_th_move(block(g), g)
          end do
 
+        !$omp parallel default(none) private(g) shared(block, start, finish, step)
+        ! Set the device (for multi-GPU)
+        call set_gpu()
+        !$omp do
         DO g=start, finish, step
           if (g == 1) cycle
           CALL selectiveRetagging_th(block(g))
@@ -243,6 +254,8 @@ PROGRAM main
           CALL velocityForcingGhost(block(g))
           CALL pressureForcingGhost(block(g))
         end do
+        !$omp end do
+        !$omp end parallel
         IF(ita>=itamax) EXIT
      END DO
      call biocfd_finalize()
