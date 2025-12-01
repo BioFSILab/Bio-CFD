@@ -139,7 +139,6 @@ PROGRAM main
            if (g == 1) CALL velocityBC(block(g), deltat, uc)
            if (g /= 1) then
              CALL solidCellBC(block(g))
-           !$acc wait
              CALL velocityForcing1(block(g))
            end if
            ! TODO: Not sure why velocityBC is called twice in a row for block(1)?
