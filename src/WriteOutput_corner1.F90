@@ -135,14 +135,14 @@ contains
 
       END SUBROUTINE writeResult
 
-         SUBROUTINE body_plot(blk)
+         SUBROUTINE body_plot(blk, blk_id)
          type(Block_t), intent(in) :: blk
+         integer(int64), intent(in) :: blk_id
          INTEGER(int64) :: inode, ielem
          CHARACTER(len=150) :: filename1
 
           if (ita /= 1) return
-          WRITE(filename1,108)
-  108     FORMAT("out/butterfly.dat")
+          WRITE(filename1, "('out/butterfly_', i3.3, '.dat')") blk_id
           OPEN(UNIT=857,FILE=filename1,STATUS="unknown")
           WRITE(857,*) 'TITLE = "FEstressplot"'
           WRITE(857,*) 'VARIABLES= "x", "y", "z","bd_n"'

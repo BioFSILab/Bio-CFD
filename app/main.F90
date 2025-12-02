@@ -163,7 +163,7 @@ PROGRAM main
 #ifndef BIOCFD_MPI
            ! TODO: Not yet tested on MPI but should be added!
            CALL writeResult(block(g),g,char_f)
-           CALL body_plot(block(g))
+           CALL body_plot(block(g), g)
 #endif
        end do
 
