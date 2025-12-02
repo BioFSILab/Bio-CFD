@@ -21,7 +21,7 @@ module biocfd_pcor_vcor
 
   contains
 
-      SUBROUTINE poissonSolver(pcItaMax)
+      SUBROUTINE poissonSolver(pcItaMax, start, finish, step)
 
         INTEGER(int64) :: i, j,k, n, g
         INTEGER (int64),INTENT(IN)   :: pcItaMax
@@ -31,11 +31,11 @@ module biocfd_pcor_vcor
 #ifndef BIOCFD_MPI
         CHARACTER(len=160) :: filename1
 #endif
+        !> Variables to control iteration over blocks (mainly for MPI)
+        integer, intent(in) :: start, finish, step
 
         ! For controlling OpenMP
         integer :: omp_threads
-        ! Variables to control iteration over blocks (mainly for MPI)
-        integer :: start, finish, step, rank
 
           max_derrStdst=0._dp
           max_derr1=0._dp
