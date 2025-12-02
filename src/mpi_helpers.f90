@@ -2,7 +2,7 @@
 !> It is written in such a way that the subroutines do the right thing
 !> regardless of whether the code is compiled with MPI support or not.
 module biocfd_mpi_helpers
-  use, intrinsic :: iso_fortran_env, only: error_unit
+  use, intrinsic :: iso_fortran_env, only: error_unit, real32
 #ifdef BIOCFD_MPI
   use mpi_f08, only: MPI_Abort, MPI_Comm_rank, MPI_Comm_size, MPI_COMM_WORLD, MPI_Finalize, &
                      MPI_Init_Thread, MPI_IN_PLACE, MPI_INTEGER, MPI_THREAD_SERIALIZED
@@ -115,7 +115,7 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
     integer :: total_gpus
     !> This is blocks per GPU computed as nblocks / total_gpus (real
     !> as in a floating point number)
-    real :: real_blocks_per_gpu
+    real(real32) :: real_blocks_per_gpu
     ! Looping variable
     integer:: i
 
@@ -128,7 +128,7 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
 
     ! Gather all GPUs together such that every rank has an array of
     ! GPU numbers
-    call MPI_Allgather(MPI_IN_PLACE, 0, MPI_INTEGER, rank_gpus, 1, MPI_INTEGER, MPI_COMM_WORLD, & 
+    call MPI_Allgather(MPI_IN_PLACE, 0, MPI_INTEGER, rank_gpus, 1, MPI_INTEGER, MPI_COMM_WORLD, &
                        ierror)
     total_gpus = sum(rank_gpus)
 
@@ -140,11 +140,18 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
     ! This is the rounded number of blocks on each rank
     rank_blocks = nint(rank_gpus * real_blocks_per_gpu)
 
-    ! 
+    ! TODO: More testing is needed
     start = sum(rank_blocks(1:rank)) + 1
     finish = sum(rank_blocks(1:rank+1))
+
+    ! Due to the nint, it may be that we end up with sum(rank_blocks)
+    ! greater than nblocks. In this case, we'll just cap the finish
+    ! value to nblocks. Need to think if there is a better way to deal
+    ! with this.
+    finish = min(finish, nblocks)
+
     step = 1
-    print *, "MPI config - rank = ", rank, "gpus = ", rank_gpus, & 
+    print *, "MPI config - rank = ", rank, "gpus = ", rank_gpus, &
              "start = ", start, "finish = ", finish
 #else
     ! If we aren't using MPI, it is straight forward. Our loop goes
