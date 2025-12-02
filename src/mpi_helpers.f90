@@ -141,7 +141,7 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
     rank_blocks = nint(rank_gpus * real_blocks_per_gpu)
 
     start = sum(rank_blocks(1:rank))
-    finsh = sum(rank_blocks(1:rank+1))
+    finish = sum(rank_blocks(1:rank+1))
     step = 1
     print *, "Testing - start = ", start, "finish = ", finish
 #else
