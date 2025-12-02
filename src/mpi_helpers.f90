@@ -4,8 +4,8 @@
 module biocfd_mpi_helpers
   use, intrinsic :: iso_fortran_env, only: error_unit, real32
 #ifdef BIOCFD_MPI
-  use mpi_f08, only: MPI_Abort, MPI_Comm_rank, MPI_Comm_size, MPI_COMM_WORLD, MPI_Finalize, &
-                     MPI_Init_Thread, MPI_IN_PLACE, MPI_INTEGER, MPI_THREAD_SERIALIZED
+  use mpi_f08, only: MPI_Abort, MPI_Comm_rank, MPI_Comm_size, MPI_COMM_WORLD, MPI_DATATYPE_NULL, &
+                     MPI_Finalize, MPI_Init_Thread, MPI_IN_PLACE, MPI_INTEGER, MPI_THREAD_SERIALIZED
 #endif
 #ifdef _OPENACC
   use openacc, only: acc_device_default, acc_get_num_devices
@@ -122,12 +122,13 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
 
     ! Get an array of GPUs and fill accordingly
     allocate(rank_gpus(world_size))
+    rank_gpus = 0
     rank_gpus(rank + 1) = acc_get_num_devices(acc_device_default)
 
     ! Gather all GPUs together such that every rank has an array of
     ! GPU numbers
-    call MPI_Allgather(MPI_IN_PLACE, 0, MPI_INTEGER, rank_gpus, 1, MPI_INTEGER, MPI_COMM_WORLD, &
-                       ierror)
+    call MPI_Allgather(MPI_IN_PLACE, 0, MPI_DATATYPE_NULL, rank_gpus, 1, MPI_INTEGER, &
+                       MPI_COMM_WORLD, ierror)
     total_gpus = sum(rank_gpus)
 
     ! This is how many blocks we need to have per GPU
