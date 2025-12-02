@@ -8,6 +8,7 @@ module biocfd_forcing
 
   public :: pressureForcing1, pressureforcingfield, pressureforcingghost
   public :: velocityforcing1, velocityforcingfield, velocityforcingghost
+  public :: compute_value_and_derivatives
 
   contains
 SUBROUTINE pressureForcing1(blk)
@@ -1276,6 +1277,7 @@ end function compute_derivative
 
 subroutine compute_value_and_derivatives(x, y, z, i, j, k, xgrid, ygrid, zgrid, offset_axis, &
                                          var, val, derivatives)
+  !$acc routine
   real(dp), intent(in) :: x, y, z
   integer, intent(in) :: i, j, k
   real(dp), intent(in), dimension(:) :: xgrid, ygrid, zgrid
