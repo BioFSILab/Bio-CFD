@@ -116,8 +116,6 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
     !> This is blocks per GPU computed as nblocks / total_gpus (real
     !> as in a floating point number)
     real(real32) :: real_blocks_per_gpu
-    ! Looping variable
-    integer:: i
 
     call MPI_Comm_size(MPI_COMM_WORLD, world_size, ierror)
     call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierror)
