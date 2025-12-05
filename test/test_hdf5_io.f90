@@ -3,7 +3,8 @@ module test_hdf5_io
   use, intrinsic :: iso_fortran_env, only: int64, dp =>real64
   use testdrive, only : error_type, unittest_type, new_unittest, check
   use biocfd_hdf5_io, only: hdf5_write_real, hdf5_write_int, hdf5_read_real_3d, &
-       hdf5_read_real_2d, hdf5_read_real_1d, hdf5_read_int_3d, hdf5_read_int_2d
+       hdf5_read_real_2d, hdf5_read_real_1d, hdf5_read_int_3d, hdf5_read_int_2d, &
+       hdf5_read_int_1d
   use hdf5, only: hid_t, hsize_t, h5f_acc_rdonly_f, h5t_std_i64le, &
        h5t_native_double, h5aread_f, h5dread_f, h5aclose_f, h5aopen_name_f, &
        h5dclose_f, h5close_f, h5dget_space_f, h5dopen_f, h5fclose_f, &
@@ -255,24 +256,7 @@ contains
 
     call hdf5_write_int(filename=filename, array_input_1d=array1d, key=key, group=group)
 
-    call h5open_f(error_hdf5)
-
-    call h5fopen_f(filename, H5F_ACC_RDONLY_F, file_id, error_hdf5)
-
-    call h5dopen_f(file_id, trim(group)//"/"//trim(key), dset_id, error_hdf5)
-
-    call h5dget_space_f(dset_id, dspace_id, error_hdf5)
-
-    call h5sget_simple_extent_dims_f(dspace_id, dims, maxdims, error_hdf5)
-
-    allocate(array1d_read(dims(1)))
-
-    call h5dread_f(dset_id, H5T_STD_I64LE, array1d_read, dims, error_hdf5)
-
-    call h5dclose_f(dset_id, error_hdf5)
-    call h5sclose_f(dspace_id, error_hdf5)
-    call h5fclose_f(file_id, error_hdf5)
-    call h5close_f(error_hdf5)
+    call hdf5_read_int_1d(filename=filename, group=group, key=key, output=array1d_read)
 
     arrays_equal = all(array1d_read == array1d)
 
