@@ -17,7 +17,7 @@ module biocfd_hdf5_io
 
   public :: hdf5_write_real, hdf5_write_int, hdf5_read_real_3d, hdf5_read_real_2d, &
        hdf5_read_real_1d, hdf5_read_int_3d, hdf5_read_int_2d, &
-       hdf5_read_int_1d, hdf5_read_real_scalar
+       hdf5_read_int_1d, hdf5_read_real_scalar, hdf5_read_int_scalar
 contains
 
   subroutine hdf5_read_real_3d(filename, group, key, output)
@@ -224,7 +224,6 @@ contains
 
     call h5aopen_name_f(group_id, key, attr_id, error_hdf5)
 
-
     call h5aread_f(attr_id, H5T_NATIVE_DOUBLE, output, adims, error_hdf5)
 
     call h5aclose_f(attr_id, error_hdf5)
@@ -233,6 +232,33 @@ contains
     call h5close_f(error_hdf5)
 
   end subroutine hdf5_read_real_scalar
+
+  subroutine hdf5_read_int_scalar(filename, group, key, output)
+    integer :: error_hdf5
+    integer(hid_t) :: file_id, group_id, attr_id, attr_space_id
+    INTEGER(HSIZE_T), DIMENSION(1) :: adims
+    character(len=*), intent(in) :: filename
+    character(len=*), intent(in) :: group
+    character(len=*), intent(in) :: key
+
+    integer(int64), intent(out) :: output
+
+    call h5open_f(error_hdf5)
+
+    call h5fopen_f(filename, H5F_ACC_RDONLY_F, file_id, error_hdf5)
+
+    call h5gopen_f(file_id, group, group_id, error_hdf5)
+
+    call h5aopen_name_f(group_id, key, attr_id, error_hdf5)
+
+    call h5aread_f(attr_id, H5T_STD_I64LE, output, adims, error_hdf5)
+
+    call h5aclose_f(attr_id, error_hdf5)
+    call h5gclose_f(group_id, error_hdf5)
+    call h5fclose_f(file_id, error_hdf5)
+    call h5close_f(error_hdf5)
+
+  end subroutine hdf5_read_int_scalar
   
   subroutine hdf5_write_real(filename,scalar_input,&
                              array_input_1d,array_input_2d,array_input_3d,key,group)
