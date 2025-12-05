@@ -8,14 +8,48 @@ module biocfd_hdf5_io
        h5gcreate_f, h5gopen_f, h5screate_f, h5screate_simple_f, h5dcreate_f, &
        h5dwrite_f, h5dclose_f, h5sclose_f, h5gclose_f, h5fclose_f, h5close_f, &
        h5F_acc_rdwr_f, H5S_SCALAR_F, H5T_STD_I64LE, h5f_acc_excl_f, h5t_native_double, &
-       h5acreate_f, h5awrite_f, size_t, h5aclose_f, h5sclose_f
+       h5acreate_f, h5awrite_f, size_t, h5aclose_f, h5sclose_f, H5F_ACC_RDONLY_F, &
+       h5dopen_f, h5dget_space_f, h5sget_simple_extent_dims_f, h5dread_f
   implicit none
 
   private
 
-  public :: hdf5_write_real, hdf5_write_int
+  public :: hdf5_write_real, hdf5_write_int, hdf5_read_real_3d!, hdf5_read_real_2d, &
+       !hdf5_read_real_1d, hdf5_read_real_scalar, hdf5_read_int_3d, hdf5_read_int_2d, &
+       !hdf5_read_int_1d, hdf5_read_int_scalar
 contains
 
+  subroutine hdf5_read_real_3d(filename, group, key, output)
+    integer :: error_hdf5
+    integer(hid_t) :: file_id, dset_id, dspace_id
+    integer(hsize_t), dimension(3) :: dims, maxdims
+    character(len=*), intent(in) :: filename
+    character(len=*), intent(in) :: group
+    character(len=*), intent(in) :: key
+
+    real(dp), allocatable, intent(out) :: output(:,:,:)
+
+    call h5open_f(error_hdf5)
+
+    call h5fopen_f(filename, H5F_ACC_RDONLY_F, file_id, error_hdf5)
+
+    call h5dopen_f(file_id, trim(group)//"/"//trim(key), dset_id, error_hdf5)
+
+    call h5dget_space_f(dset_id, dspace_id, error_hdf5)
+
+    call h5sget_simple_extent_dims_f(dspace_id, dims, maxdims, error_hdf5)
+
+    allocate(output(dims(1), dims(2), dims(3)))
+
+    call h5dread_f(dset_id, H5T_NATIVE_DOUBLE, output, dims, error_hdf5)
+
+    call h5dclose_f(dset_id, error_hdf5)
+    call h5sclose_f(dspace_id, error_hdf5)
+    call h5fclose_f(file_id, error_hdf5)
+    call h5close_f(error_hdf5)
+
+  end subroutine hdf5_read_real_3d
+  
   subroutine hdf5_write_real(filename,scalar_input,&
                              array_input_1d,array_input_2d,array_input_3d,key,group)
 
