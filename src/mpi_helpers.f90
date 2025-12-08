@@ -8,7 +8,7 @@ module biocfd_mpi_helpers
                      MPI_Finalize, MPI_Init_Thread, MPI_IN_PLACE, MPI_INTEGER, MPI_THREAD_SERIALIZED
 #endif
 #ifdef _OPENACC
-  use openacc, only: acc_device_default, acc_device_host, acc_get_num_devices, acc_set_device_type
+  use openacc, only: acc_device_default, acc_get_num_devices
 #endif
 
   implicit none
@@ -139,17 +139,10 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
 
     rank_gpus(rank + 1) = acc_get_num_devices(acc_device_default)
 
-    ! The device type is set to the host due a crash that has been
-    ! seen in the AllGather operation. It seems that CUDA-aware MPI
-    ! can start doing things on the GPU that we don't really want it
-    ! to. Setting the device type to host here (and then back to the
-    ! GPU once the AllGather is complete) seems to not crash.
-    call acc_set_device_type(acc_device_host)
     ! Gather all GPUs together such that every rank has an array of
     ! GPU numbers
     call MPI_Allgather(MPI_IN_PLACE, 0, MPI_DATATYPE_NULL, rank_gpus, 1, MPI_INTEGER, &
                        MPI_COMM_WORLD, ierror)
-    call acc_set_device_type(acc_device_default)
     total_gpus = sum(rank_gpus)
 
     ! This is how many blocks we need to have per GPU
