@@ -98,7 +98,12 @@ end subroutine get_block_iteration_params
 !> multiple GPUs! The idea here is that we will work out how many GPUs
 !> our rank has and how many GPUs there are overall. We can then split
 !> the blocks proportionally across nodes. Each rank must have at
-!> least one GPU for this to work.
+!> least one GPU for this to work. The algorithm used is a [Quota
+!> Method](https://en.wikipedia.org/wiki/Quota_method), more
+!> specifially a largest-remainder method, using the Hare Quota. While
+!> this method certainly has its drawbacks when electing
+!> representatives it should be suitable for dividing blocks amongst
+!> GPUs!
 subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
    !> The total number of blocks we are simulating
     integer, intent(in) :: nblocks
@@ -116,13 +121,19 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
     !> This is blocks per GPU computed as nblocks / total_gpus (real
     !> as in a floating point number)
     real(real32) :: real_blocks_per_gpu
+    !> This is the ideal number of blocks we should have on each node
+    !> from straight division
+    real(real32), allocatable :: ideal_blocks(:)
+    integer :: remaining_blocks, i, j
 
     call MPI_Comm_size(MPI_COMM_WORLD, world_size, ierror)
     call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierror)
 
     ! Get an array of GPUs and fill accordingly
     allocate(rank_gpus(world_size))
-    rank_gpus = 0
+    ! This is the number of blocks we are going to place on each rank
+    allocate(rank_blocks(world_size))
+
     rank_gpus(rank + 1) = acc_get_num_devices(acc_device_default)
 
     ! Gather all GPUs together such that every rank has an array of
@@ -134,20 +145,26 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
     ! This is how many blocks we need to have per GPU
     real_blocks_per_gpu = real(nblocks) / total_gpus
 
-    ! This is the number of blocks we are going to place on each rank
-    allocate(rank_blocks(world_size))
-    ! This is the rounded number of blocks on each rank
-    rank_blocks = nint(rank_gpus * real_blocks_per_gpu)
+    ! This is the "ideal" number of GPUs on each rank i.e. if we could
+    ! split blocks fractionally
+    ideal_blocks = rank_gpus * real_blocks_per_gpu
+
+    ! int does floor division
+    rank_blocks = int(ideal_blocks)
+
+    ! How many blocks have not been allocated
+    remaining_blocks = nblocks - sum(rank_blocks)
+
+    do i=1, remaining_blocks
+      ! Work out the rank with the maximum remainder, that gets given
+      ! the next block
+      j = maxloc(ideal_blocks - rank_blocks, dim=1)
+      rank_blocks(j) = rank_blocks(j) + 1
+    end do
 
     ! TODO: More testing is needed
     start = sum(rank_blocks(1:rank)) + 1
     finish = sum(rank_blocks(1:rank+1))
-
-    ! Due to the nint, it may be that we end up with sum(rank_blocks)
-    ! greater than nblocks. In this case, we'll just cap the finish
-    ! value to nblocks. Need to think if there is a better way to deal
-    ! with this.
-    finish = min(finish, nblocks)
 
     step = 1
     print *, "MPI config - rank = ", rank, "gpus = ", rank_gpus, &
