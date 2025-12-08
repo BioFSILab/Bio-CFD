@@ -133,6 +133,9 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
     allocate(rank_gpus(world_size))
     ! This is the number of blocks we are going to place on each rank
     allocate(rank_blocks(world_size))
+    ! This is the "ideal" number of GPUs on each rank i.e. if we could
+    ! split blocks fractionally
+    allocate(ideal_blocks(world_size))
 
     rank_gpus(rank + 1) = acc_get_num_devices(acc_device_default)
 
