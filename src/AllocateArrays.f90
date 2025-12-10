@@ -44,6 +44,13 @@ module biocfd_allocate_arrays
         ALLOCATE(blk%Acx(nx,3), blk%Acy(ny,3), blk%Acz(nz,3))
         ALLOCATE(blk%pc(nx+2,ny+2, nz+2), blk%pco(nx+2,ny+2, nz+2))
 
+        ALLOCATE(blk%xcent(blk%ibElems), &
+                 blk%ycent(blk%ibElems), &
+                 blk%zcent(blk%ibElems), &
+                 blk%cosAlpha(blk%ibElems), &
+                 blk%cosBeta(blk%ibElems), &
+                 blk%cosGamma(blk%ibElems), &
+                 blk%element_length(blk%ibElems))
 
       END SUBROUTINE allocateArrays
 end module biocfd_allocate_arrays
