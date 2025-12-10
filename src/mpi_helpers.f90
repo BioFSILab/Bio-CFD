@@ -55,7 +55,7 @@ contains
        stop 1
     end if
 #endif
-    call  get_block_iteration_params(nblocks, start, finish, step, rank)
+    call  get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
   end subroutine biocfd_init
 
   !> Finalize is an no-op in the case that we aren't using MPI
@@ -117,7 +117,7 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
 
     integer :: world_size
     integer, allocatable :: rank_gpus(:), rank_blocks(:)
-    integer :: total_gpus
+    integer :: this_rank_gpus, total_gpus
     !> This is blocks per GPU computed as nblocks / total_gpus (real
     !> as in a floating point number)
     real(real32) :: real_blocks_per_gpu
@@ -137,12 +137,18 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
     ! split blocks fractionally
     allocate(ideal_blocks(world_size))
 
-    rank_gpus(rank + 1) = acc_get_num_devices(acc_device_default)
+    this_rank_gpus = acc_get_num_devices(acc_device_default)
 
     ! Gather all GPUs together such that every rank has an array of
     ! GPU numbers
-    call MPI_Allgather(MPI_IN_PLACE, 0, MPI_DATATYPE_NULL, rank_gpus, 1, MPI_INTEGER, &
-                       MPI_COMM_WORLD, ierror)
+    !
+    ! Note that really we want to use AllGather here, but we ran into
+    ! crashes, which seemed to be related to CUDA-aware MPI. Gather
+    ! and Bcast is potentially slower, but this isn't a performance
+    ! critical part of the code
+    call MPI_Gather(this_rank_gpus, 1, MPI_INTEGER, rank_gpus, 1, MPI_INTEGER, 0, &
+         MPI_COMM_WORLD, ierror)
+    call MPI_Bcast(rank_gpus, world_size, MPI_INTEGER, 0, MPI_COMM_WORLD, ierror)
     total_gpus = sum(rank_gpus)
 
     ! This is how many blocks we need to have per GPU
