@@ -212,12 +212,6 @@ module biocfd_search
         REAL(dp)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL
         REAL(dp)      :: var_xcent, var_ycent, var_zcent
 
-        ALLOCATE (blk%xcent(blk%ibElems), blk%ycent(blk%ibElems), &
-                  blk%zcent(blk%ibElems), &
-                  blk%cosAlpha(blk%ibElems), blk%cosBeta(blk%ibElems), &
-                  blk%cosGamma(blk%ibElems), &
-                  blk%element_length(blk%ibElems))
-
         !compute centroid and direction cosines
        !$acc parallel loop gang vector default(present) &
        !$acc private (var_xcent, var_ycent, var_zcent,p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL) &
