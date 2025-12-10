@@ -4,8 +4,8 @@
 module biocfd_mpi_helpers
   use, intrinsic :: iso_fortran_env, only: error_unit, real32
 #ifdef BIOCFD_MPI
-  use mpi_f08, only: MPI_Abort, MPI_Comm_rank, MPI_Comm_size, MPI_COMM_WORLD, MPI_DATATYPE_NULL, &
-                     MPI_Finalize, MPI_Init_Thread, MPI_IN_PLACE, MPI_INTEGER, MPI_THREAD_SERIALIZED
+  use mpi_f08, only: MPI_Abort, MPI_Bcast, MPI_Comm_rank, MPI_Comm_size, MPI_COMM_WORLD, &
+                     MPI_Finalize, MPI_Gather, MPI_Init_Thread, MPI_INTEGER, MPI_THREAD_SERIALIZED
 #endif
 #ifdef _OPENACC
   use openacc, only: acc_device_default, acc_get_num_devices
