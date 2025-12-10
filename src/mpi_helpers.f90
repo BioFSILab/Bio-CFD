@@ -15,7 +15,7 @@ module biocfd_mpi_helpers
 
   private
 
-  public :: biocfd_init, biocfd_finalize, get_block_iteration_params
+  public :: biocfd_init, biocfd_finalize
 
 contains
 
@@ -55,7 +55,7 @@ contains
        stop 1
     end if
 #endif
-    call  get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
+    call  get_block_iteration_params(nblocks, start, finish, step, rank)
   end subroutine biocfd_init
 
   !> Finalize is an no-op in the case that we aren't using MPI
@@ -66,45 +66,18 @@ contains
 #endif
   end subroutine biocfd_finalize
 
-!> Work out how work will be shared across MPI nodes
-subroutine get_block_iteration_params(nblocks, start, finish, step, rank)
-   !> The total number of blocks we are simulating
-    integer, intent(in) :: nblocks
-    !> The start, finish (both end and stop are keywords) and step size we will use to loop over blocks
-    integer, intent(out) :: start, finish, step
-    !> The MPI rank that we are running on (0 in the case we aren't using MPI)
-    integer, intent(out) :: rank
-#ifdef BIOCFD_MPI
-    ! An error value to check when using MPI
-    integer :: ierror
-    call MPI_Comm_size(MPI_COMM_WORLD, step, ierror)
-    call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierror)
-    ! MPI ranks are zero indexed, we want to start looping from 1 in
-    ! fortran
-    start = rank + 1
-    finish = nblocks
-#else
-    ! If we aren't using MPI, it is straight forward. Our loop goes
-    ! over every block from 1 in steps of 1. Rank is set to 0.
-    start = 1
-    finish = nblocks
-    step = 1
-    rank = 0
-#endif
-
-end subroutine get_block_iteration_params
-
-!> Work out how work will be shared across MPI nodes when we have
-!> multiple GPUs! The idea here is that we will work out how many GPUs
-!> our rank has and how many GPUs there are overall. We can then split
-!> the blocks proportionally across nodes. Each rank must have at
-!> least one GPU for this to work. The algorithm used is a [Quota
-!> Method](https://en.wikipedia.org/wiki/Quota_method), more
+!> Work out how work will be shared across MPI nodes.
+!>
+!> In the case of multiple the idea here is that we will work out how
+!> many GPUs our rank has and how many GPUs there are overall. We can
+!> then split the blocks proportionally across nodes. Each rank must
+!> have at least one GPU for this to work. The algorithm used is a
+!> [Quota Method](https://en.wikipedia.org/wiki/Quota_method), more
 !> specifially a largest-remainder method, using the Hare Quota. While
 !> this method certainly has its drawbacks when electing
 !> representatives it should be suitable for dividing blocks amongst
 !> GPUs!
-subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
+subroutine get_block_iteration_params(nblocks, start, finish, step, rank)
    !> The total number of blocks we are simulating
     integer, intent(in) :: nblocks
     !> The start, finish (both end and stop are keywords) and step size we will use to loop over blocks
@@ -118,11 +91,11 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
     integer :: world_size
     integer, allocatable :: rank_gpus(:), rank_blocks(:)
     integer :: this_rank_gpus, total_gpus
-    !> This is blocks per GPU computed as nblocks / total_gpus (real
-    !> as in a floating point number)
+    ! This is blocks per GPU computed as nblocks / total_gpus (real as
+    ! in a floating point number)
     real(real32) :: real_blocks_per_gpu
-    !> This is the ideal number of blocks we should have on each node
-    !> from straight division
+    ! This is the ideal number of blocks we should have on each node
+    ! from straight division
     real(real32), allocatable :: ideal_blocks(:)
     integer :: remaining_blocks, i, j
 
@@ -171,13 +144,18 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
       rank_blocks(j) = rank_blocks(j) + 1
     end do
 
-    ! TODO: More testing is needed
     start = sum(rank_blocks(1:rank)) + 1
     finish = sum(rank_blocks(1:rank+1))
-
     step = 1
-    print *, "MPI config - rank = ", rank, "gpus = ", rank_gpus, &
-             "start = ", start, "finish = ", finish
+#elif defined(BIOCFD_MPI)
+    ! An error value to check when using MPI
+    integer :: ierror
+    call MPI_Comm_size(MPI_COMM_WORLD, step, ierror)
+    call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierror)
+    ! MPI ranks are zero indexed, we want to start looping from 1 in
+    ! fortran
+    start = rank + 1
+    finish = nblocks
 #else
     ! If we aren't using MPI, it is straight forward. Our loop goes
     ! over every block from 1 in steps of 1. Rank is set to 0.
@@ -187,6 +165,5 @@ subroutine get_block_iteration_params_gpu(nblocks, start, finish, step, rank)
     rank = 0
 #endif
 
-end subroutine get_block_iteration_params_gpu
-
+end subroutine get_block_iteration_params
 end module biocfd_mpi_helpers
