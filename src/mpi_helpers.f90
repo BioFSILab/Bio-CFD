@@ -147,6 +147,8 @@ subroutine get_block_iteration_params(nblocks, start, finish, step, rank)
     start = sum(rank_blocks(1:rank)) + 1
     finish = sum(rank_blocks(1:rank+1))
     step = 1
+    print *, "MPI config - rank = ", rank, "gpus = ", this_rank_gpus, &
+             "start = ", start, "finish = ", finish
 #elif defined(BIOCFD_MPI)
     ! An error value to check when using MPI
     integer :: ierror
