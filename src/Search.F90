@@ -493,7 +493,8 @@ SUBROUTINE tagging_th_core(blk)
             blk%TSIndexPtr(idx, :) = [i, j, k]
             blk%index_ts(idx) = n
           END IF
-          !$acc end parallel loop
+         end do
+         !$acc end parallel loop
 
         !$acc parallel loop default(present)
         DO n = 1, blk%TSCellCount
