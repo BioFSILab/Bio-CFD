@@ -67,7 +67,7 @@ contains
   end subroutine biocfd_finalize
 
   !> Work out how work will be shared across MPI nodes.
-  !> 
+  !>
   !> In the case of multiple GPUs the idea here is that we will work out how
   !> many GPUs our rank has and how many GPUs there are overall. We can
   !> then split the blocks proportionally across nodes. Each rank must
