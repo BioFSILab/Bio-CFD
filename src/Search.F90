@@ -480,7 +480,7 @@ SUBROUTINE tagging_th_core(blk)
           blk%index_ts(blk%TSCellCount))
 
          iPt1 = 0
-        !$acc parallel loop collapse(3) private(idx)
+        !$acc parallel loop private(idx)
         do n=1, blk%ibCellCount
           i = blk%interceptedIndexPtr(n, 1)
           j = blk%interceptedIndexPtr(n, 2)
