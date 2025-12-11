@@ -66,19 +66,19 @@ contains
 #endif
   end subroutine biocfd_finalize
 
-!> Work out how work will be shared across MPI nodes.
-!>
-!> In the case of multiple the idea here is that we will work out how
-!> many GPUs our rank has and how many GPUs there are overall. We can
-!> then split the blocks proportionally across nodes. Each rank must
-!> have at least one GPU for this to work. The algorithm used is a
-!> [Quota Method](https://en.wikipedia.org/wiki/Quota_method), more
-!> specifially a largest-remainder method, using the Hare Quota. While
-!> this method certainly has its drawbacks when electing
-!> representatives it should be suitable for dividing blocks amongst
-!> GPUs!
-subroutine get_block_iteration_params(nblocks, start, finish, step, rank)
-   !> The total number of blocks we are simulating
+  !> Work out how work will be shared across MPI nodes.
+  !> 
+  !> In the case of multiple GPUs the idea here is that we will work out how
+  !> many GPUs our rank has and how many GPUs there are overall. We can
+  !> then split the blocks proportionally across nodes. Each rank must
+  !> have at least one GPU for this to work. The algorithm used is a
+  !> [Quota Method](https://en.wikipedia.org/wiki/Quota_method), more
+  !> specifially a largest-remainder method, using the Hare Quota. While
+  !> this method certainly has its drawbacks when electing
+  !> representatives it should be suitable for dividing blocks amongst
+  !> GPUs!
+  subroutine get_block_iteration_params(nblocks, start, finish, step, rank)
+    !> The total number of blocks we are simulating
     integer, intent(in) :: nblocks
     !> The start, finish (both end and stop are keywords) and step size we will use to loop over blocks
     integer, intent(out) :: start, finish, step
@@ -167,5 +167,6 @@ subroutine get_block_iteration_params(nblocks, start, finish, step, rank)
     rank = 0
 #endif
 
-end subroutine get_block_iteration_params
+  end subroutine get_block_iteration_params
+
 end module biocfd_mpi_helpers
