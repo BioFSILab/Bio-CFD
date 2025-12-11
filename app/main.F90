@@ -2,7 +2,7 @@ PROGRAM main
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
         USE global, only: block, coarse_flcnt_check, deltat, &
              ita, ita1, totaltime, totime, &
-             pi,uc,re,intfr
+             pi,uc,intfr
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
@@ -14,12 +14,14 @@ PROGRAM main
         use biocfd_allocate_arrays, only: allocateArrays
         use biocfd_interface_detail, only: interfaceDetail
         use biocfd_initial_conditions, only: initialConditions
+#if USE_HDF5 == 1
         use biocfd_last_conditions, only: lastConditions
+#endif
         use biocfd_coefficient_matrix, only: coefficientMatrix
         use biocfd_navier_stokes, only: non_uni_coeff, nsmomentum2order
-        use biocfd_write_output_corner1, only: body_plot, writeresult
+        use biocfd_write_output_corner1, only: body_plot
 #if USE_HDF5 == 1
-        use biocfd_write_output_corner1, only: write_output_hdf5
+        use biocfd_write_output_corner1, only: write_output_hdf5, writeresult
 #else
         use biocfd_write_output_corner1, only: write_output_ascii
 #endif
@@ -102,7 +104,9 @@ PROGRAM main
 
          do g=start, finish, step
             IF (iStart==0) call initialConditions(block(g), uc)
-            IF (iStart==1) call lastConditions(block(g), g, re,totime, ita, ita1)
+#if USE_HDF5 == 1
+            IF (iStart==1) call lastConditions(block(g), g, totime, ita, ita1)
+#endif
          end do
 
         do g=start, finish, step
@@ -161,8 +165,10 @@ PROGRAM main
            CALL write_output_ascii(block(g),g,char_f)
 #endif
 #ifndef BIOCFD_MPI
+#if USE_HDF5 == 1
            ! TODO: Not yet tested on MPI but should be added!
            CALL writeResult(block(g),g,char_f)
+#endif
            CALL body_plot(block(g), g)
 #endif
        end do

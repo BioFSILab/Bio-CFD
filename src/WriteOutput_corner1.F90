@@ -13,7 +13,7 @@ module biocfd_write_output_corner1
 #if USE_HDF5 == 1
   public :: write_output_hdf5, body_plot, writeresult
 #else
-  public :: write_output_ascii, body_plot, writeresult
+  public :: write_output_ascii, body_plot
 #endif
 
 contains
@@ -109,30 +109,37 @@ contains
          END IF
       END SUBROUTINE write_output_ascii
 #endif
+#if USE_HDF5 == 1
       SUBROUTINE writeResult(blk,blk_no,char_f)
         type(Block_t), intent(in) :: blk
         integer (int64), intent(in) :: blk_no
         INTEGER ::  i, j, k
         CHARACTER(len=70)  :: filename1
         CHARACTER (LEN = 3),INTENT(IN)   :: char_f
-        integer :: file_unit
+        character (len=11) :: dummy_1
+        character (len=15) :: dummy_2
 
         IF(mod(ita,500_int64)/=0) return
-           WRITE(filename1,22)char_f,blk_no,re,blk%dx
- 22          FORMAT("out/Chkpt/",A3,"_butter_chkpt.",i3.3,".",f6.1,".",f8.6,".dat")
-        OPEN (newunit=file_unit,FILE=filename1,FORM="formatted")
-        DO k = 1, blk%nz+2
-        DO j = 1, blk%ny+2
-        DO i = 1, blk%nx+2
-          WRITE(file_unit,*) blk%u(i,j,k), blk%v(i,j,k), blk%w(i,j,k), &
-        blk%p(i,j,k), totime, ita, ita1
-       END DO
-       END DO
-       END DO
-        CLOSE(file_unit)
+           write(dummy_1,"(A6,I5.5)") "block_",blk_no
+           write(dummy_2,"(A9,I5.5,A1)") "timestep_", ita,"_"
+           filename1="out/Checkpoint/"//trim(dummy_2)//trim(dummy_1)//".h5"
+           call hdf5_write_real(filename=filename1,&
+             array_input_3d=blk%u,key="u",group="/")
+           call hdf5_write_real(filename=filename1,&
+             array_input_3d=blk%v,key="v",group="/")
+           call hdf5_write_real(filename=filename1,&
+             array_input_3d=blk%w,key="w",group="/")
+           call hdf5_write_real(filename=filename1,&
+             array_input_3d=blk%p,key="p",group="/")
+           call hdf5_write_real(filename=filename1,&
+             scalar_input=totime,key="totime",group="/")
+           call hdf5_write_int(filename=filename1,&
+              scalar_input=ita,key="ita",group="/")
+           call hdf5_write_int(filename=filename1,&
+              scalar_input=ita1,key="ita1",group="/")
 
       END SUBROUTINE writeResult
-
+#endif
          SUBROUTINE body_plot(blk, blk_id)
          type(Block_t), intent(in) :: blk
          integer(int64), intent(in) :: blk_id
