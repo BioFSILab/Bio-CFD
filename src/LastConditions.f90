@@ -1,13 +1,18 @@
 module biocfd_last_conditions
   use, intrinsic :: iso_fortran_env, only : dp => real64, int64
   use biocfd_block_type, only: Block_t
+#if USE_HDF5 == 1
+  use biocfd_hdf5_io, only: hdf5_read_real_3d, hdf5_read_real_scalar, &
+       hdf5_read_int_scalar
+#endif
   implicit none
   private
-
+#if USE_HDF5 == 1
   public :: lastConditions
-
+#endif
 contains
-  SUBROUTINE lastConditions(blk, id, re,totime,ita,ita1)
+#if USE_HDF5 == 1
+  SUBROUTINE lastConditions(blk, id, totime,ita,ita1)
 
     !> The Block that we want to setup
     type(Block_t), intent(inout) :: blk
@@ -18,34 +23,24 @@ contains
     integer(int64), intent(in) :: id
     real(dp), intent(in) :: re
     INTEGER ::  i, j, k
-    CHARACTER(len=150) :: filename3
+    CHARACTER(len=150) :: filename
+    character(len=20) :: id_as_string
+    write(str, '(I0)') id_as_string
 
-    WRITE(filename3,3) id, re
-3   FORMAT("out/aorta_chkpt.",i3.3,".",f6.1,".dat")
-    OPEN (1, FILE=filename3, FORM="formatted")
-    DO k = 1, blk%nz+2
-       DO j = 1, blk%ny+2
-          DO i = 1, blk%nx+2
-             ! TODO: totime, ita, and ita1 are all global variables,
-             ! but they will always just be overwritten by the last
-             ! block which is read. Do we want to have some validation
-             ! here that things are working as one would expect?
-             READ(1,*) blk%u(i,j,k), blk%v(i,j,k), blk%w(i,j,k), blk%p(i,j,k), &
-                  totime, ita, ita1
-          END DO
-       END DO
-    END DO
-    CLOSE(1)
+    filename="input/Checkpoint/Checkpoint_"//trim(id_as_string)//".h5"
 
-    DO k = 1, blk%nz+2
-       DO j = 1, blk%ny+2
-          DO i = 1, blk%nx+2
-             blk%ut(i,j,k) = blk%u(i,j,k)
-             blk%vt(i,j,k) = blk%v(i,j,k)
-             blk%wt(i,j,k) = blk%w(i,j,k)
-          END DO
-       END DO
-    END DO
+    call hdf5_read_real_3d(filename=filename, group="/", key="u", output=blk%u)
+    call hdf5_read_real_3d(filename=filename, group="/", key="v", output=blk%v)
+    call hdf5_read_real_3d(filename=filename, group="/", key="w", output=blk%w)
+    call hdf5_read_real_3d(filename=filename, group="/", key="p", output=blk%p)
+    call hdf5_read_real_scalar(filename=filename, group="/", key="totime", output=totime)
+    call hdf5_read_int_scalar(filename=filename, group="/", key="ita", output=ita)
+    call hdf5_read_int_scalar(filename=filename, group="/", key="ita1", output=ita1)
+
+    blk%ut = blk%u
+    blk%vt = blk%v
+    blk%wt = blk%w
 
   END SUBROUTINE lastConditions
+#endif
 end module biocfd_last_conditions

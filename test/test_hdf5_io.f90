@@ -2,7 +2,9 @@
 module test_hdf5_io
   use, intrinsic :: iso_fortran_env, only: int64, dp =>real64
   use testdrive, only : error_type, unittest_type, new_unittest, check
-  use biocfd_hdf5_io, only: hdf5_write_real, hdf5_write_int
+  use biocfd_hdf5_io, only: hdf5_write_real, hdf5_write_int, hdf5_read_real_3d, &
+       hdf5_read_real_2d, hdf5_read_real_1d, hdf5_read_int_3d, hdf5_read_int_2d, &
+       hdf5_read_int_1d, hdf5_read_real_scalar, hdf5_read_int_scalar
   use hdf5, only: hid_t, hsize_t, h5f_acc_rdonly_f, h5t_std_i64le, &
        h5t_native_double, h5aread_f, h5dread_f, h5aclose_f, h5aopen_name_f, &
        h5dclose_f, h5close_f, h5dget_space_f, h5dopen_f, h5fclose_f, &
@@ -58,24 +60,7 @@ contains
 
     call hdf5_write_real(filename=filename, array_input_3d=array3d, key=key, group=group)
 
-    call h5open_f(error_hdf5)
-
-    call h5fopen_f(filename, H5F_ACC_RDONLY_F, file_id, error_hdf5)
-
-    call h5dopen_f(file_id, trim(group)//"/"//trim(key), dset_id, error_hdf5)
-
-    call h5dget_space_f(dset_id, dspace_id, error_hdf5)
-
-    call h5sget_simple_extent_dims_f(dspace_id, dims, maxdims, error_hdf5)
-
-    allocate(array3d_read(dims(1), dims(2), dims(3)))
-
-    call h5dread_f(dset_id, H5T_NATIVE_DOUBLE, array3d_read, dims, error_hdf5)
-
-    call h5dclose_f(dset_id, error_hdf5)
-    call h5sclose_f(dspace_id, error_hdf5)
-    call h5fclose_f(file_id, error_hdf5)
-    call h5close_f(error_hdf5)
+    call hdf5_read_real_3d(filename=filename, group=group, key=key, output=array3d_read)
 
     arrays_equal = all(array3d_read == array3d)
 
@@ -107,24 +92,7 @@ contains
 
     call hdf5_write_real(filename=filename, array_input_2d=array2d, key=key, group=group)
 
-    call h5open_f(error_hdf5)
-
-    call h5fopen_f(filename, H5F_ACC_RDONLY_F, file_id, error_hdf5)
-
-    call h5dopen_f(file_id, trim(group)//"/"//trim(key), dset_id, error_hdf5)
-
-    call h5dget_space_f(dset_id, dspace_id, error_hdf5)
-
-    call h5sget_simple_extent_dims_f(dspace_id, dims, maxdims, error_hdf5)
-
-    allocate(array2d_read(dims(1), dims(2)))
-
-    call h5dread_f(dset_id, H5T_NATIVE_DOUBLE, array2d_read, dims, error_hdf5)
-
-    call h5dclose_f(dset_id, error_hdf5)
-    call h5sclose_f(dspace_id, error_hdf5)
-    call h5fclose_f(file_id, error_hdf5)
-    call h5close_f(error_hdf5)
+    call hdf5_read_real_2d(filename=filename, group=group, key=key, output=array2d_read)
 
     arrays_equal = all(array2d_read == array2d)
 
@@ -154,24 +122,7 @@ contains
 
     call hdf5_write_real(filename=filename, array_input_1d=array1d, key=key, group=group)
 
-    call h5open_f(error_hdf5)
-
-    call h5fopen_f(filename, H5F_ACC_RDONLY_F, file_id, error_hdf5)
-
-    call h5dopen_f(file_id, trim(group)//"/"//trim(key), dset_id, error_hdf5)
-
-    call h5dget_space_f(dset_id, dspace_id, error_hdf5)
-
-    call h5sget_simple_extent_dims_f(dspace_id, dims, maxdims, error_hdf5)
-
-    allocate(array1d_read(dims(1)))
-
-    call h5dread_f(dset_id, H5T_NATIVE_DOUBLE, array1d_read, dims, error_hdf5)
-
-    call h5dclose_f(dset_id, error_hdf5)
-    call h5sclose_f(dspace_id, error_hdf5)
-    call h5fclose_f(file_id, error_hdf5)
-    call h5close_f(error_hdf5)
+    call hdf5_read_real_1d(filename=filename, group=group, key=key, output=array1d_read)
 
     arrays_equal = all(array1d_read == array1d)
 
@@ -197,21 +148,7 @@ contains
 
     call hdf5_write_real(filename=filename, scalar_input=scalar, key=key, group=group)
 
-    call h5open_f(error_hdf5)
-
-    call h5fopen_f(filename, H5F_ACC_RDONLY_F, file_id, error_hdf5)
-
-    call h5gopen_f(file_id, group, group_id, error_hdf5)
-
-    call h5aopen_name_f(group_id, key, attr_id, error_hdf5)
-
-
-    call h5aread_f(attr_id, H5T_NATIVE_DOUBLE, scalar_read, adims, error_hdf5)
-
-    call h5aclose_f(attr_id, error_hdf5)
-    call h5gclose_f(group_id, error_hdf5)
-    call h5fclose_f(file_id, error_hdf5)
-    call h5close_f(error_hdf5)
+    call hdf5_read_real_scalar(filename=filename, group=group, key=key, output=scalar_read)
 
     call check(error, scalar , scalar_read)
     if (allocated(error)) return
@@ -243,24 +180,7 @@ contains
 
     call hdf5_write_int(filename=filename, array_input_3d=array3d, key=key, group=group)
 
-    call h5open_f(error_hdf5)
-
-    call h5fopen_f(filename, H5F_ACC_RDONLY_F, file_id, error_hdf5)
-
-    call h5dopen_f(file_id, trim(group)//"/"//trim(key), dset_id, error_hdf5)
-
-    call h5dget_space_f(dset_id, dspace_id, error_hdf5)
-
-    call h5sget_simple_extent_dims_f(dspace_id, dims, maxdims, error_hdf5)
-
-    allocate(array3d_read(dims(1), dims(2), dims(3)))
-
-    call h5dread_f(dset_id, H5T_STD_I64LE, array3d_read, dims, error_hdf5)
-
-    call h5dclose_f(dset_id, error_hdf5)
-    call h5sclose_f(dspace_id, error_hdf5)
-    call h5fclose_f(file_id, error_hdf5)
-    call h5close_f(error_hdf5)
+    call hdf5_read_int_3d(filename=filename, group=group, key=key, output=array3d_read)
 
     arrays_equal = all(array3d_read == array3d)
 
@@ -292,24 +212,7 @@ contains
 
     call hdf5_write_int(filename=filename, array_input_2d=array2d, key=key, group=group)
 
-    call h5open_f(error_hdf5)
-
-    call h5fopen_f(filename, H5F_ACC_RDONLY_F, file_id, error_hdf5)
-
-    call h5dopen_f(file_id, trim(group)//"/"//trim(key), dset_id, error_hdf5)
-
-    call h5dget_space_f(dset_id, dspace_id, error_hdf5)
-
-    call h5sget_simple_extent_dims_f(dspace_id, dims, maxdims, error_hdf5)
-
-    allocate(array2d_read(dims(1), dims(2)))
-
-    call h5dread_f(dset_id, H5T_STD_I64LE, array2d_read, dims, error_hdf5)
-
-    call h5dclose_f(dset_id, error_hdf5)
-    call h5sclose_f(dspace_id, error_hdf5)
-    call h5fclose_f(file_id, error_hdf5)
-    call h5close_f(error_hdf5)
+    call hdf5_read_int_2d(filename=filename, group=group, key=key, output=array2d_read)
 
     arrays_equal = all(array2d_read == array2d)
 
@@ -339,24 +242,7 @@ contains
 
     call hdf5_write_int(filename=filename, array_input_1d=array1d, key=key, group=group)
 
-    call h5open_f(error_hdf5)
-
-    call h5fopen_f(filename, H5F_ACC_RDONLY_F, file_id, error_hdf5)
-
-    call h5dopen_f(file_id, trim(group)//"/"//trim(key), dset_id, error_hdf5)
-
-    call h5dget_space_f(dset_id, dspace_id, error_hdf5)
-
-    call h5sget_simple_extent_dims_f(dspace_id, dims, maxdims, error_hdf5)
-
-    allocate(array1d_read(dims(1)))
-
-    call h5dread_f(dset_id, H5T_STD_I64LE, array1d_read, dims, error_hdf5)
-
-    call h5dclose_f(dset_id, error_hdf5)
-    call h5sclose_f(dspace_id, error_hdf5)
-    call h5fclose_f(file_id, error_hdf5)
-    call h5close_f(error_hdf5)
+    call hdf5_read_int_1d(filename=filename, group=group, key=key, output=array1d_read)
 
     arrays_equal = all(array1d_read == array1d)
 
@@ -382,21 +268,7 @@ contains
 
     call hdf5_write_int(filename=filename, scalar_input=scalar, key=key, group=group)
 
-    call h5open_f(error_hdf5)
-
-    call h5fopen_f(filename, H5F_ACC_RDONLY_F, file_id, error_hdf5)
-
-    call h5gopen_f(file_id, group, group_id, error_hdf5)
-
-    call h5aopen_name_f(group_id, key, attr_id, error_hdf5)
-
-
-    call h5aread_f(attr_id, H5T_STD_I64LE, scalar_read, adims, error_hdf5)
-
-    call h5aclose_f(attr_id, error_hdf5)
-    call h5gclose_f(group_id, error_hdf5)
-    call h5fclose_f(file_id, error_hdf5)
-    call h5close_f(error_hdf5)
+    call hdf5_read_int_scalar(filename=filename, group=group, key=key, output=scalar_read)
 
     call check(error, scalar , scalar_read)
     if (allocated(error)) return
