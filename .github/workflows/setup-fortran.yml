@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   test:
-    name: ${{ matrix.os }}-${{ matrix.toolchain.compiler }}${{ matrix.toolchain.tag }}
+    name: ${{ matrix.os }}-${{ matrix.toolchain.compiler }}${{ matrix.toolchain.tag }}-hdf5-${{ matrix.toolchain.hdf5 }}
     if: github.event.pull_request.draft == false
     runs-on: ${{ matrix.os }}
     env:
@@ -32,6 +32,11 @@ jobs:
           - compiler: gcc
             version: 14
             FPM_FFLAGS: "-Werror=unused -Werror=unused-parameter --coverage -pedantic-errors -std=f2008 -fopenmp -fopenacc"
+            hdf5: Off
+          - compiler: gcc
+            version: 14
+            FPM_FFLAGS: "-Werror=unused -Werror=unused-parameter --coverage -pedantic-errors -std=f2008 -fopenmp -fopenacc"
+            hdf5: On
           # As far as we can remember we haven't hit any issues picked
           # up by intel but not by the other compilers, while minutes
           # are limited we will not run these
@@ -41,7 +46,7 @@ jobs:
           # Separate nvidia compilations removed because using up all
           # our CI minutes!  The code now supports OpenMP+OpenACC
           # anyway, so it makes sense to just compile once
-          - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS: "-mp -acc=multicore"}
+          - {compiler: nvidia-hpc, version: '25.1', FPM_FFLAGS: "-mp -acc=multicore", hdf5: Off }
           # Cannot currently support lfortran due to it not supporting
           # namelists (issue number 1999 lfortran)
           # - {compiler: lfortran, version: '0.55.0'}
@@ -66,6 +71,12 @@ jobs:
       - run: |
           # Install hdf5 dependency
           sudo apt install libhdf5-dev
+
+      - name: Modify fpm.toml to switch on HDF5
+        if: ${{ contains(matrix.toolchain.hdf5, 'On') }}
+        run: |
+          sed -i 's/# dependencies.hdf5/dependencies.hdf5/' fpm.toml
+          sed -i 's/"USE_HDF5=0"/"USE_HDF5=1"/' fpm.toml
 
       - run: |
           # Build and test code using FPM
