@@ -13,7 +13,7 @@ module biocfd_forcing
   contains
 SUBROUTINE pressureForcing1(blk)
       type(Block_t), intent(inout) :: blk
-      INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
+      INTEGER :: n, k, j, i, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
                    dpdn_e, ac_y, ac_z, at_y, at_z
       real(dp) :: derivatives(3)
@@ -91,7 +91,7 @@ END SUBROUTINE pressureForcing1
 
 SUBROUTINE velocityForcing1(blk)
       type(Block_t), intent(inout) :: blk
-      INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
+      INTEGER :: n, k, j, i, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1,  &
                          aval, bval, cval, sur2nodeDis, &
                          usurf, u_pos1, vsurf, v_pos1, wsurf, w_pos1, &
@@ -131,18 +131,10 @@ SUBROUTINE velocityForcing1(blk)
          pos1_y = blk%yu(j)   + pt1*blk%cosBeta(blk%nelu2(n))
          pos1_z = blk%zu(k)   + pt1*blk%cosGamma(blk%nelu2(n))
 
-         !$acc loop seq
-         DO il = 1, blk%nx+2
-            if(pos1_x>=blk%xu(il).and.pos1_x<blk%xu(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = 1, blk%ny+1
-            if(pos1_y>=blk%yu(jl).and.pos1_y<blk%yu(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = 1, blk%nz+1
-            if(pos1_z>=blk%zu(kl).and.pos1_z<blk%zu(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xu, 1_int64, blk%nx+2)
+         i_y1 = find_index_in_array(pos1_y, blk%yu, 1_int64, blk%ny+1)
+         i_z1 = find_index_in_array(pos1_z, blk%zu, 1_int64, blk%nz+1)
+
          IF(i_x1==blk%nx+2) i_x1 = blk%nx+1
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
@@ -178,18 +170,9 @@ SUBROUTINE velocityForcing1(blk)
          pos1_y = blk%yu(j) + pt1*blk%cosBeta(blk%nelu1(n))
          pos1_z = blk%zu(k) + pt1*blk%cosGamma(blk%nelu1(n))
 
-         !$acc loop seq
-         DO il = 1, blk%nx+1
-            if(pos1_x>=blk%xu(il).and.pos1_x<blk%xu(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = 1, blk%ny+1
-            if(pos1_y>=blk%yu(jl).and.pos1_y<blk%yu(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = 1, blk%nz+1
-            if(pos1_z>=blk%zu(kl).and.pos1_z<blk%zu(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xu, 1_int64, blk%nx+1)
+         i_y1 = find_index_in_array(pos1_y, blk%yu, 1_int64, blk%ny+1)
+         i_z1 = find_index_in_array(pos1_z, blk%zu, 1_int64, blk%nz+1)
 
          IF(i_x1==1) i_x1 = 2
 
@@ -230,18 +213,9 @@ SUBROUTINE velocityForcing1(blk)
          pos1_y = blk%yv(j+1) + pt1*blk%cosBeta(blk%nelv2(n))
          pos1_z = blk%zv(k) + pt1*blk%cosGamma(blk%nelv2(n))
 
-         !$acc loop seq
-         DO il = 1, blk%nx+1
-            if(pos1_x>=blk%xv(il).and.pos1_x<blk%xv(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = 1, blk%ny+2
-            if(pos1_y>=blk%yv(jl).and.pos1_y<blk%yv(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = 1, blk%nz+1
-            if(pos1_z>=blk%zv(kl).and.pos1_z<blk%zv(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xv, 1_int64, blk%nx+1)
+         i_y1 = find_index_in_array(pos1_y, blk%yv, 1_int64, blk%ny+2)
+         i_z1 = find_index_in_array(pos1_z, blk%zv, 1_int64, blk%nz+1)
 
          IF(i_y1==blk%ny+2) i_y1 = blk%ny+1
 
@@ -280,18 +254,9 @@ SUBROUTINE velocityForcing1(blk)
          pos1_y = blk%yv(j) + pt1*blk%cosBeta(blk%nelv1(n))
          pos1_z = blk%zv(k) + pt1*blk%cosGamma(blk%nelv1(n))
 
-         !$acc loop seq
-         DO il = 1, blk%nx+1
-            if(pos1_x>=blk%xv(il).and.pos1_x<blk%xv(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = 1, blk%ny+1
-            if(pos1_y>=blk%yv(jl).and.pos1_y<blk%yv(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = 1, blk%nz+1
-            if(pos1_z>=blk%zv(kl).and.pos1_z<blk%zv(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xv, 1_int64, blk%nx+1)
+         i_y1 = find_index_in_array(pos1_y, blk%yv, 1_int64, blk%ny+1)
+         i_z1 = find_index_in_array(pos1_z, blk%zv, 1_int64, blk%nz+1)
 
          IF(i_y1==1) i_y1 = 2
 
@@ -329,18 +294,9 @@ SUBROUTINE velocityForcing1(blk)
          pos1_y = blk%yw(j) + pt1*blk%cosBeta(blk%nelw2(n))
          pos1_z = blk%zw(k+1) + pt1*blk%cosGamma(blk%nelw2(n))
 
-         !$acc loop seq
-         DO il = 1, blk%nx+1
-            if(pos1_x>=blk%xw(il).and.pos1_x<blk%xw(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = 1, blk%ny+1
-            if(pos1_y>=blk%yw(jl).and.pos1_y<blk%yw(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = 1, blk%nz+2
-            if(pos1_z>=blk%zw(kl).and.pos1_z<blk%zw(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xw, 1_int64, blk%nx+1)
+         i_y1 = find_index_in_array(pos1_y, blk%yw, 1_int64, blk%ny+1)
+         i_z1 = find_index_in_array(pos1_z, blk%zw, 1_int64, blk%nz+2)
 
          IF(i_z1==blk%nz+2) i_z1 = blk%nz+1
 
@@ -378,18 +334,9 @@ SUBROUTINE velocityForcing1(blk)
          pos1_y = blk%yw(j) + pt1*blk%cosBeta(blk%nelw1(n))
          pos1_z = blk%zw(k) + pt1*blk%cosGamma(blk%nelw1(n))
 
-         !$acc loop seq
-         DO il = 1, blk%nx+1
-            if(pos1_x>=blk%xw(il).and.pos1_x<blk%xw(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = 1, blk%ny+1
-            if(pos1_y>=blk%yw(jl).and.pos1_y<blk%yw(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = 1, blk%nz+1
-            if(pos1_z>=blk%zw(kl).and.pos1_z<blk%zw(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xw, 1_int64, blk%nx+1)
+         i_y1 = find_index_in_array(pos1_y, blk%yw, 1_int64, blk%ny+1)
+         i_z1 = find_index_in_array(pos1_z, blk%zw, 1_int64, blk%nz+1)
 
          IF(i_z1==1) i_z1 = 2
 
@@ -414,7 +361,7 @@ END SUBROUTINE velocityForcing1
 
 SUBROUTINE pressureForcingGhost(blk)
       type(Block_t), intent(inout) :: blk
-      INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
+      INTEGER :: n, k, j, i, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, &
                          aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
                          dpdn_e, ac_y, ac_z, at_y, at_z
@@ -843,7 +790,7 @@ END SUBROUTINE velocityForcingGhost
 
 SUBROUTINE pressureForcingField(blk)
       type(Block_t), intent(inout) :: blk
-      INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
+      INTEGER :: n, k, j, i, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, &
                    aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
                    dpdn_e, ac_y, ac_z, at_y, at_z
