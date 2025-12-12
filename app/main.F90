@@ -26,6 +26,7 @@ PROGRAM main
         use biocfd_forcing, only: pressureForcing1, pressureforcingfield, pressureforcingghost, &
              velocityforcing1, velocityforcingfield, velocityforcingghost
         use biocfd_mpi_helpers, only: biocfd_init, biocfd_finalize
+        use biocfd_gpu_helpers, only: set_gpu
 #ifdef BIOCFD_MPI
         use mpi_f08, only: MPI_Allreduce, MPI_Bcast, MPI_COMM_WORLD, MPI_DOUBLE_PRECISION, &
                            MPI_IN_PLACE, MPI_INTEGER8, MPI_Max
@@ -37,10 +38,11 @@ PROGRAM main
         CHARACTER (LEN = 3)   :: char_f
         INTEGER               :: istart
         INTEGER (int64)   :: itamax, pcItaMax
-        real(dp) :: aoa,aoa1,aoa2,phase_angle,piv_pt
+        real(dp) :: aoa, aoa1, aoa2, phase_angle, piv_pt, mu_f, rho_f
         integer :: start, finish, step, rank
 
-        CALL readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt)
+        CALL readInput(surGeoPoints, char_f, istart, itamax, pcItaMax, aoa, phase_angle, piv_pt, &
+                       mu_f, rho_f)
         ! Need to init after we know the size of block
         call biocfd_init(size(block), start, finish, step, rank)
         CALL readBlockInterface
@@ -72,12 +74,18 @@ PROGRAM main
         totime = 0.
         ita1 = 0
 
+        !$omp parallel default(none) private(g) shared(block, start, finish, step)
+        ! Set the device (for multi-GPU)
+        call set_gpu()
+        !$omp do
         do g=start, finish, step
           if (g /= 1) then
            CALL tagging_th(block(g), g)
            CALL cellCount_solid(block(g), g)
           end if
         end do
+        !$omp end do
+        !$omp end parallel
 
         ! Just run fine_block_cell on rank 1 (note that we'll need to
         ! be sure that only block(1) is being written to)
@@ -122,19 +130,25 @@ PROGRAM main
         DO
         ita = ita + 1
         totime = totime + deltat
+
+        !$omp parallel default(none) private(g) shared(block, start, finish, step, deltat, uc)
+        ! Set the device (for multi-GPU)
+        call set_gpu()
+        !$omp do
         do g=start, finish, step
            CALL nsMomentum2order(block(g))
            if (g == 1) CALL velocityBC(block(g), deltat, uc)
            if (g /= 1) then
              CALL solidCellBC(block(g))
-           !$acc wait
              CALL velocityForcing1(block(g))
            end if
            ! TODO: Not sure why velocityBC is called twice in a row for block(1)?
            if (g == 1) CALL velocityBC(block(g), deltat, uc)
         end do
+        !$omp end do
+        !$omp end parallel
 
-        CALL poissonSolver(pcItaMax)
+        CALL poissonSolver(pcItaMax, start, finish, step)
 
         do g=start, finish, step
            if (g /= 1) CALL pressureForcing1(block(g))
@@ -149,7 +163,7 @@ PROGRAM main
 #ifndef BIOCFD_MPI
            ! TODO: Not yet tested on MPI but should be added!
            CALL writeResult(block(g),g,char_f)
-           CALL body_plot(block(g))
+           CALL body_plot(block(g), g)
 #endif
        end do
 
@@ -157,7 +171,8 @@ PROGRAM main
          if (g /= 1) then
            !$acc wait
            DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent, &
-                      block(g)%cosAlpha, block(g)%cosBeta, block(g)%cosGamma)
+                      block(g)%cosAlpha, block(g)%cosBeta, block(g)%cosGamma, &
+                      block(g)%element_length)
            block(g)%blk_mv_tag=0.
            CALL computeSurfaceVariables(block(g),g,phase_angle,piv_pt)
          end if
@@ -218,44 +233,38 @@ PROGRAM main
             if (g /= 1) CALL tagging_th_move(block(g), g)
          end do
 
-        do g=start, finish, step
-           if (g /= 1) CALL selectiveRetagging_th(block(g))
-        end do
-
+        !$omp parallel default(none) private(g) shared(block, start, finish, step)
+        ! Set the device (for multi-GPU)
+        call set_gpu()
+        !$omp do
         DO g=start, finish, step
-         if (g /= 1) then
-            block(g)%blk_mv_tag=0.
-              DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,&
-                   block(g)% pNormDis,block(g)% nelp,block(g)% nelu1,block(g)% nelu2,&
-                   block(g)% nelv1,block(g)% nelv2,block(g)% nelw1,block(g)% nelw2,&
-                   block(g)% u1NormDis,block(g)% u2NormDis ,block(g)% v1NormDis,&
-                   block(g)% v2NormDis,block(g)% w1NormDis,block(g)% w2NormDis,&
-                   block(g)% solidIndexPtr)
-        DEALLOCATE(block(g)%fluidIndexPtr,block(g)% redCellIndexPtr, block(g)%blackCellIndexPtr)
-        DEALLOCATE(block(g)%p_ghost,block(g)% pt_ghost,block(g)% u2_ghost,block(g)% u2t_ghost,&
-             block(g)% v2_ghost,block(g)% v2t_ghost,block(g)% w2_ghost, block(g)%w2t_ghost,&
-             block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, &
-             block(g)%w1_ghost,block(g)% w1t_ghost)
-             end if
-       END DO
-
-       do g=start, finish, step
-         if (g == 1) cycle  ! Use cycle here to save on indentation
-           CALL cellCount_solid(block(g),g)
-           call solidCellBC_move(block(g))
-           call updateVelocity_newv(block(g))
-           block(g)%move_check=0.
-           CALL computeNormDistance(block(g))
-           CALL findTScells(block(g))
-        end do
-
-        do g=start, finish, step
-          if (g == 1) cycle  ! Use cycle here to save on indentation
+          if (g == 1) cycle
+          CALL selectiveRetagging_th(block(g))
+          block(g)%blk_mv_tag=0.
+          DEALLOCATE(block(g)%index_ts,block(g)% TSIndexPtr,block(g)% interceptedIndexPtr,&
+               block(g)% pNormDis,block(g)% nelp,block(g)% nelu1,block(g)% nelu2,&
+               block(g)% nelv1,block(g)% nelv2,block(g)% nelw1,block(g)% nelw2,&
+               block(g)% u1NormDis,block(g)% u2NormDis ,block(g)% v1NormDis,&
+               block(g)% v2NormDis,block(g)% w1NormDis,block(g)% w2NormDis,&
+               block(g)% solidIndexPtr)
+          DEALLOCATE(block(g)%fluidIndexPtr,block(g)% redCellIndexPtr, block(g)%blackCellIndexPtr)
+          DEALLOCATE(block(g)%p_ghost,block(g)% pt_ghost,block(g)% u2_ghost,block(g)% u2t_ghost,&
+               block(g)% v2_ghost,block(g)% v2t_ghost,block(g)% w2_ghost, block(g)%w2t_ghost,&
+               block(g)% u1_ghost,block(g)% u1t_ghost,block(g)% v1_ghost,block(g)% v1t_ghost, &
+               block(g)%w1_ghost,block(g)% w1t_ghost)
+          CALL cellCount_solid(block(g),g)
+          call solidCellBC_move(block(g))
+          call updateVelocity_newv(block(g))
+          block(g)%move_check=0.
+          CALL computeNormDistance(block(g))
+          CALL findTScells(block(g))
           CALL velocityForcingField(block(g))
           CALL pressureForcingField(block(g))
           CALL velocityForcingGhost(block(g))
           CALL pressureForcingGhost(block(g))
         end do
+        !$omp end do
+        !$omp end parallel
         IF(ita>=itamax) EXIT
      END DO
      call biocfd_finalize()
