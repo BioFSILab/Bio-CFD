@@ -21,7 +21,7 @@ SUBROUTINE pressureForcing1(blk)
 
  !$acc parallel loop gang vector                                                                                          &
  !$acc private (n, n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
- !$acc           dpdn_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
+ !$acc           dpdn_e, k, j, i, i_x1, i_y1,               &
  !$acc           i_z1,ac_z,ac_y,at_y,at_z)         &
  !$acc default(present)  &
  !$acc private(derivatives)
@@ -103,7 +103,7 @@ SUBROUTINE velocityForcing1(blk)
  !$acc          aval, bval, cval, sur2nodeDis,                       &
  !$acc          usurf, u_pos1, vsurf, v_pos1, wsurf, w_pos1, &
  !$acc          dudn_e, dvdn_e, dwdn_e, &
- !$acc          k, j, i, il, jl, kl, i_x1, i_y1, i_z1) &
+ !$acc          k, j, i, i_x1, i_y1, i_z1) &
  !$acc private(derivatives) &
  !$acc default(present)
 
@@ -370,7 +370,7 @@ SUBROUTINE pressureForcingGhost(blk)
       dpdn = 0._dp
  !$acc parallel loop gang vector                                                                    &
  !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
- !$acc           dpdn_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
+ !$acc           dpdn_e, k, j, i, i_x1, i_y1,               &
  !$acc           i_z1,ac_z,ac_y,at_y,at_z)         &
  !$acc default(present) private(derivatives)
       DO n = 1, blk%TSCellCount
@@ -799,7 +799,7 @@ SUBROUTINE pressureForcingField(blk)
       dpdn = 0._dp
  !$acc parallel loop gang vector                                                                                          &
  !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
- !$acc          dpdn_e, k, j, i, il, jl, kl, i_x1, i_y1,               &
+ !$acc          dpdn_e, k, j, i, i_x1, i_y1,               &
  !$acc          i_z1,ac_z,ac_y,at_y,at_z)         &
  !$acc default(present) private(derivatives)
       DO n = 1, blk%ibCellCount
