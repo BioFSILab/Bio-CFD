@@ -1,6 +1,6 @@
 module biocfd_stress_calculation
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use biocfd_forcing, only: compute_value_and_derivatives
+  use biocfd_forcing, only: compute_value_and_derivatives, find_index_in_array
   use biocfd_block_type, only: Block_t
   IMPLICIT NONE
 
@@ -194,27 +194,5 @@ contains
     blk%pressure_lift_coefficient = 2 * (pressureLift/area_Sy)
 
   end subroutine stress_calculation
-
-!> Find the position in the array where the value is greater than
-!> element i but less than element i+1
-pure function find_index_in_array(value, array, start, finish) result(index)
-   real(dp), intent(in) :: value
-   real(dp), intent(in) :: array(:)
-   ! TODO: No need for these to be int64
-   integer(int64), intent(in) :: start, finish
-
-   !> The resulting index
-   integer :: index
-
-   ! Internal counter
-   integer :: i
-   !$acc routine seq
-   do i=start, finish
-      if (value >= array(i) .and. value < array(i+1)) then
-         index = i
-         return  ! As soon as we find a value we can return
-      end if
-   end do
-end function find_index_in_array
 
 end module biocfd_stress_calculation
