@@ -1,5 +1,5 @@
 module biocfd_forcing
-  use, intrinsic :: iso_fortran_env, only: dp => real64
+  use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use biocfd_interpolation, only: linear_interpolation, bilinear_interpolation
   use biocfd_block_type, only: Block_t
   implicit none
@@ -8,7 +8,7 @@ module biocfd_forcing
 
   public :: pressureForcing1, pressureforcingfield, pressureforcingghost
   public :: velocityforcing1, velocityforcingfield, velocityforcingghost
-  public :: compute_value_and_derivatives
+  public :: compute_value_and_derivatives, find_index_in_array
 
   contains
 SUBROUTINE pressureForcing1(blk)
@@ -65,18 +65,9 @@ SUBROUTINE pressureForcing1(blk)
          pos1_y = blk%yp(j) + pt1*blk%cosBeta(blk%nelp(n))
          pos1_z = blk%zp(k) + pt1*blk%cosGamma(blk%nelp(n))
 
-          !$acc loop seq
-         DO il = 1, blk%nx+1
-            if(pos1_x>=blk%xp(il).and.pos1_x<blk%xp(il+1)) i_x1 = il
-         END DO
-          !$acc loop seq
-         DO jl = 1, blk%ny+1
-            if(pos1_y>=blk%yp(jl).and.pos1_y<blk%yp(jl+1)) i_y1 = jl
-         END DO
-          !$acc loop seq
-         DO kl = 1, blk%nz+1
-            if(pos1_z>=blk%zp(kl).and.pos1_z<blk%zp(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xp, 1_int64, blk%nx+1)
+         i_y1 = find_index_in_array(pos1_y, blk%yp, 1_int64, blk%ny+1)
+         i_z1 = find_index_in_array(pos1_z, blk%zp, 1_int64, blk%nz+1)
 
         call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                            blk%xp, blk%yp, blk%zp, 0, &
@@ -484,18 +475,10 @@ SUBROUTINE pressureForcingGhost(blk)
          pos1_x = blk%xp(i) - pt1*blk%cosAlpha(blk%nelp(blk%index_ts(n)))
          pos1_y = blk%yp(j) - pt1*blk%cosBeta(blk%nelp(blk%index_ts(n)))
          pos1_z = blk%zp(k) - pt1*blk%cosGamma(blk%nelp(blk%index_ts(n)))
-         !$acc loop seq
-         DO il = i-7, i+7
-            if(pos1_x>=blk%xp(il).and.pos1_x<blk%xp(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = j-7, j+7
-            if(pos1_y>=blk%yp(jl).and.pos1_y<blk%yp(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = k-7, k+7
-            if(pos1_z>=blk%zp(kl).and.pos1_z<blk%zp(kl+1)) i_z1 = kl
-         END DO
+
+         i_x1 = find_index_in_array(pos1_x, blk%xp, i-7_int64, i+7_int64)
+         i_y1 = find_index_in_array(pos1_y, blk%yp, j-7_int64, j+7_int64)
+         i_z1 = find_index_in_array(pos1_z, blk%zp, k-7_int64, k+7_int64)
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                            blk%xp, blk%yp, blk%zp, 0, &
@@ -911,18 +894,9 @@ SUBROUTINE pressureForcingField(blk)
          pos1_y = blk%yp(j) + pt1*blk%cosBeta(blk%nelp(n))
          pos1_z = blk%zp(k) + pt1*blk%cosGamma(blk%nelp(n))
 
-         !$acc loop seq
-         DO il = i-7, i+7
-            if(pos1_x>=blk%xp(il).and.pos1_x<blk%xp(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = j-7, j+7
-            if(pos1_y>=blk%yp(jl).and.pos1_y<blk%yp(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = k-7, k+7
-            if(pos1_z>=blk%zp(kl).and.pos1_z<blk%zp(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xp, i-7_int64, i+7_int64)
+         i_y1 = find_index_in_array(pos1_y, blk%yp, j-7_int64, j+7_int64)
+         i_z1 = find_index_in_array(pos1_z, blk%zp, k-7_int64, k+7_int64)
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                            blk%xp, blk%yp, blk%zp, 0, &
@@ -1346,5 +1320,27 @@ subroutine compute_value_and_derivatives(x, y, z, i, j, k, xgrid, ygrid, zgrid, 
   derivatives(3) = compute_derivative(z, zgrid(k+1), zgrid(k), val, tmp(3, 2), tmp(3, 1))
 
 end subroutine compute_value_and_derivatives
+
+!> Find the position in the array where the value is greater than
+!> element i but less than element i+1
+pure function find_index_in_array(value, array, start, finish) result(index)
+   real(dp), intent(in) :: value
+   real(dp), intent(in) :: array(:)
+   ! TODO: No need for these to be int64
+   integer(int64), intent(in) :: start, finish
+
+   !> The resulting index
+   integer :: index
+
+   ! Internal counter
+   integer :: i
+   !$acc routine seq
+   do i=start, finish
+      if (value >= array(i) .and. value < array(i+1)) then
+         index = i
+         return  ! As soon as we find a value we can return
+      end if
+   end do
+end function find_index_in_array
 
 end module biocfd_forcing
