@@ -10,7 +10,6 @@ module biocfd_pcor_vcor
   use biocfd_fine_interp_bound, only : fineUpdate_newv_bd, fineUpdate_pc_bd, fineupdate_bd_mv
   use biocfd_coarse_update, only : coarseUpdate_newv, coarseUpdate_pc, coarseUpdate
   use biocfd_boundary_conditions, only : velocityBC
-  use biocfd_mpi_helpers, only: get_block_iteration_params
 #ifdef BIOCFD_MPI
    use mpi_f08, only: MPI_Bcast, MPI_COMM_WORLD, MPI_DOUBLE_PRECISION
 #endif
@@ -21,7 +20,7 @@ module biocfd_pcor_vcor
 
   contains
 
-      SUBROUTINE poissonSolver(pcItaMax)
+      SUBROUTINE poissonSolver(pcItaMax, start, finish, step)
 
         INTEGER(int64) :: i, j,k, n, g
         INTEGER (int64),INTENT(IN)   :: pcItaMax
@@ -31,11 +30,11 @@ module biocfd_pcor_vcor
 #ifndef BIOCFD_MPI
         CHARACTER(len=160) :: filename1
 #endif
+        !> Variables to control iteration over blocks (mainly for MPI)
+        integer, intent(in) :: start, finish, step
 
         ! For controlling OpenMP
         integer :: omp_threads
-        ! Variables to control iteration over blocks (mainly for MPI)
-        integer :: start, finish, step, rank
 
           max_derrStdst=0._dp
           max_derr1=0._dp
@@ -49,8 +48,6 @@ module biocfd_pcor_vcor
 
           ! Dummy values for omp/acc variables
           omp_threads = 1
-
-          call get_block_iteration_params(size(block), start, finish, step, rank)
 
 #ifdef _OPENMP
           ! Count the number of blocks on this rank (or in total if not
