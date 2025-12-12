@@ -22,15 +22,11 @@ contains
       SUBROUTINE write_output_hdf5(blk,blk_no)
        type(Block_t), intent(in) :: blk
        integer (int64), intent(in) :: blk_no
-       CHARACTER(len=150)  :: filename1
+       CHARACTER(len=150)  :: filename
        INTEGER  :: k, i, j
        REAL (dp), allocatable :: u1(:,:,:), v1(:,:,:), w1(:,:,:)
-       character (len=11) :: dummy_1
-       character (len=15) :: dummy_2
 
          if (mod(ita,200_int64) /=0 .and. ita > 2) return
-            write(dummy_1,"(A6,I5.5)") "block_",blk_no
-            write(dummy_2,"(A9,I5.5,A1)") "timestep_", ita,"_"
             allocate(u1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1),&
                      v1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1),&
                      w1(2:blk%nx+1,2:blk%ny+1,2:blk%nz+1))
@@ -43,7 +39,7 @@ contains
             END DO
             END DO
             END DO
-            filename1="out/"//trim(dummy_2)//trim(dummy_1)//".h5"
+            write(filename, "('out/timestep_', i5.5, '_block_', i5.5, '.h5')") ita, blk_no
             call hdf5_write_real(filename=filename1,&
                                  array_input_3d=u1,key="u1",group="/")
             call hdf5_write_real(filename=filename1,&
