@@ -40,36 +40,36 @@ contains
             END DO
             END DO
             write(filename, "('out/timestep_', i5.5, '_block_', i5.5, '.h5')") ita, blk_no
-            call hdf5_write_real(filename=filename1,&
+            call hdf5_write_real(filename=filename,&
                                  array_input_3d=u1,key="u1",group="/")
-            call hdf5_write_real(filename=filename1,&
+            call hdf5_write_real(filename=filename,&
                                  array_input_3d=v1,key="v1",group="/")
-            call hdf5_write_real(filename=filename1,&
+            call hdf5_write_real(filename=filename,&
                                  array_input_3d=w1,key="w1",group="/")
-            call hdf5_write_real(filename=filename1,&
+            call hdf5_write_real(filename=filename,&
                                  array_input_1d=blk%xp(2:blk%nx+1), key="xp", group="/")
-            call hdf5_write_real(filename=filename1,&
+            call hdf5_write_real(filename=filename,&
                                  array_input_1d=blk%yp(2:blk%ny+1), key="yp",group="/")
-            call hdf5_write_real(filename=filename1,&
+            call hdf5_write_real(filename=filename,&
                                  array_input_1d=blk%zp(2:blk%nz+1), key="zp",group="/")
-            call hdf5_write_int(filename=filename1,&
+            call hdf5_write_int(filename=filename,&
                                 scalar_input=blk%nx,key="zonei",group="/")
-            call hdf5_write_int(filename=filename1,&
+            call hdf5_write_int(filename=filename,&
                                 scalar_input=blk%nx,key="zonej",group="/")
-            call hdf5_write_int(filename=filename1,&
+            call hdf5_write_int(filename=filename,&
                                 scalar_input=blk%nz,key="zonek",group="/")
-            call hdf5_write_real(filename=filename1,&
+            call hdf5_write_real(filename=filename,&
                                  array_input_3d=blk%p(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
                                  key="p",group="/")
-            call hdf5_write_real(filename=filename1,&
+            call hdf5_write_real(filename=filename,&
                                  scalar_input=totime,key="totime",group="/")
-            call hdf5_write_int(filename=filename1,&
+            call hdf5_write_int(filename=filename,&
                                 array_input_3d=blk%cell(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
                                 key="cell",group="/")
-            call hdf5_write_int(filename=filename1,&
+            call hdf5_write_int(filename=filename,&
                                 array_input_3d=blk%cell_n(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
                                 key="cell_n",group="/")
-            call hdf5_write_int(filename=filename1,&
+            call hdf5_write_int(filename=filename,&
                                 array_input_3d=blk%cell_pr(2:blk%nx+1, 2:blk%ny+1, 2:blk%nz+1), &
                                 key="cell_pr",group="/")
             deallocate(u1,v1,w1)
