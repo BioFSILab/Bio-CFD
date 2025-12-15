@@ -202,11 +202,11 @@ module biocfd_read_input
 
          WRITE(filename1, grid_fmt) "x", g, block(g)%nx+1
          OPEN(newunit=io, file=filename1, form="formatted", status="old", action="read")
-         DO i = 2, block(g)%nx+2
-            READ(io, *) block(g)%x1(i)
-                block(g)%x1(i)=0.001_dp*block(g)%x1(i)
-                    block(g)%x1(i)=block(g)%x1(i) + block(g)%gx_shift
-         END DO
+           DO i = 2, block(g)%nx+2
+             READ(io, *) block(g)%x1(i)
+             block(g)%x1(i) = 0.001_dp * block(g)%x1(i)
+             block(g)%x1(i) = block(g)%x1(i) + block(g)%gx_shift
+           END DO
          CLOSE(io)
 
          DO i = 2, block(g)%nx+1
@@ -220,11 +220,11 @@ module biocfd_read_input
 
          WRITE(filename1, grid_fmt) "y", g, block(g)%ny+1
          OPEN(newunit=io, file=filename1, form="formatted", status="old", action="read")
-         DO i = 2, block(g)%ny+2
-            READ(io, *) block(g)%y1(i)
-                 block(g)%y1(i)=0.001_dp*block(g)%y1(i)
-                    block(g)%y1(i)=block(g)%y1(i) + block(g)%gy_shift
-         END DO
+           DO i = 2, block(g)%ny+2
+             READ(io, *) block(g)%y1(i)
+             block(g)%y1(i) = 0.001_dp * block(g)%y1(i)
+             block(g)%y1(i) = block(g)%y1(i) + block(g)%gy_shift
+           END DO
          CLOSE(io)
 
          DO i = 2, block(g)%ny+1
@@ -238,11 +238,11 @@ module biocfd_read_input
 
          WRITE(filename1, grid_fmt) "z", g, block(g)%nz+1
          OPEN(newunit=io, file=filename1, form="formatted", status="old", action="read")
-         DO i = 2, block(g)%nz+2
-            READ(io, *) block(g)%z1(i)
-                 block(g)%z1(i)=0.001_dp*block(g)%z1(i)
-                    block(g)%z1(i)=block(g)%z1(i) + block(g)%gz_shift
-         END DO
+           DO i = 2, block(g)%nz+2
+             READ(io, *) block(g)%z1(i)
+             block(g)%z1(i)=0.001_dp*block(g)%z1(i)
+             block(g)%z1(i)=block(g)%z1(i) + block(g)%gz_shift
+           END DO
          CLOSE(io)
 
          DO i = 2, block(g)%nz+1
