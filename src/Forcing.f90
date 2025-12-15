@@ -812,7 +812,7 @@ END SUBROUTINE pressureForcingField
 
 SUBROUTINE velocityForcingField(blk)
       type(Block_t), intent(inout) :: blk
-      INTEGER :: n, k, j, i, il, jl, kl, i_x1, i_y1, i_z1
+      INTEGER :: n, k, j, i, i_x1, i_y1, i_z1
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1,  &
                          aval, bval, cval, sur2nodeDis, &
                          usurf, u_pos1, vsurf, v_pos1, wsurf, w_pos1, &
@@ -823,7 +823,7 @@ SUBROUTINE velocityForcingField(blk)
  !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1,           &
  !$acc          aval, bval, cval, sur2nodeDis, &
  !$acc          usurf, u_pos1, vsurf, v_pos1, wsurf, w_pos1, &
- !$acc          dudn_e, dvdn_e, dwdn_e, k, j, i, il, jl, kl, i_x1, i_y1, i_z1) &
+ !$acc          dudn_e, dvdn_e, dwdn_e, k, j, i, i_x1, i_y1, i_z1) &
  !$acc default(present) private(derivatives)
       DO n = 1, blk%ibCellCount
 
@@ -850,18 +850,9 @@ SUBROUTINE velocityForcingField(blk)
          pos1_y = blk%yu(j)   + pt1*blk%cosBeta(blk%nelu2(n))
          pos1_z = blk%zu(k)   + pt1*blk%cosGamma(blk%nelu2(n))
 
-         !$acc loop seq
-         DO il = i-7, i+7
-            if(pos1_x>=blk%xu(il).and.pos1_x<blk%xu(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = j-7, j+7
-            if(pos1_y>=blk%yu(jl).and.pos1_y<blk%yu(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = k-7, k+7
-            if(pos1_z>=blk%zu(kl).and.pos1_z<blk%zu(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xu, i-7_int64, i+7_int64)
+         i_y1 = find_index_in_array(pos1_y, blk%yu, j-7_int64, j+7_int64)
+         i_z1 = find_index_in_array(pos1_z, blk%zu, k-7_int64, k+7_int64)
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                             blk%xu, blk%yu, blk%zu, &
@@ -897,18 +888,9 @@ SUBROUTINE velocityForcingField(blk)
          pos1_y = blk%yu(j) + pt1*blk%cosBeta(blk%nelu1(n))
          pos1_z = blk%zu(k) + pt1*blk%cosGamma(blk%nelu1(n))
 
-         !$acc loop seq
-         DO il = i-7, i+7
-            if(pos1_x>=blk%xu(il).and.pos1_x<blk%xu(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = j-7, j+7
-            if(pos1_y>=blk%yu(jl).and.pos1_y<blk%yu(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = k-7, k+7
-            if(pos1_z>=blk%zu(kl).and.pos1_z<blk%zu(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xu, i-7_int64, i+7_int64)
+         i_y1 = find_index_in_array(pos1_y, blk%yu, j-7_int64, j+7_int64)
+         i_z1 = find_index_in_array(pos1_z, blk%zu, k-7_int64, k+7_int64)
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                             blk%xu, blk%yu, blk%zu, &
@@ -949,18 +931,9 @@ SUBROUTINE velocityForcingField(blk)
          pos1_y = blk%yv(j+1) + pt1*blk%cosBeta(blk%nelv2(n))
          pos1_z = blk%zv(k) + pt1*blk%cosGamma(blk%nelv2(n))
 
-         !$acc loop seq
-         DO il = i-7, i+7
-            if(pos1_x>=blk%xv(il).and.pos1_x<blk%xv(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = j-7, j+7
-            if(pos1_y>=blk%yv(jl).and.pos1_y<blk%yv(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = k-7, k+7
-            if(pos1_z>=blk%zv(kl).and.pos1_z<blk%zv(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xv, i-7_int64, i+7_int64)
+         i_y1 = find_index_in_array(pos1_y, blk%yv, j-7_int64, j+7_int64)
+         i_z1 = find_index_in_array(pos1_z, blk%zv, k-7_int64, k+7_int64)
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                             blk%xv, blk%yv, blk%zv, &
@@ -1003,18 +976,9 @@ SUBROUTINE velocityForcingField(blk)
          pos1_y = blk%yv(j) + pt1*blk%cosBeta(blk%nelv1(n))
          pos1_z = blk%zv(k) + pt1*blk%cosGamma(blk%nelv1(n))
 
-         !$acc loop seq
-         DO il = i-7, i+7
-            if(pos1_x>=blk%xv(il).and.pos1_x<blk%xv(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = j-7, j+7
-            if(pos1_y>=blk%yv(jl).and.pos1_y<blk%yv(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = k-7, k+7
-            if(pos1_z>=blk%zv(kl).and.pos1_z<blk%zv(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xv, i-7_int64, i+7_int64)
+         i_y1 = find_index_in_array(pos1_y, blk%yv, j-7_int64, j+7_int64)
+         i_z1 = find_index_in_array(pos1_z, blk%zv, k-7_int64, k+7_int64)
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                             blk%xv, blk%yv, blk%zv, &
@@ -1049,18 +1013,9 @@ SUBROUTINE velocityForcingField(blk)
          pos1_y = blk%yw(j) + pt1*blk%cosBeta(blk%nelw2(n))
          pos1_z = blk%zw(k+1) + pt1*blk%cosGamma(blk%nelw2(n))
 
-         !$acc loop seq
-         DO il = i-7, i+7
-            if(pos1_x>=blk%xw(il).and.pos1_x<blk%xw(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = j-7, j+7
-            if(pos1_y>=blk%yw(jl).and.pos1_y<blk%yw(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = k-7, k+7
-            if(pos1_z>=blk%zw(kl).and.pos1_z<blk%zw(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xw, i-7_int64, i+7_int64)
+         i_y1 = find_index_in_array(pos1_y, blk%yw, j-7_int64, j+7_int64)
+         i_z1 = find_index_in_array(pos1_z, blk%zw, k-7_int64, k+7_int64)
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                             blk%xw, blk%yw, blk%zw, &
@@ -1097,18 +1052,9 @@ SUBROUTINE velocityForcingField(blk)
          pos1_y = blk%yw(j) + pt1*blk%cosBeta(blk%nelw1(n))
          pos1_z = blk%zw(k) + pt1*blk%cosGamma(blk%nelw1(n))
 
-         !$acc loop seq
-         DO il = i-7, i+7
-            if(pos1_x>=blk%xw(il).and.pos1_x<blk%xw(il+1)) i_x1 = il
-         END DO
-         !$acc loop seq
-         DO jl = j-7, j+7
-            if(pos1_y>=blk%yw(jl).and.pos1_y<blk%yw(jl+1)) i_y1 = jl
-         END DO
-         !$acc loop seq
-         DO kl = k-7, k+7
-            if(pos1_z>=blk%zw(kl).and.pos1_z<blk%zw(kl+1)) i_z1 = kl
-         END DO
+         i_x1 = find_index_in_array(pos1_x, blk%xw, i-7_int64, i+7_int64)
+         i_y1 = find_index_in_array(pos1_y, blk%yw, j-7_int64, j+7_int64)
+         i_z1 = find_index_in_array(pos1_z, blk%zw, k-7_int64, k+7_int64)
 
          call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
                                             blk%xw, blk%yw, blk%zw, &
