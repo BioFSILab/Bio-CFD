@@ -36,6 +36,7 @@ module biocfd_read_input
                    u0,  &
                    surGeoPoints, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
                    istart, dt_order,  inor, dxmin
+       character(len=*), parameter :: grid_fmt = '(A, "grid_bk", i3.3, "_", i0, ".txt")'
 
   open(newunit=io, file="input_data.nml", status="old", action="read")
   read(io, NML=input_data)
@@ -199,16 +200,14 @@ module biocfd_read_input
 
          Do g=1,size(block)
 
-         WRITE(filename1,8282) g,block(g)%nx+1
-
- 8282    FORMAT("xgrid_bk",i1,"_",i3.3,".txt")
-         OPEN(61, FILE = filename1, FORM = "formatted")
+         WRITE(filename1, grid_fmt) "x", g, block(g)%nx+1
+         OPEN(newunit=io, file=filename1, form="formatted", status="old", action="read")
          DO i = 2, block(g)%nx+2
-            READ(61, *) block(g)%x1(i)
+            READ(io, *) block(g)%x1(i)
                 block(g)%x1(i)=0.001_dp*block(g)%x1(i)
                     block(g)%x1(i)=block(g)%x1(i) + block(g)%gx_shift
          END DO
-         CLOSE(61)
+         CLOSE(io)
 
          DO i = 2, block(g)%nx+1
             block(g)%deltax(i) = block(g)%x1(i+1) - block(g)%x1(i)
@@ -219,16 +218,14 @@ module biocfd_read_input
          block(g)%x1(1) = block(g)%x1(2) - block(g)%deltax(1)
          block(g)%x1(block(g)%nx+3) = block(g)%x1(block(g)%nx+2) + block(g)%deltax(block(g)%nx+2)
 
-         WRITE(filename1,8383) g,block(g)%ny+1
-
- 8383    FORMAT("ygrid_bk",i1,"_",i3.3,".txt")
-         OPEN(62, FILE = filename1, FORM = "formatted")
+         WRITE(filename1, grid_fmt) "y", g, block(g)%ny+1
+         OPEN(newunit=io, file=filename1, form="formatted", status="old", action="read")
          DO i = 2, block(g)%ny+2
-            READ(62, *) block(g)%y1(i)
+            READ(io, *) block(g)%y1(i)
                  block(g)%y1(i)=0.001_dp*block(g)%y1(i)
                     block(g)%y1(i)=block(g)%y1(i) + block(g)%gy_shift
          END DO
-         CLOSE(62)
+         CLOSE(io)
 
          DO i = 2, block(g)%ny+1
             block(g)%deltay(i) = block(g)%y1(i+1) - block(g)%y1(i)
@@ -239,15 +236,14 @@ module biocfd_read_input
          block(g)%y1(1) = block(g)%y1(2) - block(g)%deltay(1)
          block(g)%y1(block(g)%ny+3) = block(g)%y1(block(g)%ny+2) + block(g)%deltay(block(g)%ny+2)
 
-         WRITE(filename1,8484) g,block(g)%nz+1
- 8484    FORMAT("zgrid_bk",i1,"_",i3.3,".txt")
-         OPEN(63, FILE =filename1, FORM = "formatted")
+         WRITE(filename1, grid_fmt) "z", g, block(g)%nz+1
+         OPEN(newunit=io, file=filename1, form="formatted", status="old", action="read")
          DO i = 2, block(g)%nz+2
-            READ(63, *) block(g)%z1(i)
+            READ(io, *) block(g)%z1(i)
                  block(g)%z1(i)=0.001_dp*block(g)%z1(i)
                     block(g)%z1(i)=block(g)%z1(i) + block(g)%gz_shift
          END DO
-         CLOSE(63)
+         CLOSE(io)
 
          DO i = 2, block(g)%nz+1
             block(g)%deltaz(i) = block(g)%z1(i+1) - block(g)%z1(i)
