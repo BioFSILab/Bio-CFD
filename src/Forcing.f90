@@ -475,7 +475,7 @@ SUBROUTINE pressureForcingGhost(blk)
 
          sur2nodeDis = -blk%pNormDis(blk%index_ts(n))
 
-         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 &
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 &
                              + blk%deltay(j)**2 &
                              + blk%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
@@ -549,7 +549,7 @@ SUBROUTINE velocityForcingGhost(blk)
 
          sur2nodeDis = -blk%u2NormDis(blk%index_ts(n))
 
-         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 &
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 &
                + blk%deltay(j)**2 &
                + blk%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
@@ -598,7 +598,7 @@ SUBROUTINE velocityForcingGhost(blk)
 
          sur2nodeDis = -blk%u1NormDis(blk%index_ts(n))
 
-         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -653,7 +653,7 @@ SUBROUTINE velocityForcingGhost(blk)
 
          sur2nodeDis = -blk%v2NormDis(blk%index_ts(n))
 
-         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -710,7 +710,7 @@ SUBROUTINE velocityForcingGhost(blk)
 
          sur2nodeDis = -blk%v1NormDis(blk%index_ts(n))
 
-         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 &
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 &
                + blk%deltaz(k)**2) + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -762,7 +762,7 @@ SUBROUTINE velocityForcingGhost(blk)
 
          sur2nodeDis = -blk%w2NormDis(blk%index_ts(n))
 
-         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -817,7 +817,7 @@ SUBROUTINE velocityForcingGhost(blk)
 
          sur2nodeDis = -blk%w1NormDis(blk%index_ts(n))
 
-         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -903,7 +903,7 @@ SUBROUTINE pressureForcingField(blk)
 
          sur2nodeDis = blk%pNormDis(n)
 
-         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -975,7 +975,7 @@ SUBROUTINE velocityForcingField(blk)
 
          sur2nodeDis = blk%u2NormDis(n)
 
-         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -1021,7 +1021,7 @@ SUBROUTINE velocityForcingField(blk)
 
          sur2nodeDis = blk%u1NormDis(n)
 
-         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 &
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 &
                + blk%deltay(j)**2 + blk%deltaz(k)**2) &
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
@@ -1074,7 +1074,7 @@ SUBROUTINE velocityForcingField(blk)
 
          sur2nodeDis = blk%v2NormDis(n)
 
-         pt1 = 1.21_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -1128,7 +1128,7 @@ SUBROUTINE velocityForcingField(blk)
          !vsurf =  -block(g)%thetaDot*(block(g)%xcent(block(g)%nelv1(n)) - block(g)%piv_x) + ydot
          sur2nodeDis = blk%v1NormDis(n)
 
-         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -1174,7 +1174,7 @@ SUBROUTINE velocityForcingField(blk)
          END IF
 
          sur2nodeDis = blk%w2NormDis(n)
-         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
@@ -1222,7 +1222,7 @@ SUBROUTINE velocityForcingField(blk)
 
          sur2nodeDis = blk%w1NormDis(n)
 
-         pt1 = 1.51_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2)&
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
