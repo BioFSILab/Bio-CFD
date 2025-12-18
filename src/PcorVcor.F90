@@ -370,7 +370,7 @@ module biocfd_pcor_vcor
         !$acc end parallel loop
 
          block(g)%derr2=derr4
-         IF (derr4<epsi .and. block(g)%nIterPcor > pcItaMax) EXIT
+         IF (derr4<epsi .or. block(g)%nIterPcor > pcItaMax) EXIT
         END DO
       END SUBROUTINE REDBLACKSOR_linear
 
