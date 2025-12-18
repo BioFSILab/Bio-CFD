@@ -303,7 +303,8 @@ module biocfd_pcor_vcor
          nxy= nx_var * ny_var
          block(g)%derr2 = 0._dp
          errSum = 0._dp
- 3       block(g)%nIterPcor=block(g)%nIterPcor+1
+        DO
+        block(g)%nIterPcor=block(g)%nIterPcor+1
 
         var=0.
 
@@ -369,7 +370,8 @@ module biocfd_pcor_vcor
         !$acc end parallel loop
 
          block(g)%derr2=derr4
-         IF (derr4>=epsi .and. block(g)%nIterPcor <= pcItaMax) GOTO 3
+         IF (derr4<epsi .or. block(g)%nIterPcor > pcItaMax) EXIT
+        END DO
       END SUBROUTINE REDBLACKSOR_linear
 
       SUBROUTINE updateVelocity_newv(blk)
