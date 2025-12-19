@@ -134,6 +134,7 @@ module biocfd_search
         REAL(dp)      :: bdy,bdfr
         REAL(dp)      :: ang_theta
         CHARACTER(len=150) :: filename1
+        integer :: file_unit
 
         angg=90
         aoa1       =  (blk%a0)*sin(2._dp*pi*freq*(totime+deltat) + phase_angle)
@@ -175,10 +176,10 @@ module biocfd_search
         blk%nxtx_cent= blk%nxtx_cent + blk%xmove
         WRITE(filename1,1) blk%fineg,re, g
       1  FORMAT("d",I4.4,"_index.",F8.2,".",i3.1,".dat")
-        OPEN(UNIT = 17, FILE = filename1,POSITION="APPEND", STATUS = "unknown")
-        write(17,14) totime, blk%nxty_cent, blk%inity_cent, blk%ymove, &
+        OPEN(newunit=file_unit, FILE = filename1,POSITION="APPEND", STATUS = "unknown")
+        write(file_unit,14) totime, blk%nxty_cent, blk%inity_cent, blk%ymove, &
                      blk%nxtx_cent, blk%xmove
-     close(17)
+     close(file_unit)
      14      FORMAT(7F15.8)
         print*,"centn",blk%nxty_cent,"centi",blk%inity_cent,"mv",blk%ychg
       DO i = 1, blk%ibnodes
@@ -388,25 +389,25 @@ SUBROUTINE tagging_th_core(blk)
        INTEGER(int64), intent(in)  :: blk_no
        CHARACTER(LEN=120) :: filename1
        INTEGER(int64) :: i, j, k
-
+       integer :: file_unit
         call tagging_th_core(blk)
                WRITE(filename1,1) blk_no
   1      FORMAT("butter_f.",i3.3,".dat")
-          OPEN(11,FILE=filename1,status="unknown")
+          OPEN(newunit=file_unit,FILE=filename1,status="unknown")
         DO k = 1, blk%nz+2
         DO j = 1, blk%ny+2
         DO i = 1, blk%nx+2
-        WRITE(11,*) blk%cell(i,j,k), blk%nodeIdTag(i,j,k)
+        WRITE(file_unit,*) blk%cell(i,j,k), blk%nodeIdTag(i,j,k)
         END DO
         END DO
         END DO
-        CLOSE(11)
+        CLOSE(file_unit)
 
          WRITE(filename1,2) blk_no
  2       FORMAT("butter_cellcount_f.",i3.3,".dat")
-         OPEN(12,FILE=filename1,FORM="formatted")
-        WRITE(12,*) blk%solidCellCount, blk%fluidCellCount, blk%ibCellCount
-        CLOSE(12)
+         OPEN(newunit=file_unit,FILE=filename1,FORM="formatted")
+        WRITE(file_unit,*) blk%solidCellCount, blk%fluidCellCount, blk%ibCellCount
+        CLOSE(file_unit)
 
      END SUBROUTINE tagging_th
 
