@@ -19,10 +19,11 @@ contains
     real(dp), intent(in) :: re
     INTEGER ::  i, j, k
     CHARACTER(len=150) :: filename3
+    integer :: file_unit
 
     WRITE(filename3,3) id, re
 3   FORMAT("out/aorta_chkpt.",i3.3,".",f6.1,".dat")
-    OPEN (1, FILE=filename3, FORM="formatted")
+    OPEN (newunit=file_unit, FILE=filename3, FORM="formatted")
     DO k = 1, blk%nz+2
        DO j = 1, blk%ny+2
           DO i = 1, blk%nx+2
@@ -30,12 +31,12 @@ contains
              ! but they will always just be overwritten by the last
              ! block which is read. Do we want to have some validation
              ! here that things are working as one would expect?
-             READ(1,*) blk%u(i,j,k), blk%v(i,j,k), blk%w(i,j,k), blk%p(i,j,k), &
+             READ(file_unit,*) blk%u(i,j,k), blk%v(i,j,k), blk%w(i,j,k), blk%p(i,j,k), &
                   totime, ita, ita1
           END DO
        END DO
     END DO
-    CLOSE(1)
+    CLOSE(file_unit)
 
     DO k = 1, blk%nz+2
        DO j = 1, blk%ny+2
