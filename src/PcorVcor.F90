@@ -58,7 +58,14 @@ module biocfd_pcor_vcor
           ! Then omp_threads is the minimum of that or the maximum number of allowed threads
           omp_threads = min(omp_get_max_threads(), omp_threads)
 #endif
+        !$omp parallel num_threads(omp_threads) default(none) &
+        !$omp& private(g) &
+        !$omp& shared(pcItaMax, block) &
+        !$omp& shared(start, finish, step)
 
+        call set_gpu()
+
+        !$omp do
         DO g=start, finish, step
         !$acc parallel loop gang vector collapse (3) default(present)
         DO k = 1, block(g)%nz+2
@@ -75,16 +82,12 @@ module biocfd_pcor_vcor
         block(g)%derr2  = 0._dp
         block(g)%derrStdSt=0._dp
         end do
+        !$omp end do
 
+        !$omp single
         CALL fineUpdate_newv_bd
         CALL coarseUpdate_newv
-
-        !$omp parallel num_threads(omp_threads) default(none) &
-        !$omp& private(g) &
-        !$omp& shared(pcItaMax, block) &
-        !$omp& shared(start, finish, step)
-
-        call set_gpu()
+        !$omp end single
 
         !$omp do
         DO g=start, finish, step
@@ -394,6 +397,3 @@ module biocfd_pcor_vcor
 
       END SUBROUTINE updateVelocity_newv
 end module biocfd_pcor_vcor
-
-
-
