@@ -67,20 +67,7 @@ module biocfd_pcor_vcor
 
         !$omp do
         DO g=start, finish, step
-        !$acc parallel loop gang vector collapse (3) default(present)
-        DO k = 1, block(g)%nz+2
-        DO j = 1, block(g)%ny+2
-        DO i = 1, block(g)%nx+2
-           block(g)%b(i,j,k)  = 0.
-           block(g)%pc(i,j,k) = 0.
-           block(g)%pco(i,j,k)= 0.
-        END DO
-        END DO
-        END DO
-        !$acc end parallel loop
-        block(g)%nIterPcor=0
-        block(g)%derr2  = 0._dp
-        block(g)%derrStdSt=0._dp
+           call zero_arrays(block(g))
         end do
         !$omp end do
 
@@ -396,4 +383,23 @@ module biocfd_pcor_vcor
         end if
 
       END SUBROUTINE updateVelocity_newv
+
+      subroutine zero_arrays(blk)
+        type(Block_t), intent(inout) :: blk
+        INTEGER(int64) :: i, j, k
+        !$acc parallel loop gang vector collapse (3) default(present)
+        DO k = 1, blk%nz+2
+        DO j = 1, blk%ny+2
+        DO i = 1, blk%nx+2
+           blk%b(i,j,k)  = 0.
+           blk%pc(i,j,k) = 0.
+           blk%pco(i,j,k)= 0.
+        END DO
+        END DO
+        END DO
+        !$acc end parallel loop
+        blk%nIterPcor=0
+        blk%derr2  = 0._dp
+        blk%derrStdSt=0._dp
+      end subroutine zero_arrays
 end module biocfd_pcor_vcor
