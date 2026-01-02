@@ -95,7 +95,8 @@ module biocfd_pcor_vcor
         DO g=start, finish, step
            CALL computeDiv(g)    !divergence vector
            ! Do not compute Red/Black here for block 1
-           if (g /= 1)  CALL REDBLACKSOR_linear(g, pcItaMax,deltat,epsi, omega1, omega2, omega3, omega4)
+           if (g /= 1)  CALL REDBLACKSOR_linear(g, pcItaMax,deltat,epsi, &
+                omega1, omega2, omega3, omega4)
         end do
         !$omp end do
 
@@ -107,13 +108,15 @@ module biocfd_pcor_vcor
         ! code will work if block(1) is anywhere other than rank 0,
         ! but we ideally we shouldn't assume that it is.
         do g=start, finish, step
-          if (g == 1) CALL REDBLACKSOR_linear(g, pcItaMax,deltat,epsi, omega1, omega2, omega3, omega4)
+           if (g == 1) CALL REDBLACKSOR_linear(g, pcItaMax,deltat,epsi, &
+                omega1, omega2, omega3, omega4)
         end do
         call fineUpdate_pc_bd
         !$omp end single
         !$omp do
         DO g=start, finish, step
-         if (g /= 1) CALL REDBLACKSOR_linear(g,pcItaMax,deltat,epsi, omega1, omega2, omega3, omega4)
+           if (g /= 1) CALL REDBLACKSOR_linear(g,pcItaMax,deltat,epsi, &
+                omega1, omega2, omega3, omega4)
         end do
         !$omp end do
         !$omp single
