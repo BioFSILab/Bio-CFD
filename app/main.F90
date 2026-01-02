@@ -152,7 +152,7 @@ PROGRAM main
         !$omp end do
         !$omp end parallel
 
-        CALL poissonSolver(pcItaMax)
+        CALL poissonSolver(pcItaMax, start, finish, step)
 
         do g=start, finish, step
            if (g /= 1) CALL pressureForcing1(block(g))
@@ -176,9 +176,6 @@ PROGRAM main
        do g=start, finish, step
          if (g /= 1) then
            !$acc wait
-           DEALLOCATE(block(g)%xcent, block(g)%ycent, block(g)%zcent, &
-                      block(g)%cosAlpha, block(g)%cosBeta, block(g)%cosGamma, &
-                      block(g)%element_length)
            block(g)%blk_mv_tag=0.
            CALL computeSurfaceVariables(block(g),g,phase_angle,piv_pt)
          end if
