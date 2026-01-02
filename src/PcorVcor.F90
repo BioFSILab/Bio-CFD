@@ -36,6 +36,8 @@ module biocfd_pcor_vcor
         ! For controlling OpenMP
         integer :: omp_threads
 
+        integer :: file_unit
+
           max_derrStdst=0._dp
           max_derr1=0._dp
           max_derr2=0._dp
@@ -169,13 +171,13 @@ module biocfd_pcor_vcor
           ! TN: Not going to do this if we are using MPI - I'm not sure how useful it is anyway
             WRITE(filename1,1)
  1          FORMAT("sphere_iter.dat")
-         OPEN(111,FILE=filename1,POSITION="APPEND",STATUS="unknown")
+         OPEN(newunit=file_unit,FILE=filename1,POSITION="APPEND",STATUS="unknown")
          ! Final 0. was solverTime, but this was never written to so was always 0.
-         WRITE(111,126)   ita, block(1)%nIterPcor, block(2)%nIterPcor, omega1, omega2, 0._dp
+         WRITE(file_unit,126)   ita, block(1)%nIterPcor, block(2)%nIterPcor, omega1, omega2, 0._dp
          WRITE(*,16) ita, max_nIterPcor, max_derr2, max_derrStdSt, totalTime
  126      FORMAT(" ",I8, 2I10, 2F6.2,F14.9)
  16      FORMAT(" ",I8, I10, 4E15.6)
-         CLOSE(111)
+         CLOSE(file_unit)
 #endif
 
          DO g=start, finish, step
@@ -303,7 +305,8 @@ module biocfd_pcor_vcor
          nxy= nx_var * ny_var
          block(g)%derr2 = 0._dp
          errSum = 0._dp
- 3       block(g)%nIterPcor=block(g)%nIterPcor+1
+        DO
+        block(g)%nIterPcor=block(g)%nIterPcor+1
 
         var=0.
 
@@ -369,7 +372,8 @@ module biocfd_pcor_vcor
         !$acc end parallel loop
 
          block(g)%derr2=derr4
-         IF (derr4>=epsi .and. block(g)%nIterPcor <= pcItaMax) GOTO 3
+         IF (derr4<epsi .or. block(g)%nIterPcor > pcItaMax) EXIT
+        END DO
       END SUBROUTINE REDBLACKSOR_linear
 
       SUBROUTINE updateVelocity_newv(blk)

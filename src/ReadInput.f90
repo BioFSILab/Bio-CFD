@@ -36,6 +36,7 @@ module biocfd_read_input
                    u0,  &
                    surGeoPoints, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
                    istart, dt_order,  inor, dxmin
+       character(len=*), parameter :: grid_fmt = '(A, "grid_bk", i3.3, "_", i0, ".txt")'
 
   open(newunit=io, file="input_data.nml", status="old", action="read")
   read(io, NML=input_data)
@@ -46,34 +47,34 @@ module biocfd_read_input
         allocate(xstart_temp(size(block)),xend_temp(size(block)),&
         ystart_temp(size(block)),yend_temp(size(block)),&
         zstart_temp(size(block)),zend_temp(size(block)))
-        OPEN(77, FILE = "body_search.dat", FORM = "formatted")
+        OPEN(newunit=io, FILE = "body_search.dat", FORM = "formatted")
         DO g=1,size(block)
-                READ(77,*) block(g)%i_startSearch, block(g)%i_endSearch, &
+                READ(io,*) block(g)%i_startSearch, block(g)%i_endSearch, &
                            block(g)%j_startSearch, block(g)%j_endSearch, &
                            block(g)%k_startSearch, block(g)%k_endSearch
                 print*, block(g)%i_startSearch, block(g)%i_endSearch, &
                            block(g)%j_startSearch, block(g)%j_endSearch, &
                            block(g)%k_startSearch, block(g)%k_endSearch
         END DO
-        CLOSE(77)
-        OPEN(77, FILE = "grid_shift.dat", FORM = "formatted")
+        CLOSE(io)
+        OPEN(newunit=io, FILE = "grid_shift.dat", FORM = "formatted")
         DO g=1,size(block)
-        READ(77,*) block(g)%gx_shift, block(g)%gy_shift, block(g)%gz_shift
+        READ(io,*) block(g)%gx_shift, block(g)%gy_shift, block(g)%gz_shift
         block(g)%gx_shift=block(g)%gx_shift*0.001_dp
         block(g)%gy_shift=block(g)%gy_shift*0.001_dp
         block(g)%gz_shift=block(g)%gz_shift*0.001_dp
         END DO
-        CLOSE(77)
-        OPEN(77, FILE = "shift.dat", FORM = "formatted")
+        CLOSE(io)
+        OPEN(newunit=io, FILE = "shift.dat", FORM = "formatted")
 
         DO g=1,size(block)
-        READ(77,*) block(g)%xshift, block(g)%yshift, block(g)%zshift
+        READ(io,*) block(g)%xshift, block(g)%yshift, block(g)%zshift
         write(*,*) block(g)%xshift, block(g)%yshift, block(g)%zshift
         block(g)%xshift=block(g)%xshift*0.001_dp
         block(g)%yshift=block(g)%yshift*0.001_dp
         block(g)%zshift=block(g)%zshift*0.001_dp
         END DO
-        CLOSE(77)
+        CLOSE(io)
         if (alpha_m /= 0 .and. theta_m /=0) then
                 char_f = "bot"
         end if
@@ -88,12 +89,12 @@ module biocfd_read_input
         theta_m1=abs(theta_m)
         dxmin = 0.001_dp*dxmin
 
-        OPEN(77, FILE = "flap_amp.dat", FORM = "formatted")
+        OPEN(newunit=io, FILE = "flap_amp.dat", FORM = "formatted")
         DO g=blk_start,size(block)
-                READ(77,*) block(g)%a0
+                READ(io,*) block(g)%a0
                 write(*,*)g, block(g)%a0
         END DO
-        CLOSE(77)
+        CLOSE(io)
         mu_f = mu_f*1e-5_dp
         rho_f = rho_f
         l_c = 0.001_dp*l_c
@@ -115,42 +116,42 @@ module biocfd_read_input
         print*, "theta_m =", theta_m
         print*, "u_tip =", u_tip
 
-        OPEN(77, FILE = "butter_move.dat", FORM = "formatted")
+        OPEN(newunit=io, FILE = "butter_move.dat", FORM = "formatted")
         DO g=blk_start,size(block)
-                READ(77,*) block(g)%yamp, block(g)%bfreq
+                READ(io,*) block(g)%yamp, block(g)%bfreq
                 block(g)%yamp=dxmin*block(g)%yamp
                 write(*,*)g, block(g)%yamp, block(g)%bfreq
         END DO
-        CLOSE(77)
+        CLOSE(io)
 
 
-        OPEN(111,FILE="init_params.dat",POSITION="APPEND",STATUS="unknown")
-        WRITE(111,*) "dxmin, u0, deltat, re"
-        WRITE(111,166) dxmin, u0, deltat, re
+        OPEN(newunit=io,FILE="init_params.dat",POSITION="APPEND",STATUS="unknown")
+        WRITE(io,*) "dxmin, u0, deltat, re"
+        WRITE(io,166) dxmin, u0, deltat, re
 166     FORMAT(2F10.6,E15.6,F8.2)
-        WRITE(111,*) "freq, disp, utip"
-        WRITE(111,266) freq, disp, u_tip
+        WRITE(io,*) "freq, disp, utip"
+        WRITE(io,266) freq, disp, u_tip
 266     FORMAT(3F10.6)
-        WRITE(111,*) "alpha_m, theta_m"
-        WRITE(111,366) alpha_m1, theta_m1
+        WRITE(io,*) "alpha_m, theta_m"
+        WRITE(io,366) alpha_m1, theta_m1
 366     FORMAT(2F5.2)
-        WRITE(111,*) "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        CLOSE(111)
+        WRITE(io,*) "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        CLOSE(io)
 
         ita = 0
         ita1 = 0
         totime = 0._dp
         print*, "dt =",  deltat, "ita = ", ita, "totime = ", totime
 
-        OPEN(51, FILE = "block_details.dat", FORM = "formatted")
+        OPEN(newunit=io, FILE = "block_details.dat", FORM = "formatted")
        DO i=1,size(block)
 
-        read(51, *) xstart_temp(i),xend_temp(i),ystart_temp(i),&
+        read(io, *) xstart_temp(i),xend_temp(i),ystart_temp(i),&
                     yend_temp(i),zstart_temp(i),zend_temp(i),&
                     block(i)%nx, block(i)%ny, block(i)%nz, &
                     block(i)%dx, block(i)%dy, block(i)%dz
        END DO
-       CLOSE(51)
+       CLOSE(io)
         print*,"after allocation"
 
          DO i=1,size(block)
@@ -199,16 +200,14 @@ module biocfd_read_input
 
          Do g=1,size(block)
 
-         WRITE(filename1,8282) g,block(g)%nx+1
-
- 8282    FORMAT("xgrid_bk",i1,"_",i3.3,".txt")
-         OPEN(61, FILE = filename1, FORM = "formatted")
-         DO i = 2, block(g)%nx+2
-            READ(61, *) block(g)%x1(i)
-                block(g)%x1(i)=0.001_dp*block(g)%x1(i)
-                    block(g)%x1(i)=block(g)%x1(i) + block(g)%gx_shift
-         END DO
-         CLOSE(61)
+         WRITE(filename1, grid_fmt) "x", g, block(g)%nx+1
+         OPEN(newunit=io, file=filename1, form="formatted", status="old", action="read")
+           DO i = 2, block(g)%nx+2
+             READ(io, *) block(g)%x1(i)
+             block(g)%x1(i) = 0.001_dp * block(g)%x1(i)
+             block(g)%x1(i) = block(g)%x1(i) + block(g)%gx_shift
+           END DO
+         CLOSE(io)
 
          DO i = 2, block(g)%nx+1
             block(g)%deltax(i) = block(g)%x1(i+1) - block(g)%x1(i)
@@ -219,16 +218,14 @@ module biocfd_read_input
          block(g)%x1(1) = block(g)%x1(2) - block(g)%deltax(1)
          block(g)%x1(block(g)%nx+3) = block(g)%x1(block(g)%nx+2) + block(g)%deltax(block(g)%nx+2)
 
-         WRITE(filename1,8383) g,block(g)%ny+1
-
- 8383    FORMAT("ygrid_bk",i1,"_",i3.3,".txt")
-         OPEN(62, FILE = filename1, FORM = "formatted")
-         DO i = 2, block(g)%ny+2
-            READ(62, *) block(g)%y1(i)
-                 block(g)%y1(i)=0.001_dp*block(g)%y1(i)
-                    block(g)%y1(i)=block(g)%y1(i) + block(g)%gy_shift
-         END DO
-         CLOSE(62)
+         WRITE(filename1, grid_fmt) "y", g, block(g)%ny+1
+         OPEN(newunit=io, file=filename1, form="formatted", status="old", action="read")
+           DO i = 2, block(g)%ny+2
+             READ(io, *) block(g)%y1(i)
+             block(g)%y1(i) = 0.001_dp * block(g)%y1(i)
+             block(g)%y1(i) = block(g)%y1(i) + block(g)%gy_shift
+           END DO
+         CLOSE(io)
 
          DO i = 2, block(g)%ny+1
             block(g)%deltay(i) = block(g)%y1(i+1) - block(g)%y1(i)
@@ -239,15 +236,14 @@ module biocfd_read_input
          block(g)%y1(1) = block(g)%y1(2) - block(g)%deltay(1)
          block(g)%y1(block(g)%ny+3) = block(g)%y1(block(g)%ny+2) + block(g)%deltay(block(g)%ny+2)
 
-         WRITE(filename1,8484) g,block(g)%nz+1
- 8484    FORMAT("zgrid_bk",i1,"_",i3.3,".txt")
-         OPEN(63, FILE =filename1, FORM = "formatted")
-         DO i = 2, block(g)%nz+2
-            READ(63, *) block(g)%z1(i)
-                 block(g)%z1(i)=0.001_dp*block(g)%z1(i)
-                    block(g)%z1(i)=block(g)%z1(i) + block(g)%gz_shift
-         END DO
-         CLOSE(63)
+         WRITE(filename1, grid_fmt) "z", g, block(g)%nz+1
+         OPEN(newunit=io, file=filename1, form="formatted", status="old", action="read")
+           DO i = 2, block(g)%nz+2
+             READ(io, *) block(g)%z1(i)
+             block(g)%z1(i)=0.001_dp*block(g)%z1(i)
+             block(g)%z1(i)=block(g)%z1(i) + block(g)%gz_shift
+           END DO
+         CLOSE(io)
 
          DO i = 2, block(g)%nz+1
             block(g)%deltaz(i) = block(g)%z1(i+1) - block(g)%z1(i)
@@ -311,27 +307,28 @@ module biocfd_read_input
        type(Block_t), intent(inout) :: blk
        INTEGER(int64) :: n, i1, i2, i3, i5
        INTEGER (int64),INTENT(IN)   :: surGeoPoints
+       integer :: io
 
-       OPEN(121, FILE ="geometries/butterflyMedium.msh", form = "formatted")               !READ SURFACE MESH FILE
+       OPEN(newunit=io, FILE ="geometries/butterflyMedium.msh", form = "formatted")               !READ SURFACE MESH FILE
         DO n = 1, 4
-           READ (121,*)
+           READ (io,*)
         END DO
-        READ (121,*) blk%ibNodes  !nsurf=total no. of points in file
+        READ (io,*) blk%ibNodes  !nsurf=total no. of points in file
         ALLOCATE(blk%ibNodeId(blk%ibNodes), blk%xnode(blk%ibNodes), &
                  blk%ynode(blk%ibNodes), blk%znode(blk%ibNodes))
         blk%ibNodeId = 50
         DO n = 1, blk%ibNodes
-           READ (121,*) i1, blk%xnode(n), blk%ynode(n), blk%znode(n)
+           READ (io,*) i1, blk%xnode(n), blk%ynode(n), blk%znode(n)
            blk%xnode(n)=blk%xnode(n)*0.001_dp
            blk%ynode(n)=blk%ynode(n)*0.001_dp
            blk%znode(n)=blk%znode(n)*0.001_dp
         END DO
         DO n = 1, 2
-          READ (121,*)
+          READ (io,*)
         END DO
-        READ (121,*) blk%ibElems   !no. of elements
+        READ (io,*) blk%ibElems   !no. of elements
         DO n = 1, surGeoPoints
-          READ (121,*)
+          READ (io,*)
         END DO
         blk%ibElems = blk%ibElems-surGeoPoints
         ALLOCATE(blk%ibSurfId(blk%ibElems), blk%ibElP1(blk%ibElems), &
@@ -341,7 +338,7 @@ module biocfd_read_input
         blk%ibElP3 = 0
         blk%ibSurfId = 0
         DO n = 1, blk%ibElems
-        READ (121,*) i1, i2, i3, blk%ibSurfId(n), i5, &
+        READ (io,*) i1, i2, i3, blk%ibSurfId(n), i5, &
         blk%ibElP1(n), blk%ibElP2(n), blk%ibElP3(n)
         END DO
        DO n = 1, blk%ibElems
@@ -363,7 +360,7 @@ module biocfd_read_input
           END IF
         END DO
 
-       CLOSE(121)
+       CLOSE(io)
        PRINT *, "SURFACE MESH READING COMPLETE"
        PRINT *, "ibNodes =", blk%ibNodes, "ibElems =", blk%ibElems
 
@@ -371,11 +368,11 @@ module biocfd_read_input
 
         SUBROUTINE readBlockInterface
         INTEGER(int64) :: i
-
+        integer :: io
          print*,"Inside readBlockInterface"
-        OPEN(51, FILE = "interface_details.dat", FORM = "formatted")
+        OPEN(newunit=io, FILE = "interface_details.dat", FORM = "formatted")
         DO i=1, size(intfr)
-        READ(51,*) intfr(i)%a_blk, intfr(i)%a_msh, intfr(i)%a_intf, &
+        READ(io,*) intfr(i)%a_blk, intfr(i)%a_msh, intfr(i)%a_intf, &
                    intfr(i)%b_blk, intfr(i)%b_msh, intfr(i)%b_intf, &
                    intfr(i)%xintf_start, intfr(i)%xintf_end, &
                    intfr(i)%yintf_start, intfr(i)%yintf_end, &
@@ -393,7 +390,7 @@ module biocfd_read_input
                 intfr(i)%yintf_start, intfr(i)%yintf_end, &
                 intfr(i)%zintf_start, intfr(i)%zintf_end
         END DO
-        CLOSE(51)
+        CLOSE(io)
 
          end subroutine readBlockInterface
 end module biocfd_read_input

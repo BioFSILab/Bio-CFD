@@ -78,6 +78,14 @@ jobs:
           sed -i 's/# dependencies.hdf5/dependencies.hdf5/' fpm.toml
           sed -i 's/"USE_HDF5=0"/"USE_HDF5=1"/' fpm.toml
 
+      - name: Modify FPM_FFLAGS to include mpi flags nvhpc
+        if: ${{ contains(matrix.toolchain.compiler, 'nvidia-hpc') }}
+        run: |
+          export MPI_FLAGS=$(mpif90 -show | cut -d' ' -f2-)
+          export FPM_FFLAGS="$MPI_FLAGS $FPM_FFLAGS"
+          echo "FPM_FFLAGS=$FPM_FFLAGS" >> $GITHUB_ENV
+          sed -i 's/"USE_HDF5=0"/"USE_HDF5=0","BIOCFD_MPI"/' fpm.toml
+
       - run: |
           # Build and test code using FPM
           fpm test
