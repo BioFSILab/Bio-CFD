@@ -1,8 +1,6 @@
 PROGRAM main
         use, intrinsic :: iso_fortran_env, only: int64, dp => real64
-        USE global, only: block, deltat, &
-              totaltime, totime, &
-             pi,uc,re,intfr
+        USE global, only: block, intfr, pi
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
              cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
@@ -39,10 +37,13 @@ PROGRAM main
         INTEGER               :: istart
         INTEGER (int64)   :: itamax, pcItaMax, coarse_flcnt_check
         real(dp) :: aoa, aoa1, aoa2, phase_angle, piv_pt, mu_f, rho_f
+        real(dp) :: deltat, re, totalTime, totime, uc, u0, dt_order, dxmin, epsi, freq, &
+             omega1, omega2, omega3, omega4
         integer :: start, finish, step, rank
 
         CALL readInput(surGeoPoints, char_f, istart, itamax, pcItaMax, aoa, phase_angle, piv_pt, &
-                       mu_f, rho_f, ita, ita1, inor, blk_start)
+                       mu_f, rho_f, ita, ita1, inor, blk_start,deltat,dt_order,dxmin, &
+                           epsi,freq,omega1,omega2,omega3,omega4, re, totime, u0, uc)
         ! Need to init after we know the size of block
         call biocfd_init(size(block), start, finish, step, rank)
         CALL readBlockInterface
@@ -65,7 +66,7 @@ PROGRAM main
         do g=start, finish, step
           if (g /= 1) then
             CALL findDistnode(block(g))
-            CALL shiftSurfaceNodesInitial(block(g),aoa1,aoa2,piv_pt,ita)
+            CALL shiftSurfaceNodesInitial(block(g),aoa1,aoa2,piv_pt,ita,deltat,dxmin,totime)
             CALL computeSurfaceNorm(block(g),inor)
           end if
         end do
@@ -121,9 +122,9 @@ PROGRAM main
 
         do g=start, finish, step
 #if USE_HDF5 == 1
-        CALL write_output_hdf5(block(g),g,ita)
+        CALL write_output_hdf5(block(g),g,ita,totime)
 #else
-        CALL write_output_ascii(block(g),g,char_f, ita)
+        CALL write_output_ascii(block(g),g,char_f, ita,re,totime)
 #endif
         end do
         coarse_flcnt_check=0
@@ -136,7 +137,7 @@ PROGRAM main
         call set_gpu()
         !$omp do
         do g=start, finish, step
-           CALL nsMomentum2order(block(g))
+           CALL nsMomentum2order(block(g),deltat,re)
            if (g == 1) CALL velocityBC(block(g), deltat, uc)
            if (g /= 1) then
              CALL solidCellBC(block(g))
@@ -148,7 +149,8 @@ PROGRAM main
         !$omp end do
         !$omp end parallel
 
-        CALL poissonSolver(pcItaMax, ita, start, finish, step)
+        CALL poissonSolver(pcItaMax, epsi, ita, deltat, omega1, omega2, omega3, omega4, &
+         totime, uc, totalTime, start, finish, step)
 
         do g=start, finish, step
            if (g /= 1) CALL pressureForcing1(block(g))
@@ -156,13 +158,13 @@ PROGRAM main
 
         do g=start, finish, step
 #if USE_HDF5 == 1
-           CALL write_output_hdf5(block(g),g,ita)
+           CALL write_output_hdf5(block(g),g,ita,totime)
 #else
-           CALL write_output_ascii(block(g),g,char_f,ita)
+           CALL write_output_ascii(block(g),g,char_f,ita,re,totime)
 #endif
 #ifndef BIOCFD_MPI
            ! TODO: Not yet tested on MPI but should be added!
-           CALL writeResult(block(g),g,char_f,ita,ita1)
+           CALL writeResult(block(g),g,char_f,ita,ita1,re,totime)
            CALL body_plot(block(g), g, ita)
 #endif
        end do
@@ -171,7 +173,8 @@ PROGRAM main
          if (g /= 1) then
            !$acc wait
            block(g)%blk_mv_tag=0.
-           CALL computeSurfaceVariables(block(g),g,phase_angle,piv_pt,ita)
+           CALL computeSurfaceVariables(block(g),g,phase_angle,piv_pt, ita, &
+           deltat, dxmin, freq, re, totime)
          end if
        END DO
 

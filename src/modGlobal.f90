@@ -4,14 +4,6 @@ MODULE global
        use biocfd_block_type, only: Block_t
        use biocfd_interface_type, only: Interface_t
        IMPLICIT NONE
-       REAL (dp)        ::      dt_order,  &
-                                omega,omega1,omega2,omega3,omega4,  &
-                                dxmin, &
-                                freq, &
-                                u0, &
-                                epsi, re, &
-                                deltat, totime, totalTime, &
-                                uc
        real(dp), parameter :: pi = 4._dp * atan(1._dp)
 
         type(Block_t),allocatable :: block(:)
