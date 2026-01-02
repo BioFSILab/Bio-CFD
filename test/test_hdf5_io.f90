@@ -182,8 +182,8 @@ contains
   subroutine test_hdf5_write_real_scalar(error)
     !> Error handling
     type(error_type), allocatable, intent(out) :: error
-    integer :: k, error_hdf5
-    integer(hid_t) :: file_id, group_id, attr_id, attr_space_id
+    integer :: error_hdf5
+    integer(hid_t) :: file_id, group_id, attr_id
     INTEGER(HSIZE_T), DIMENSION(1) :: adims
     character(len=*), parameter :: filename = "test_output.h5"
     character(len=*), parameter :: group = "/test_group"
@@ -367,8 +367,8 @@ contains
   subroutine test_hdf5_write_int_scalar(error)
     !> Error handling
     type(error_type), allocatable, intent(out) :: error
-    integer :: k, error_hdf5
-    integer(hid_t) :: file_id, group_id, attr_id, attr_space_id
+    integer :: error_hdf5
+    integer(hid_t) :: file_id, group_id, attr_id
     INTEGER(HSIZE_T), DIMENSION(1) :: adims
     character(len=*), parameter :: filename = "test_output.h5"
     character(len=*), parameter :: group = "/test_group"
