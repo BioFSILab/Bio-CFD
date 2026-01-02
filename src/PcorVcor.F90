@@ -87,6 +87,7 @@ module biocfd_pcor_vcor
         !$omp parallel num_threads(omp_threads) default(none) &
         !$omp& private(g) &
         !$omp& shared(pcItaMax, block) &
+        !$omp& shared(deltat,epsi, omega1, omega2, omega3, omega4) &
         !$omp& shared(start, finish, step)
 
         call set_gpu()
