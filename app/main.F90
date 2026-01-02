@@ -132,7 +132,7 @@ PROGRAM main
         ita = ita + 1
         totime = totime + deltat
 
-        !$omp parallel default(none) private(g) shared(block, start, finish, step, deltat, uc)
+        !$omp parallel default(none) private(g) shared(block, start, finish, step, deltat, uc, re)
         ! Set the device (for multi-GPU)
         call set_gpu()
         !$omp do
