@@ -1,7 +1,7 @@
 module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, &
-       ita, totaltime,totime,uc, intfr
+       totaltime,totime,uc, intfr
   use biocfd_block_type, only: Block_t
   use biocfd_gpu_helpers, only: set_gpu
 #ifdef _OPENMP
@@ -20,10 +20,11 @@ module biocfd_pcor_vcor
 
   contains
 
-      SUBROUTINE poissonSolver(pcItaMax, start, finish, step)
+      SUBROUTINE poissonSolver(pcItaMax, ita, start, finish, step)
 
         INTEGER(int64) :: i, j,k, n, g
         INTEGER (int64),INTENT(IN)   :: pcItaMax
+        INTEGER (int64),INTENT(IN)   :: ita
         REAL (dp)    :: max_derr1, max_derr2, max_div, max_derrStdSt
         REAL (dp)    :: er_dudt, er_dvdt, er_dwdt, err_ds
         INTEGER(int64) :: max_nIterPcor

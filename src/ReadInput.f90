@@ -4,9 +4,9 @@ module biocfd_read_input
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, uc, u0, totime, &
        re, pi, omega4, &
-       omega3, omega2, omega1, ita1, ita, &
-       inor, freq, epsi, dxmin, dt_order, deltat, &
-       blk_start, intfr
+       omega3, omega2, omega1, &
+       freq, epsi, dxmin, dt_order, deltat, &
+       intfr
   use biocfd_interface_type, only: Interface_t
   use biocfd_block_type,only : Block_t
   implicit none
@@ -25,10 +25,10 @@ module biocfd_read_input
       !> "grid file" names are constructed and those files are then
       !> read to determine the grid.
       SUBROUTINE readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt, &
-                           mu_f, rho_f)
+                           mu_f, rho_f, ita, ita1, inor, blk_start)
        INTEGER (int64) :: i, g,io
        CHARACTER(len=160)  :: filename1
-       INTEGER (int64),INTENT(OUT)   :: surGeoPoints, itamax,pcItaMax
+       INTEGER (int64),INTENT(OUT)   :: surGeoPoints, itamax,pcItaMax, ita, ita1, inor, blk_start
        REAL(dp),intent(out) :: aoa,phase_angle,piv_pt, mu_f, rho_f
        CHARACTER (LEN = 3), INTENT(OUT)  :: char_f
        INTEGER,INTENT(OUT)               :: istart
