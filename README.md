@@ -16,7 +16,7 @@ the `FPM_FC` and `FPM_FFLAGS` environment variables e.g. to use
 
 ```
 export FPM_FC="nvfortran"
-export FPM_FFLAGS="-Mr8 -acc -mcmodel=medium -gpu=managed -cuda"
+export FPM_FFLAGS="-Mr8 -acc -mcmodel=medium -gpu=managed -cuda -mp"
 ```
 
 You can then simply run
