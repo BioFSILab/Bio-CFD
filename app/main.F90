@@ -5,7 +5,7 @@ PROGRAM main
              pi,uc,re,intfr
         use biocfd_search, only: findDistnode, shiftSurfaceNodesInitial, computeSurfaceNorm, &
              tagging_th, tagging_th_move, block_move_check, cellcount_solid, &
-             cellcount_solid_coarse, cellcount_solid_coarse_mv, change_block_coords, &
+             cellcount_solid_coarse, change_block_coords, &
              change_block_interface, computenormdistance, computesurfacevariables, findtscells, &
              fine_block_cell, selectiveretagging_th, change_block_coords_interfaces
         use biocfd_pcor_vcor, only: poissonSolver, updateVelocity_newv
@@ -199,7 +199,8 @@ PROGRAM main
         do g=start, finish, step
           if (g == 1) then
             CALL fine_block_cell
-            CALL cellCount_solid_coarse_mv
+            if (coarse_flcnt_check == 1) call cellCount_solid_coarse(block(1))
+            coarse_flcnt_check = 0
           end if
         end do
         ! cellCount_solid_coarse_mv may or may not set
