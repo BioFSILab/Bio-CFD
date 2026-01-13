@@ -113,8 +113,8 @@ module biocfd_search
             yr1 = -blk%znode(i)*sin(aoa2) + blk%ynode(i)*cos(aoa2)  + piv_pt*sin(aoa2)
            ELSE
                xr1 = blk% xnode(i)
-               zr1 = blk% znode(i)  !*cos(aoa1) + ynode(i)*sin(aoa1)
-               yr1 = blk% ynode(i)  !*sin(aoa1) + ynode(i)*cos(aoa1)
+               zr1 = blk% znode(i)
+               yr1 = blk% ynode(i)
            END IF
            blk%xnode1(i) = xr1+ blk%xShift
            blk%ynode1(i) = yr1+ blk%yShift
