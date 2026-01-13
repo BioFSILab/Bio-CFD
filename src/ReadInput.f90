@@ -1,4 +1,6 @@
 module biocfd_read_input
+  !* This module is used to read the various input files needed to
+  !* control the program.
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use global, only : block, uc, u0, totime, &
        re, pi, omega4, &
@@ -15,6 +17,13 @@ module biocfd_read_input
 
   contains
 
+      !> Read the input parameters used to control the simulation. The
+      !> primary file used to control this is `input_data.nml` but the
+      !> following files are also required: `body_search.dat`,
+      !> `grid_shift.dat`, `shift.dat`, `flap_amp.dat`,
+      !> `butter_move.dat`, and `block_details.dat`. From these the
+      !> "grid file" names are constructed and those files are then
+      !> read to determine the grid.
       SUBROUTINE readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt, &
                            mu_f, rho_f)
        INTEGER (int64) :: i, g,io
@@ -303,6 +312,7 @@ module biocfd_read_input
 
       END SUBROUTINE readInput
 
+      !> Read a mesh file produced by [GMSH](https://gmsh.info)
       SUBROUTINE readSurfaceMeshGmsh(blk,surGeoPoints)
        type(Block_t), intent(inout) :: blk
        INTEGER(int64) :: n, i1, i2, i3, i5
@@ -366,6 +376,8 @@ module biocfd_read_input
 
       END SUBROUTINE readSurfaceMeshGmsh
 
+        !> Read the `interface_details.dat` file. This file defines
+        !> the interfaces between blocks.
         SUBROUTINE readBlockInterface
         INTEGER(int64) :: i
         integer :: io
