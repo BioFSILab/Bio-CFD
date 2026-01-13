@@ -1,10 +1,15 @@
 MODULE biocfd_block_type
+  !* Defines the Block_t type, which holds all the information about a
+  !* specific block.
   use, intrinsic :: iso_fortran_env, only: dp => real64, int32, int64
   IMPLICIT NONE
   private
 
   public :: Block_t
 
+  !> Block_t is a core component of the simulation, holding all the
+  !> required information about each "Block". The same type is used
+  !> for both the coarse mesh and all the fine meshes.
   type Block_t
      REAL(dp) ::  dx,dy, dz, ypth2, xpth1, xpth2, xchg,ychg, yt, ydot, yddot,&
           bfreq, yamp, xt, xdot
