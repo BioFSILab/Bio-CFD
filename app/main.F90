@@ -37,7 +37,7 @@ PROGRAM main
         INTEGER               :: istart
         INTEGER (int64)   :: itamax, pcItaMax, coarse_flcnt_check
         real(dp) :: aoa, phase_angle, piv_pt, mu_f, rho_f
-        real(dp) :: deltat, re, totalTime, totime=0.0_dp, uc, dxmin, epsi, freq, &
+        real(dp) :: deltat, re, totalTime, totime, uc, dxmin, epsi, freq, &
              omega1, omega2, omega3, omega4
         integer :: start, finish, step, rank
 
