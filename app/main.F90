@@ -36,7 +36,7 @@ PROGRAM main
         CHARACTER (LEN = 3)   :: char_f
         INTEGER               :: istart
         INTEGER (int64)   :: itamax, pcItaMax, coarse_flcnt_check
-        real(dp) :: aoa, aoa1, aoa2, phase_angle, piv_pt, mu_f, rho_f
+        real(dp) :: aoa, phase_angle, piv_pt, mu_f, rho_f
         real(dp) :: deltat, re, totalTime, totime=0.0_dp, uc, dxmin, epsi, freq, &
              omega1, omega2, omega3, omega4
         integer :: start, finish, step, rank
@@ -60,13 +60,11 @@ PROGRAM main
         end do
 
         phase_angle = phase_angle*pi/180_dp
-        aoa1 = aoa*pi/180_dp
-        aoa2 = -aoa1
 
         do g=start, finish, step
           if (g /= 1) then
             CALL findDistnode(block(g))
-            CALL shiftSurfaceNodesInitial(block(g),aoa1,aoa2,piv_pt,ita,deltat,dxmin,totime)
+            CALL shiftSurfaceNodesInitial(block(g),aoa,piv_pt,ita,deltat,dxmin,totime)
             CALL computeSurfaceNorm(block(g),inor)
           end if
         end do

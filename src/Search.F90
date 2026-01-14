@@ -46,14 +46,18 @@ module biocfd_search
         END DO
         end subroutine findDistnode
 
-        SUBROUTINE shiftSurfaceNodesInitial(blk,aoa1,aoa2,piv_pt, ita, &
+        SUBROUTINE shiftSurfaceNodesInitial(blk,aoa, piv_pt, ita, &
              deltat, dxmin, totime)
         type(Block_t), intent(inout) :: blk
-        real(dp),intent(in) :: aoa1, aoa2, piv_pt, deltat, dxmin, totime
+        real(dp),intent(in) :: aoa, piv_pt, deltat, dxmin, totime
         integer(int64), intent(in) :: ita
         INTEGER(int64) ::  i
         REAL(dp)      ::  xr1, yr1, zr1, angt
         REAL(dp)      :: bdy,bdfr
+        real(dp) :: aoa1, aoa2
+
+        aoa1 = aoa*pi/180_dp
+        aoa2 = -aoa1
 
         ALLOCATE (blk%xnode1(blk%ibNodes), blk%ynode1(blk%ibNodes), &
                   blk%znode1(blk%ibNodes))
