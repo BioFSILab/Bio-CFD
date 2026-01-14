@@ -208,7 +208,7 @@ contains
 
   subroutine hdf5_read_real_scalar(filename, group, key, output)
     integer :: error_hdf5
-    integer(hid_t) :: file_id, group_id, attr_id, attr_space_id
+    integer(hid_t) :: file_id, group_id, attr_id
     INTEGER(HSIZE_T), DIMENSION(1) :: adims
     character(len=*), intent(in) :: filename
     character(len=*), intent(in) :: group
@@ -235,7 +235,7 @@ contains
 
   subroutine hdf5_read_int_scalar(filename, group, key, output)
     integer :: error_hdf5
-    integer(hid_t) :: file_id, group_id, attr_id, attr_space_id
+    integer(hid_t) :: file_id, group_id, attr_id
     INTEGER(HSIZE_T), DIMENSION(1) :: adims
     character(len=*), intent(in) :: filename
     character(len=*), intent(in) :: group
