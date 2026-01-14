@@ -78,6 +78,8 @@ MODULE biocfd_block_type
      real(dp) :: viscous_drag_coefficient, pressure_drag_coefficient
      real(dp) :: viscous_lift_coefficient, pressure_lift_coefficient
 
+     real(dp) :: omega
+
   end type Block_t
 
 END MODULE biocfd_block_type

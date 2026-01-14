@@ -37,13 +37,11 @@ PROGRAM main
         INTEGER               :: istart
         INTEGER (int64)   :: itamax, pcItaMax, coarse_flcnt_check
         real(dp) :: aoa, phase_angle, piv_pt, mu_f, rho_f
-        real(dp) :: deltat, re, totalTime, totime, uc, dxmin, epsi, freq, &
-             omega1, omega2, omega3, omega4
+        real(dp) :: deltat, re, totalTime, totime, uc, dxmin, epsi, freq
         integer :: start, finish, step, rank
 
         CALL readInput(surGeoPoints, char_f, istart, itamax, pcItaMax, aoa, phase_angle, piv_pt, &
-                       mu_f, rho_f, inor, deltat,dxmin, &
-                           epsi,freq,omega1,omega2,omega3,omega4, re, uc)
+                       mu_f, rho_f, inor, deltat, dxmin, epsi, freq, re, uc)
         ita=0
         totime=0.0_dp
         ! Need to init after we know the size of block
@@ -149,8 +147,7 @@ PROGRAM main
         !$omp end do
         !$omp end parallel
 
-        CALL poissonSolver(pcItaMax, epsi, ita, deltat, omega1, omega2, omega3, omega4, &
-         totime, uc, totalTime, start, finish, step)
+        CALL poissonSolver(pcItaMax, epsi, ita, deltat, totime, uc, totalTime, start, finish, step)
 
         do g=start, finish, step
            if (g /= 1) CALL pressureForcing1(block(g))

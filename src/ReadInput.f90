@@ -22,15 +22,13 @@ module biocfd_read_input
       !> `butter_move.dat`, and `block_details.dat`. From these the
       !> "grid file" names are constructed and those files are then
       !> read to determine the grid.
-      SUBROUTINE readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt, &
-                           mu_f, rho_f, inor, deltat,dxmin, &
-                           epsi,freq,omega1,omega2,omega3,omega4, re, uc)
+      SUBROUTINE readInput(surGeoPoints, char_f, istart, itamax, pcItaMax, aoa, phase_angle, &
+                           piv_pt,mu_f, rho_f, inor, deltat, dxmin, epsi, freq, re, uc)
        INTEGER (int64) :: i, g,io
        CHARACTER(len=160)  :: filename1
        INTEGER (int64),INTENT(OUT)   :: surGeoPoints, itamax,pcItaMax, inor
        REAL(dp),intent(out) :: aoa,phase_angle,piv_pt, mu_f, rho_f
-       real(dp), intent(out) :: deltat, dxmin, epsi, freq, omega1,omega2, omega3, &
-             omega4, re, uc
+       real(dp), intent(out) :: deltat, dxmin, epsi, freq, re, uc
        CHARACTER (LEN = 3), INTENT(OUT)  :: char_f
        INTEGER,INTENT(OUT)               :: istart
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
@@ -41,6 +39,9 @@ module biocfd_read_input
        REAL(dp) :: alpha_m,theta_m,alpha_m1,theta_m1, l_c,u_tip,disp
        INTEGER (int64) :: intflines, nblocks
        real(dp) :: dt_order, u0
+       ! Omega variables are set as block variables
+       real(dp) :: omega1, omega2, omega3, omega4
+
        NAMELIST /input_data/ nblocks, intflines,  &
                    itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
                    re,rho_f, mu_f, l_c, &
@@ -307,6 +308,15 @@ module biocfd_read_input
             block(g)%zp(i) = block(g)%zu(i)
           END DO
         END DO
+
+        ! Set omega following previous logic (every block number >= 4
+        ! has an omega value of omega4)
+        do g=1, size(block)
+           if (g == 1) block(g)%omega = omega1
+           if (g == 2) block(g)%omega = omega2
+           if (g == 3) block(g)%omega = omega3
+           if (g >= 4) block(g)%omega = omega4
+        end do
 
       END SUBROUTINE readInput
 
