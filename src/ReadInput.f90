@@ -8,7 +8,7 @@ module biocfd_read_input
   implicit none
 
   integer, parameter :: blk_start=2
-  
+
   private
 
   public :: readInput, readBlockInterface, readSurfaceMeshGmsh
@@ -95,7 +95,6 @@ module biocfd_read_input
         if (alpha_m /= 0 .and. theta_m ==0) then
                 char_f = "ang"
         end if
-        blk_start=2
         alpha_m1=abs(alpha_m)
         theta_m1=abs(theta_m)
         dxmin = 0.001_dp*dxmin
@@ -149,7 +148,7 @@ module biocfd_read_input
         WRITE(io,*) "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         CLOSE(io)
 
-        print*, "dt =",  deltat, "ita = ", ita, "totime = ", totime
+        print*, "dt =",  deltat
 
         OPEN(newunit=io, FILE = "block_details.dat", FORM = "formatted")
        DO i=1,size(block)
