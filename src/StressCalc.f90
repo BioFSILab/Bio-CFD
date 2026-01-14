@@ -63,7 +63,7 @@ contains
     !$acc private(derivatives, normal) &
     !$acc reduction(+: pressureDrag, viscousDrag, viscousLift, pressureLift, area_Sx, area_Sy, surf_area)
     DO ielem = 1, blk%ibElems
-       !***********************interpolation points****************************
+       ! ***********************interpolation points****************************
 
        normal = [blk%cosAlpha(ielem), blk%cosBeta(ielem), blk%cosGamma(ielem)]
 
@@ -82,7 +82,7 @@ contains
        pos1_y = blk%ycent(ielem) + normdis * normal(2)
        pos1_z = blk%zcent(ielem) + normdis * normal(3)
 
-       !**************************velocity and pressure at the surface**********************
+       ! **************************velocity and pressure at the surface**********************
        IF (blk%ibSurfID(ielem)==50) THEN
           blk% thetaDot  =  0.
           blk% thetaDDot =  0.
@@ -106,9 +106,9 @@ contains
        dpdn = -((ac_z + at_z)*blk%cosGamma(ielem) &
             + (ac_y + at_y)*blk%cosBeta(ielem))-blk%yddot*blk%cosBeta(ielem)
 
-       !*******************velocity interpolation at point 2******************
+       ! *******************velocity interpolation at point 2******************
 
-       !******************u velocity interpolation at point 2******************
+       ! ******************u velocity interpolation at point 2******************
 
        i_x1 = find_index_in_array(pos1_x, blk%xu, 2_int64, blk%nx+1)
        i_y1 = find_index_in_array(pos1_y, blk%yu, 2_int64, blk%ny+1)
@@ -121,7 +121,7 @@ contains
        dudn_e = dot_product(derivatives, normal)
        ddn_s(1) = (2._dp/normdis)*(u_pos1 - usurf) - dudn_e
 
-       !******************v velocity interpolation in point 2******************
+       ! ******************v velocity interpolation in point 2******************
        i_x1 = find_index_in_array(pos1_x, blk%xv, 2_int64, blk%nx+1)
        i_y1 = find_index_in_array(pos1_y, blk%yv, 2_int64, blk%ny+1)
        i_z1 = find_index_in_array(pos1_z, blk%zv, 2_int64, blk%nz+1)
@@ -133,7 +133,7 @@ contains
        dvdn_e = dot_product(derivatives, normal)
        ddn_s(2) = (2._dp/normdis)*(v_pos1 - vsurf) - dvdn_e
 
-       !******************w velocity interpolation in point 2******************
+       ! ******************w velocity interpolation in point 2******************
        i_x1 = find_index_in_array(pos1_x, blk%xw, 2_int64, blk%nx+1)
        i_y1 = find_index_in_array(pos1_y, blk%yw, 2_int64, blk%ny+1)
        i_z1 = find_index_in_array(pos1_z, blk%zw, 2_int64, blk%nz+1)
@@ -145,18 +145,18 @@ contains
        dwdn_e = dot_product(derivatives, normal)
        ddn_s(3) = (2._dp/normdis)*(w_pos1 - wsurf) - dwdn_e
 
-       !***********************calculate area of the elements******************
+       ! ***********************calculate area of the elements******************
        alen = blk%element_length(ielem)
        area = alen/2._dp
        area_yz = 0.5_dp*abs(alen * normal(1))
        area_xz = 0.5_dp*abs(alen * normal(2))
        area_xy = 0.5_dp*abs(alen * normal(3))
 
-       !*********non-dimensional viscous stress & force calculation************
+       ! *********non-dimensional viscous stress & force calculation************
        shear_force = (ddn_s - dot_product(ddn_s, normal) * normal) * mu_f * area
-       !************************presssure interpolation************************
+       ! ************************presssure interpolation************************
 
-       !*******************pressure interpolation at point 2*******************
+       ! *******************pressure interpolation at point 2*******************
        i_x1 = find_index_in_array(pos1_x, blk%xp, 2_int64, blk%nx+1)
        i_y1 = find_index_in_array(pos1_y, blk%yp, 2_int64, blk%ny+1)
        i_z1 = find_index_in_array(pos1_z, blk%zp, 2_int64, blk%nz+1)
@@ -173,7 +173,7 @@ contains
 
        f_surf = -cval * area * normal * rho_f
 
-       !***********************drag calculation********************************
+       ! ***********************drag calculation********************************
        viscousDrag = viscousDrag + shear_force(1)
        pressureDrag = pressureDrag + f_surf(1)
        viscousLift = viscousLift + shear_force(2)
