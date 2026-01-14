@@ -24,23 +24,64 @@ module biocfd_read_input
       !> read to determine the grid.
       SUBROUTINE readInput(surGeoPoints, char_f, istart, itamax, pcItaMax, aoa, phase_angle, &
                            piv_pt,mu_f, rho_f, inor, deltat, dxmin, epsi, freq, re, uc)
-       INTEGER (int64) :: i, g,io
-       CHARACTER(len=160)  :: filename1
-       INTEGER (int64),INTENT(OUT)   :: surGeoPoints, itamax,pcItaMax, inor
-       REAL(dp),intent(out) :: aoa,phase_angle,piv_pt, mu_f, rho_f
-       real(dp), intent(out) :: deltat, dxmin, epsi, freq, re, uc
-       CHARACTER (LEN = 3), INTENT(OUT)  :: char_f
-       INTEGER,INTENT(OUT)               :: istart
+       INTEGER (int64) :: i, g, io
+       CHARACTER(len=160) :: filename1
+       real(dp), intent(out) :: deltat, uc
+       CHARACTER (LEN = 3), INTENT(OUT) :: char_f
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
        !     not dependent on diff for checking code changes don't break code
        !     Variables removed from Blocks 'xstart, xend, ystart, yend, zstart, zend'
-       REAL(dp),ALLOCATABLE,DIMENSION(:) :: xstart_temp,xend_temp,&
-       ystart_temp,yend_temp,zstart_temp,zend_temp
-       REAL(dp) :: alpha_m,theta_m,alpha_m1,theta_m1, l_c,u_tip,disp
-       INTEGER (int64) :: intflines, nblocks
-       real(dp) :: dt_order, u0
-       ! Omega variables are set as block variables
+       REAL(dp), ALLOCATABLE,DIMENSION(:) :: xstart_temp, xend_temp, ystart_temp, yend_temp, &
+            zstart_temp,zend_temp
+       REAL(dp) :: alpha_m1, theta_m1, u_tip, disp
+
+       ! Namelist documentation
+       !> The number of blocks to simulate
+       integer(int64) :: nblocks
+       !> The number of interfaces between blocks. Typically `nblocks
+       !> - 1`, as each fine block has a single interface to the
+       !> coarse block.
+       integer(int64) :: intflines
+       !> The maximum number of iterations to simulate
+       integer(int64), intent(out) :: itamax
+       !>
+       real(dp), intent(out) :: epsi
+       !>
+       integer(int64), intent(out) :: pcItaMax
+       !>
        real(dp) :: omega1, omega2, omega3, omega4
+       !>
+       real(dp), intent(out) :: re
+       !>
+       real(dp), intent(out) :: rho_f
+       !>
+       real(dp), intent(out) :: mu_f
+       !>
+       real(dp) :: l_c
+       !>
+       real(dp) :: u0
+       !>
+       integer(int64), intent(out) :: surGeoPoints
+       !>
+       real(dp), intent(out) :: phase_angle
+       !>
+       real(dp), intent(out) :: freq
+       !>
+       real(dp), intent(out) :: aoa
+       !>
+       real(dp), intent(out) :: piv_pt
+       !>
+       real(dp) :: alpha_m
+       !>
+       real(dp) :: theta_m
+       !>
+       integer, intent(out) :: istart
+       !>
+       real(dp) :: dt_order
+       !>
+       integer(int64), intent(out) :: inor
+       !>
+       real(dp), intent(out) :: dxmin
 
        NAMELIST /input_data/ nblocks, intflines,  &
                    itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
