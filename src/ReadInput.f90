@@ -46,7 +46,7 @@ module biocfd_read_input
                    re,rho_f, mu_f, l_c, &
                    u0,  &
                    surGeoPoints, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
-                   istart,  inor, dxmin
+                   istart, dt_order, inor, dxmin
        character(len=*), parameter :: grid_fmt = '(A, "grid_bk", i3.3, "_", i0, ".txt")'
 
   open(newunit=io, file="input_data.nml", status="old", action="read")
