@@ -45,6 +45,7 @@ PROGRAM main
                        mu_f, rho_f, inor, deltat,dxmin, &
                            epsi,freq,omega1,omega2,omega3,omega4, re, uc)
         ita=0
+        totime=0.0_dp
         ! Need to init after we know the size of block
         call biocfd_init(size(block), start, finish, step, rank)
         CALL readBlockInterface
