@@ -31,7 +31,7 @@ jobs:
           # Compile with OpenACC and OpenMP as the default
           - compiler: gcc
             version: 14
-            FPM_FFLAGS: "-Werror=unused -Werror=unused-parameter --coverage -pedantic-errors -std=f2008 -fopenmp -fopenacc"
+            FPM_FFLAGS: "-Werror=unused -Werror=unused-parameter -pedantic-errors -std=f2008 -fopenmp -fopenacc"
             hdf5: Off
           - compiler: gcc
             version: 14
