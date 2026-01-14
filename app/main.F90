@@ -32,18 +32,18 @@ PROGRAM main
         IMPLICIT NONE
 
         INTEGER (int64) :: g
-        INTEGER (int64)   :: surGeoPoints, ita, ita1, inor, blk_start
+        INTEGER (int64)   :: surGeoPoints, ita=0, ita1=0, inor
         CHARACTER (LEN = 3)   :: char_f
         INTEGER               :: istart
         INTEGER (int64)   :: itamax, pcItaMax, coarse_flcnt_check
         real(dp) :: aoa, aoa1, aoa2, phase_angle, piv_pt, mu_f, rho_f
-        real(dp) :: deltat, re, totalTime, totime, uc, u0, dt_order, dxmin, epsi, freq, &
+        real(dp) :: deltat, re, totalTime, totime=0.0_dp, uc, dxmin, epsi, freq, &
              omega1, omega2, omega3, omega4
         integer :: start, finish, step, rank
 
         CALL readInput(surGeoPoints, char_f, istart, itamax, pcItaMax, aoa, phase_angle, piv_pt, &
-                       mu_f, rho_f, ita, ita1, inor, blk_start,deltat,dt_order,dxmin, &
-                           epsi,freq,omega1,omega2,omega3,omega4, re, totime, u0, uc)
+                       mu_f, rho_f, inor, deltat,dxmin, &
+                           epsi,freq,omega1,omega2,omega3,omega4, re, uc)
         ! Need to init after we know the size of block
         call biocfd_init(size(block), start, finish, step, rank)
         CALL readBlockInterface
