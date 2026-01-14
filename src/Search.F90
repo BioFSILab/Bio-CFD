@@ -46,8 +46,7 @@ module biocfd_search
         END DO
         end subroutine findDistnode
 
-        SUBROUTINE shiftSurfaceNodesInitial(blk,aoa, piv_pt, ita, &
-             deltat, dxmin, totime)
+        SUBROUTINE shiftSurfaceNodesInitial(blk, aoa, piv_pt, ita, deltat, dxmin, totime)
         type(Block_t), intent(inout) :: blk
         real(dp),intent(in) :: aoa, piv_pt, deltat, dxmin, totime
         integer(int64), intent(in) :: ita
