@@ -1,7 +1,6 @@
 module biocfd_write_output_corner1
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, ita, totime, re, &
-       totime, ita1
+  use global, only : block
   use biocfd_block_type, only: Block_t
 #if USE_HDF5 == 1
   use biocfd_hdf5_io, only: hdf5_write_real, hdf5_write_int
@@ -19,9 +18,11 @@ module biocfd_write_output_corner1
 contains
 
 #if USE_HDF5 == 1
-      SUBROUTINE write_output_hdf5(blk,blk_no)
+      SUBROUTINE write_output_hdf5(blk,blk_no, ita, totime)
        type(Block_t), intent(in) :: blk
        integer (int64), intent(in) :: blk_no
+       integer(int64), intent(in) :: ita
+       real(dp), intent(in) :: totime
        CHARACTER(len=150)  :: filename
        INTEGER  :: k, i, j
        REAL (dp), allocatable :: u1(:,:,:), v1(:,:,:), w1(:,:,:)
@@ -76,9 +77,11 @@ contains
 
        END SUBROUTINE write_output_hdf5
 #else
-      SUBROUTINE write_output_ascii(blk,blk_no,char_f)
+      SUBROUTINE write_output_ascii(blk,blk_no,char_f, ita, re, totime)
        type(Block_t), intent(in) :: blk
        integer (int64), intent(in) :: blk_no
+       integer(int64), intent(in) :: ita
+       real(dp), intent(in) :: re, totime
        CHARACTER(len=150)  :: filename1
        CHARACTER (LEN = 3),INTENT(IN)   :: char_f
        INTEGER  :: k, i, j
@@ -109,9 +112,11 @@ contains
          END IF
       END SUBROUTINE write_output_ascii
 #endif
-      SUBROUTINE writeResult(blk,blk_no,char_f)
+      SUBROUTINE writeResult(blk,blk_no,char_f,ita,ita1, re, totime)
         type(Block_t), intent(in) :: blk
         integer (int64), intent(in) :: blk_no
+        integer(int64), intent(in) :: ita, ita1
+        real(dp), intent(in) :: re, totime
         INTEGER ::  i, j, k
         CHARACTER(len=70)  :: filename1
         CHARACTER (LEN = 3),INTENT(IN)   :: char_f
@@ -133,9 +138,10 @@ contains
 
       END SUBROUTINE writeResult
 
-         SUBROUTINE body_plot(blk, blk_id)
+         SUBROUTINE body_plot(blk, blk_id, ita)
          type(Block_t), intent(in) :: blk
          integer(int64), intent(in) :: blk_id
+         integer(int64), intent(in) :: ita
          INTEGER(int64) :: inode, ielem
          CHARACTER(len=150) :: filename1
          integer :: file_unit

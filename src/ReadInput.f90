@@ -2,14 +2,12 @@ module biocfd_read_input
   !* This module is used to read the various input files needed to
   !* control the program.
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, uc, u0, totime, &
-       re, pi, omega4, &
-       omega3, omega2, omega1, ita1, ita, &
-       inor, freq, epsi, dxmin, dt_order, deltat, &
-       blk_start, intfr
+  use global, only : block, intfr, pi
   use biocfd_interface_type, only: Interface_t
   use biocfd_block_type,only : Block_t
   implicit none
+
+  integer, parameter :: blk_start=2
 
   private
 
@@ -25,11 +23,14 @@ module biocfd_read_input
       !> "grid file" names are constructed and those files are then
       !> read to determine the grid.
       SUBROUTINE readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt, &
-                           mu_f, rho_f)
+                           mu_f, rho_f, inor, deltat,dxmin, &
+                           epsi,freq,omega1,omega2,omega3,omega4, re, uc)
        INTEGER (int64) :: i, g,io
        CHARACTER(len=160)  :: filename1
-       INTEGER (int64),INTENT(OUT)   :: surGeoPoints, itamax,pcItaMax
+       INTEGER (int64),INTENT(OUT)   :: surGeoPoints, itamax,pcItaMax, inor
        REAL(dp),intent(out) :: aoa,phase_angle,piv_pt, mu_f, rho_f
+       real(dp), intent(out) :: deltat, dxmin, epsi, freq, omega1,omega2, omega3, &
+             omega4, re, uc
        CHARACTER (LEN = 3), INTENT(OUT)  :: char_f
        INTEGER,INTENT(OUT)               :: istart
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
@@ -39,12 +40,13 @@ module biocfd_read_input
        ystart_temp,yend_temp,zstart_temp,zend_temp
        REAL(dp) :: alpha_m,theta_m,alpha_m1,theta_m1, l_c,u_tip,disp
        INTEGER (int64) :: intflines, nblocks
+       real(dp) :: dt_order, u0
        NAMELIST /input_data/ nblocks, intflines,  &
                    itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
                    re,rho_f, mu_f, l_c, &
                    u0,  &
                    surGeoPoints, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
-                   istart, dt_order,  inor, dxmin
+                   istart, dt_order, inor, dxmin
        character(len=*), parameter :: grid_fmt = '(A, "grid_bk", i3.3, "_", i0, ".txt")'
 
   open(newunit=io, file="input_data.nml", status="old", action="read")
@@ -93,7 +95,6 @@ module biocfd_read_input
         if (alpha_m /= 0 .and. theta_m ==0) then
                 char_f = "ang"
         end if
-        blk_start=2
         alpha_m1=abs(alpha_m)
         theta_m1=abs(theta_m)
         dxmin = 0.001_dp*dxmin
@@ -147,10 +148,7 @@ module biocfd_read_input
         WRITE(io,*) "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         CLOSE(io)
 
-        ita = 0
-        ita1 = 0
-        totime = 0._dp
-        print*, "dt =",  deltat, "ita = ", ita, "totime = ", totime
+        print*, "dt =",  deltat
 
         OPEN(newunit=io, FILE = "block_details.dat", FORM = "formatted")
        DO i=1,size(block)

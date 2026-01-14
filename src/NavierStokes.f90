@@ -1,6 +1,5 @@
 module biocfd_navier_stokes
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : deltat, re
   use biocfd_block_type, only: Block_t
   implicit none
   private
@@ -250,11 +249,12 @@ contains
 
        END SUBROUTINE non_uni_coeff
 
-      subroutine nsMomentum2order(blk)
+      subroutine nsMomentum2order(blk, deltat, re)
 !c***********************************************************************
 !c     navier-stokes equations for constant properties
 !c***********************************************************************
       type(Block_t), intent(inout) :: blk
+      real(dp), intent(in) :: deltat, re
       INTEGER (dp) :: i, j, k, n ,nx_var,ny_var,nz_var, n1, nn, &
            index_ip1, index_im1, index_jp1, index_jm1, index_kp1, index_km1, block_idx_ts, idx
          REAL (dp) :: dpdx,dpdy,dpdz,u1a,u22,u3,u4,u5,u6,u7,u8,u9,u10,u11,u12,u13,u14, &
