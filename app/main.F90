@@ -32,7 +32,7 @@ PROGRAM main
         IMPLICIT NONE
 
         INTEGER (int64) :: g
-        INTEGER (int64)   :: surGeoPoints, ita=0, ita1=0, inor
+        INTEGER (int64)   :: surGeoPoints, ita, ita1, inor
         CHARACTER (LEN = 3)   :: char_f
         INTEGER               :: istart
         INTEGER (int64)   :: itamax, pcItaMax, coarse_flcnt_check
@@ -44,6 +44,7 @@ PROGRAM main
         CALL readInput(surGeoPoints, char_f, istart, itamax, pcItaMax, aoa, phase_angle, piv_pt, &
                        mu_f, rho_f, inor, deltat,dxmin, &
                            epsi,freq,omega1,omega2,omega3,omega4, re, uc)
+        ita=0
         ! Need to init after we know the size of block
         call biocfd_init(size(block), start, finish, step, rank)
         CALL readBlockInterface
