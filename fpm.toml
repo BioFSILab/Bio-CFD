@@ -28,3 +28,4 @@ ignore = ["C003"]
 
 [extra.ford]
 project = "Bio CFD"
+display = ["public", "protected", "private"]
