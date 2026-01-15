@@ -1,32 +1,43 @@
+!> This is the module that computes drag and lift coefficients on the immersed body
 module biocfd_stress_calculation
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
   use biocfd_forcing, only: compute_value_and_derivatives
   use biocfd_block_type, only: Block_t
   IMPLICIT NONE
-
+!> Everything is private apart from the subroutine stress_calculation (exposed to other modules)
   private
 
   public :: stress_calculation
 
 contains
-
+!> This is the subroutine that computes viscous and pressure forces on IB surfaces
   SUBROUTINE stress_calculation(blk, mu_f, rho_f)
     !> The block to perform the stress calculation on (not this is
     !> inout only because of setting thetaDot and thetaDDot, which I
     !> think might not be needed)
     type(Block_t), intent(inout) :: blk
     !> Parameters used in the stress calculation
+    !> Fluid dynamic viscosity and Density
     real(dp), intent(in) :: mu_f, rho_f
-
+    !> ielem: Immersed Boundary element
+    !> i_x1, i_y1, i_z1: Where to interpolate fluid values
     INTEGER :: ielem, i_x1, i_y1, i_z1
-
+    !> i_cell, j_cell, j_cell: Which grid cell the surface point lies inside
     INTEGER :: i_cell, j_cell, k_cell
-
+    !> Diagis: Diagonal distance of the cell, normdis is the distance from the surface to the fluid sample point
     REAL(dp) :: diagdis, normdis, aval, bval, cval, del_X, del_Y, del_Z
-
+    !>pos1_x, pos1_y, pos1_z: Fluid sample point, point that is slightly off the surface, inside the fluid.
+    !> p_pos1: Pressure at this fluid sample point.
+    !> dpdn: Pressure gradient at the surface
+    !> dpdn_e: Pressure gradient near the wall, slightly inside the fluid.
+    !> usurf, vsurf, wsurf: Velocity at the surface
+    !> u_pos1, v_pos1, w_pos1: Fluid velocity at the fluid sample point
+    !>dudn_e, dvdn_e, dwdn_e: Velocity derivatives near the wall, slightly inside the fluid.
+    !> ddn_s: Tangential velocity gradient at wall
     REAL(dp) :: pos1_x, pos1_y, pos1_z, p_pos1, dpdn, dpdn_e, usurf, u_pos1, vsurf, v_pos1, &
                wsurf, w_pos1,  dudn_e, dvdn_e, dwdn_e, ddn_s(3)
-
+    !> alen: Element length
+    !>
     REAL(dp) :: alen, area, area_xz, area_yz, area_xy
 
     REAL(dp) :: shear_force(3), f_surf(3)
@@ -34,12 +45,13 @@ contains
     REAL(dp) :: pressureDrag, viscousDrag, viscousLift, pressureLift, area_Sx, area_Sy, surf_area
 
     real(dp) :: ac_y, ac_z, at_y, at_z
+    !> Note: The (3) at the end of some variables indicates that it is a 1D array with three components
     real(dp) :: derivatives(3)
     ! In this case I think it makes sense to store the normal - there
     ! is an argument to make cosAlpha, cosBeta, and cosGamma a length
     ! 3 array in Block_t
     real(dp) :: normal(3)
-
+    !> Set all quantities to zero before looping
     viscousDrag = 0._dp
     pressureDrag = 0._dp
     viscousLift = 0._dp
@@ -62,6 +74,7 @@ contains
     !$acc firstprivate (rho_f, mu_f) &
     !$acc private(derivatives, normal) &
     !$acc reduction(+: pressureDrag, viscousDrag, viscousLift, pressureLift, area_Sx, area_Sy, surf_area)
+    !> Loop over all immersed boundary surface elements
     DO ielem = 1, blk%ibElems
        !***********************interpolation points****************************
 
@@ -74,7 +87,7 @@ contains
        del_X = blk%x1(i_cell+1)-blk%x1(i_cell)
        del_Y = blk%y1(j_cell+1)-blk%y1(j_cell)
        del_Z = blk%z1(k_cell+1)-blk%z1(k_cell)
-
+       !> This is the distance to the nearest interpolation point - It is the length of the cell
        diagdis = sqrt(del_X**2 + del_Y**2 + del_Z**2)
 
        normdis = diagdis
@@ -93,11 +106,11 @@ contains
           blk% thetaDot  = blk% thetaDot2
           blk% thetaDDot = blk% thetaDDot2
        END IF
-
+       !> This is the main rigid body kinemtaics
        usurf = blk%xdot
        vsurf = -blk%thetaDot * (blk%zcent(ielem) - blk%piv_z) + blk%ydot
        wsurf = blk%thetaDot * (blk%ycent(ielem) - blk%piv_y)
-
+       !> Calculating Centripetal and tangential acceleration
        ac_z = -blk%thetaDot**2 * (blk%zcent(ielem) - blk%piv_z)
        ac_y = -blk%thetaDot**2 * (blk%ycent(ielem) - blk%piv_y)
        at_z = blk%thetaDDot * (blk%ycent(ielem) - blk%piv_y)
