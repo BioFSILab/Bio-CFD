@@ -389,37 +389,26 @@ SUBROUTINE pressureForcingGhost(blk)
         ELSE IF (blk%ibSurfId(index)==51) THEN
             blk%thetaDot  = blk%thetaDot1
             blk%thetaDDot = blk%thetaDDot1
-            ac_z = -blk%thetaDot**2*(blk%zcent(index) &
-                   - blk%piv_z)
-            ac_y = -blk%thetaDot**2*(blk%ycent(index) &
-                   - blk%piv_y)
-            at_z =  blk%thetaDDot*(blk%ycent(index) &
-                   - blk%piv_y)
-            at_y = -blk%thetaDDot*(blk%zcent(index) &
-                   - blk%piv_z)
+            ac_z = -blk%thetaDot**2*(blk%zcent(index) - blk%piv_z)
+            ac_y = -blk%thetaDot**2*(blk%ycent(index) - blk%piv_y)
+            at_z =  blk%thetaDDot*(blk%ycent(index) - blk%piv_y)
+            at_y = -blk%thetaDDot*(blk%zcent(index) - blk%piv_z)
 
         ELSE IF (blk%ibSurfId(index)==52) THEN
             blk%thetaDot  = blk%thetaDot2
             blk%thetaDDot = blk%thetaDDot2
-            ac_z = -blk%thetaDot**2*(blk%zcent(index) &
-                   - blk%piv_z)
-            ac_y = -blk%thetaDot**2*(blk%ycent(index) &
-                   - blk%piv_y)
-            at_z =  blk%thetaDDot*(blk%ycent(index)  &
-                   - blk%piv_y)
-            at_y = -blk%thetaDDot*(blk%zcent(index) &
-                   - blk%piv_z)
+            ac_z = -blk%thetaDot**2*(blk%zcent(index) - blk%piv_z)
+            ac_y = -blk%thetaDot**2*(blk%ycent(index) - blk%piv_y)
+            at_z =  blk%thetaDDot*(blk%ycent(index)  - blk%piv_y)
+            at_y = -blk%thetaDDot*(blk%zcent(index) - blk%piv_z)
         END IF
-            dpdn = ((ac_z + at_z)* blk%cosGamma(index) &
-                  + (ac_y + at_y)* blk%cosBeta(index)) &
+            dpdn = ((ac_z + at_z)* blk%cosGamma(index) + (ac_y + at_y)* blk%cosBeta(index)) &
                    + (blk%yddot*(blk%cosBeta(index)))
 
          sur2nodeDis = -blk%pNormDis(blk%index_ts(n))
 
-         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 &
-                             + blk%deltay(j)**2 &
-                             + blk%deltaz(k)**2) &
-               + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
+         pt1 = 1.5_dp*dsqrt(blk%deltax(i)**2 + blk%deltay(j)**2 + blk%deltaz(k)**2) &
+              + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
          pos1_x = blk%xp(i) - pt1*blk%cosAlpha(index)
