@@ -365,50 +365,53 @@ SUBROUTINE pressureForcingGhost(blk)
       REAL (dp) :: n1, pos1_x, pos1_y, pos1_z, pt1, &
                          aval, bval, cval, p_pos1, sur2nodeDis, dpdn, &
                          dpdn_e, ac_y, ac_z, at_y, at_z
-       real(dp) :: derivatives(3)
+      real(dp) :: derivatives(3)
+      integer(int64) :: index
 
       dpdn = 0._dp
  !$acc parallel loop gang vector                                                                    &
  !$acc private (n1, pos1_x, pos1_y, pos1_z, pt1, aval, bval, cval, p_pos1, sur2nodeDis, dpdn,                   &
  !$acc           dpdn_e, k, j, i, i_x1, i_y1,               &
- !$acc           i_z1,ac_z,ac_y,at_y,at_z)         &
+ !$acc           i_z1,ac_z,ac_y,at_y,at_z, index)         &
  !$acc default(present) private(derivatives)
       DO n = 1, blk%TSCellCount
+
+        index = blk%nelp(blk%index_ts(n))
 
         i = blk%TSIndexPtr(n, 1)
         j = blk%TSIndexPtr(n, 2)
         k = blk%TSIndexPtr(n, 3)
-        IF (blk%ibSurfId(blk%nelp(blk%index_ts(n)))==50) THEN
+        IF (blk%ibSurfId(index)==50) THEN
             ac_z = 0.  !-block(g)%thetaDot**2*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
             ac_y = 0.  !-block(g)%thetaDot**2*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_z = 0.  ! block(g)%thetaDDot*(block(g)%ycent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_y)
             at_y = 0.  !-block(g)%thetaDDot*(block(g)%zcent(block(g)%nelp(block(g)%index_ts(n))) - block(g)%piv_z)
-        ELSE IF (blk%ibSurfId(blk%nelp(blk%index_ts(n)))==51) THEN
+        ELSE IF (blk%ibSurfId(index)==51) THEN
             blk%thetaDot  = blk%thetaDot1
             blk%thetaDDot = blk%thetaDDot1
-            ac_z = -blk%thetaDot**2*(blk%zcent(blk%nelp(blk%index_ts(n))) &
+            ac_z = -blk%thetaDot**2*(blk%zcent(index) &
                    - blk%piv_z)
-            ac_y = -blk%thetaDot**2*(blk%ycent(blk%nelp(blk%index_ts(n))) &
+            ac_y = -blk%thetaDot**2*(blk%ycent(index) &
                    - blk%piv_y)
-            at_z =  blk%thetaDDot*(blk%ycent(blk%nelp(blk%index_ts(n))) &
+            at_z =  blk%thetaDDot*(blk%ycent(index) &
                    - blk%piv_y)
-            at_y = -blk%thetaDDot*(blk%zcent(blk%nelp(blk%index_ts(n))) &
+            at_y = -blk%thetaDDot*(blk%zcent(index) &
                    - blk%piv_z)
 
-        ELSE IF (blk%ibSurfId(blk%nelp(blk%index_ts(n)))==52) THEN
+        ELSE IF (blk%ibSurfId(index)==52) THEN
             blk%thetaDot  = blk%thetaDot2
             blk%thetaDDot = blk%thetaDDot2
-            ac_z = -blk%thetaDot**2*(blk%zcent(blk%nelp(blk%index_ts(n))) &
+            ac_z = -blk%thetaDot**2*(blk%zcent(index) &
                    - blk%piv_z)
-            ac_y = -blk%thetaDot**2*(blk%ycent(blk%nelp(blk%index_ts(n))) &
+            ac_y = -blk%thetaDot**2*(blk%ycent(index) &
                    - blk%piv_y)
-            at_z =  blk%thetaDDot*(blk%ycent(blk%nelp(blk%index_ts(n)))  &
+            at_z =  blk%thetaDDot*(blk%ycent(index)  &
                    - blk%piv_y)
-            at_y = -blk%thetaDDot*(blk%zcent(blk%nelp(blk%index_ts(n))) &
+            at_y = -blk%thetaDDot*(blk%zcent(index) &
                    - blk%piv_z)
         END IF
-            dpdn = ((ac_z + at_z)* blk%cosGamma(blk%nelp(blk%index_ts(n))) &
-                  + (ac_y + at_y)* blk%cosBeta(blk%nelp(blk%index_ts(n)))) &
+            dpdn = ((ac_z + at_z)* blk%cosGamma(index) &
+                  + (ac_y + at_y)* blk%cosBeta(index)) &
                    + (blk%yddot*(blk%cosBeta(blk%index_ts(n))))
 
          sur2nodeDis = -blk%pNormDis(blk%index_ts(n))
@@ -419,9 +422,9 @@ SUBROUTINE pressureForcingGhost(blk)
                + (dabs(sur2nodeDis)-sur2nodeDis)*0.5_dp
 
          !coordinates of three points from interceptd cell pressure node
-         pos1_x = blk%xp(i) - pt1*blk%cosAlpha(blk%nelp(blk%index_ts(n)))
-         pos1_y = blk%yp(j) - pt1*blk%cosBeta(blk%nelp(blk%index_ts(n)))
-         pos1_z = blk%zp(k) - pt1*blk%cosGamma(blk%nelp(blk%index_ts(n)))
+         pos1_x = blk%xp(i) - pt1*blk%cosAlpha(index)
+         pos1_y = blk%yp(j) - pt1*blk%cosBeta(index)
+         pos1_z = blk%zp(k) - pt1*blk%cosGamma(index)
 
          i_x1 = find_index_in_array(pos1_x, blk%xp, i-7_int64, i+7_int64)
          i_y1 = find_index_in_array(pos1_y, blk%yp, j-7_int64, j+7_int64)
@@ -431,9 +434,9 @@ SUBROUTINE pressureForcingGhost(blk)
                                            blk%xp, blk%yp, blk%zp, 0, &
                                            blk%p, p_pos1, derivatives)
 
-         dpdn_e =  -1 * (derivatives(1) * blk%cosAlpha(blk%nelp(blk%index_ts(n))) &
-                        + derivatives(2) * blk%cosBeta(blk%nelp(blk%index_ts(n))) &
-                        + derivatives(3) * blk%cosGamma(blk%nelp(blk%index_ts(n))))
+         dpdn_e =  -1 * (derivatives(1) * blk%cosAlpha(index) &
+                        + derivatives(2) * blk%cosBeta(index) &
+                        + derivatives(3) * blk%cosGamma(index))
 
          n1 = pt1 + sur2nodeDis
 
