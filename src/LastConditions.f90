@@ -21,11 +21,10 @@ contains
     !> The ID number of the block, usually 1 for the coarse block and
     !> >=2 for the fine blocks
     integer(int64), intent(in) :: id
-    real(dp), intent(in) :: re
     INTEGER ::  i, j, k
     CHARACTER(len=150) :: filename
     character(len=20) :: id_as_string
-    write(str, '(I0)') id_as_string
+    write(id_as_string, '(I0)') id
 
     filename="input/Checkpoint/Checkpoint_"//trim(id_as_string)//".h5"
 
