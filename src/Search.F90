@@ -1,9 +1,6 @@
 module biocfd_search
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64, int32
-  use global, only: block, blk_start, totime, &
-       pi, ita, dxmin, deltat, &
-       re, freq, inor, &
-       coarse_flcnt_check, intfr
+  use global, only: block, intfr, pi
   use biocfd_fine_interp, only: fineUpdate_mv
   use biocfd_fine_interp_bound, only : fineUpdate_bd_mv
   use biocfd_interface_detail, only : print_interface_detail
@@ -49,12 +46,17 @@ module biocfd_search
         END DO
         end subroutine findDistnode
 
-        SUBROUTINE shiftSurfaceNodesInitial(blk,aoa1,aoa2,piv_pt)
+        SUBROUTINE shiftSurfaceNodesInitial(blk, aoa, piv_pt, ita, deltat, dxmin, totime)
         type(Block_t), intent(inout) :: blk
-        real(dp),intent(in) :: aoa1, aoa2, piv_pt
+        real(dp),intent(in) :: aoa, piv_pt, deltat, dxmin, totime
+        integer(int64), intent(in) :: ita
         INTEGER(int64) ::  i
         REAL(dp)      ::  xr1, yr1, zr1, angt
         REAL(dp)      :: bdy,bdfr
+        real(dp) :: aoa1, aoa2
+
+        aoa1 = aoa*pi/180_dp
+        aoa2 = -aoa1
 
         ALLOCATE (blk%xnode1(blk%ibNodes), blk%ynode1(blk%ibNodes), &
                   blk%znode1(blk%ibNodes))
@@ -113,8 +115,8 @@ module biocfd_search
             yr1 = -blk%znode(i)*sin(aoa2) + blk%ynode(i)*cos(aoa2)  + piv_pt*sin(aoa2)
            ELSE
                xr1 = blk% xnode(i)
-               zr1 = blk% znode(i)  !*cos(aoa1) + ynode(i)*sin(aoa1)
-               yr1 = blk% ynode(i)  !*sin(aoa1) + ynode(i)*cos(aoa1)
+               zr1 = blk% znode(i)
+               yr1 = blk% ynode(i)
            END IF
            blk%xnode1(i) = xr1+ blk%xShift
            blk%ynode1(i) = yr1+ blk%yShift
@@ -123,9 +125,12 @@ module biocfd_search
 
       END SUBROUTINE shiftSurfaceNodesInitial
 
-      SUBROUTINE computeSurfaceVariables(blk,g,phase_angle,piv_pt)
+      SUBROUTINE computeSurfaceVariables(blk,g,phase_angle,piv_pt, ita, &
+           deltat, dxmin, freq, re, totime)
         type(Block_t), intent(inout) :: blk
         real(dp),intent(in) :: phase_angle,piv_pt
+        integer(int64), intent(in) :: ita
+        real(dp), intent(in) :: deltat, dxmin, freq, re, totime
         real(dp) :: aoa1,aoa2
         INTEGER(int64) ::  i
         INTEGER(int64), intent(in) :: g
@@ -207,8 +212,9 @@ module biocfd_search
 
       END SUBROUTINE computeSurfaceVariables
 
-      SUBROUTINE computeSurfaceNorm(blk)
+      SUBROUTINE computeSurfaceNorm(blk, inor)
         type(Block_t), intent(inout) :: blk
+        integer(int64), intent(in) :: inor
         INTEGER(int64) ::  n  !c1, c2, c3, c4
         REAL(dp)      :: p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, lenEL
         REAL(dp)      :: var_xcent, var_ycent, var_zcent
@@ -938,8 +944,9 @@ blk%fluidCellCount = flcnt
 
         end subroutine fine_block_cell
 
-        SUBROUTINE cellCount_solid_coarse_mv
+        SUBROUTINE cellCount_solid_coarse_mv(coarse_flcnt_check)
 
+        integer(int64), intent(inout) :: coarse_flcnt_check
         INTEGER(int64) ::  n, iPt, iPt1, iPt2, i, j, k
         INTEGER(int64) ::  g
         g=1
@@ -1018,8 +1025,9 @@ blk%fluidCellCount = flcnt
 
         END SUBROUTINE cellCount_solid_coarse_mv
 
-        SUBROUTINE block_move_check
+        SUBROUTINE block_move_check(coarse_flcnt_check)
 
+        integer(int64), intent(inout) :: coarse_flcnt_check
         INTEGER(int64) :: i,j,k,g, a_blk_no, b_blk_no, factor
         REAL(dp) :: ydisp1, xdisp1, zdisp1, mg1
         REAL(dp) :: marginx, marginy, marginz, yval_up, yval_dw, xval_lt, xval_rt

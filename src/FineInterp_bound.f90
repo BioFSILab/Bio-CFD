@@ -57,7 +57,7 @@ module biocfd_fine_interp_bound
                steps(3) = intfr(g)%counterzp-1
           end if
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ppppppp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ! p
         !$acc parallel loop collapse(3) private(varx1, varx2, vary1, vary2, varz1, varz2) &
         !$acc private(loc_x, loc_y, loc_z, bl_interp_ans) &
         !$acc firstprivate(a_blk_no, b_blk_no)
@@ -135,7 +135,7 @@ module biocfd_fine_interp_bound
                cycle
            end if
 #endif
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!uuuuuuu!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          ! u
           ! Loop through the x (1), y (2), and z (3) axes
           DO axis=1, 3
 
@@ -193,8 +193,7 @@ module biocfd_fine_interp_bound
      end do  ! axes
 
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!vvvvvvv!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+        ! v
         ! Loop through the x (1), y (2), and z (3) axes
         DO axis=1, 3
 
@@ -249,8 +248,7 @@ module biocfd_fine_interp_bound
 
      end do  ! axes
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!wwwwwww!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+        ! w
         ! Loop through the x (1), y (2), and z (3) axes
         DO axis=1, 3
 
@@ -322,8 +320,7 @@ module biocfd_fine_interp_bound
            a_blk_no=intfr(g)%a_blk
            b_blk_no=intfr(g)%b_blk
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ppppppp!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+        ! p
         ! Loop through the x (1), y (2), and z (3) axes
         DO axis=1, 3
 
@@ -379,7 +376,7 @@ module biocfd_fine_interp_bound
 
         end do  ! axes
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!uuuuuuu!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ! u
         ! Loop through the x (1), y (2), and z (3) axes
         DO axis=1, 3
 
@@ -434,7 +431,7 @@ module biocfd_fine_interp_bound
 
         end do  ! axes
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!vvvvvvv!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ! v
         ! Loop through the x (1), y (2), and z (3) axes
         DO axis=1, 3
 
@@ -489,7 +486,7 @@ module biocfd_fine_interp_bound
 
         end do  ! axes
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!wwwwwww!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ! w
         ! Loop through the x (1), y (2), and z (3) axes
         DO axis=1, 3
 

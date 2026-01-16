@@ -11,8 +11,10 @@ module biocfd_allocate_arrays
 
     contains
 
+    !> Allocate arrays required for various calculations for a block
     SUBROUTINE allocateArrays(blk)
 
+        !> The block that arrays are being allocated for
         type(Block_t), intent(inout) :: blk
         integer(int64) :: nx, ny, nz
 

@@ -1,13 +1,13 @@
 module biocfd_read_input
+  !* This module is used to read the various input files needed to
+  !* control the program.
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, uc, u0, totime, &
-       re, pi, omega4, &
-       omega3, omega2, omega1, ita1, ita, &
-       inor, freq, epsi, dxmin, dt_order, deltat, &
-       blk_start, intfr
+  use global, only : block, intfr, pi
   use biocfd_interface_type, only: Interface_t
   use biocfd_block_type,only : Block_t
   implicit none
+
+  integer, parameter :: blk_start=2
 
   private
 
@@ -15,27 +15,80 @@ module biocfd_read_input
 
   contains
 
-      SUBROUTINE readInput(surGeoPoints,char_f,istart,itamax,pcItaMax,aoa,phase_angle,piv_pt, &
-                           mu_f, rho_f)
-       INTEGER (int64) :: i, g,io
-       CHARACTER(len=160)  :: filename1
-       INTEGER (int64),INTENT(OUT)   :: surGeoPoints, itamax,pcItaMax
-       REAL(dp),intent(out) :: aoa,phase_angle,piv_pt, mu_f, rho_f
-       CHARACTER (LEN = 3), INTENT(OUT)  :: char_f
-       INTEGER,INTENT(OUT)               :: istart
+      !> Read the input parameters used to control the simulation. The
+      !> primary file used to control this is `input_data.nml` but the
+      !> following files are also required: `body_search.dat`,
+      !> `grid_shift.dat`, `shift.dat`, `flap_amp.dat`,
+      !> `butter_move.dat`, and `block_details.dat`. From these the
+      !> "grid file" names are constructed and those files are then
+      !> read to determine the grid.
+      SUBROUTINE readInput(surGeoPoints, char_f, istart, itamax, pcItaMax, aoa, phase_angle, &
+                           piv_pt,mu_f, rho_f, inor, deltat, dxmin, epsi, freq, re, uc)
+       INTEGER (int64) :: i, g, io
+       CHARACTER(len=160) :: filename1
+       real(dp), intent(out) :: deltat, uc
+       CHARACTER (LEN = 3), INTENT(OUT) :: char_f
        ! MB: Temporary variables added, to separate them out from type Blocks. Kept until
        !     not dependent on diff for checking code changes don't break code
        !     Variables removed from Blocks 'xstart, xend, ystart, yend, zstart, zend'
-       REAL(dp),ALLOCATABLE,DIMENSION(:) :: xstart_temp,xend_temp,&
-       ystart_temp,yend_temp,zstart_temp,zend_temp
-       REAL(dp) :: alpha_m,theta_m,alpha_m1,theta_m1, l_c,u_tip,disp
-       INTEGER (int64) :: intflines, nblocks
+       REAL(dp), ALLOCATABLE,DIMENSION(:) :: xstart_temp, xend_temp, ystart_temp, yend_temp, &
+            zstart_temp,zend_temp
+       REAL(dp) :: alpha_m1, theta_m1, u_tip, disp
+
+       ! Namelist documentation
+       !> The number of blocks to simulate
+       integer(int64) :: nblocks
+       !> The number of interfaces between blocks. Typically `nblocks
+       !> - 1`, as each fine block has a single interface to the
+       !> coarse block.
+       integer(int64) :: intflines
+       !> The maximum number of iterations to simulate
+       integer(int64), intent(out) :: itamax
+       !>
+       real(dp), intent(out) :: epsi
+       !>
+       integer(int64), intent(out) :: pcItaMax
+       !>
+       real(dp) :: omega1, omega2, omega3, omega4
+       !>
+       real(dp), intent(out) :: re
+       !>
+       real(dp), intent(out) :: rho_f
+       !>
+       real(dp), intent(out) :: mu_f
+       !>
+       real(dp) :: l_c
+       !>
+       real(dp) :: u0
+       !>
+       integer(int64), intent(out) :: surGeoPoints
+       !>
+       real(dp), intent(out) :: phase_angle
+       !>
+       real(dp), intent(out) :: freq
+       !>
+       real(dp), intent(out) :: aoa
+       !>
+       real(dp), intent(out) :: piv_pt
+       !>
+       real(dp) :: alpha_m
+       !>
+       real(dp) :: theta_m
+       !>
+       integer, intent(out) :: istart
+       !>
+       real(dp) :: dt_order
+       !>
+       integer(int64), intent(out) :: inor
+       !>
+       real(dp), intent(out) :: dxmin
+
        NAMELIST /input_data/ nblocks, intflines,  &
                    itamax, epsi, pcItaMax,omega1,omega2,omega3,omega4, &
                    re,rho_f, mu_f, l_c, &
                    u0,  &
                    surGeoPoints, phase_angle, freq, aoa, piv_pt,alpha_m, theta_m, &
-                   istart, dt_order,  inor, dxmin
+                   istart, dt_order, inor, dxmin
        character(len=*), parameter :: grid_fmt = '(A, "grid_bk", i3.3, "_", i0, ".txt")'
 
   open(newunit=io, file="input_data.nml", status="old", action="read")
@@ -84,7 +137,6 @@ module biocfd_read_input
         if (alpha_m /= 0 .and. theta_m ==0) then
                 char_f = "ang"
         end if
-        blk_start=2
         alpha_m1=abs(alpha_m)
         theta_m1=abs(theta_m)
         dxmin = 0.001_dp*dxmin
@@ -138,10 +190,7 @@ module biocfd_read_input
         WRITE(io,*) "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         CLOSE(io)
 
-        ita = 0
-        ita1 = 0
-        totime = 0._dp
-        print*, "dt =",  deltat, "ita = ", ita, "totime = ", totime
+        print*, "dt =",  deltat
 
         OPEN(newunit=io, FILE = "block_details.dat", FORM = "formatted")
        DO i=1,size(block)
@@ -301,8 +350,18 @@ module biocfd_read_input
           END DO
         END DO
 
+        ! Set omega following previous logic (every block number >= 4
+        ! has an omega value of omega4)
+        do g=1, size(block)
+           if (g == 1) block(g)%omega = omega1
+           if (g == 2) block(g)%omega = omega2
+           if (g == 3) block(g)%omega = omega3
+           if (g >= 4) block(g)%omega = omega4
+        end do
+
       END SUBROUTINE readInput
 
+      !> Read a mesh file produced by [GMSH](https://gmsh.info)
       SUBROUTINE readSurfaceMeshGmsh(blk,surGeoPoints)
        type(Block_t), intent(inout) :: blk
        INTEGER(int64) :: n, i1, i2, i3, i5
@@ -366,6 +425,8 @@ module biocfd_read_input
 
       END SUBROUTINE readSurfaceMeshGmsh
 
+        !> Read the `interface_details.dat` file. This file defines
+        !> the interfaces between blocks.
         SUBROUTINE readBlockInterface
         INTEGER(int64) :: i
         integer :: io

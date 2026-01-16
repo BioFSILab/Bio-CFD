@@ -25,3 +25,7 @@ select = ["ALL"]
 # C003: implicit-external-procedures
 # This is an F2018 and not supported by nvfortran
 ignore = ["C003"]
+
+[extra.ford]
+project = "Bio CFD"
+display = ["public", "protected", "private"]

@@ -48,3 +48,6 @@ inputdata
 
 # Bash script files
 *.sh
+
+# docs
+doc/

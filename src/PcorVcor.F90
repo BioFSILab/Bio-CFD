@@ -1,7 +1,6 @@
 module biocfd_pcor_vcor
   use, intrinsic :: iso_fortran_env, only: dp => real64, int64
-  use global, only : block, deltat, epsi, omega, omega1, omega2, omega3, omega4, &
-       ita, totaltime,totime,uc, intfr
+  use global, only : block, intfr
   use biocfd_block_type, only: Block_t
   use biocfd_gpu_helpers, only: set_gpu
 #ifdef _OPENMP
@@ -20,10 +19,13 @@ module biocfd_pcor_vcor
 
   contains
 
-      SUBROUTINE poissonSolver(pcItaMax, start, finish, step)
-
+    SUBROUTINE poissonSolver(pcItaMax, epsi, ita, deltat, totime, uc, totalTime, &
+                             start, finish, step)
         INTEGER(int64) :: i, j,k, n, g
         INTEGER (int64),INTENT(IN)   :: pcItaMax
+        INTEGER (int64),INTENT(IN)   :: ita
+        real(dp), intent(in) :: epsi, deltat, totime, uc
+        real(dp), intent(inout) :: totalTime
         REAL (dp)    :: max_derr1, max_derr2, max_div, max_derrStdSt
         REAL (dp)    :: er_dudt, er_dvdt, er_dwdt, err_ds
         INTEGER(int64) :: max_nIterPcor
@@ -84,6 +86,7 @@ module biocfd_pcor_vcor
         !$omp parallel num_threads(omp_threads) default(none) &
         !$omp& private(g) &
         !$omp& shared(pcItaMax, block) &
+        !$omp& shared(deltat, epsi) &
         !$omp& shared(start, finish, step)
 
         call set_gpu()
@@ -92,7 +95,7 @@ module biocfd_pcor_vcor
         DO g=start, finish, step
            CALL computeDiv(g)    !divergence vector
            ! Do not compute Red/Black here for block 1
-           if (g /= 1)  CALL REDBLACKSOR_linear(g, pcItaMax)
+           if (g /= 1)  CALL REDBLACKSOR_linear(g, pcItaMax, deltat, epsi)
         end do
         !$omp end do
 
@@ -104,13 +107,13 @@ module biocfd_pcor_vcor
         ! code will work if block(1) is anywhere other than rank 0,
         ! but we ideally we shouldn't assume that it is.
         do g=start, finish, step
-          if (g == 1) CALL REDBLACKSOR_linear(g, pcItaMax)
+           if (g == 1) CALL REDBLACKSOR_linear(g, pcItaMax, deltat, epsi)
         end do
         call fineUpdate_pc_bd
         !$omp end single
         !$omp do
         DO g=start, finish, step
-         if (g /= 1) CALL REDBLACKSOR_linear(g,pcItaMax)
+           if (g /= 1) CALL REDBLACKSOR_linear(g, pcItaMax, deltat, epsi)
         end do
         !$omp end do
         !$omp single
@@ -120,7 +123,7 @@ module biocfd_pcor_vcor
        !$omp do
        DO g=start, finish, step
                CALL correctPressure(g)  !pressure correction
-               CALL correctVelocity(g)  !velocity correction
+               CALL correctVelocity(g,deltat)  !velocity correction
         END DO
         !$omp end do
         !$omp end parallel
@@ -173,7 +176,8 @@ module biocfd_pcor_vcor
  1          FORMAT("sphere_iter.dat")
          OPEN(newunit=file_unit,FILE=filename1,POSITION="APPEND",STATUS="unknown")
          ! Final 0. was solverTime, but this was never written to so was always 0.
-         WRITE(file_unit,126)   ita, block(1)%nIterPcor, block(2)%nIterPcor, omega1, omega2, 0._dp
+         WRITE(file_unit,126) ita, block(1)%nIterPcor, block(2)%nIterPcor, &
+                              block(1)%omega, block(2)%omega, 0._dp
          WRITE(*,16) ita, max_nIterPcor, max_derr2, max_derrStdSt, totalTime
  126      FORMAT(" ",I8, 2I10, 2F6.2,F14.9)
  16      FORMAT(" ",I8, I10, 4E15.6)
@@ -254,10 +258,11 @@ module biocfd_pcor_vcor
         !$acc end parallel loop
       END SUBROUTINE correctPressure
 
-      SUBROUTINE correctVelocity(g)
+      SUBROUTINE correctVelocity(g, deltat)
 
          INTEGER(int64) :: n, i, j, k,gg
          INTEGER(int64),INTENT(IN) :: g
+         real(dp), intent(in) :: deltat
          gg=g
 
         !$acc parallel loop gang vector private (i, j, k) firstprivate (deltat) &
@@ -280,22 +285,17 @@ module biocfd_pcor_vcor
          !$acc end parallel loop
       END SUBROUTINE correctVelocity
 
-      SUBROUTINE REDBLACKSOR_linear(g,pcItaMax)
+      SUBROUTINE REDBLACKSOR_linear(g, pcItaMax, deltat, epsi)
          INTEGER (int64),INTENT(IN)   :: pcItaMax
+         real(dp), intent(in) :: deltat, epsi
+         real(dp) :: omega
          INTEGER(int64) :: n, i, j, k, gg, nx_var, ny_var,nz_var,nxy
          REAL (dp) :: errSum,var,derr4
          INTEGER(int64),INTENT(IN) :: g
 
          gg=g
-            if (gg == 1)then
-                 omega = omega1
-           else if (gg == 2) then
-                 omega=omega2
-           else if (gg == 3) then
-                 omega=omega3
-           else
-                omega =omega4
-          end if
+
+         omega = block(gg)%omega
 
           nx_var=block(gg)%nx
           ny_var=block(gg)%ny
