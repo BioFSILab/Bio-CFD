@@ -133,13 +133,12 @@ module biocfd_search
         INTEGER(int64) ::  i
         INTEGER(int64), intent(in) :: g
         REAL(dp)      ::  xr1, yr1, zr1
-        REAL(dp)      :: angg, angt
+        REAL(dp)      :: angt
         REAL(dp)      :: bdy,bdfr
         REAL(dp)      :: ang_theta
         CHARACTER(len=150) :: filename1
         integer :: file_unit
 
-        angg=90
         aoa1       =  (blk%a0)*sin(2._dp*pi*freq*(totime+deltat) + phase_angle)
         aoa2       = -aoa1
         ang_theta  =  2._dp*pi*freq
