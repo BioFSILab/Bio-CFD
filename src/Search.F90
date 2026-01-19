@@ -446,22 +446,41 @@ SUBROUTINE tagging_th_core(blk)
         !$acc end parallel loop
 
         tscnt=0
-        !$acc parallel loop default(present) reduction(+:tscnt)
+        !$acc parallel loop default(present) reduction(+:tscnt) private(i, j, k)
         DO n = 1, blk%ibCellCount
-        i = blk%interceptedIndexPtr(n, 1)
-        j = blk%interceptedIndexPtr(n, 2)
-        k = blk%interceptedIndexPtr(n, 3)
-         IF(blk%ibSurfID(blk%nelp(n))==51.OR.blk%ibSurfID(blk%nelp(n))==52) then
-           blk%cell2(i, j, k) = 2
-           tscnt = tscnt + 1
-         end if
-         END DO
+          IF (blk%ibSurfID(blk%nelp(n))==51 .or. blk%ibSurfID(blk%nelp(n))==52) then
+             i = blk%interceptedIndexPtr(n, 1)
+             j = blk%interceptedIndexPtr(n, 2)
+             k = blk%interceptedIndexPtr(n, 3)
+             blk%cell2(i, j, k) = 2
+             tscnt = tscnt + 1
+          end if
+        END DO
         !$acc end parallel loop
 
         blk%TSCellCount = tscnt
         print*, "TScell count =", blk%TSCellCount
 
         ALLOCATE(blk%TSIndexPtr(blk%TSCellCount,3))
+        allocate(blk%index_ts(blk%TSCellCount))
+
+         iPt1 = 0
+        !$acc parallel loop private(idx, i, j, k)
+        do n=1, blk%ibCellCount
+          IF (blk%cell2(i,j,k)==2) THEN
+            i = blk%interceptedIndexPtr(n, 1)
+            j = blk%interceptedIndexPtr(n, 2)
+            k = blk%interceptedIndexPtr(n, 3)
+            !$acc atomic capture
+            iPt1 = iPt1 + 1
+            idx = iPt1
+            !$acc end atomic
+            blk%TSIndexPtr(idx, :) = [i, j, k]
+            blk%index_ts(idx) = n
+          END IF
+        end do
+        !$acc end parallel loop
+
         ALLOCATE(&
           blk%u2_ghost(blk%TSCellCount),  &
           blk%u2t_ghost(blk%TSCellCount), &
@@ -476,25 +495,7 @@ SUBROUTINE tagging_th_core(blk)
           blk%w2_ghost(blk%TSCellCount), &
           blk%w2t_ghost(blk%TSCellCount), &
           blk%w1_ghost(blk%TSCellCount),  &
-          blk%w1t_ghost(blk%TSCellCount), &
-          blk%index_ts(blk%TSCellCount))
-
-         iPt1 = 0
-        !$acc parallel loop private(idx)
-        do n=1, blk%ibCellCount
-          i = blk%interceptedIndexPtr(n, 1)
-          j = blk%interceptedIndexPtr(n, 2)
-          k = blk%interceptedIndexPtr(n, 3)
-          IF (blk%cell2(i,j,k)==2) THEN
-            !$acc atomic capture
-            iPt1 = iPt1 + 1
-            idx = iPt1
-            !$acc end atomic
-            blk%TSIndexPtr(idx, :) = [i, j, k]
-            blk%index_ts(idx) = n
-          END IF
-         end do
-         !$acc end parallel loop
+          blk%w1t_ghost(blk%TSCellCount))
 
         !$acc parallel loop default(present)
         DO n = 1, blk%TSCellCount
