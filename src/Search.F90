@@ -100,8 +100,6 @@ module biocfd_search
         blk%nxtx_cent=blk%xshift
         blk%initz_cent=blk%zshift
         blk%nxtz_cent=blk%zshift
-        blk%ypos=blk%yshift
-        blk%xpos=blk%xshift
         DO i = 1, blk%ibnodes
         IF (blk%ibNodeId(i)==51) THEN
             xr1 =  blk%xnode(i)
@@ -172,8 +170,6 @@ module biocfd_search
         blk%xmove = blk%xchg
         blk%zmove = 0.
 
-        blk%ypos =  blk%ypos  + blk%ychg
-        blk%xpos =  blk%xpos  + blk%xmove
         blk%piv_y = blk%piv_y + blk%ychg
         blk%piv_x = blk%piv_x + blk%xmove
         blk%piv_z = blk%piv_z + blk%zmove
