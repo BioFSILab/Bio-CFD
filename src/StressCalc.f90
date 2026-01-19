@@ -98,7 +98,6 @@ contains
        !Which grid cell are they in?" Between 2 and blk%nx+1.
        !Example: blk%xcent(ielem)=0.27, x1=[0,0.1,0.2,0.3], then 0.27 is between
        !0.2 and 0.3, so i_cell=3.
-       !Scroll to the bottom to see how find_index_in_array is defined
        i_cell = find_index_in_array(blk%xcent(ielem), blk%x1, 2_int64, blk%nx+1)
        j_cell = find_index_in_array(blk%ycent(ielem), blk%y1, 2_int64, blk%ny+1)
        k_cell = find_index_in_array(blk%zcent(ielem), blk%z1, 2_int64, blk%nz+1)
@@ -153,7 +152,7 @@ contains
        i_z1 = find_index_in_array(pos1_z, blk%zu, 2_int64, blk%nz+1)
        !Interpolation
        call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-c            blk%xu, blk%yu, blk%zu, 1, &
+            blk%xu, blk%yu, blk%zu, 1, &
             blk%u, u_pos1, derivatives)
        !compute derivative
        dudn_e = dot_product(derivatives, normal)
