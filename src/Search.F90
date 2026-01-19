@@ -1025,7 +1025,7 @@ blk%fluidCellCount = flcnt
 
         integer(int64), intent(inout) :: coarse_flcnt_check
         INTEGER(int64) :: i,j,k,g, a_blk_no, b_blk_no, factor
-        REAL(dp) :: ydisp1, xdisp1, zdisp1, mg1
+        REAL(dp) :: mg1
         REAL(dp) :: marginx, marginy, marginz, yval_up, yval_dw, xval_lt, xval_rt
 
         DO g=1,size(intfr)
@@ -1046,10 +1046,6 @@ blk%fluidCellCount = flcnt
         yval_dw=dmin1(block(b_blk_no)%ynode1(block(b_blk_no)%mk),block(b_blk_no)%nxty_cent-0.02_dp)
         xval_lt=(block(b_blk_no)%xnode1(block(b_blk_no)%mkx1))
         xval_rt=(block(b_blk_no)%xnode1(block(b_blk_no)%mkx2))
-        ydisp1= dmin1(abs(yval_dw-intfr(g)%yintf_start),abs(yval_up - intfr(g)%yintf_end))
-        xdisp1= (abs(xval_lt - intfr(g)%xintf_start))
-        zdisp1= dmin1(abs(block(b_blk_no)%piv_z - intfr(g)%zintf_start), &
-                      abs(block(b_blk_no)%piv_z - intfr(g)%zintf_end))
         print*,"blk_check_cond", marginx, marginy
         print*,"ydsip",abs(yval_dw-intfr(g)%yintf_start),abs(yval_up - intfr(g)%yintf_end)
         print*,block(b_blk_no)%xnode1(block(b_blk_no)%mkx1),block(b_blk_no)%nxtx_cent
