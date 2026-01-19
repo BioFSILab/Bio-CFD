@@ -17,38 +17,54 @@ contains
     !> think might not be needed)
     type(Block_t), intent(inout) :: blk
     !> Fluid dynamic viscosity and Density
+    ! Intent(in): Read only - Use the value, cannot change it.
+    ! Intent(out): You set the value, it overwrites what the variable
+    ! was set to before.
+    ! Intent(inout): You use the value and you can also modify it.
+    ! Essentially a normal REAL(dp) variable.
     real(dp), intent(in) :: mu_f, rho_f
-    !> ielem: Immersed Boundary element
-    !> i_x1, i_y1, i_z1: Where to interpolate fluid values
+    ! ielem: Immersed Boundary element
+    ! i_x1, i_y1, i_z1: Where to interpolate fluid values
     INTEGER :: ielem, i_x1, i_y1, i_z1
-    !> i_cell, j_cell, j_cell: Which grid cell the surface point lies inside
+    ! i_cell, j_cell, j_cell: Which grid cell the surface point lies inside
     INTEGER :: i_cell, j_cell, k_cell
-    !> Diagis: Diagonal distance of the cell, normdis is the distance from the surface to the fluid sample point
+    ! Diagis: Diagonal distance of the cell
+    ! normdis is the distance from the surface to the fluid sample point
     REAL(dp) :: diagdis, normdis, aval, bval, cval, del_X, del_Y, del_Z
-    !>pos1_x, pos1_y, pos1_z: Fluid sample point, point that is slightly off the surface, inside the fluid.
-    !> p_pos1: Pressure at this fluid sample point.
-    !> dpdn: Pressure gradient at the surface
-    !> dpdn_e: Pressure gradient near the wall, slightly inside the fluid.
-    !> usurf, vsurf, wsurf: Velocity at the surface
-    !> u_pos1, v_pos1, w_pos1: Fluid velocity at the fluid sample point
-    !>dudn_e, dvdn_e, dwdn_e: Velocity derivatives near the wall, slightly inside the fluid.
-    !> ddn_s: Tangential velocity gradient at wall
+    !pos1_x, pos1_y, pos1_z: Fluid sample point, point that is slightly off the surface, inside the fluid.
+    ! p_pos1: Pressure at this fluid sample point.
+    ! dpdn: Pressure gradient at the surface
+    ! dpdn_e: Pressure gradient near the wall, slightly inside the fluid.
+    ! usurf, vsurf, wsurf: Velocity at the surface
+    ! u_pos1, v_pos1, w_pos1: Fluid velocity at the fluid sample point
+    !dudn_e, dvdn_e, dwdn_e: Velocity derivatives near the wall, slightly inside the fluid.
+    ! ddn_s: Tangential velocity gradient at wall, for viscous stresses.
     REAL(dp) :: pos1_x, pos1_y, pos1_z, p_pos1, dpdn, dpdn_e, usurf, u_pos1, vsurf, v_pos1, &
                wsurf, w_pos1,  dudn_e, dvdn_e, dwdn_e, ddn_s(3)
-    !> alen: Element length
-    !>
+    ! alen: Element length
+    ! area: Surface area
+    ! area_xz, area_yz, area_xy: Projected areas - Normal direction of area_xy is z etc.
+ 
     REAL(dp) :: alen, area, area_xz, area_yz, area_xy
-
+    
+    ! Shear_force: Viscous force vector
+    ! f_surf: Pressure force vector
     REAL(dp) :: shear_force(3), f_surf(3)
-
+    !PressureDrag: Total drag force in x due to pressure difference (normal to the surface element)
+    !ViscousDrag: Total drag force in x due to viscous shear stress (tangential to the surface element)
+    !PressureLift: Total lift force in y due to pressure difference
+    !ViscousLift: Total lift force in y due to viscous shear stress
+    !area_Sx, Sy: Areas used to normalise forces in the x and y direction
+    !surf_area: Total immersed boundary surface area
     REAL(dp) :: pressureDrag, viscousDrag, viscousLift, pressureLift, area_Sx, area_Sy, surf_area
-
+    ! Centripetal and tangential accelerations in y and z.
     real(dp) :: ac_y, ac_z, at_y, at_z
 
     real(dp) :: derivatives(3)
     ! In this case I think it makes sense to store the normal - there
     ! is an argument to make cosAlpha, cosBeta, and cosGamma a length
     ! 3 array in Block_t
+    !Surface normal of the immersed boundary surface element ielem
     real(dp) :: normal(3)
     ! Set all quantities to zero before looping
     viscousDrag = 0._dp
@@ -76,28 +92,37 @@ contains
     ! Loop over all immersed boundary surface elements
     DO ielem = 1, blk%ibElems
        ! ***********************interpolation points****************************
-
+       ! Constructs the unit normal vector
        normal = [blk%cosAlpha(ielem), blk%cosBeta(ielem), blk%cosGamma(ielem)]
-
+       !These lines are essentially:"Given the x,y and z coordinate of a surface point,
+       !Which grid cell are they in?" Between 2 and blk%nx+1.
+       !Example: blk%xcent(ielem)=0.27, x1=[0,0.1,0.2,0.3], then 0.27 is between
+       !0.2 and 0.3, so i_cell=3.
+       !Scroll to the bottom to see how find_index_in_array is defined
        i_cell = find_index_in_array(blk%xcent(ielem), blk%x1, 2_int64, blk%nx+1)
        j_cell = find_index_in_array(blk%ycent(ielem), blk%y1, 2_int64, blk%ny+1)
        k_cell = find_index_in_array(blk%zcent(ielem), blk%z1, 2_int64, blk%nz+1)
-
+       ! Now we know which cell it is, we compute the size. Essentially x(i+1) minus x(i)
        del_X = blk%x1(i_cell+1)-blk%x1(i_cell)
        del_Y = blk%y1(j_cell+1)-blk%y1(j_cell)
        del_Z = blk%z1(k_cell+1)-blk%z1(k_cell)
-       ! This is the distance to the nearest interpolation point - It is the length of the cell
+       ! Then using these spacings we can compute the diagonal length inside the cell.
        diagdis = sqrt(del_X**2 + del_Y**2 + del_Z**2)
-
+       !"Go from the surface point one cell diagonal in the direction of the surface normal".
+       !Essentially step into the fluid from the surface and stop after moving after you've travelled a distance
+       !of the diagonal distance of the cell. Allows for safely sampling the fluid - Because with IBM the solid
+       !surface does not sit exactly on grid points
        normdis = diagdis
        pos1_x = blk%xcent(ielem) + normdis * normal(1)
        pos1_y = blk%ycent(ielem) + normdis * normal(2)
        pos1_z = blk%zcent(ielem) + normdis * normal(3)
 
        ! **************************velocity and pressure at the surface**********************
+       ! If the immersed boundary surface belongs to the body, set the angular velocity and acceleration to zero.
        IF (blk%ibSurfID(ielem)==50) THEN
           blk% thetaDot  =  0.
           blk% thetaDDot =  0.
+       !The wings (51 and 52)  are pitching so they do have a defined angular motion
        ELSE IF (blk%ibSurfID(ielem)==51) THEN
           blk% thetaDot  = blk% thetaDot1
           blk% thetaDDot = blk% thetaDDot1
@@ -105,7 +130,7 @@ contains
           blk% thetaDot  = blk% thetaDot2
           blk% thetaDDot = blk% thetaDDot2
        END IF
-       ! This is the main rigid body kinemtaics
+       ! v=wxr, omega is rotation about the x axis (flapping)
        usurf = blk%xdot
        vsurf = -blk%thetaDot * (blk%zcent(ielem) - blk%piv_z) + blk%ydot
        wsurf = blk%thetaDot * (blk%ycent(ielem) - blk%piv_y)
@@ -114,26 +139,29 @@ contains
        ac_y = -blk%thetaDot**2 * (blk%ycent(ielem) - blk%piv_y)
        at_z = blk%thetaDDot * (blk%ycent(ielem) - blk%piv_y)
        at_y = -blk%thetaDDot * (blk%zcent(ielem) - blk%piv_z)
-
+       !Compute pressure gradient dpdn=-rho*(acceleration at wall times fluid velcoity vector) - negative because normal?
        dpdn = -((ac_z + at_z)*blk%cosGamma(ielem) &
             + (ac_y + at_y)*blk%cosBeta(ielem))-blk%yddot*blk%cosBeta(ielem)
 
        ! *******************velocity interpolation at point 2******************
 
        ! ******************u velocity interpolation at point 2******************
-
+       !Reminder:pos1_x, pos1_y, pos1_z = Fluid sample point. xu yu and zu are the velocity components
+       !"Which u-velocity face contains this fluid sample point, so I can interpolate the velocity?"
        i_x1 = find_index_in_array(pos1_x, blk%xu, 2_int64, blk%nx+1)
        i_y1 = find_index_in_array(pos1_y, blk%yu, 2_int64, blk%ny+1)
        i_z1 = find_index_in_array(pos1_z, blk%zu, 2_int64, blk%nz+1)
-
+       !Interpolation
        call compute_value_and_derivatives(pos1_x, pos1_y, pos1_z, i_x1, i_y1, i_z1, &
-            blk%xu, blk%yu, blk%zu, 1, &
+c            blk%xu, blk%yu, blk%zu, 1, &
             blk%u, u_pos1, derivatives)
-
+       !compute derivative
        dudn_e = dot_product(derivatives, normal)
+       !Compute Tangential velocity gradient at wall (u-velocity)
        ddn_s(1) = (2._dp/normdis)*(u_pos1 - usurf) - dudn_e
 
        ! ******************v velocity interpolation in point 2******************
+       !Same occurs for y
        i_x1 = find_index_in_array(pos1_x, blk%xv, 2_int64, blk%nx+1)
        i_y1 = find_index_in_array(pos1_y, blk%yv, 2_int64, blk%ny+1)
        i_z1 = find_index_in_array(pos1_z, blk%zv, 2_int64, blk%nz+1)
@@ -146,6 +174,7 @@ contains
        ddn_s(2) = (2._dp/normdis)*(v_pos1 - vsurf) - dvdn_e
 
        ! ******************w velocity interpolation in point 2******************
+       !Same occurs for z
        i_x1 = find_index_in_array(pos1_x, blk%xw, 2_int64, blk%nx+1)
        i_y1 = find_index_in_array(pos1_y, blk%yw, 2_int64, blk%ny+1)
        i_z1 = find_index_in_array(pos1_z, blk%zw, 2_int64, blk%nz+1)
@@ -158,6 +187,9 @@ contains
        ddn_s(3) = (2._dp/normdis)*(w_pos1 - wsurf) - dwdn_e
 
        ! ***********************calculate area of the elements******************
+       !Reminder that alen is the length of the surface element, and ielem is the index of the
+       !current immersed boundary element.
+       !is this area calculation correct?
        alen = blk%element_length(ielem)
        area = alen/2._dp
        area_yz = 0.5_dp*abs(alen * normal(1))
@@ -165,6 +197,8 @@ contains
        area_xy = 0.5_dp*abs(alen * normal(3))
 
        ! *********non-dimensional viscous stress & force calculation************
+       !Shear stress=mu_f*tangential velocity gradient
+       !Shear force=Shear stress * area
        shear_force = (ddn_s - dot_product(ddn_s, normal) * normal) * mu_f * area
        ! ************************presssure interpolation************************
 
@@ -178,33 +212,40 @@ contains
             blk%p, p_pos1, derivatives)
 
        dpdn_e = dot_product(derivatives, normal)
-
+       !Here we perform quadratic interpolation: an^2+bn+c
+       !bval = slope at the surface (not used in this module?)
+       !aval = curvature (not used in this module?)
+       !cval - pressure at the surface
        bval = dpdn  !dpdn=-dudt
        aval = (dpdn_e - dpdn)/(2*diagdis)
        cval = p_pos1 - (dpdn_e + dpdn)*diagdis*0.5_dp
-
+       !Force= -p*A*n (acts normal) why multiplying by density?
        f_surf = -cval * area * normal * rho_f
 
        ! ***********************drag calculation********************************
+       !Here we add the x component of each force to the running total for drag, and the y component for lift.
        viscousDrag = viscousDrag + shear_force(1)
        pressureDrag = pressureDrag + f_surf(1)
        viscousLift = viscousLift + shear_force(2)
        PressureLift = PressureLift + f_surf(2)
+       !Here we add the total of all surface element areas, as well as 
+       !projected areas
        surf_area = surf_area + area
        area_Sx = area_Sx + area_xz
        area_Sy = area_Sy + area_yz
 
     END DO
     !$acc end parallel loop
-
+    !Why are these multiplied by a half? Is it because we multiply by 2 after?
     area_Sx= 0.5_dp * area_Sx
     area_Sy= 0.5_dp * area_Sy
-
+    !cD=FD/(1/2*rho*v^2*A)?
     blk%viscous_drag_coefficient = 2 * (viscousDrag/area_Sx)
     blk%pressure_drag_coefficient = 2 * (pressureDrag/area_Sy)
     blk%viscous_lift_coefficient = 2 * (viscousLift/area_Sx)
     blk%pressure_lift_coefficient = 2 * (pressureLift/area_Sy)
 
   end subroutine stress_calculation
+
 
 end module biocfd_stress_calculation
