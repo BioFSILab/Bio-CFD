@@ -466,20 +466,20 @@ SUBROUTINE tagging_th_core(blk)
 
          iPt1 = 0
         !$acc parallel loop private(idx, i, j, k)
-        do n=1, blk%ibCellCount
-          IF (blk%cell2(i,j,k)==2) THEN
-            i = blk%interceptedIndexPtr(n, 1)
-            j = blk%interceptedIndexPtr(n, 2)
-            k = blk%interceptedIndexPtr(n, 3)
-            !$acc atomic capture
-            iPt1 = iPt1 + 1
-            idx = iPt1
-            !$acc end atomic
-            blk%TSIndexPtr(idx, :) = [i, j, k]
-            blk%index_ts(idx) = n
-          END IF
-        end do
-        !$acc end parallel loop
+         do n=1, blk%ibCellCount
+           i = blk%interceptedIndexPtr(n, 1)
+           j = blk%interceptedIndexPtr(n, 2)
+           k = blk%interceptedIndexPtr(n, 3)
+           IF (blk%cell2(i,j,k)==2) THEN
+             !$acc atomic capture
+             iPt1 = iPt1 + 1
+             idx = iPt1
+             !$acc end atomic
+             blk%TSIndexPtr(idx, :) = [i, j, k]
+             blk%index_ts(idx) = n
+           END IF
+         end do
+         !$acc end parallel loop
 
         ALLOCATE(&
           blk%u2_ghost(blk%TSCellCount),  &
