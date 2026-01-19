@@ -29,6 +29,7 @@ contains
     blk%nx = 5
     blk%ny = 5
     blk%nz = 5
+    blk%ibElems = 10
 
     call allocateArrays(blk)
 
