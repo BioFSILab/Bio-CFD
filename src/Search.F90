@@ -433,7 +433,7 @@ SUBROUTINE tagging_th_core(blk)
 
    SUBROUTINE findTScells(blk)
        type(Block_t), intent(inout) :: blk
-        INTEGER            :: i, j, k, i1, j1, k1, iPt1, m, n, tscnt
+        INTEGER            :: i, j, k, iPt1, n, tscnt
         integer :: idx
         !$acc parallel loop collapse(3) default(present)
                  DO k = 2, blk%nz+1
