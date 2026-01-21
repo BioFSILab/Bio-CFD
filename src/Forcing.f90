@@ -409,7 +409,7 @@ SUBROUTINE pressureForcingGhost(blk)
         END IF
             dpdn = ((ac_z + at_z)* blk%cosGamma(blk%nelp(blk%index_ts(n))) &
                   + (ac_y + at_y)* blk%cosBeta(blk%nelp(blk%index_ts(n)))) &
-                   + (blk%yddot*(blk%cosBeta(blk%index_ts(n))))
+                   + (blk%yddot*(blk%cosBeta(blk%nelp(blk%index_ts(n)))))
 
          sur2nodeDis = -blk%pNormDis(blk%index_ts(n))
 
