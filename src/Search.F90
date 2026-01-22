@@ -431,9 +431,9 @@ SUBROUTINE tagging_th_core(blk)
         END DO
      END SUBROUTINE tagging_th_move
 
-     SUBROUTINE findTScells(blk)
+   SUBROUTINE findTScells(blk)
        type(Block_t), intent(inout) :: blk
-        INTEGER            :: i, j, k, i1, j1, k1, iPt1, m, n, tscnt
+        INTEGER            :: i, j, k, iPt1, n, tscnt
         integer :: idx
         !$acc parallel loop collapse(3) default(present)
                  DO k = 2, blk%nz+1
@@ -445,54 +445,41 @@ SUBROUTINE tagging_th_core(blk)
                  END DO
         !$acc end parallel loop
 
-        !$acc parallel loop default(present)
-        DO n = 1, blk%ibCellCount
-        i = blk%interceptedIndexPtr(n, 1)
-        j = blk%interceptedIndexPtr(n, 2)
-        k = blk%interceptedIndexPtr(n, 3)
-         IF(blk%ibSurfID(blk%nelp(n))==51.OR.blk%ibSurfID(blk%nelp(n))==52) then
-           blk%cell2(i, j, k) = 2
-         end if
-
-         END DO
-        !$acc end parallel loop
-
-        blk%TSCellCount = 0
         tscnt=0
-        !$acc parallel loop collapse(3) default(present) reduction(+:tscnt)
-                 DO k = 2, blk%nz+1
-                 DO j = 2, blk%ny+1
-                 DO i = 2, blk%nx+1
-                     IF (blk%cell2(i,j,k)==2) THEN
-                           !blk%TSCellCount = blk%TSCellCount + 1
-                           tscnt = tscnt + 1
-                     END IF
-                 END DO
-                 END DO
-                 END DO
+        !$acc parallel loop default(present) reduction(+:tscnt) private(i, j, k)
+        DO n = 1, blk%ibCellCount
+          IF (blk%ibSurfID(blk%nelp(n))==51 .or. blk%ibSurfID(blk%nelp(n))==52) then
+             i = blk%interceptedIndexPtr(n, 1)
+             j = blk%interceptedIndexPtr(n, 2)
+             k = blk%interceptedIndexPtr(n, 3)
+             blk%cell2(i, j, k) = 2
+             tscnt = tscnt + 1
+          end if
+        END DO
         !$acc end parallel loop
 
         blk%TSCellCount = tscnt
         print*, "TScell count =", blk%TSCellCount
 
         ALLOCATE(blk%TSIndexPtr(blk%TSCellCount,3))
+        allocate(blk%index_ts(blk%TSCellCount))
 
-        iPt1 = 0
-        !$acc parallel loop collapse(3) private(idx)
-        DO k=1,blk%nz+3
-           DO j=1,blk%ny+3
-              DO i=1,blk%nx+3
-                 IF (blk%cell2(i,j,k)==2) THEN
-                    !$acc atomic capture
-                    iPt1 = iPt1 + 1
-                    idx = iPt1
-                    !$acc end atomic
-                    blk%TSIndexPtr(idx, :) = [i, j, k]
-                 END IF
-              END DO
-           END DO
-        END DO
-        !$acc end parallel loop
+         iPt1 = 0
+        !$acc parallel loop private(idx, i, j, k)
+         do n=1, blk%ibCellCount
+           i = blk%interceptedIndexPtr(n, 1)
+           j = blk%interceptedIndexPtr(n, 2)
+           k = blk%interceptedIndexPtr(n, 3)
+           IF (blk%cell2(i,j,k)==2) THEN
+             !$acc atomic capture
+             iPt1 = iPt1 + 1
+             idx = iPt1
+             !$acc end atomic
+             blk%TSIndexPtr(idx, :) = [i, j, k]
+             blk%index_ts(idx) = n
+           END IF
+         end do
+         !$acc end parallel loop
 
         ALLOCATE(&
           blk%u2_ghost(blk%TSCellCount),  &
@@ -508,23 +495,10 @@ SUBROUTINE tagging_th_core(blk)
           blk%w2_ghost(blk%TSCellCount), &
           blk%w2t_ghost(blk%TSCellCount), &
           blk%w1_ghost(blk%TSCellCount),  &
-          blk%w1t_ghost(blk%TSCellCount), &
-          blk%index_ts(blk%TSCellCount))
+          blk%w1t_ghost(blk%TSCellCount))
 
         !$acc parallel loop default(present)
         DO n = 1, blk%TSCellCount
-        i = blk%TSIndexPtr(n, 1)
-        j = blk%TSIndexPtr(n, 2)
-        k = blk%TSIndexPtr(n, 3)
-           !$acc loop seq
-           DO m = 1, blk%ibCellCount
-           i1 = blk%interceptedIndexPtr(m, 1)
-           j1 = blk%interceptedIndexPtr(m, 2)
-           k1 = blk%interceptedIndexPtr(m, 3)
-              IF (i1==i .AND. j1==j .AND. k1==k) THEN
-                  blk%index_ts(n) = m
-              END IF
-           END DO
            blk%u2_ghost(n)  = 0.
            blk%u2t_ghost(n) = 0.
            blk%v2_ghost(n)  = 0.
@@ -541,7 +515,7 @@ SUBROUTINE tagging_th_core(blk)
            blk%w1t_ghost(n) = 0.
         END DO
         !$acc end parallel loop
-             END SUBROUTINE findTScells
+   END SUBROUTINE findTScells
 
      SUBROUTINE selectiveRetagging_th(blk)
        type(Block_t), intent(inout) :: blk
