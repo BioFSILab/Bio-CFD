@@ -15,7 +15,6 @@ concurrency:
 jobs:
   docs:
     name: Ford-docs
-    if: github.ref == 'refs/heads/dev'
     runs-on: [ubuntu-latest]
     if: github.event.pull_request.draft == false
     steps:
@@ -35,6 +34,7 @@ jobs:
 
   deploy:
     needs: docs
+    if: github.ref == 'refs/heads/dev'
     permissions:
       pages: write
       id-token: write
