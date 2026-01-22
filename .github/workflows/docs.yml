@@ -2,11 +2,8 @@ name: Build documentation
 
 on:
   workflow_dispatch:
-  pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
-    branches: [main,dev]
-#  push:
-#    branches: [main]
+  push:
+    branches: [dev]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
