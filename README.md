@@ -28,7 +28,7 @@ in the root directory of the project.
 
 ## Running the code
 
-Running the code is also simple. Simply exectue the command
+Running the code is also simple. Simply execute the command
 
 ```
 fpm run
@@ -43,3 +43,7 @@ needed.
 
 [1]: https://fpm.fortran-lang.org/index.html
 [2]: https://fpm.fortran-lang.org/install/index.html#install
+
+## Acknowledgements
+
+This software was substantially developed with research software engineering support funded by the Baskerville Tier 2 HPC service (https://www.baskerville.ac.uk/). Baskerville was funded by the EPSRC and UKRI through the World Class Labs scheme (EP/T022221/1) and the Digital Research Infrastructure programme (EP/W032244/1) and is operated by Advanced Research Computing at the University of Birmingham.
